@@ -165,32 +165,42 @@ class FireController: NSObject {
     func addUserToChannel(userId: String, groupId: String, channelId: String, then: ((Bool) -> Void)? = nil) {
         
         let channelLink = channelMemberMap(timestamp: Utils.now(), priorityIndex: 4, role: "member" /* neutral */)
-        
         var updates: [String: Any] = [:]
         updates["channel-members/\(channelId)/\(userId)"] = true
         updates["member-channels/\(userId)/\(groupId)/\(channelId)"] = channelLink
+        FireController.db.updateChildValues(updates) { error, ref in
+            then?(error == nil)
+        }
+    }
+    
+    func addUserToChannels(userId: String, groupId: String, channels: [String: Any], then: ((Bool) -> Void)? = nil) {
         
+        let channelLink = channelMemberMap(timestamp: Utils.now(), priorityIndex: 4, role: "member" /* neutral */)
+        var updates: [String: Any] = [:]
+        for channelId in channels.keys {
+            updates["channel-members/\(channelId)/\(userId)"] = true
+            updates["member-channels/\(userId)/\(groupId)/\(channelId)"] = channelLink
+        }
         FireController.db.updateChildValues(updates) { error, ref in
             then?(error == nil)
         }
     }
 
-    func addUserToGroup(userId: String, groupId: String, channelId: String?, role: String, then: ((Bool) -> Void)? = nil) {
+    func addUserToGroup(userId: String, groupId: String, channels: [String: Any]?, role: String, email: String, then: ((Bool) -> Void)? = nil) {
         /*
          * Standard member is added to group membership and all default channels.
          * Guest member is added to group and to targeted channel.
-         *
-         * Guard: Check and pass if user is already a member of the group. What if being
-         * re-invited as a member instead of a guest?
          */
         let timestamp = Utils.now()
         let channelLink = channelMemberMap(timestamp: timestamp, priorityIndex: 4, role: "member")
         
         var updates: [String: Any] = [:]
         
-        if channelId != nil {
-            updates["channel-members/\(channelId!)/\(userId)"] = true
-            updates["member-channels/\(userId)/\(groupId)/\(channelId!)"] = channelLink
+        if channels != nil {
+            for channelId in channels!.keys {
+                updates["channel-members/\(channelId)/\(userId)"] = true
+                updates["member-channels/\(userId)/\(groupId)/\(channelId)"] = channelLink
+            }
         }
         
         let groupPriority = (role == "guest") ? 5 : 4
@@ -199,29 +209,42 @@ class FireController: NSObject {
         updates["member-groups/\(userId)/\(groupId)"] = groupLink
         updates["group-members/\(groupId)/\(userId)"] = groupLink
         
-        if role != "guest" {
-            let pathDefaults = "groups/\(groupId)/default_channels"
-            FireController.db.child(pathDefaults).observeSingleEvent(of: .value, with: { snap in
-                
+        FireController.db.child("invites/\(groupId)")
+            .queryOrdered(byChild: "email")
+            .queryEqual(toValue: email)
+            .observeSingleEvent(of: .value, with: { snap in
                 if !(snap.value is NSNull) {
-                    let defaultChannelIds = snap.value as! [String]
-                    let defaultChannelLink = self.channelMemberMap(timestamp: timestamp, priorityIndex: 3, role: "member")
-                    for defaultChannelId in defaultChannelIds {
-                        updates["channel-members/\(defaultChannelId)/\(userId)"] = true
-                        updates["member-channels/\(userId)/\(groupId)/\(defaultChannelId)"] = defaultChannelLink
+                    if let mapInvite = snap.value as? [String: Any] {
+                        let inviteId = mapInvite.first!.key
+                        FireController.db.child("invites/\(groupId)/\(inviteId)/accepted_at").setValue(Int(floorf(Float(timestamp))))
+                        FireController.db.child("invites/\(groupId)/\(inviteId)/accepted_by").setValue(userId)
+                        FireController.db.child("invites/\(groupId)/\(inviteId)/status").setValue("accepted")
                     }
                 }
-                
-                FireController.db.updateChildValues(updates) { error, ref in
-                    then?(error == nil)
+                if role != "guest" {
+                    let pathDefaults = "groups/\(groupId)/default_channels"
+                    FireController.db.child(pathDefaults).observeSingleEvent(of: .value, with: { snap in
+                        
+                        if !(snap.value is NSNull) {
+                            let defaultChannelIds = snap.value as! [String]
+                            let defaultChannelLink = self.channelMemberMap(timestamp: timestamp, priorityIndex: 3, role: "member")
+                            for defaultChannelId in defaultChannelIds {
+                                updates["channel-members/\(defaultChannelId)/\(userId)"] = true
+                                updates["member-channels/\(userId)/\(groupId)/\(defaultChannelId)"] = defaultChannelLink
+                            }
+                        }
+                        
+                        FireController.db.updateChildValues(updates) { error, ref in
+                            then?(error == nil)
+                        }
+                    })
                 }
-            })
-        }
-        else {
-            FireController.db.updateChildValues(updates) { error, ref in
-                then?(error == nil)
-            }
-        }
+                else {
+                    FireController.db.updateChildValues(updates) { error, ref in
+                        then?(error == nil)
+                    }
+                }
+        })
     }
     
     func removeUserFromGroup(userId: String, groupId: String, then: ((Bool) -> Void)? = nil) {
@@ -401,6 +424,10 @@ class FireController: NSObject {
         })
     }
     
+    func deleteInvite(groupId: String, inviteId: String) {
+        FireController.db.child("invites/\(groupId)/\(inviteId)").removeValue()
+    }
+    
     func delete(channelId: String, groupId: String, execute: Bool = true, then: (([String: Any]?) -> Void)? = nil) {
         
         let pathChannelMessages = "channel-messages/\(channelId)"
@@ -492,6 +519,19 @@ class FireController: NSObject {
     func findFirstChannel(groupId: String, next: ((String?) -> Void)? = nil) {
         let userId = UserController.instance.userId!
         let query = FireController.db.child("member-channels/\(userId)/\(groupId)").queryOrdered(byChild: "index_priority_joined_at_desc").queryLimited(toFirst: 1)
+        
+        query.observeSingleEvent(of: .value, with: { snap in
+            if !(snap.value is NSNull) && snap.hasChildren() {
+                let channelId = (snap.children.nextObject() as! FIRDataSnapshot).key
+                next?(channelId)
+                return
+            }
+            next?(nil)
+        })
+    }
+    
+    func findGeneralChannel(groupId: String, next: ((String?) -> Void)? = nil) {
+        let query = FireController.db.child("group-channels/\(groupId)").queryOrdered(byChild: "general").queryEqual(toValue: true)
         
         query.observeSingleEvent(of: .value, with: { snap in
             if !(snap.value is NSNull) && snap.hasChildren() {

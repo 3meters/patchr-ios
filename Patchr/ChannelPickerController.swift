@@ -10,38 +10,23 @@ import Firebase
 import FirebaseDatabaseUI
 import SlideMenuControllerSwift
 import pop
+import CLTokenInputView
 
-class ChannelPickerController: BaseTableController {
+class ChannelPickerController: BaseTableController, CLTokenInputViewDelegate {
     
-    var channelsQuery: FIRDatabaseQuery!
-    var unreadsTotalQuery: UnreadQuery?
-    var unreadsGroupQuery: UnreadQuery?
-    var tableViewDataSource: FUITableViewDataSource!
+    var channelsSource = [FireChannel]()
+    var channelsFiltered = [FireChannel]()
+    var delegate: PickerDelegate?
     
+    var channelsView: AirContactView!
     var tableView = AirTableView(frame: CGRect.zero, style: .plain)
-    var searchBar: UISearchBar!
-    var searchController: SearchController!
-    var searchTableView = AirTableView(frame: CGRect.zero, style: .plain)
-    var searchOn = false
-    var rule = UIView()
+    var doneButton: UIBarButtonItem!
+    var selectedStyle: SelectedStyle = .prominent
     
-    var gradientImage: UIImage!
-    var backButton: UIBarButtonItem!
-    var searchBarButton: UIBarButtonItem!
-    var searchButton: UIBarButtonItem!
-    var titleButton: UIBarButtonItem!
-    
-    var role = "guest"
-    
-    var unreadTotal = 0
-    var unreadGroup = 0
-    var unreadOther: Int? {
-        didSet {
-            if unreadOther != oldValue {
-                updateBackButton()
-            }
-        }
-    }
+    var channels: [String: Any] = [:]
+    var filterText: String?
+    var filterActive = false
+    var allowMultiSelect = true
     
     /*--------------------------------------------------------------------------------------------
     * MARK: - Lifecycle
@@ -53,75 +38,49 @@ class ChannelPickerController: BaseTableController {
         bind()
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        self.navigationController?.navigationBar.setBackgroundImage(self.gradientImage, for: .default)
-        self.navigationController?.navigationBar.tintColor = Colors.white
-    }
-    
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-    }
-    
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
-        self.searchTableView.fillSuperview()
-        self.tableView.fillSuperview()
+        
+        let navHeight = self.navigationController?.navigationBar.height() ?? 0
+        let statusHeight = UIApplication.shared.statusBarFrame.size.height
+        self.channelsView.anchorTopCenterFillingWidth(withLeftAndRightPadding: 0, topPadding: (navHeight + statusHeight), height: channelsView.height())
+        self.tableView.alignUnder(self.channelsView, centeredFillingWidthAndHeightWithLeftAndRightPadding: 0, topAndBottomPadding: 0)
     }
 
     /*--------------------------------------------------------------------------------------------
     * MARK: - Events
     *--------------------------------------------------------------------------------------------*/
     
-    func addAction(sender: AnyObject?) {
-        let groupId = StateController.instance.groupId!
-        let controller = ChannelEditViewController()
-        let wrapper = AirNavigationController()
-        controller.mode = .insert
-        controller.inputGroupId = groupId
-        wrapper.viewControllers = [controller]
-        self.slideMenuController()?.closeLeft()
-        self.present(wrapper, animated: true, completion: nil)
-    }
-
-    func switchAction(sender: AnyObject?) {
-        let _ = self.navigationController?.popToRootViewController(animated: true)
+    func doneAction(sender: AnyObject?) {
+        if isValid() {
+            self.delegate?.update(channels: self.channels)
+            close()
+        }
     }
     
-    func backAction(sender: AnyObject?) {
-        let _ = self.navigationController?.popToRootViewController(animated: true)
-    }
-    
-    func searchAction(sender: AnyObject?) {
-        search(on: true)
+    func closeAction(sender: AnyObject?) {
+        close()
     }
 
     /*--------------------------------------------------------------------------------------------
     * MARK: - Notifications
     *--------------------------------------------------------------------------------------------*/
     
-    func userDidSwitch(notification: NSNotification?) {
-        bind()
+    func keyboardWillShow(notification: Notification) {
+        let info: NSDictionary = notification.userInfo! as NSDictionary
+        let value = info.value(forKey: UIKeyboardFrameBeginUserInfoKey) as! NSValue
+        let keyboardSize = value.cgRectValue.size
+        
+        let contentInsets = UIEdgeInsetsMake(self.tableView.contentInset.top, 0, keyboardSize.height, 0)
+        self.tableView.contentInset = contentInsets
+        self.tableView.scrollIndicatorInsets = contentInsets
     }
     
-    func groupDidSwitch(notification: NSNotification?) {
-        bind()
+    func keyboardWillHide(notification: Notification) {
+        self.tableView.contentInset = UIEdgeInsetsMake(self.tableView.contentInset.top, 0, 0, 0)
+        self.tableView.scrollIndicatorInsets = self.tableView.contentInset
     }
     
-    func channelDidSwitch(notification: NSNotification?) {
-        self.tableView.reloadData()
-    }
-    
-    func leftDidClose(notification: NSNotification?) {
-        if self.searchOn {
-            self.search(on: false)
-            self.searchBar?.setShowsCancelButton(false, animated: false)
-            self.searchBar?.endEditing(true)
-            self.searchController.channelsFiltered.removeAll()
-            self.searchTableView.reloadData()
-        }
-    }
-
     /*--------------------------------------------------------------------------------------------
     * MARK: - Methods
     *--------------------------------------------------------------------------------------------*/
@@ -129,301 +88,58 @@ class ChannelPickerController: BaseTableController {
     override func initialize() {
         super.initialize()
         
-        self.searchBar = UISearchBar(frame: CGRect.zero)
-        self.searchBar?.delegate = self
-        self.searchBar?.placeholder = "Search"
-        self.searchBar.searchBarStyle = .prominent
-        self.searchBar.autocapitalizationType = .none
-        for subview in self.searchBar.subviews[0].subviews {
-            if subview is UITextField {
-                subview.tintColor = Colors.accentColor
-            }
-        }
-        self.searchBarButton = UIBarButtonItem(customView: self.searchBar)
+        self.automaticallyAdjustsScrollViewInsets = false
+        self.view.backgroundColor = Colors.white
         
-        self.rule.backgroundColor = Theme.colorSeparator
+        self.channelsView = AirContactView(frame: CGRect(x: 0, y: 0, width: self.view.width(), height: 44))
+        self.channelsView.placeholder.text = "Search"
+        self.channelsView.placeholder.textColor = Theme.colorTextPlaceholder
+        self.channelsView.placeholder.font = Theme.fontComment
+        self.channelsView.backgroundColor = Colors.white
+        self.channelsView.drawBottomBorder = true
+        self.channelsView.delegate = self
+        self.channelsView.autoresizingMask = [UIViewAutoresizing.flexibleBottomMargin, UIViewAutoresizing.flexibleWidth]
 
+        self.tableView.register(UINib(nibName: "ChannelSearchCell", bundle: nil), forCellReuseIdentifier: "channel-search-cell")
         self.tableView.backgroundColor = Theme.colorBackgroundTable
         self.tableView.tableFooterView = UIView()
-        self.tableView.delegate = self        
+        self.tableView.delegate = self
+        self.tableView.dataSource = self
         self.tableView.estimatedRowHeight = 36
         self.tableView.separatorInset = UIEdgeInsets.zero
-        self.tableView.register(UINib(nibName: "ChannelListCell", bundle: nil), forCellReuseIdentifier: "channel-list-cell")
         
-        self.searchController = SearchController(tableView: self.searchTableView)
-        
-        self.searchTableView.alpha = 0.0
-        self.searchTableView.backgroundColor = Theme.colorBackgroundTable
-        self.searchTableView.tableFooterView = UIView()
-        self.searchTableView.delegate = self
-        self.searchTableView.dataSource = self.searchController
-        self.searchTableView.separatorInset = UIEdgeInsets.zero
-        self.searchTableView.register(UINib(nibName: "ChannelListCell", bundle: nil), forCellReuseIdentifier: "channel-search-cell")
-        
-        self.view.addSubview(self.searchTableView)
+        self.view.addSubview(self.channelsView)
         self.view.addSubview(self.tableView)
         
-        /* Navigation button */
-        let unreadBackView = UnreadBackView()
-        unreadBackView.buttonScrim.addTarget(self, action: #selector(backAction(sender:)), for: .touchUpInside)
-        unreadBackView.frame = CGRect(x: 0, y: 0, width: 24, height: 36)
-        unreadBackView.badge.alpha = CGFloat(0)
+        self.selectedStyle = .normal
+        self.navigationItem.title = "Select channel for guest"
         
-        self.backButton = UIBarButtonItem(customView: unreadBackView)
-        self.searchButton = UIBarButtonItem(barButtonSystemItem: .search, target: self, action: #selector(searchAction(sender:)))
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(notification:)), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(notification:)), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
         
-        let gradient = CAGradientLayer()
-        gradient.frame = CGRect(x: 0, y: 0, width: NAVIGATION_DRAWER_WIDTH, height: 64)
-        gradient.colors = [Colors.accentColor.cgColor, Colors.brandColor.cgColor]
-        gradient.startPoint = CGPoint(x: 0.0, y: 0.5)
-        gradient.endPoint = CGPoint(x: 1.0, y: 0.5)
-        gradient.zPosition = 1
-        gradient.shouldRasterize = true
-        gradient.rasterizationScale = UIScreen.main.scale
+        let closeButton = UIBarButtonItem(barButtonSystemItem: .stop, target: self, action: #selector(closeAction(sender:)))
+        self.navigationItem.leftBarButtonItems = [closeButton]
+        self.doneButton = UIBarButtonItem(title: "Done", style: .plain, target: self, action: #selector(doneAction(sender:)))
+        self.doneButton.isEnabled = false
+        self.navigationItem.rightBarButtonItems = [doneButton]
         
-        self.gradientImage = Utils.imageFromLayer(layer: gradient)
-        
-        let titleWidth = (NAVIGATION_DRAWER_WIDTH - 112)
-        let titleView = AirLabelDisplay(frame: CGRect(x: 0, y: 0, width: titleWidth, height: 24))
-        titleView.font = Theme.fontBarText
-        self.titleButton = UIBarButtonItem(customView: titleView)
-
-        self.navigationItem.leftBarButtonItem = self.titleButton
-        self.navigationItem.rightBarButtonItems = [self.backButton, self.searchButton]
-        self.navigationItem.hidesBackButton = true
-        
-        NotificationCenter.default.addObserver(self, selector: #selector(userDidSwitch(notification:)), name: NSNotification.Name(rawValue: Events.UserDidSwitch), object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(groupDidSwitch(notification:)), name: NSNotification.Name(rawValue: Events.GroupDidSwitch), object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(channelDidSwitch(notification:)), name: NSNotification.Name(rawValue: Events.ChannelDidSwitch), object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(leftDidClose(notification:)), name: NSNotification.Name(rawValue: Events.LeftDidClose), object: nil)
+        if self.channels.count > 0 {
+            for (channelId, channelName) in self.channels {
+                let token = CLToken(displayText: channelName as! String, context: channelId as NSObject)
+                self.channelsView.add(token)
+            }
+        }
     }
     
     func bind() {
         
-        if let userId = UserController.instance.userId,
-            let groupId = StateController.instance.groupId {
-            
-            let seed = Utils.numberFromName(fullname: groupId)
-            let color = ColorArray.randomColor(seed: seed)
-            self.navigationController?.navigationBar.barTintColor = color
-            
-            FireController.db.child("member-groups/\(userId)/\(groupId)/role").observeSingleEvent(of: .value, with: { [weak self] snap in
-                if let role = snap.value as? String {
-                    self?.searchController.role = role
-                    self?.searchController.load()
-
-                    if role == "guest" {
-                        self?.navigationController?.setToolbarHidden(true, animated: true)
-                        self?.toolbarItems = []
-                    }
-                    else {
-                        self?.navigationController?.setToolbarHidden(false, animated: true)
-                        let addButton = UIBarButtonItem(title: "New Channel", style: .plain, target: self, action: #selector(self?.addAction(sender:)))
-                        self?.toolbarItems = [spacerFlex, addButton, spacerFlex]
-                    }
-                }
-            })
-            
-            FireController.db.child("groups/\(groupId)/title").observe(.value, with: { [weak self] snap in
-                if let title = snap.value as? String {
-                    (self?.titleButton.customView as? UILabel)?.text = title
-                }
-            })
-            
-            if self.tableViewDataSource != nil {
-                self.tableViewDataSource = nil
-                self.tableView.reloadData()
-            }
-            
-            self.unreadsTotalQuery?.remove()
-            self.unreadsTotalQuery = UnreadQuery(level: .user, userId: userId)
-            self.unreadsTotalQuery!.observe(with: { total in
-                if total != self.unreadTotal {
-                    self.unreadTotal = total
-                    self.unreadOther = self.unreadTotal - self.unreadGroup
-                }
-            })
-            
-            self.unreadsGroupQuery?.remove()
-            self.unreadsGroupQuery = UnreadQuery(level: .group, userId: userId, groupId: groupId)
-            self.unreadsGroupQuery!.observe(with: { total in
-                if total != self.unreadGroup {
-                    self.unreadGroup = total
-                    self.unreadOther = self.unreadTotal - self.unreadGroup
-                }
-            })
-            
-            self.channelsQuery = FireController.db.child("member-channels/\(userId)/\(groupId)").queryOrdered(byChild: "index_priority_joined_at_desc")
-            
-            self.tableViewDataSource = FUITableViewDataSource(
-                query: self.channelsQuery,
-                view: self.tableView,
-                populateCell: { [weak self] (tableView, indexPath, snap) -> UITableViewCell in
-                    return (self?.populateCell(tableView, cellForRowAt: indexPath, snap: snap))!
-            })
-            
-            self.tableView.dataSource = self.tableViewDataSource
-            self.view.setNeedsLayout()
-        }
-    }
-    
-    func search(on: Bool) {
-        self.searchOn = on
-        if on {
-            self.navigationItem.setLeftBarButton(self.searchBarButton, animated: true)
-            self.navigationItem.setRightBarButtonItems(nil, animated: true)
-            self.searchBar.frame = CGRect(x: 0, y: 0, width: (self.navigationController?.navigationBar.width())! - 32, height: 44)
-            self.searchBar.becomeFirstResponder()
-        }
-        else {
-            self.navigationItem.setLeftBarButton(self.titleButton, animated: true)
-            self.navigationItem.setRightBarButtonItems([self.backButton, self.searchButton], animated: true)
-            self.searchBar.resignFirstResponder()
-        }
-    }
-    
-    func updateBackButton() {
-        let unreadOther = (self.unreadTotal - self.unreadGroup)
-        if let backButtonView = self.backButton.customView as? UnreadBackView {
-            backButtonView.badge.text = unreadOther > 0 ? "\(unreadOther)" : nil
-            backButtonView.setNeedsLayout()
-            backButtonView.layoutIfNeeded()
-            if unreadOther > 0 {
-                backButtonView.badge.fadeIn()
-            }
-            else {
-                backButtonView.badge.fadeOut()
-            }
-            Log.d("ChannelPicker: Setting other groups unread to \(unreadOther)")
-        }
-    }
-    
-    override var prefersStatusBarHidden: Bool {
-        return false
-    }
-    
-    func populateCell(_ tableView: UITableView, cellForRowAt indexPath: IndexPath, snap: FIRDataSnapshot) -> UITableViewCell {
-        
-        let cell = tableView.dequeueReusableCell(withIdentifier: "channel-list-cell", for: indexPath) as! ChannelListCell
-        
-        cell.reset()    // Releases previous data observers
-        
-        let userId = UserController.instance.userId!
-        let groupId = StateController.instance.groupId!
-        let channelId = snap.key
-        
-        cell.query = ChannelQuery(groupId: groupId, channelId: channelId, userId: userId)    // Just channel lookup
-        cell.query!.observe(with: { channel in
-            
-            if channel != nil {
-                if channelId == StateController.instance.channelId {
-                    cell.selected(on: true)
-                }
-                cell.bind(channel: channel!)
-                cell.unreadQuery = UnreadQuery(level: .channel, userId: userId, groupId: groupId, channelId: channelId)
-                cell.unreadQuery!.observe(with: { total in
-                    if total > 0 {
-                        cell.badge?.text = "\(total)"
-                        cell.badge?.isHidden = false
-                        cell.accessoryType = .none
-                    }
-                    else {
-                        cell.badge?.isHidden = true
-                        cell.accessoryType = cell.selectedOn ? .checkmark : .none
-                    }
-                })
-            }
-            else {
-                Log.w("Ouch! User is member of channel that does not exist")
-            }
-        })
-        
-        return cell
-    }
-}
-
-extension ChannelPickerController: UITableViewDelegate {
-    
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        
-        let cell = tableView.cellForRow(at: indexPath) as! ChannelListCell
-        let channelId = cell.channel.id!
-        let groupId = cell.channel.group!
-        self.slideMenuController()?.closeLeft()
-        if let currentChannelId = StateController.instance.channelId {
-            if channelId != currentChannelId {
-                StateController.instance.setChannelId(channelId: channelId, groupId: groupId)
-                MainController.instance.showChannel(groupId: groupId, channelId: channelId)
-            }
-        }
-        
-        if let indexPath = self.tableView.indexPathForSelectedRow {
-            self.tableView.deselectRow(at: indexPath, animated: false)
-        }
-    }
-}
-
-extension ChannelPickerController: UISearchBarDelegate {
-    
-    func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
-        self.searchBar?.setShowsCancelButton(true, animated: true)
-        self.tableView.fadeOut()
-        self.searchTableView.fadeIn()
-    }
-    
-    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        self.searchController.filter(searchText: searchText)
-    }
-    
-    func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
-        self.searchBar?.text = nil
-        self.tableView.fadeIn()
-        self.searchTableView.fadeOut()
-    }
-    
-    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
-        search(on: false)
-        self.searchBar?.setShowsCancelButton(false, animated: true)
-        self.searchBar?.endEditing(true)
-        self.searchController.channelsFiltered.removeAll()
-        self.searchTableView.reloadData()
-    }
-}
-
-extension ChannelPickerController: UISearchResultsUpdating {
-    
-    func updateSearchResults(for searchController: UISearchController) {
-        self.searchController.filter(searchText: self.searchBar!.text!)
-    }
-}
-
-class SearchController: NSObject, UITableViewDataSource {
-    
-    var channelsSource = [FireChannel]()
-    var channelsFiltered = [FireChannel]()
-    var tableView: UITableView? = nil
-    var role: String!
-    
-    init(tableView: UITableView) {
-        self.tableView = tableView
-    }
-    
-    func filter(searchText: String, scope: String = "All") {
-        self.channelsFiltered = channelsSource.filter { channel in
-            return channel.name!.lowercased().contains(searchText.lowercased())
-        }
-        self.tableView?.reloadData()
-    }
-    
-    func load() {
-        
         self.channelsSource.removeAll()
         self.channelsFiltered.removeAll()
         
-        let userId = UserController.instance.userId!
         let groupId = StateController.instance.groupId!
-
-        let query = FireController.db.child("group-channels/\(groupId)").queryOrdered(byChild: "name")
+        
+        let query = FireController.db.child("group-channels/\(groupId)")
+            .queryOrdered(byChild: "name")
         
         query.observe(.value, with: { [weak self] snap in
             self?.channelsSource.removeAll()
@@ -431,37 +147,153 @@ class SearchController: NSObject, UITableViewDataSource {
                 for item in snap.children {
                     let snapChannel = item as! FIRDataSnapshot
                     if let channel = FireChannel.from(dict: snapChannel.value as? [String: Any], id: snapChannel.key) {
-                        let channelId = channel.id!
-                        let path = "member-channels/\(userId)/\(groupId)/\(channelId)"
-                        FireController.db.child(path).observeSingleEvent(of: .value, with: { snap in
-                            if !(snap.value is NSNull) {
-                                /* Channels public or private the user is already a member of */
-                                let link = snap.value as! [String: Any]
-                                channel.membershipFrom(dict: link)
-                                self?.channelsSource.append(channel) // Channels user is a member of
-                            }
-                            else {
-                                /* Open channels user is not a member of and they are not a guest member */
-                                if self?.role != "guest" && channel.visibility == "open" {
-                                    self?.channelsSource.append(channel)
-                                }
-                            }
-                        })
+                        self?.channelsSource.append(channel)
                     }
                 }
+            }
+            DispatchQueue.main.async {
+                self?.tableView.reloadData()
             }
         })
     }
     
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.channelsFiltered.count
+    func filter() {
+        
+        self.channelsFiltered.removeAll()
+        for channel in self.channelsSource {
+            let match = channel.name!.lowercased().contains(self.filterText!.lowercased())
+            if match {
+                self.channelsFiltered.append(channel)
+            }
+        }
+        
+        DispatchQueue.main.async {
+            self.tableView.reloadData()
+        }
     }
+    
+    func isValid() -> Bool {
+        
+        if self.channels.count == 0 {
+            Alert(title: "Select a channel")
+            return false
+        }
+        
+        return true
+    }
+}
+
+extension ChannelPickerController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "channel-search-cell", for: indexPath) as! ChannelListCell
-        let channel = self.channelsFiltered[indexPath.row]
+        let channel = self.filterActive ? self.channelsFiltered[indexPath.row] : self.channelsSource[indexPath.row]
+        let channelId = channel.id!
+        
+        cell.selectionStyle = .none
         cell.reset()
+        cell.selected(on: (self.channels[channelId] != nil), style: .normal)
         cell.bind(channel: channel)
+        cell.status?.isHidden = true
+        cell.checkBox?.isHidden = true
+
         return cell
+    }
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return self.filterActive ? self.channelsFiltered.count : self.channelsSource.count
+    }
+    
+    func numberOfSections(in: UITableView) -> Int {
+        return 1
+    }
+}
+
+extension ChannelPickerController: UITableViewDelegate {
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        
+        if let cell = tableView.cellForRow(at: indexPath) as? ChannelListCell {
+            let channel = cell.channel!
+            let channelId = channel.id!
+            let channelName = channel.name!
+            let included = (self.channels[channelId] != nil)
+            let token = CLToken(displayText: channelName, context: channelId as NSObject?)
+            if included {
+                self.channelsView.remove(token)
+                cell.selected(on: false, style: .normal)
+            }
+            else {
+                self.channelsView.add(token)
+                cell.selected(on: true, style: .normal)
+            }
+        }
+    }
+}
+
+extension ChannelPickerController {
+    
+    func tokenInputView(_ view: CLTokenInputView, didChangeText text: String?) {
+        self.filterActive = (text != nil && !text!.trimmingCharacters(in: .whitespaces).isEmpty)
+        self.filterText = (text != nil) ? text!.trimmingCharacters(in: .whitespaces) : nil
+        if filterActive {
+            filter()
+        }
+        else {
+            DispatchQueue.main.async {
+                self.tableView.reloadData()
+            }
+        }
+    }
+    
+    func tokenInputView(_ view: CLTokenInputView, didAdd token: CLToken) {
+        self.doneButton.isEnabled = (self.channelsView.allTokens.count > 0)
+        if let channelId = token.context as? String {
+            self.channels[channelId] = token.displayText
+        }
+    }
+    
+    func tokenInputView(_ view: CLTokenInputView, didRemove token: CLToken) {
+        self.doneButton.isEnabled = (self.channelsView.allTokens.count > 0)
+        if let channelId = token.context as? String {
+            self.channels.removeValue(forKey: channelId)
+        }
+    }
+    
+    func tokenInputView(_ view: CLTokenInputView, didChangeHeightTo height: CGFloat) {
+        UIView.animate(withDuration: 0.3, animations: {
+            self.channelsView.frame.size.height = height
+            let navHeight = self.navigationController?.navigationBar.height() ?? 0
+            let statusHeight = UIApplication.shared.statusBarFrame.size.height
+            self.channelsView.anchorTopCenterFillingWidth(withLeftAndRightPadding: 0, topPadding: (navHeight + statusHeight), height: self.channelsView.height())
+            self.tableView.alignUnder(self.channelsView, matchingLeftAndRightFillingHeightWithTopPadding: 0, bottomPadding: 0)
+        })
+    }
+    
+    func tokenInputView(_ view: CLTokenInputView, tokenForText text: String) -> CLToken? {
+        Log.d("tokenForText")
+        if let cell = self.tableView.cellForRow(at: IndexPath(row: 0, section: 0)) as? ChannelListCell {
+            let channel = cell.channel!
+            cell.checkBox?.setOn(true, animated: true)
+            self.channels[channel.id!] = channel
+            return CLToken(displayText: channel.name!, context: cell)
+        }
+        
+        return nil
+    }
+    
+    func tokenInputViewDidEndEditing(_ view: CLTokenInputView) {
+        self.channelsView.editingEnd()
+        self.tableView.reloadData()
+    }
+    
+    func tokenInputViewDidBeginEditing(_ view: CLTokenInputView) {
+        self.channelsView.editingBegin()
+        self.tableView.reloadData()
+    }
+    
+    func tokenInputViewShouldReturn(_ view: CLTokenInputView) -> Bool {
+        Log.d("tokenInputViewShouldReturn")
+        return true
     }
 }

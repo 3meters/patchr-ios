@@ -9,7 +9,7 @@ import AVFoundation
 import Firebase
 import FirebaseDatabaseUI
 
-class GroupPickerController: BaseTableController {
+class GroupSwitcherController: BaseTableController {
     
     var groupsQuery: FIRDatabaseQuery!
     var tableViewDataSource: FUITableViewDataSource!
@@ -287,7 +287,7 @@ class GroupPickerController: BaseTableController {
     }
 }
 
-extension GroupPickerController: UITableViewDelegate {
+extension GroupSwitcherController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
@@ -318,6 +318,11 @@ extension GroupPickerController: UITableViewDelegate {
             FireController.instance.findFirstChannel(groupId: groupId) { channelId in
                 if channelId != nil {
                     self.showChannel(channelId: channelId!, groupId: groupId)
+                }
+                else {
+                    FireController.instance.findGeneralChannel(groupId: groupId) { channelId in
+                        self.showChannel(channelId: channelId!, groupId: groupId)
+                    }
                 }
             }
         }

@@ -98,7 +98,7 @@ class SettingsTableViewController: UITableViewController {
                             self.progress?.hide(true)
                             self.dismiss(animated: true)
                             StateController.instance.clearGroup()   // Make sure group and channel are both unset
-                            let controller = GroupPickerController()
+                            let controller = GroupSwitcherController()
                             let wrapper = AirNavigationController()
                             wrapper.viewControllers = [controller]
                             UIViewController.topMostViewController()?.present(wrapper, animated: true, completion: nil)

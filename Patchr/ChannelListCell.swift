@@ -14,8 +14,9 @@ class ChannelListCell: UITableViewCell {
     @IBOutlet weak var lock: UIImageView?
     @IBOutlet weak var status: UILabel?
     @IBOutlet weak var badge: UILabel?
-    @IBOutlet weak var statusWidth: NSLayoutConstraint!
-    @IBOutlet weak var lockWidth: NSLayoutConstraint!
+    @IBOutlet weak var statusWidth: NSLayoutConstraint?
+    @IBOutlet weak var lockWidth: NSLayoutConstraint?
+    @IBOutlet weak var checkBox: AirCheckBox?
     
     var channel: FireChannel!
     var unreadQuery: UnreadQuery?
@@ -35,22 +36,25 @@ class ChannelListCell: UITableViewCell {
         self.badge?.layer.cornerRadius = (self.badge?.frame.size.height)! / 2
     }
     
-    func selected(on: Bool) {
+    func selected(on: Bool, style: SelectedStyle = .prominent) {
         self.selectedOn = on
         if on {
-            self.backgroundColor = Theme.colorBackgroundSelected
-            self.title?.font = UIFont(name: "HelveticaNeue-Medium", size: (self.title?.font.pointSize)!)
-            self.accessoryType = self.badge!.isHidden ? .checkmark : .none
+            self.accessoryType = .checkmark
+            if style != .minimal {
+                self.title?.font = UIFont(name: "HelveticaNeue-Medium", size: (self.title?.font.pointSize)!)
+            }
+            if style == .prominent {
+                self.backgroundColor = Theme.colorBackgroundSelected
+            }
         }
         else {
-            self.backgroundColor = Colors.white
-            self.title?.font = UIFont(name: "HelveticaNeue-Light", size: (self.title?.font.pointSize)!)
             self.accessoryType = .none
+            self.title?.font = UIFont(name: "HelveticaNeue-Light", size: (self.title?.font.pointSize)!)
+            self.backgroundColor = Colors.white
         }
     }
     
     func reset() {
-        selected(on: false)
         self.title?.text = nil
         self.star?.isHidden = true
         self.lock?.isHidden = true
@@ -75,7 +79,13 @@ class ChannelListCell: UITableViewCell {
         if channel.joinedAt == nil {
             self.status?.isHidden = false
         }
-        self.statusWidth!.constant = (self.status?.isHidden)! ? 0 : 95
+        self.statusWidth?.constant = (self.status?.isHidden)! ? 0 : 95
         self.layoutIfNeeded()
     }
+}
+
+enum SelectedStyle: Int {
+    case prominent
+    case normal
+    case minimal
 }

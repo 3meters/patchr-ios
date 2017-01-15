@@ -26,9 +26,10 @@ class ContactPickerController: BaseTableController, UITableViewDelegate, UITable
     
     var invites: [AnyHashable: Any] = [:]
     var emails: [AnyHashable: Any] = [:]
+    var invitedEmails: [AnyHashable: Any] = [:]
     
     var role = "members"
-    var channel: FireChannel!
+    var channels: [String: Any] = [:]
     var inputGroupId: String?
     var inputGroupTitle: String?
     
@@ -143,23 +144,36 @@ class ContactPickerController: BaseTableController, UITableViewDelegate, UITable
     
     func bind() {
         
-        if CNContactStore.authorizationStatus(for: .contacts) == .notDetermined {
-            CNContactStore().requestAccess(for: .contacts) { authorized, error in
-                if authorized {
-                    DispatchQueue.global().async {
-                        self.loadContacts()
+        let groupId = StateController.instance.group?.id ?? self.inputGroupId!
+        self.invitedEmails.removeAll()
+        FireController.db.child("invites/\(groupId)").observeSingleEvent(of: .value, with: { snap in
+            if !(snap.value is NSNull) && snap.hasChildren() {
+                for item in snap.children {
+                    let snapInvite = item as! FIRDataSnapshot
+                    let map = snapInvite.value as! [String: Any]
+                    let status = map["status"] as? String
+                    self.invitedEmails[map["email"] as! String] = status
+                }
+            }
+            
+            if CNContactStore.authorizationStatus(for: .contacts) == .notDetermined {
+                CNContactStore().requestAccess(for: .contacts) { authorized, error in
+                    if authorized {
+                        DispatchQueue.global().async {
+                            self.loadContacts()
+                        }
                     }
                 }
             }
-        }
-        else if CNContactStore.authorizationStatus(for: .contacts) == .authorized {
-            DispatchQueue.global().async {
-                self.loadContacts()
+            else if CNContactStore.authorizationStatus(for: .contacts) == .authorized {
+                DispatchQueue.global().async {
+                    self.loadContacts()
+                }
             }
-        }
-        else {
-            Alert(title: "Access to contacts has been denied. Check your privacy settings to allow access.")
-        }
+            else {
+                self.Alert(title: "Access to contacts has been denied. Check your privacy settings to allow access.")
+            }
+        })
     }
     
     func loadContacts() {
@@ -247,80 +261,86 @@ class ContactPickerController: BaseTableController, UITableViewDelegate, UITable
             let groupTitle = StateController.instance.group?.title ?? self.inputGroupTitle!
             let username = UserController.instance.user!.username!
             
-            BranchProvider.inviteMember(groupId: groupId, groupTitle: groupTitle, username: username, completion: { response, error in
+            for key in self.invites.keys {
+                let contact = self.invites[key] as! CNContact
+                let email = contact.emailAddresses.first?.value as? String
+                let inviteId = "in-\(Utils.genRandomId())"
                 
-                if error == nil {
+                BranchProvider.inviteMember(groupId: groupId, groupTitle: groupTitle, username: username, email: email!, inviteId: inviteId, completion: { response, error in
                     
-                    let invite = response as! InviteItem
-                    let inviteUrl = invite.url
-                    let userTitle = UserController.instance.userTitle
-                    let userEmail = UserController.instance.userEmail
-                    
-                    var emails = [String]()
-                    
-                    for key in self.invites.keys {
-                        let contact = self.invites[key] as! CNContact
-                        let email = contact.emailAddresses.first?.value as? String
-                        emails.append(email!)
+                    if error == nil {
+                        
+                        let invite = response as! InviteItem
+                        let inviteUrl = invite.url
+                        let userTitle = UserController.instance.userTitle
+                        let userEmail = UserController.instance.userEmail
+                        let userId = UserController.instance.userId!
+                        let username = UserController.instance.user?.username
+                        
+                        var task: [String: Any] = [:]
+                        task["recipients"] = [email]
+                        task["type"] = "invite-members"
+                        task["group"] = ["id": groupId, "title": groupTitle]
+                        task["user"] = ["id": userId, "title": userTitle, "username": username, "email": userEmail]
+                        task["inviteId"] = inviteId
+                        task["link"] = inviteUrl
+                        
+                        let queueRef = FireController.db.child("queue/emails").childByAutoId()
+                        queueRef.setValue(task)
+                        if self.flow == .onboardCreate {
+                            self.onboardAction(sender: nil)
+                        }
+                        else {
+                            self.close()
+                        }
+                        UIShared.Toast(message: "Invites sent")
                     }
-                    
-                    var task: [String: Any] = [:]
-                    task["recipients"] = emails
-                    task["type"] = "invite-members"
-                    task["group"] = ["title": groupTitle]
-                    task["user"] = ["title": userTitle, "email": userEmail]
-                    task["link"] = inviteUrl
-                    
-                    let queueRef = FireController.db.child("queue/emails").childByAutoId()
-                    queueRef.setValue(task)
-                    if self.flow == .onboardCreate {
-                        self.onboardAction(sender: nil)
-                    }
-                    else {
-                        self.close()
-                    }
-                    UIShared.Toast(message: "Invites sent")
-                }
-            })
+                })
+            }
         }
         else if self.role == "guests" {
             
-            BranchProvider.inviteGuest(group: StateController.instance.group, channel: self.channel, completion: { response, error in
+            for key in self.invites.keys {
+                let contact = self.invites[key] as! CNContact
+                let email = contact.emailAddresses.first?.value as? String
+                let inviteId = "in-\(Utils.genRandomId())"
                 
-                if error == nil {
+                BranchProvider.inviteGuest(group: StateController.instance.group, channels: self.channels, email: email!, inviteId: inviteId, completion: { response, error in
                     
-                    let invite = response as! InviteItem
-                    let inviteUrl = invite.url
-                    let userTitle = UserController.instance.userTitle
-                    let userEmail = UserController.instance.userEmail
-                    
-                    let group = StateController.instance.group!
-                    let groupTitle = group.title!
-                    let channel = self.channel!
-                    let channelName = channel.name!
-                    
-                    var emails = [String]()
-                    
-                    for key in self.invites.keys {
-                        let contact = self.invites[key] as! CNContact
-                        let email = contact.emailAddresses.first?.value as? String
-                        emails.append(email!)
+                    if error == nil {
+                        
+                        let invite = response as! InviteItem
+                        let inviteUrl = invite.url
+                        let userTitle = UserController.instance.userTitle
+                        let userEmail = UserController.instance.userEmail
+                        let userId = UserController.instance.userId!
+                        let username = UserController.instance.user?.username
+                        
+                        let group = StateController.instance.group!
+                        let groupTitle = group.title!
+                        let groupId = StateController.instance.group?.id ?? self.inputGroupId!
+                        
+                        var task: [String: Any] = [:]
+                        var channels = [String: Any]()
+                        for (channelId, channelName) in self.channels {
+                            channels[channelId] = channelName
+                        }
+                        let type = (self.channels.count > 1) ? "invite-guests-multi-channel" : "invite-guests"
+                        task["recipients"] = [email]
+                        task["type"] = type
+                        task["group"] = ["id": groupId, "title": groupTitle]
+                        task["user"] = ["id": userId, "title": userTitle, "username": username, "email": userEmail]
+                        task["inviteId"] = inviteId
+                        task["link"] = inviteUrl
+                        task["channels"] = channels
+                        
+                        let queueRef = FireController.db.child("queue/emails").childByAutoId()
+                        queueRef.setValue(task)
+                        self.close()
+                        UIShared.Toast(message: "Invites sent")
                     }
-                    
-                    var task: [String: Any] = [:]
-                    task["recipients"] = emails
-                    task["type"] = "invite-guests"
-                    task["group"] = ["title": groupTitle]
-                    task["channel"] = ["name": channelName]
-                    task["user"] = ["title": userTitle, "email": userEmail]
-                    task["link"] = inviteUrl
-                    
-                    let queueRef = FireController.db.child("queue/emails").childByAutoId()
-                    queueRef.setValue(task)
-                    self.close()
-                    UIShared.Toast(message: "Invites sent")
-                }
-            })
+                })
+            }
         }
     }
 }
@@ -387,11 +407,15 @@ extension ContactPickerController {
         if self.sectionTitles != nil {
             let sectionTitle = self.sectionTitles?[indexPath.section]
             let contact = self.contactsMapped[sectionTitle!]?[indexPath.row]
-            cell.bind(contact: contact!)
+            let email = contact!.emailAddresses.first?.value as String!
+            let status = (self.invitedEmails[email!] as? String) ?? "none"
+            cell.bind(contact: contact!, status: status)
         }
         else {
             let contact = self.contactsFiltered[indexPath.row]
-            cell.bind(contact: contact)
+            let email = contact.emailAddresses.first?.value as String!
+            let status = (self.invitedEmails[email!] as? String) ?? "none"
+            cell.bind(contact: contact, status: status)
         }
         
         cell.checkBox?.on = false

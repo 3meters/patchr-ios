@@ -105,7 +105,7 @@ class MemberPickerController: BaseTableController, UITableViewDelegate {
                 
                 cell.selectionStyle = .none
                 cell.accessoryType = .none
-                cell.role?.isHidden = true
+                cell.roleLabel?.isHidden = true
                 cell.reset()
 
                 userQuery.once(with: { user in
@@ -113,14 +113,14 @@ class MemberPickerController: BaseTableController, UITableViewDelegate {
                         FireController.instance.isChannelMember(userId: userId, channelId: channelId, next: { member in
                             cell.bind(user: user!)
                             if member {
-                                cell.role?.isHidden = false
-                                cell.role?.text = "already a member"
-                                cell.role?.textColor = MaterialColor.lightGreen.base
+                                cell.roleLabel?.isHidden = false
+                                cell.roleLabel?.text = "already a member"
+                                cell.roleLabel?.textColor = MaterialColor.lightGreen.base
                                 cell.checkBox?.isHidden = true
                                 cell.allowSelection = false
                             }
                             else {
-                                cell.role?.isHidden = true
+                                cell.roleLabel?.isHidden = true
                                 cell.checkBox?.isHidden = false
                                 cell.checkBox?.on = cell.isSelected
                             }

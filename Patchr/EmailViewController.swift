@@ -13,7 +13,7 @@ import Firebase
 
 class EmailViewController: BaseEditViewController {
     
-    var inputInviteParams: [AnyHashable: Any]?
+    var inputInviteLink: [AnyHashable: Any]!
 
     var emailField = FloatTextField(frame: CGRect.zero)
     var message = AirLabelTitle()
@@ -135,7 +135,7 @@ class EmailViewController: BaseEditViewController {
                 controller.flow = self.flow
                 controller.branch = exists ? .login : .signup
                 controller.inputEmail = email
-                controller.inputInviteParams = self.inputInviteParams
+                controller.inputInviteLink = self.inputInviteLink
                 self.navigationController?.pushViewController(controller, animated: true)
             }
             else if self.flow == .onboardCreate {

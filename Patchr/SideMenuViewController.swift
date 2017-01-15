@@ -162,7 +162,7 @@ extension SideMenuViewController {
         }
         else if selectedCell == self.switchCell {
             
-            let controller = GroupPickerController()
+            let controller = GroupSwitcherController()
             let wrapper = AirNavigationController(rootViewController: controller)
             UIViewController.topMostViewController()?.present(wrapper, animated: true, completion: nil)
         }

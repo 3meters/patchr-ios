@@ -92,7 +92,7 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
         super.viewWillAppear(animated)
         self.slideMenuController()?.delegate = self        
         if UserController.instance.userId != nil && StateController.instance.groupId == nil {
-            let controller = GroupPickerController()
+            let controller = GroupSwitcherController()
             let wrapper = AirNavigationController()
             wrapper.viewControllers = [controller]
             self.present(wrapper, animated: true, completion: nil)
@@ -486,6 +486,9 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
         self.messageBar.alpha = 0.0
         
         self.typingIndicatorView?.interval = TimeInterval(8.0)
+        self.typingIndicatorView?.textFont = Theme.fontTextList
+        self.typingIndicatorView?.highlightFont = Theme.fontTextListBold
+        self.typingIndicatorView?.textColor = Colors.accentColorTextLight
         
         self.view.addSubview(self.activity)
         

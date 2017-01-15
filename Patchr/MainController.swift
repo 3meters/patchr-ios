@@ -19,8 +19,8 @@ class MainController: NSObject, iRateDelegate {
     static let instance = MainController()
     var window: UIWindow?
     var upgradeRequired = false
-    static let channelPicker = ChannelPickerController()
-    static let groupPicker = GroupPickerController()
+    static let channelPicker = ChannelSwitcherController()
+    static let groupPicker = GroupSwitcherController()
 
     private override init() { }
 
@@ -107,7 +107,7 @@ class MainController: NSObject, iRateDelegate {
                 /* A hit could mean a deferred link match */
                 if let clickedBranchLink = params?["+clicked_branch_link"] as? Bool , clickedBranchLink {
                     Log.d("Deep link routing based on clicked branch link", breadcrumb: true)
-                    self?.routeDeepLink(params: params, error: error)    /* Presents modally on top of main tab controller. */
+                    self?.routeDeepLink(link: params!, error: error)    /* Presents modally on top of main tab controller. */
                 }
             }
         })
@@ -130,7 +130,7 @@ class MainController: NSObject, iRateDelegate {
             showLobby()
         }
         else if groupId == nil || channelId == nil {
-            showLobby(controller: GroupPickerController())
+            showLobby(controller: GroupSwitcherController())
         }
         else {
             showChannel(groupId: groupId!, channelId: channelId!)
@@ -202,131 +202,188 @@ class MainController: NSObject, iRateDelegate {
         }
     }
 
-    func routeDeepLink(params: [AnyHashable: Any]?, error: Error?) {
+    func routeDeepLink(link: [AnyHashable: Any], error: Error?) {
         /*
          * Logged in: open in channel
          * Not logged in: email -> username|password -> open channel
          */
-        let groupId = (params?["groupId"] as! String)
+        let groupId = (link["groupId"] as! String)
+        var member = false
+        var role = link["role"] as! String
         
         FireController.db.child("groups/\(groupId)").observeSingleEvent(of: .value, with: { snap in
             if !(snap.value is NSNull) {
                 
                 if UserController.instance.authenticated {
-                    
                     let userId = UserController.instance.userId!
-                    let path = "group-members/\(groupId)/\(userId)"
-                    
-                    FireController.db.child(path).observeSingleEvent(of: .value, with: { snap in
+                    FireController.db.child("group-members/\(groupId)/\(userId)").observeSingleEvent(of: .value, with: { snap in
                         if !(snap.value is NSNull) {
-                            if let topController = UIViewController.topMostViewController() {
-                                let groupTitle = params!["groupTitle"] as! String
-                                let popup = PopupDialog(title: "Already a Member", message: "You are currently a member of the \(groupTitle) Patchr group!")
-                                let button = DefaultButton(title: "OK") {}
-                                button.buttonHeight = 48
-                                popup.addButton(button)
-                                topController.present(popup, animated: true)
+                            let membership = snap.value as! [String: Any]
+                            role = membership["role"] as! String
+                            member = true
+                            if role != "guest" {
+                                if let topController = UIViewController.topMostViewController() {
+                                    let groupTitle = link["groupTitle"] as! String
+                                    let popup = PopupDialog(title: "Already a Member", message: "You are currently a member of the \(groupTitle) Patchr group!")
+                                    let button = DefaultButton(title: "OK") {}
+                                    button.buttonHeight = 48
+                                    popup.addButton(button)
+                                    topController.present(popup, animated: true)
+                                }
+                                return
                             }
                         }
-                        else {
-                            if let topController = UIViewController.topMostViewController() {
-                                
-                                let groupTitle = params!["groupTitle"] as! String
-                                let referrerName = params!["referrerName"] as! String
-                                let role = params!["role"] as! String
-                                let channelId = params!["channelId"] as? String
-                                let channelName = params!["channelName"] as? String
-                                
-                                var message = "\(referrerName) has invited you to join the \"\(groupTitle)\" Patchr group."
-                                if channelId != nil {
-                                   message = "\(referrerName) has invited you to join the #\(channelName!) channel of the \(groupTitle) Patchr group."
+                        
+                        /* We only get here if not a member already or is a guest member */
+                        
+                        let inviteId = (link["inviteId"] as! String)
+                        FireController.db.child("invites/\(groupId)")
+                            .queryOrdered(byChild: "inviteId")
+                            .queryEqual(toValue: inviteId)
+                            .observeSingleEvent(of: .value, with: { snap in
+                                if !(snap.value is NSNull) {
+                                    /* invite exists for the email and group */
+                                    let inviteWithKey = snap.value as! [String: Any]
+                                    var invite = inviteWithKey.first?.value as! [String: Any]
+                                    invite["key"] = inviteWithKey.first?.key
+                                    self.processInvite(link: link, invite: invite, member: member)
                                 }
-                                
-                                let popup = PopupDialog(title: "Invitation", message: message)
-                                let cancelButton = CancelButton(title: "Cancel".uppercased(), height: 48) {
-                                    /* If we don't have a currrent group|channel then we are in the lobby */
-                                    if StateController.instance.groupId == nil || StateController.instance.channelId == nil {
-                                        self.route()
+                                else {
+                                    /* invite does not exist for the email and group */
+                                    if let topController = UIViewController.topMostViewController() {
+                                        let popup = PopupDialog(title: "Expired Invitation", message: "Your invitation has expired or been revoked.")
+                                        let button = DefaultButton(title: "OK") {}
+                                        button.buttonHeight = 48
+                                        popup.addButton(button)
+                                        topController.present(popup, animated: true)
                                     }
                                 }
-                                let joinButton = DefaultButton(title: "Join".uppercased(), height: 48) {
-                                    FireController.instance.addUserToGroup(userId: userId, groupId: groupId, channelId: channelId, role: role, then: { success in
-                                        if success {
-                                            if channelId != nil {
-                                                StateController.instance.setChannelId(channelId: channelId!, groupId: groupId)
-                                                self.showChannel(groupId: groupId, channelId: channelId!)
-                                                Utils.delay(1.0) {
-                                                    if let topController = UIViewController.topMostViewController() {
-                                                        let popup = PopupDialog(title: "Welcome!", message: "You have joined the #\(channelName!) channel of the \(groupTitle) Patchr group. Use the message bar to send your first message.")
-                                                        popup.buttonAlignment = .horizontal
-                                                        let showButton = DefaultButton(title: "Show Me".uppercased(), height: 48) {
-                                                            if let slideController = self.window?.rootViewController as? SlideMenuController,
-                                                                let wrapper = slideController.mainViewController as? AirNavigationController,
-                                                                let channelController = wrapper.topViewController as? ChannelViewController {
-                                                                    channelController.textInputbar.textView.becomeFirstResponder()
-                                                            }
-                                                        }
-                                                        let doneButton = DefaultButton(title: "Carry On".uppercased(), height: 48) {}
-                                                        popup.addButtons([showButton, doneButton])
-                                                        topController.present(popup, animated: true)
-                                                    }
-                                                }
-                                            }
-                                            else {
-                                                FireController.instance.findFirstChannel(groupId: groupId) { firstChannelId in
-                                                    if firstChannelId != nil {
-                                                        StateController.instance.setChannelId(channelId: firstChannelId!, groupId: groupId)
-                                                        self.showChannel(groupId: groupId, channelId: firstChannelId!)
-                                                        Utils.delay(1.0) {
-                                                            if let topController = UIViewController.topMostViewController() {
-                                                                let popup = PopupDialog(title: "Welcome!", message: "You are now a member of the \(groupTitle) Patchr group. Use the navigation drawer to discover and join channels.")
-                                                                popup.buttonAlignment = .horizontal
-                                                                let showButton = DefaultButton(title: "Show Me".uppercased(), height: 48) {
-                                                                    if let slideController = self.window?.rootViewController as? SlideMenuController {
-                                                                        slideController.openLeft()
-                                                                    }
-                                                                }
-                                                                let doneButton = DefaultButton(title: "Carry On".uppercased(), height: 48) {}
-                                                                popup.addButtons([showButton, doneButton])
-                                                                topController.present(popup, animated: true)
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    })
-                                }
-                                
-                                popup.buttonAlignment = .horizontal
-                                popup.addButtons([cancelButton, joinButton])
-                                topController.present(popup, animated: true, completion: nil)
-                                
-//                                let controller = JoinViewController()
-//                                controller.inputGroupId = params?["groupId"] as? String
-//                                controller.inputRole = params?["role"] as? String
-//                                controller.inputChannelId = params?["channelId"] as? String
-//                                controller.inputGroupTitle = params?["groupTitle"] as? String
-//                                controller.inputChannelName = params?["channelName"] as? String
-//                                controller.inputReferrerName = params?["referrerName"] as? String
-//                                controller.inputReferrerId = params?["referrerId"] as? String
-//                                controller.inputReferrerPhotoUrl = params?["referrerPhotoUrl"] as? String
-//                                controller.flow = .onboardInvite
-                            }
-                        }
+                        })
                     })
                 }
                 else {
                     let controller = EmailViewController()
                     controller.flow = .onboardInvite
-                    controller.inputInviteParams = params
+                    controller.inputInviteLink = link
                     self.showLobby(controller: controller)
                 }
             }
             else {
-                UIShared.Toast(message: "The \(params!["groupTitle"]) Patchr group is not active")
+                UIShared.Toast(message: "The \(link["groupTitle"]) Patchr group is not active")
             }
         })
+    }
+    
+    func processInvite(link: [AnyHashable: Any], invite: [String: Any], member: Bool = false) {
+        
+        if let topController = UIViewController.topMostViewController() {
+            
+            let userId = UserController.instance.userId!
+            let groupId = (link["groupId"] as! String)
+            let email = (link["email"] as! String)
+            let groupTitle = link["groupTitle"] as! String
+            let referrerName = link["referrerName"] as! String
+            
+            /* Invite trumps link */
+            let role = invite["role"] as! String
+            let channels = invite["channels"] as? [String: Any]
+            
+            var message = "\(referrerName) has invited you to join the \"\(groupTitle)\" Patchr group."
+            if channels != nil && channels!.count > 0 {
+                if channels!.count > 1 {
+                    message = "\(referrerName) has invited you to join these channels in the \(groupTitle) Patchr group.\n"
+                    for channelName in channels!.values {
+                        message += "\n#\(channelName)"
+                    }
+                }
+                else {
+                    let channelName = channels!.first!.value as! String
+                    message = "\(referrerName) has invited you to join the #\(channelName) channel in the \(groupTitle) Patchr group."
+                }
+            }
+            
+            let popup = PopupDialog(title: "Invitation", message: message)
+            
+            let cancelButton = CancelButton(title: "Cancel".uppercased(), height: 48) {
+                if StateController.instance.groupId == nil || StateController.instance.channelId == nil {
+                    self.route() // If we don't have a currrent group|channel then we are in the lobby
+                }
+            }
+            
+            let joinButton = DefaultButton(title: "Join".uppercased(), height: 48) {
+                if member && channels != nil {
+                    FireController.instance.addUserToChannels(userId: userId, groupId: groupId, channels: channels!) { success in
+                        if success {
+                            self.afterInvite(groupId: groupId, groupTitle: groupTitle, channels: channels)
+                        }
+                    }
+                    return
+                }
+                
+                FireController.instance.addUserToGroup(userId: userId, groupId: groupId, channels: channels, role: role, email: email, then: { success in
+                    if success {
+                        if channels != nil {
+                            self.afterInvite(groupId: groupId, groupTitle: groupTitle, channels: channels)
+                        }
+                        else {
+                            FireController.instance.findFirstChannel(groupId: groupId) { firstChannelId in
+                                if firstChannelId != nil {
+                                    StateController.instance.setChannelId(channelId: firstChannelId!, groupId: groupId)
+                                    self.showChannel(groupId: groupId, channelId: firstChannelId!)
+                                    Utils.delay(1.0) {
+                                        if let topController = UIViewController.topMostViewController() {
+                                            let popup = PopupDialog(title: "Welcome!", message: "You are now a member of the \(groupTitle) Patchr group. Use the navigation drawer to discover and join channels.")
+                                            popup.buttonAlignment = .horizontal
+                                            let showButton = DefaultButton(title: "Show Me".uppercased(), height: 48) {
+                                                if let slideController = self.window?.rootViewController as? SlideMenuController {
+                                                    slideController.openLeft()
+                                                }
+                                            }
+                                            let doneButton = DefaultButton(title: "Carry On".uppercased(), height: 48) {}
+                                            popup.addButtons([showButton, doneButton])
+                                            topController.present(popup, animated: true)
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                })
+            }
+            
+            popup.buttonAlignment = .horizontal
+            popup.addButtons([cancelButton, joinButton])
+            topController.present(popup, animated: true, completion: nil)
+        }
+    }
+    
+    func afterInvite(groupId: String, groupTitle: String, channels: [String: Any]?) {
+        
+        let channelId = channels!.first!.key
+        let channelName = channels!.first!.value as! String
+        StateController.instance.setChannelId(channelId: channelId, groupId: groupId)
+        self.showChannel(groupId: groupId, channelId: channelId)
+        
+        Utils.delay(1.0) {
+            if let topController = UIViewController.topMostViewController() {
+                var message = "You have joined the #\(channelName) channel in the \(groupTitle) Patchr group. Use the message bar to send your first message."
+                if channels!.count > 1 {
+                    message = "You have joined multiple channels in the \(groupTitle) Patchr group. Use the message bar to send your first message."
+                }
+                let popup = PopupDialog(title: "Welcome!", message: message)
+                popup.buttonAlignment = .horizontal
+                let showButton = DefaultButton(title: "Show Me".uppercased(), height: 48) {
+                    if let slideController = self.window?.rootViewController as? SlideMenuController,
+                        let wrapper = slideController.mainViewController as? AirNavigationController,
+                        let channelController = wrapper.topViewController as? ChannelViewController {
+                        channelController.textInputbar.textView.becomeFirstResponder()
+                    }
+                }
+                let doneButton = DefaultButton(title: "Carry On".uppercased(), height: 48) {}
+                popup.addButtons([showButton, doneButton])
+                topController.present(popup, animated: true)
+            }
+        }
     }
     
     func checkCompatibility() {

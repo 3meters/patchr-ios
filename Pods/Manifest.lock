@@ -146,6 +146,7 @@ PODS:
   - SlackTextViewController (1.9.5)
   - SlideMenuControllerSwift (3.0.1)
   - TTTAttributedLabel (2.0.0)
+  - TwicketSegmentedControl (0.1.1)
   - UIDevice-Hardware (0.1.8)
 
 DEPENDENCIES:
@@ -183,6 +184,7 @@ DEPENDENCIES:
   - SlackTextViewController (from `~/code/SlackTextViewController`)
   - SlideMenuControllerSwift
   - TTTAttributedLabel
+  - TwicketSegmentedControl
   - UIDevice-Hardware (~> 0.1.7)
 
 EXTERNAL SOURCES:
@@ -238,8 +240,9 @@ SPEC CHECKSUMS:
   SlackTextViewController: fbcdadbb8090673f604484ff5b6eb8d77baed42a
   SlideMenuControllerSwift: 9a163b16d54afab734add42858cba7ef7c307755
   TTTAttributedLabel: 8cffe8e127e4e82ff3af1e5386d4cd0ad000b656
+  TwicketSegmentedControl: bbb2d155792dbfcee7fea995a614d0c0a3de4a16
   UIDevice-Hardware: ecb52d9a7b223b31f81982358e2b0769ac1a7918
 
-PODFILE CHECKSUM: 3a61f9cfdafa9483481ab391f7399cc1f878fc7e
+PODFILE CHECKSUM: 550186a1ea7f645bbe7e144e7f60d5b9e36c1085
 
 COCOAPODS: 1.1.0.rc.3

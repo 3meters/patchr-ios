@@ -83,8 +83,9 @@ class MemberListController: BaseTableController, UITableViewDelegate {
     func manageUserAction(sender: AnyObject?) {
         if let button = sender as? AirButton, let user = button.data as? FireUser {
             let controller = MemberSettingsController()
+            let wrapper = AirNavigationController(rootViewController: controller)
             controller.inputUser = user
-            self.navigationController?.pushViewController(controller, animated: true)
+            self.present(wrapper, animated: true)
         }
     }
     
@@ -110,6 +111,7 @@ class MemberListController: BaseTableController, UITableViewDelegate {
         
         self.tableView.register(UINib(nibName: "UserListCell", bundle: nil), forCellReuseIdentifier: self.cellReuseIdentifier)
         self.tableView.backgroundColor = Theme.colorBackgroundTable
+        self.tableView.separatorInset = UIEdgeInsets.zero
         self.tableView.tableFooterView = UIView()
         self.tableView.delegate = self
         

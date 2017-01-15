@@ -11,6 +11,11 @@ import Branch
 import MessageUI
 import Firebase
 import FirebaseAuth
+import CLTokenInputView
+
+protocol PickerDelegate {
+    func update(channels: [String: Any])
+}
 
 class InviteViewController: BaseEditViewController {
 	
@@ -18,10 +23,13 @@ class InviteViewController: BaseEditViewController {
 	var inviteMembersButton = AirButton()
     var inviteMembersComment = AirLabelDisplay()
 	var inviteGuestsButton = AirButton()
+    var inviteGuestsLabel = AirLabelDisplay()
+    var channelButton = AirButton()
     var inviteGuestsComment = AirLabelDisplay()
-    var channelField = AirTextField()
+    var inviteListButton = AirLinkButton()
+    var dropdownIndicator: UIImageView!
 
-    var channel: FireChannel!
+    var channels: [String: Any] = [:]
     var inputGroupId: String?
     var inputGroupTitle: String?
     
@@ -41,13 +49,18 @@ class InviteViewController: BaseEditViewController {
         let messageSize = self.message.sizeThatFits(CGSize(width:288, height:CGFloat.greatestFiniteMagnitude))
         let inviteMembersCommentSize = self.inviteMembersComment.sizeThatFits(CGSize(width:288, height:CGFloat.greatestFiniteMagnitude))
         let inviteGuestsCommentSize = self.inviteGuestsComment.sizeThatFits(CGSize(width:288, height:CGFloat.greatestFiniteMagnitude))
+        
+        self.channelButton.sizeToFit()
 		
 		self.message.anchorTopCenter(withTopPadding: 0, width: 288, height: messageSize.height)
 		self.inviteMembersButton.alignUnder(self.message, matchingCenterWithTopPadding: 24, width: 288, height: 48)
         self.inviteMembersComment.alignUnder(self.inviteMembersButton, matchingCenterWithTopPadding: 12, width: 288, height: inviteMembersCommentSize.height)
 		self.inviteGuestsButton.alignUnder(self.inviteMembersComment, matchingCenterWithTopPadding: 20, width: 288, height: 48)
-        self.channelField.alignUnder(self.inviteGuestsButton, matchingCenterWithTopPadding: 12, width: 288, height: 48)
-        self.inviteGuestsComment.alignUnder(self.channelField, matchingCenterWithTopPadding: 12, width: 280, height: inviteGuestsCommentSize.height)
+        self.inviteGuestsLabel.alignUnder(self.inviteGuestsButton, matchingCenterWithTopPadding: 4, width: 288, height: 48)
+        self.channelButton.alignUnder(self.inviteGuestsLabel, matchingCenterWithTopPadding: 4, width: 288, height: max(self.channelButton.height(), 48))
+        self.inviteGuestsComment.alignUnder(self.channelButton, matchingCenterWithTopPadding: 12, width: 280, height: inviteGuestsCommentSize.height)
+        self.inviteListButton.alignUnder(self.inviteGuestsComment, matchingCenterWithTopPadding: 12, width: 288, height: 48)
+        self.dropdownIndicator.anchorCenterRight(withRightPadding: 24, width: 14, height: 10)
 		
         super.viewWillLayoutSubviews()
 	}
@@ -65,6 +78,23 @@ class InviteViewController: BaseEditViewController {
         self.validateFor = "guests"
 		inviteGuests()
 	}
+    
+    func inviteListAction(sender: AnyObject?) {
+        inviteList()
+    }
+    
+    func pickChannel(sender: AnyObject?) {
+        let controller = ChannelPickerController()
+        let wrapper = AirNavigationController(rootViewController: controller)
+        if self.channels.count > 0 {
+            for channelId in self.channels.keys {
+                let channel = self.channels[channelId]
+                controller.channels[channelId] = channel
+            }
+        }
+        controller.delegate = self
+        self.navigationController?.present(wrapper, animated: true, completion: nil)
+    }
     
     func closeAction(sender: AnyObject?) {
         close()
@@ -131,6 +161,11 @@ class InviteViewController: BaseEditViewController {
             self.inviteMembersButton.addTarget(self, action: #selector(inviteMembersAction(sender:)), for: .touchUpInside)
             
             self.inviteGuestsButton.setTitle("Invite Guests".uppercased(), for: .normal)
+            
+            self.inviteGuestsLabel.text = "Selected channel"
+            self.inviteGuestsLabel.textColor = Theme.colorTextSecondary
+            self.inviteGuestsLabel.textAlignment = .center
+
             self.inviteGuestsComment.text = "Guests can only partipate in selected channels."
             self.inviteGuestsComment.textColor = Theme.colorTextSecondary
             self.inviteGuestsComment.textAlignment = .center
@@ -138,23 +173,31 @@ class InviteViewController: BaseEditViewController {
             
             self.inviteGuestsButton.addTarget(self, action: #selector(inviteGuestsAction(sender:)), for: .touchUpInside)
             
-            self.channelField.setPlaceholder("Select a channel", floatingTitle: "Selected channel")
-            self.channelField.floatingLabel.textAlignment = .center
-            self.channelField.textAlignment = .center
-            self.channelField.textColor = Colors.accentColorDark
-            self.channelField.delegate = self
-            self.channelField.keyboardType = .default
-            self.channelField.autocapitalizationType = .none
-            self.channelField.autocorrectionType = .no
-            self.channelField.returnKeyType = .default
-            self.channelField.isUserInteractionEnabled = false
+            self.inviteListButton.setTitle("Pending and accepted invites".uppercased(), for: .normal)
+            self.inviteListButton.addTarget(self, action: #selector(inviteListAction(sender:)), for: .touchUpInside)
+
+            self.dropdownIndicator = UIImageView(image: UIImage(named: "imgArrowDownLight"))
+            self.dropdownIndicator.tintColor = Colors.white
             
-            if let groupId = StateController.instance.groupId, let channelId = StateController.instance.channelId {
+            self.channelButton.titleLabel?.textAlignment = .center
+            self.channelButton.titleLabel?.numberOfLines = 0
+            self.channelButton.titleEdgeInsets = UIEdgeInsets(top: 0, left: 36, bottom: 0, right: 36)
+            self.channelButton.backgroundColor = Colors.accentColorFill
+            self.channelButton.titleLabel?.textColor = Colors.white
+            self.channelButton.layer.cornerRadius = 6
+            self.channelButton.setTitleColor(Colors.white, for: .normal)
+            self.channelButton.setTitleColor(Colors.gray90pcntColor, for: .highlighted)
+            self.channelButton.addSubview(self.dropdownIndicator)
+            self.channelButton.addTarget(self, action: #selector(pickChannel(sender:)), for: .touchUpInside)
+            
+            if let groupId = StateController.instance.groupId,
+                let channelId = StateController.instance.channelId {
                 let channelQuery = ChannelQuery(groupId: groupId, channelId: channelId, userId: nil)
                 channelQuery.once(with: { channel in
                     if channel != nil {
-                        self.channel = channel
-                        self.channelField.text = channel?.name
+                        let channelName = channel!.name!
+                        self.channels[channelId] = channelName
+                        self.channelButton.setTitle(channelName, for: .normal)
                     }
                 })
             }
@@ -163,13 +206,20 @@ class InviteViewController: BaseEditViewController {
             self.contentHolder.addSubview(self.inviteMembersButton)
             self.contentHolder.addSubview(self.inviteMembersComment)
             self.contentHolder.addSubview(self.inviteGuestsButton)
+            self.contentHolder.addSubview(self.inviteGuestsLabel)
+            self.contentHolder.addSubview(self.channelButton)
             self.contentHolder.addSubview(self.inviteGuestsComment)
-            self.contentHolder.addSubview(self.channelField)
+            self.contentHolder.addSubview(self.inviteListButton)
             
             let closeButton = UIBarButtonItem(barButtonSystemItem: .stop, target: self, action: #selector(closeAction(sender:)))
             self.navigationItem.rightBarButtonItems = [closeButton]
         }
 	}
+    
+    func inviteList() {
+        let controller = InviteListController()
+        self.navigationController?.pushViewController(controller, animated: true)
+    }
     
     func inviteMembers() {
         let controller = ContactPickerController()
@@ -184,7 +234,7 @@ class InviteViewController: BaseEditViewController {
         let controller = ContactPickerController()
         controller.role = "guests"
         controller.flow = self.flow
-        controller.channel = self.channel
+        controller.channels = self.channels
         controller.inputGroupId = self.inputGroupId
         controller.inputGroupTitle = self.inputGroupTitle
         self.navigationController?.pushViewController(controller, animated: true)
@@ -192,13 +242,29 @@ class InviteViewController: BaseEditViewController {
     
     func isValid() -> Bool {
         if self.validateFor == "guests" {
-            if self.channelField.isEmpty {
+            if (self.channelButton.titleLabel?.text?.isEmpty)! {
                 Alert(title: "Select a channel")
                 return false
             }
             /* Check for channel that exists */
         }
         return true
+    }
+}
+
+extension InviteViewController: PickerDelegate {
+    internal func update(channels: [String: Any]) {
+        self.channels = channels
+        var channelsLabel = ""
+        for channelName in channels.values {
+            if !channelsLabel.isEmpty {
+                channelsLabel += "\r"
+            }
+            channelsLabel += "\(channelName)"
+        }
+        self.inviteGuestsLabel.text = channels.count > 1 ? "Selected channels" : "Selected channel"
+        self.channelButton.setTitle(channelsLabel, for: .normal)
+        self.view.setNeedsLayout()
     }
 }
 

@@ -9,7 +9,7 @@ import Firebase
 class UserQuery: NSObject {
 
     var onlineHandle: UInt!
-    
+
     var userPath: String!
     var userHandle: UInt!
     var user: FireUser!
@@ -18,6 +18,8 @@ class UserQuery: NSObject {
     var linkHandle: UInt!
     var linkMap: [String: Any]!
     var linkMapMiss = false
+    
+    var block: ((FireUser?) -> ())?
 
     init(userId: String, groupId: String?, trackPresence: Bool = false) {
         super.init()
@@ -34,32 +36,24 @@ class UserQuery: NSObject {
             })
         }
     }
-    /**
-     * Call to include channel link properties instead of group link
-     * properties.
-     */
-    init(userId: String, groupId: String, channelId: String) {
-        super.init()
-        self.userPath = "users/\(userId)"
-        self.linkPath = "member-channels/\(userId)/\(groupId)/\(channelId)"
-    }
 
-    func observe(with block: @escaping (FireUser?) -> Swift.Void) {
+    func observe(with block: @escaping (FireUser?) -> ()) {
         
+        self.block = block
         self.userHandle = FireController.db.child(self.userPath).observe(.value, with: { snap in
             if !(snap.value is NSNull) {
                 self.user = FireUser.from(dict: snap.value as? [String: Any], id: snap.key)
                 if self.linkPath == nil || self.linkMapMiss {
-                    block(self.user)  // May or may not have link info
+                    self.block?(self.user)  // May or may not have link info
                 }
                 else if self.linkMap != nil {
                     self.user!.membershipFrom(dict: (self.linkMap)!)
-                    block(self.user)  // May or may not have link info
+                    self.block?(self.user)  // May or may not have link info
                 }
             }
             else {
                 Log.w("User snapshot is null")
-                block(nil)
+                self.block?(nil)
             }
         })
         
@@ -69,7 +63,7 @@ class UserQuery: NSObject {
                     self.linkMap = snap.value as! [String: Any]
                     if self.user != nil {
                         self.user!.membershipFrom(dict: (self.linkMap)!)
-                        block(self.user)
+                        self.block?(self.user)
                     }
                 }
                 else {
@@ -77,15 +71,16 @@ class UserQuery: NSObject {
                     self.linkMapMiss = true
                     if self.user != nil {
                         self.user!.membershipClear()
-                        block(self.user)
+                        self.block?(self.user)
                     }
                 }
             })
         }
     }
 
-    func once(with block: @escaping (FireUser?) -> Swift.Void) {
+    func once(with block: @escaping (FireUser?) -> ()) {
         
+        self.block = block
         var fired = false
         
         FireController.db.child(self.userPath).observeSingleEvent(of: .value, with: { snap in
@@ -94,18 +89,18 @@ class UserQuery: NSObject {
                     self.user = FireUser.from(dict: snap.value as? [String: Any], id: snap.key)
                     if self.linkPath == nil || self.linkMapMiss {
                         fired = true
-                        block(self.user)  // May or may not have link info
+                        self.block?(self.user)  // May or may not have link info
                     }
                     else if self.linkMap != nil {
                         fired = true
                         self.user!.membershipFrom(dict: (self.linkMap)!)
-                        block(self.user)  // May or may not have link info
+                        self.block?(self.user)  // May or may not have link info
                     }
                 }
                 else {
                     fired = true
                     Log.w("User snapshot is null")
-                    block(nil)
+                    self.block?(nil)
                 }
             }
         })
@@ -118,14 +113,14 @@ class UserQuery: NSObject {
                         if self.user != nil {
                             fired = true
                             self.user!.membershipFrom(dict: (self.linkMap)!)
-                            block(self.user)
+                            self.block?(self.user)
                         }
                     }
                     else {
                         self.linkMapMiss = true
                         if self.user != nil {
                             fired = true
-                            block(self.user)
+                            self.block?(self.user)
                         }
                     }
                 }
@@ -136,6 +131,9 @@ class UserQuery: NSObject {
     func remove() {
         if self.userHandle != nil {
             FireController.db.child(self.userPath).removeObserver(withHandle: self.userHandle)
+        }
+        if self.linkHandle != nil {
+            FireController.db.child(self.linkPath).removeObserver(withHandle: self.linkHandle)
         }
         if self.onlineHandle != nil {
             FireController.db.child(".info/connected").removeObserver(withHandle: self.onlineHandle)

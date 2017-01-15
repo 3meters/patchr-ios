@@ -21,12 +21,12 @@ class BranchProvider: NSObject {
     
     typealias CompletionBlock = (_ response: AnyObject?, _ error: NSError?) -> Void
     
-    static func inviteMember(group: FireGroup, completion: @escaping CompletionBlock) {
-        let username = UserController.instance.user?.username
-        BranchProvider.inviteMember(groupId: group.id!, groupTitle: group.title!, username: username, completion: completion)
-    }
+//    static func inviteMember(group: FireGroup, completion: @escaping CompletionBlock) {
+//        let username = UserController.instance.user?.username
+//        BranchProvider.inviteMember(groupId: group.id!, groupTitle: group.title!, username: username, completion: completion)
+//    }
     
-    static func inviteMember(groupId: String, groupTitle: String, username: String?, completion: @escaping CompletionBlock) {
+    static func inviteMember(groupId: String, groupTitle: String, username: String?, email: String, inviteId: String, completion: @escaping CompletionBlock) {
         
         let group = StateController.instance.group
         let referrer = UserController.instance.user
@@ -44,9 +44,12 @@ class BranchProvider: NSObject {
         }
         
         applink.metadata?["role"] = "member"
+        applink.metadata?["email"] = email
+        applink.metadata?["inviteId"] = inviteId
         applink.metadata?["groupId"] = groupId
         applink.metadata?["groupTitle"] = groupTitle
-        
+        applink.metadata?["created_at"] = Utils.now()
+            
         /* $og_title */
         applink.title = "Invite by \(referrerName!) to the \(groupTitle) group"
         
@@ -78,7 +81,7 @@ class BranchProvider: NSObject {
         })
     }
     
-    static func inviteGuest(group: FireGroup, channel: FireChannel, completion: @escaping CompletionBlock) {
+    static func inviteGuest(group: FireGroup, channels: [String: Any], email: String, inviteId: String, completion: @escaping CompletionBlock) {
         
         let referrer = UserController.instance.user
         let referrerId = UserController.instance.userId
@@ -95,24 +98,19 @@ class BranchProvider: NSObject {
         }
         
         applink.metadata?["role"] = "guest"
+        applink.metadata?["email"] = email
+        applink.metadata?["inviteId"] = inviteId
         applink.metadata?["groupId"] = group.id!
         applink.metadata?["groupTitle"] = group.title!
-        applink.metadata?["channelId"] = channel.id!
-        applink.metadata?["channelName"] = channel.name!
+        applink.metadata?["channels"] = channels
         
         /* $og_title */
-        applink.title = "Invite by \(referrerName!) to the \(channel.name!) channel"
-        
-        /* $og_image */
-        if let photo = channel.photo {
-            let settings = "h=250&crop&fit=crop&q=50"
-            let photoUrl = "https://3meters-images.imgix.net/\(photo.filename!)?\(settings)"
-            applink.imageUrl = photoUrl
+        let channelName = channels.first?.value as! String
+        if channels.count == 1 {
+            applink.title = "Invite by \(referrerName!) to the \(channelName) channel"
         }
-        
-        /* $og_description */
-        if channel.purpose != nil && !channel.purpose!.isEmpty {
-            applink.contentDescription = channel.purpose!
+        else {
+            applink.title = "Invite by \(referrerName!) to the \(channelName) channel plus more"
         }
         
         let linkProperties = BranchLinkProperties()

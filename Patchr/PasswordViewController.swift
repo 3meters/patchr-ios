@@ -14,7 +14,7 @@ import Firebase
 class PasswordViewController: BaseEditViewController {
     
     var inputEmail: String!
-    var inputInviteParams: [AnyHashable: Any]?
+    var inputInviteLink: [AnyHashable: Any]!
     
     var message = AirLabelTitle()
     var userNameField = FloatTextField(frame: CGRect.zero)
@@ -184,7 +184,7 @@ class PasswordViewController: BaseEditViewController {
                     UserController.instance.setUserId(userId: (user?.uid)!) { [weak self] result in
                         if self != nil {
                             if self!.flow == .onboardLogin {
-                                let controller = GroupPickerController()
+                                let controller = GroupSwitcherController()
                                 self!.navigationController?.pushViewController(controller, animated: true)
                             }
                             else if self!.flow == .onboardCreate {
@@ -195,7 +195,7 @@ class PasswordViewController: BaseEditViewController {
                             else if self!.flow == .onboardInvite {
                                 let controller = EmptyViewController()
                                 self!.navigationController?.setViewControllers([controller], animated: true)
-                                MainController.instance.routeDeepLink(params: self!.inputInviteParams, error: nil)
+                                MainController.instance.routeDeepLink(link: self!.inputInviteLink, error: nil)
                             }
                         }
                     }
@@ -238,7 +238,7 @@ class PasswordViewController: BaseEditViewController {
                                 else if self.flow == .onboardInvite {
                                     let controller = EmptyViewController()
                                     self.navigationController?.setViewControllers([controller], animated: true)
-                                    MainController.instance.routeDeepLink(params: self.inputInviteParams, error: nil)
+                                    MainController.instance.routeDeepLink(link: self.inputInviteLink, error: nil)
                                 }
                             }
                         }

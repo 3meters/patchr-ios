@@ -14,10 +14,11 @@ class UserListCell: UITableViewCell {
     @IBOutlet weak var photoControl: PhotoControl?
     @IBOutlet weak var title: UILabel?
     @IBOutlet weak var subtitle: UILabel?
-    @IBOutlet weak var role: UILabel?
+    @IBOutlet weak var roleLabel: UILabel?
     @IBOutlet weak var presenceView = PresenceView()
     @IBOutlet weak var checkBox: AirCheckBox?
     @IBOutlet weak var actionButton: AirButton?
+    @IBOutlet weak var agoLabel: UILabel!
     
     var allowSelection = true
     
@@ -40,23 +41,31 @@ class UserListCell: UITableViewCell {
         self.title?.text = nil
         self.subtitle?.text = nil
         self.subtitle?.isHidden = false
-        self.role?.text = nil
-        self.role?.isHidden = false
+        self.roleLabel?.text = nil
+        self.roleLabel?.isHidden = false
         self.presenceView?.showOffline()
+        self.agoLabel.isHidden = true
         self.actionButton?.isHidden = true
         self.allowSelection = true
     }
     
-    func bind(contact: CNContact) {
-        self.role?.isHidden = true
+    func bind(contact: CNContact, status: String) {
+        self.roleLabel?.isHidden = true
         self.actionButton?.isHidden = true
         self.presenceView?.isHidden = true
+        self.agoLabel.isHidden = true
         self.checkBox?.isHidden = false
         self.accessoryType = .none
         self.photoControl?.initialsCount = 2
         self.photoControl?.nameLabel.font = Theme.fontText
-        
         self.contact = contact
+        
+        self.roleLabel?.isHidden = (status == "none")
+        if status != "none" {
+            self.roleLabel?.text = status
+            self.roleLabel?.textColor = MaterialColor.lightBlue.base
+        }
+        
         let email = contact.emailAddresses.first?.value as String!
         let fullName = CNContactFormatter.string(from: contact, style: .fullName)
         let title = fullName ?? email!
@@ -76,6 +85,12 @@ class UserListCell: UITableViewCell {
         
         self.user = user
         self.presenceView?.bind(online: user.presence)
+        if let offlineSince = user.presence as? Int {
+            let offlineAgo = UIShared.timeAgoShort(date: NSDate(timeIntervalSince1970: Double(offlineSince) / 1000))
+            self.agoLabel.text = offlineAgo
+            self.agoLabel.isHidden = false
+        }
+        
         if user.id == UserController.instance.userId {
             self.title?.text = "\(user.profile?.fullName ?? user.username!) (you)"
         }
@@ -87,19 +102,19 @@ class UserListCell: UITableViewCell {
             self.subtitle?.text = "@\(user.username!)"
         }
 
-        self.role?.text = user.role
+        self.roleLabel?.text = user.role
         
         if user.role == "owner" {
-            self.role?.textColor = MaterialColor.deepOrange.base
+            self.roleLabel?.textColor = MaterialColor.deepOrange.base
         }
         else if user.role == "admin" {
-            self.role?.textColor = MaterialColor.amber.base
+            self.roleLabel?.textColor = MaterialColor.amber.base
         }
         else if user.role == "member" {
-            self.role?.textColor = MaterialColor.lightGreen.base
+            self.roleLabel?.textColor = MaterialColor.lightGreen.base
         }
         else if user.role == "guest" {
-            self.role?.textColor = MaterialColor.lightBlue.base
+            self.roleLabel?.textColor = MaterialColor.lightBlue.base
         }
         
         let fullName = user.profile?.fullName ?? user.username

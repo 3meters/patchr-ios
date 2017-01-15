@@ -158,6 +158,13 @@ struct UIShared {
         let date = NSDate(timeIntervalSince1970: Double(timestamp) / 1000)
         return Int(date.secondsAgo())
     }
+    
+    static func dateMediumString(timestamp: Int) -> String {
+        let dateFormatter = DateFormatter()
+        let date = NSDate(timeIntervalSince1970: Double(timestamp) / 1000)
+        dateFormatter.dateStyle = .medium
+        return dateFormatter.string(from: date as Date)
+    }
 	
 	static func timeAgoMedium(date: NSDate) -> String {
         let dateFormatter = DateFormatter()
