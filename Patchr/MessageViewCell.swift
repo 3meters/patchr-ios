@@ -21,6 +21,7 @@ class MessageViewCell: AirUIView {
     var createdDate = AirLabelDisplay()
     var edited = AirLabelDisplay()
     var unread = AirLabelDisplay()
+    var optionsButton = AirLinkButton(frame: CGRect.zero)
 
     var toolbar = AirUIView()
     var likeButton = AirLikeButton(frame: CGRect.zero)
@@ -60,6 +61,7 @@ class MessageViewCell: AirUIView {
         let photoHeight = columnWidth * 0.5625        // 16:9 aspect ratio
 
         self.userPhotoControl.anchorTopLeft(withLeftPadding: 0, topPadding: 0, width: 48, height: 48)
+        self.optionsButton.anchorTopRight(withRightPadding: -4, topPadding: 2, width: 20, height: 20)
 
         /* Header */
 
@@ -162,6 +164,10 @@ class MessageViewCell: AirUIView {
         self.unread.textColor = Colors.accentColorDark
         self.unread.textAlignment = .left
         self.unread.isHidden = true
+        
+        self.optionsButton.setImage(UIImage(named: "imgOverflowVerticalLight"), for: .normal)
+        self.optionsButton.tintColor = Colors.gray75pcntColor
+        self.optionsButton.showsTouchWhenHighlighted = true
 
         /* Footer */
 
@@ -189,10 +195,13 @@ class MessageViewCell: AirUIView {
         self.addSubview(self.createdDate)
         self.addSubview(self.edited)
         self.addSubview(self.unread)
+        self.addSubview(self.optionsButton)
     }
 
     func reset() {
         self.description_?.text = nil
+        self.description_?.textColor = Colors.black
+        self.description_!.font = Theme.fontTextList
         self.userName.text = nil
         self.unread.isHidden = true
         self.toolbar.isHidden = true
@@ -207,9 +216,13 @@ class MessageViewCell: AirUIView {
 
         self.description_?.isHidden = true
         self.photoView?.isHidden = true
-
+        
         if let description = message.text {
             self.description_?.isHidden = false
+            if message.source == "system" {
+                self.description_.textColor = Colors.accentColorTextLight
+                self.description_!.font = Theme.fontTextListItalic
+            }
             self.description_?.text = description
         }
         

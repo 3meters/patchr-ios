@@ -19,8 +19,8 @@ class GroupEditViewController: BaseEditViewController {
     var banner = AirLabelTitle()
     var message = AirLabelDisplay()
     var photoEditView = PhotoEditView()
-    var titleField = AirTextField()
-    var errorLabel = AirLabelDisplay()
+    var titleField = FloatTextField(frame: CGRect.zero)
+    var usersButton = AirButton()
     
     /*--------------------------------------------------------------------------------------------
     * Lifecycle
@@ -42,13 +42,12 @@ class GroupEditViewController: BaseEditViewController {
          */
         let bannerSize = self.banner.sizeThatFits(CGSize(width:288, height:CGFloat.greatestFiniteMagnitude))
         let messageSize = self.message.sizeThatFits(CGSize(width:288, height:CGFloat.greatestFiniteMagnitude))
-        let errorSize = self.errorLabel.sizeThatFits(CGSize(width:288, height:CGFloat.greatestFiniteMagnitude))
 
         self.banner.anchorTopCenter(withTopPadding: 0, width: 288, height: bannerSize.height)
         self.message.alignUnder(self.banner, matchingCenterWithTopPadding: 8, width: 288, height: messageSize.height)
         self.photoEditView.alignUnder(self.message, matchingCenterWithTopPadding: 16, width: 150, height: 150)
         self.titleField.alignUnder(self.photoEditView, matchingCenterWithTopPadding: 16, width: 288, height: 48)
-        self.errorLabel.alignUnder(self.titleField, matchingCenterWithTopPadding: 0, width: 288, height: errorSize.height)
+        self.usersButton.alignUnder(self.titleField, matchingCenterWithTopPadding: 16, width: 288, height: 48)
 
         super.viewWillLayoutSubviews()
     }
@@ -58,13 +57,21 @@ class GroupEditViewController: BaseEditViewController {
      *--------------------------------------------------------------------------------------------*/
 
     func doneAction(sender: AnyObject) {
+        /* We are updating in realtime */
         closeAction(sender: sender)
     }
 
     func closeAction(sender: AnyObject) {
         if isValid() {
-            let _ = self.navigationController?.popViewController(animated: true)
+            close()
         }
+    }
+    
+    func manageUsersAction(sender: AnyObject?) {
+        let controller = MemberListController()
+        controller.scope = .group
+        controller.manage = true
+        self.navigationController?.pushViewController(controller, animated: true)
     }
 
     func deleteAction(sender: AnyObject) {
@@ -154,16 +161,16 @@ class GroupEditViewController: BaseEditViewController {
         self.titleField.keyboardType = .default
         self.titleField.returnKeyType = .next
         
-        self.errorLabel.textColor = Theme.colorTextValidationError
-        self.errorLabel.alpha = 0.0
-        self.errorLabel.numberOfLines = 0
-        self.errorLabel.font = Theme.fontValidationError
-
+        self.usersButton.setTitle("Manage Group Members".uppercased(), for: .normal)
+        self.usersButton.imageRight = UIImageView(image: UIImage(named: "imgArrowRightLight"))
+        self.usersButton.imageRight?.bounds.size = CGSize(width: 10, height: 14)
+        self.usersButton.addTarget(self, action: #selector(manageUsersAction(sender:)), for: .touchUpInside)
+        
         self.contentHolder.addSubview(self.banner)
         self.contentHolder.addSubview(self.message)
-        self.contentHolder.addSubview(self.titleField)
         self.contentHolder.addSubview(self.photoEditView)
-        self.contentHolder.addSubview(self.errorLabel)
+        self.contentHolder.addSubview(self.titleField)
+        self.contentHolder.addSubview(self.usersButton)
 
         Reporting.screen("GroupEdit")
         self.banner.text = "Group Settings"
@@ -172,6 +179,10 @@ class GroupEditViewController: BaseEditViewController {
         let doneButton = UIBarButtonItem(title: "Done", style: UIBarButtonItemStyle.plain, target: self, action: #selector(doneAction(sender:)))
         let deleteButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.trash, target: self, action: #selector(deleteAction(sender:)))
         self.navigationItem.rightBarButtonItems = [doneButton, deleteButton]
+        if self.presented {
+            let closeButton = UIBarButtonItem(barButtonSystemItem: .stop, target: self, action: #selector(closeAction(sender:)))
+            self.navigationItem.leftBarButtonItems = [closeButton]
+        }
         
         NotificationCenter.default.addObserver(self, selector: #selector(photoDidChange(sender:)), name: NSNotification.Name(rawValue: Events.PhotoDidChange), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(photoRemoved(sender:)), name: NSNotification.Name(rawValue: Events.PhotoRemoved), object: nil)
@@ -200,9 +211,7 @@ class GroupEditViewController: BaseEditViewController {
     func isValid() -> Bool {
 
         if self.titleField.isEmpty {
-            self.errorLabel.text = "Enter a name for the group."
-            self.view.setNeedsLayout()
-            self.errorLabel.fadeIn()
+            self.titleField.errorMessage = "Enter a name for the group."
             return false
         }
 

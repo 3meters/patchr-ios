@@ -9,6 +9,18 @@
 import UIKit
 
 class AirButton: AirButtonBase {
+    
+    var imageRight: UIImageView? {
+        didSet {
+            self.addSubview(self.imageRight!)
+        }
+    }
+    
+    var imageLeft: UIImageView? {
+        didSet {
+            self.addSubview(self.imageLeft!)
+        }
+    }
 
 	required init(coder aDecoder: NSCoder) {
 		/* Called when instantiated from XIB or Storyboard */
@@ -42,5 +54,11 @@ class AirButton: AirButtonBase {
 	
 	override func layoutSubviews() {
 		super.layoutSubviews()
+        if let image = self.imageRight {
+            image.anchorCenterRight(withRightPadding: 24, width: image.width(), height: image.height())
+        }
+        if let image = self.imageLeft {
+            image.anchorCenterLeft(withLeftPadding: 24, width: image.width(), height: image.height())
+        }
 	}
 }

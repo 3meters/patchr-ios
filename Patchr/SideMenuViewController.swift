@@ -23,6 +23,7 @@ class SideMenuViewController: BaseTableController, UITableViewDelegate, UITableV
     var membersCell: WrapperTableViewCell?
     var profileCell: WrapperTableViewCell?
     var switchCell: WrapperTableViewCell?
+    var manageCell: WrapperTableViewCell?
     var settingsCell: WrapperTableViewCell?
 
     /*--------------------------------------------------------------------------------------------
@@ -96,11 +97,14 @@ class SideMenuViewController: BaseTableController, UITableViewDelegate, UITableV
         self.menuHeader.addGestureRecognizer(headerTapGestureRecognizer)
         self.tableView.tableHeaderView = self.menuHeader	// Triggers table binding
 
-        self.inviteCell = WrapperTableViewCell(view: MenuItemView(title: "Invite", image: UIImage(named: "imgInvite2Light")!), padding: UIEdgeInsets.zero, reuseIdentifier: nil)
         self.membersCell = WrapperTableViewCell(view: MenuItemView(title: "Group members", image: UIImage(named: "imgUsersLight")!), padding: UIEdgeInsets.zero, reuseIdentifier: nil)
+        self.inviteCell = WrapperTableViewCell(view: MenuItemView(title: "Invite", image: UIImage(named: "imgInvite2Light")!), padding: UIEdgeInsets.zero, reuseIdentifier: nil)
         self.profileCell = WrapperTableViewCell(view: MenuItemView(title: "Edit profile", image: UIImage(named: "imgEdit2Light")!), padding: UIEdgeInsets.zero, reuseIdentifier: nil)
-        self.settingsCell = WrapperTableViewCell(view: MenuItemView(title: "Settings", image: UIImage(named: "imgSettingsLight")!), padding: UIEdgeInsets.zero, reuseIdentifier: nil)
         self.switchCell = WrapperTableViewCell(view: MenuItemView(title: "Switch groups", image: UIImage(named: "imgSwitchLight")!), padding: UIEdgeInsets.zero, reuseIdentifier: nil)
+        self.manageCell = WrapperTableViewCell(view: MenuItemView(title: "Manage", image: UIImage(named: "imgGroupLight")!), padding: UIEdgeInsets.zero, reuseIdentifier: nil)
+        self.settingsCell = WrapperTableViewCell(view: MenuItemView(title: "Settings", image: UIImage(named: "imgSettingsLight")!), padding: UIEdgeInsets.zero, reuseIdentifier: nil)
+        
+        self.tableView.tableFooterView = self.settingsCell
         
         self.view.addSubview(self.tableView)
         
@@ -136,37 +140,7 @@ extension SideMenuViewController {
 
         let selectedCell = tableView.cellForRow(at: indexPath)
 
-        if selectedCell == self.inviteCell {
-            
-            if StateController.instance.group?.role != "owner" {
-                self.Alert(title: "Only group owners can invite new members.")
-            }
-            else {
-                let controller = InviteViewController()
-                let wrapper = AirNavigationController(rootViewController: controller)
-                UIViewController.topMostViewController()?.present(wrapper, animated: true, completion: nil)
-            }
-        }
-        else if selectedCell == self.settingsCell {
-            
-            let controller = SettingsTableViewController()
-            let wrapper = AirNavigationController(rootViewController: controller)
-            UIViewController.topMostViewController()?.present(wrapper, animated: true, completion: nil)
-        }
-        else if selectedCell == self.profileCell {
-            
-            let controller = ProfileEditViewController()
-            let wrapper = AirNavigationController()
-            wrapper.viewControllers = [controller]
-            UIViewController.topMostViewController()?.present(wrapper, animated: true, completion: nil)
-        }
-        else if selectedCell == self.switchCell {
-            
-            let controller = GroupSwitcherController()
-            let wrapper = AirNavigationController(rootViewController: controller)
-            UIViewController.topMostViewController()?.present(wrapper, animated: true, completion: nil)
-        }
-        else if selectedCell == self.membersCell {
+        if selectedCell == self.membersCell {
             
             if let role = StateController.instance.group.role {
                 let controller = MemberListController()
@@ -174,6 +148,46 @@ extension SideMenuViewController {
                 controller.scope = (role == "guest") ? .channel : .group
                 UIViewController.topMostViewController()?.present(wrapper, animated: true, completion: nil)
             }
+        }
+        if selectedCell == self.inviteCell {
+            
+            if StateController.instance.group?.role != "owner" {
+                UIShared.Toast(message: "Only group owners can invite new members")
+            }
+            else {
+                let controller = InviteViewController()
+                let wrapper = AirNavigationController(rootViewController: controller)
+                UIViewController.topMostViewController()?.present(wrapper, animated: true, completion: nil)
+            }
+        }
+        if selectedCell == self.profileCell {
+            
+            let controller = ProfileEditViewController()
+            let wrapper = AirNavigationController()
+            wrapper.viewControllers = [controller]
+            UIViewController.topMostViewController()?.present(wrapper, animated: true, completion: nil)
+        }
+        if selectedCell == self.switchCell {
+            
+            let controller = GroupSwitcherController()
+            let wrapper = AirNavigationController(rootViewController: controller)
+            UIViewController.topMostViewController()?.present(wrapper, animated: true, completion: nil)
+        }
+        if selectedCell == self.manageCell {
+            if StateController.instance.group?.role != "owner" {
+                UIShared.Toast(message: "Only group owners can manage groups")
+            }
+            else {
+                let controller = GroupEditViewController()
+                let wrapper = AirNavigationController(rootViewController: controller)
+                UIViewController.topMostViewController()?.present(wrapper, animated: true, completion: nil)
+            }
+        }
+        if selectedCell == self.settingsCell {
+            
+            let controller = SettingsTableViewController()
+            let wrapper = AirNavigationController(rootViewController: controller)
+            UIViewController.topMostViewController()?.present(wrapper, animated: true, completion: nil)
         }
         
         slideMenuController()?.closeRight()
@@ -200,6 +214,9 @@ extension SideMenuViewController {
             return self.switchCell!
         }
         else if indexPath.row == 4 {
+            return self.manageCell!
+        }
+        else if indexPath.row == 5 {
             return self.settingsCell!
         }
         return UITableViewCell()
@@ -210,6 +227,6 @@ extension SideMenuViewController {
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 5
+        return 6
     }
 }

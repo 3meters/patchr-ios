@@ -148,7 +148,7 @@ class MemberPickerController: BaseTableController, UITableViewDelegate {
                 let groupId = self.channel.group!
                 let channelId = self.channel.id!
                 for userId in self.invites.keys {
-                    FireController.instance.addUserToChannel(userId: userId, groupId: groupId, channelId: channelId)
+                    FireController.instance.addUserToChannel(userId: userId, groupId: groupId, channelId: channelId, channelName: channelName)
                 }
                 self.close()
             }

@@ -17,6 +17,7 @@ class StateController: NSObject {
     static let instance = StateController()
     
     fileprivate(set) internal var groupId: String?
+    fileprivate(set) internal var groupGeneralId: String?
     fileprivate(set) internal var group: FireGroup! // Used by FireController, invite links
     fileprivate var groupQuery: GroupQuery?
 
@@ -117,6 +118,11 @@ class StateController: NSObject {
             self.groupId = groupId
             NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.GroupDidSwitch), object: self, userInfo: userInfo)
             UserDefaults.standard.set(groupId, forKey: "groupId")
+
+            /* Stash channelId for general channel */
+            FireController.instance.findGeneralChannel(groupId: groupId) { channelId in
+                self.groupGeneralId = channelId
+            }
             
             setChannelId(channelId: channelId, groupId: groupId, bundle: userInfo, next: next)
             

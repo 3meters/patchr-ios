@@ -24,12 +24,6 @@ class MemberSettingsController: UITableViewController {
     var removeFromGroupCell = AirTableViewCell()
     var removeFromGroupButton = AirLinkButton()
     
-    var presented: Bool {
-        return self.presentingViewController?.presentedViewController == self
-            || (self.navigationController != nil && self.navigationController?.presentingViewController?.presentedViewController == self.navigationController)
-            || self.tabBarController?.presentingViewController is UITabBarController
-    }
-
     var roleValue: String? = nil
 
     /*--------------------------------------------------------------------------------------------
@@ -173,7 +167,7 @@ class MemberSettingsController: UITableViewController {
                     if let channelIds = snap.value as? [String] {
                         for channelId in channelIds {
                             if self.channelsAfter[channelId] == nil {
-                                FireController.instance.addUserToChannel(userId: userId, groupId: groupId, channelId: channelId)
+                                FireController.instance.addUserToChannel(userId: userId, groupId: groupId, channelId: channelId, channelName: nil)
                             }
                         }
                     }
@@ -184,14 +178,16 @@ class MemberSettingsController: UITableViewController {
         /* Find channel removals */
         for channelId in self.channelsBefore.keys {
             if self.channelsAfter[channelId] == nil {
-                FireController.instance.removeUserFromChannel(userId: userId, groupId: groupId, channelId: channelId)
+                let channelName = self.channelsBefore[channelId] as! String
+                FireController.instance.removeUserFromChannel(userId: userId, groupId: groupId, channelId: channelId, channelName: channelName)
             }
         }
         
         /* Find channel additions */
         for channelId in self.channelsAfter.keys {
             if self.channelsBefore[channelId] == nil {
-                FireController.instance.addUserToChannel(userId: userId, groupId: groupId, channelId: channelId)
+                let channelName = self.channelsAfter[channelId] as! String
+                FireController.instance.addUserToChannel(userId: userId, groupId: groupId, channelId: channelId, channelName: channelName)
             }
         }
     }

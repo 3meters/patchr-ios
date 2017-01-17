@@ -304,6 +304,17 @@ extension UIViewController {
         }
         return nil
     }
+    
+    var presented: Bool {
+        if self.presentingViewController?.presentedViewController == self { return true }
+        if let wrapper = self.navigationController {
+            if (wrapper.viewControllers.count == 1 && self.presentingViewController?.presentedViewController == wrapper) { return true }
+            if (wrapper.viewControllers.count > 1 && wrapper.topViewController == self) { return false }
+            if wrapper.presentingViewController?.presentedViewController == wrapper { return true }
+        }
+        if self.tabBarController?.presentingViewController is UITabBarController { return true }
+        return false
+    }
 	
 	func dismissToast(sender: AnyObject) {
 		if let gesture = sender as? UIGestureRecognizer, let hud = gesture.view as? MBProgressHUD {

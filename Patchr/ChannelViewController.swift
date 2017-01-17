@@ -217,10 +217,11 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
     func joinChannelAction(sender: AnyObject?) {
         let groupId = StateController.instance.groupId!
         let channelId = self.channel.id!
+        let channelName = self.channel.name!
         let userId = UserController.instance.userId!
-        FireController.instance.addUserToChannel(userId: userId, groupId: groupId, channelId: channelId, then: { success in
+        FireController.instance.addUserToChannel(userId: userId, groupId: groupId, channelId: channelId, channelName: channelName, then: { success in
             if success {
-                UIShared.Toast(message: "You are now a member")
+                UIShared.Toast(message: "You have joined this channel")
                 if UserDefaults.standard.bool(forKey: PatchrUserDefaultKey(subKey: "SoundEffects")) {
                     AudioController.instance.play(sound: Sound.pop.rawValue)
                 }
@@ -238,11 +239,12 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
                     if doIt {
                         if let group = StateController.instance.group {
                             let userId = UserController.instance.userId!
-                            FireController.instance.removeUserFromChannel(userId: userId, groupId: group.id!, channelId: self.channel.id!, then: { success in
+                            let channelName = self.channel.name!
+                            FireController.instance.removeUserFromChannel(userId: userId, groupId: group.id!, channelId: self.channel.id!, channelName: channelName, then: { success in
                                 if success {
                                     /* Close and switch to accessible channel */
                                     self.dismiss(animated: true, completion: nil)
-                                    UIShared.Toast(message: "You are not a member of this channel")
+                                    UIShared.Toast(message: "You have left this channel.")
                                     StateController.instance.clearChannel()
                                 }
                             })
@@ -253,9 +255,10 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
         else {
             if let group = StateController.instance.group {
                 let userId = UserController.instance.userId!
-                FireController.instance.removeUserFromChannel(userId: userId, groupId: group.id!, channelId: self.channel.id!, then: { success in
+                let channelName = self.channel.name!
+                FireController.instance.removeUserFromChannel(userId: userId, groupId: group.id!, channelId: self.channel.id!, channelName: channelName, then: { success in
                     if success {
-                        UIShared.Toast(message: "You are not a member of this channel")
+                        UIShared.Toast(message: "You have left this channel.")
                         if UserDefaults.standard.bool(forKey: PatchrUserDefaultKey(subKey: "SoundEffects")) {
                             AudioController.instance.play(sound: Sound.pop.rawValue)
                         }
@@ -283,6 +286,14 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
                 let message = FireMessage.from(dict: snap.value as? [String: Any], id: snap.key)
                 showMessageActions(message: message!)
             }
+        }
+    }
+    
+    func messageOptionsAction(sender: AnyObject?) {
+        if let button = sender as? AirLinkButton,
+            let message = button.data as? FireMessage {
+            dismissKeyboard(true)
+            showMessageActions(message: message)
         }
     }
     
@@ -630,7 +641,7 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
             
             if cell.view == nil {
                 let recognizer = UILongPressGestureRecognizer(target: self, action: #selector(self.longPressAction(sender:)))
-                recognizer.minimumPressDuration = TimeInterval(0.5)
+                recognizer.minimumPressDuration = TimeInterval(0.3)
                 cell.addGestureRecognizer(recognizer)
                 
                 let view = MessageViewCell(frame: CGRect(x: 0, y: 0, width: self.view.width(), height: 40))
@@ -646,7 +657,11 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
             }
             
             if let messageView = cell.view! as? MessageViewCell {
+                
                 messageView.bind(message: message)
+                messageView.optionsButton.addTarget(self, action: #selector(self.messageOptionsAction(sender:)), for: .touchUpInside)
+                messageView.optionsButton.data = message
+
                 if message.creator != nil {
                     messageView.userPhotoControl.target = message.creator
                     messageView.userPhotoControl.addTarget(self, action: #selector(self.browseMemberAction(sender:)), for: .touchUpInside)
@@ -728,6 +743,18 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
             let statusTitle = isMember ? "Leave channel" : "Join channel"
             let statusAction = UIAlertAction(title: statusTitle, style: .default) { action in
                 if isMember {
+                    if isOwner {    // Check if only owner
+                        let groupId = StateController.instance.groupId!
+                        let channelId = self.channel.id!
+                        FireController.instance.channelRoleCount(groupId: groupId, channelId: channelId, role: "owner") { count in
+                            if count != nil && count! < 2 {
+                                self.Alert(title: "Only Owner", message: "Channels need at least one owner.")
+                                return
+                            }
+                            self.leaveChannelAction(sender: nil)
+                        }
+                        return
+                    }
                     self.leaveChannelAction(sender: nil)
                 }
                 else {
@@ -753,7 +780,7 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
                 }
             }
 
-            let editAction = UIAlertAction(title: "Edit channel", style: .default) { action in
+            let editAction = UIAlertAction(title: "Manage channel", style: .default) { action in
                 self.editChannelAction()
             }
             
@@ -780,8 +807,11 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
                 sheet.addAction(starAction!)
                 sheet.addAction(muteAction!)
                 sheet.addAction(browseMembersAction)
-                sheet.addAction(addMembersAction)
-                sheet.addAction(editAction)
+                if !self.channel!.general! {
+                    sheet.addAction(statusAction)
+                }
+                sheet.addAction(addMembersAction)   // Owners only
+                sheet.addAction(editAction)         // Owners only
                 sheet.addAction(cancel)
             }
             else if isMember {
@@ -795,7 +825,9 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
             }
             else {
                 sheet.addAction(browseMembersAction)
-                sheet.addAction(statusAction)
+                if !self.channel!.general! {
+                    sheet.addAction(statusAction)
+                }
                 sheet.addAction(cancel)
             }
             

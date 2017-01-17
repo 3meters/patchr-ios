@@ -15,11 +15,6 @@ import FirebaseDatabaseUI
 class BaseSlackController: SLKTextViewController {
 	
     var controllerIsActive = false
-	var presented: Bool {
-		return self.presentingViewController?.presentedViewController == self
-			|| (self.navigationController != nil && self.navigationController?.presentingViewController?.presentedViewController == self.navigationController)
-			|| self.tabBarController?.presentingViewController is UITabBarController
-	}
 
     var statusBarHidden: Bool = false {
         didSet {
@@ -290,6 +285,7 @@ class BaseSlackController: SLKTextViewController {
         messageMap["modified_by"] = userId
         messageMap["created_by"] = userId
         messageMap["channel"] = channelId
+        messageMap["source"] = "user"
         
         if let text = self.textInputbar.textView.text {
             messageMap["text"] = text

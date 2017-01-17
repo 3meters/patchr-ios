@@ -312,7 +312,7 @@ class MainController: NSObject, iRateDelegate {
             
             let joinButton = DefaultButton(title: "Join".uppercased(), height: 48) {
                 if member && channels != nil {
-                    FireController.instance.addUserToChannels(userId: userId, groupId: groupId, channels: channels!) { success in
+                    FireController.instance.addUserToChannels(userId: userId, groupId: groupId, channels: channels!, inviter: referrerName) { success in
                         if success {
                             self.afterInvite(groupId: groupId, groupTitle: groupTitle, channels: channels)
                         }

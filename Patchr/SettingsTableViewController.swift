@@ -19,7 +19,6 @@ class SettingsTableViewController: UITableViewController {
 
     /* Section 1: Global settings */
     var editProfileCell = AirTableViewCell()
-    var editGroupCell = AirTableViewCell()
 
     /* Section 2: User settings for group */
     var notificationsCell = AirTableViewCell()
@@ -39,12 +38,6 @@ class SettingsTableViewController: UITableViewController {
     var logoutButton = AirLinkButton()
     var clearHistoryButton = AirLinkButton()
     var leaveGroupButton = AirLinkButton()
-    
-    var presented: Bool {
-        return self.presentingViewController?.presentedViewController == self
-            || (self.navigationController != nil && self.navigationController?.presentingViewController?.presentedViewController == self.navigationController)
-            || self.tabBarController?.presentingViewController is UITabBarController
-    }
 
     /*--------------------------------------------------------------------------------------------
     * Lifecycle
@@ -162,8 +155,7 @@ class SettingsTableViewController: UITableViewController {
         self.logoutCell.accessoryType = .none
         self.leaveGroupCell.accessoryType = .none
 
-        self.editProfileCell.textLabel!.text = "Profile Settings"
-        self.editGroupCell.textLabel!.text = "Group Settings"
+        self.editProfileCell.textLabel!.text = "Edit Profile"
 
         self.notificationsCell.textLabel!.text = "Notifications and Sounds"
         self.hideEmailCell.textLabel!.text = "Hide Email"
@@ -234,11 +226,6 @@ extension SettingsTableViewController {
 
         let selectedCell = tableView.cellForRow(at: indexPath)
         
-        if selectedCell == self.editGroupCell {
-            let controller = GroupEditViewController()
-            self.navigationController?.pushViewController(controller, animated: true)
-        }
-        
         if selectedCell == self.editProfileCell {
             let controller = ProfileEditViewController()
             self.navigationController?.pushViewController(controller, animated: true)
@@ -288,17 +275,6 @@ extension SettingsTableViewController {
     }
 
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-
-        if indexPath.section == 0 && indexPath.row == 1 {
-            editGroupCell.isHidden = true
-            if let role = StateController.instance.group.role {
-                if role == "owner" {
-                    editGroupCell.isHidden = false
-                    return CGFloat(44)
-                }
-            }
-            return CGFloat(0)
-        }
         
         if indexPath.section == 1 && indexPath.row == 2 {
             if StateController.instance.group?.ownedBy == UserController.instance.userId {
@@ -328,7 +304,6 @@ extension SettingsTableViewController {
             case 0:
                 switch (indexPath.row) {
                     case 0: return self.editProfileCell
-                    case 1: return self.editGroupCell
                     default: fatalError("Unknown row in section 1")
                 }
             case 1:
@@ -381,7 +356,7 @@ extension SettingsTableViewController {
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch (section) {
-            case 0: return 2
+            case 0: return 1
             case 1: return 3
             case 2: return 4
             case 3: return 2

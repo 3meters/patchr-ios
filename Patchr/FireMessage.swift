@@ -22,6 +22,7 @@ class FireMessage: NSObject {
     var event: String?
     var text: String?
     var attachments: [String: FireAttachment]?
+    var source: String?
     var createdAt: Int?
     var createdBy: String?
     var modifiedAt: Int?
@@ -50,6 +51,7 @@ class FireMessage: NSObject {
                 message.reactions = reactions
             }
             
+            message.source = dict!["source"] as? String
             message.createdAt = dict!["created_at"] as? Int
             message.createdBy = dict!["created_by"] as? String
             message.modifiedAt = dict!["modified_at"] as? Int

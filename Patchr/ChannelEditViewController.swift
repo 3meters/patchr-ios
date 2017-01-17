@@ -20,13 +20,13 @@ class ChannelEditViewController: BaseEditViewController {
 
     var banner = AirLabelTitle()
     var photoEditView = PhotoEditView()
-    var nameField = TextFieldView()
-
+    var nameField = FloatTextField(frame: CGRect.zero)
     var purposeField = AirTextView()
     var visibilityGroup = AirRuleView()
     var visibilitySwitch = UISwitch()
     var visibilityLabel	= AirLabelDisplay()
     var visibilityValue = "open"
+    var usersButton = AirButton()
 
     /*--------------------------------------------------------------------------------------------
     * Lifecycle
@@ -62,15 +62,17 @@ class ChannelEditViewController: BaseEditViewController {
         self.visibilityLabel.sizeToFit()
 
         self.banner.anchorTopCenter(withTopPadding: 0, width: 288, height: bannerSize.height)
-        self.nameField.alignUnder(self.banner, matchingCenterWithTopPadding: 8, width: 288, height: 48 + nameField.errorLabel.height())
+        self.nameField.alignUnder(self.banner, matchingCenterWithTopPadding: 8, width: 288, height: 48)
         self.purposeField.alignUnder(self.nameField, matchingCenterWithTopPadding: 16, width: 288, height: max(48, descriptionSize.height))
         self.photoEditView.alignUnder(self.purposeField, matchingCenterWithTopPadding: 16, width: 288, height: 288 * 0.56)
         
         self.visibilityGroup.alignUnder(self.photoEditView, matchingCenterWithTopPadding: 8, width: 288, height: 48)
         self.visibilityLabel.anchorCenterLeft(withLeftPadding: 0, width: 144, height: self.visibilityLabel.height())
         self.visibilitySwitch.anchorCenterRight(withRightPadding: 0, width: self.visibilitySwitch.width(), height: self.visibilitySwitch.height())
+        
+        self.usersButton.alignUnder(self.photoEditView, matchingCenterWithTopPadding: 16, width: 288, height: 48)
 
-        super.viewWillLayoutSubviews()        
+        super.viewWillLayoutSubviews()
     }
 
     /*--------------------------------------------------------------------------------------------
@@ -114,6 +116,14 @@ class ChannelEditViewController: BaseEditViewController {
         }
     }
     
+    func manageUsersAction(sender: AnyObject?) {
+        let controller = MemberListController()
+        controller.scope = .channel
+        controller.target = .channel
+        controller.manage = true
+        self.navigationController?.pushViewController(controller, animated: true)
+    }
+    
     func doneAction(sender: AnyObject){
         
         if self.mode == .insert {
@@ -122,7 +132,10 @@ class ChannelEditViewController: BaseEditViewController {
             post()
         }
         else {
-            self.close(animated: true)
+            self.activeTextField?.resignFirstResponder()
+            if isValid() {
+                self.close(animated: true)
+            }
         }
     }
     
@@ -148,25 +161,11 @@ class ChannelEditViewController: BaseEditViewController {
                 if isValid() {
                     FireController.db.child(self.channel.path).updateChildValues([
                         "modified_at": FIRServerValue.timestamp(),
-                        "name": emptyToNull(self.nameField.textField.text)
+                        "name": emptyToNull(self.nameField.text)
                     ])
                 }
             }
         }
-    }
-    
-    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
-        if textField == self.nameField.textField {
-            clearErrorIfNeeded(self.nameField)
-        }
-        return true
-    }
-    
-    func textFieldShouldClear(_ textField: UITextField) -> Bool {
-        if textField == self.nameField.textField {
-            clearErrorIfNeeded(self.nameField)
-        }
-        return true
     }
     
     func visibilityChanged(sender: AnyObject) {
@@ -235,12 +234,13 @@ class ChannelEditViewController: BaseEditViewController {
         self.photoEditView.setHostController(controller: self)
         self.photoEditView.configureTo(photoMode: .Placeholder)
 
-        self.nameField.textField.placeholder = "Channel name (lower case)"
-        self.nameField.textField.delegate = self
-        self.nameField.textField.autocapitalizationType = .none
-        self.nameField.textField.autocorrectionType = .no
-        self.nameField.textField.keyboardType = UIKeyboardType.default
-        self.nameField.textField.returnKeyType = UIReturnKeyType.next
+        self.nameField.placeholder = "Channel name"
+        self.nameField.title = "Channel name (lower case)"
+        self.nameField.setDelegate(delegate: self)
+        self.nameField.autocapitalizationType = .none
+        self.nameField.autocorrectionType = .no
+        self.nameField.keyboardType = UIKeyboardType.default
+        self.nameField.returnKeyType = UIReturnKeyType.next
         
         self.purposeField.placeholder = "Channel purpose (optional)"
         self.purposeField.placeholderLabel.numberOfLines = 0
@@ -252,6 +252,12 @@ class ChannelEditViewController: BaseEditViewController {
         self.visibilityLabel.text = "Private Channel"
         self.visibilitySwitch.isOn = false
         self.visibilitySwitch.addTarget(self, action: #selector(visibilityChanged(sender:)), for: .touchUpInside)
+        
+        self.usersButton.setTitle("Manage Channel Members".uppercased(), for: .normal)
+        self.usersButton.imageRight = UIImageView(image: UIImage(named: "imgArrowRightLight"))
+        self.usersButton.imageRight?.bounds.size = CGSize(width: 10, height: 14)
+        self.usersButton.titleEdgeInsets = UIEdgeInsets(top: 0, left: 12, bottom: 0, right: 36)
+        self.usersButton.addTarget(self, action: #selector(manageUsersAction(sender:)), for: .touchUpInside)
 
         self.visibilityGroup.addSubview(self.visibilityLabel)
         self.visibilityGroup.addSubview(self.visibilitySwitch)
@@ -261,11 +267,13 @@ class ChannelEditViewController: BaseEditViewController {
         self.contentHolder.addSubview(self.purposeField)
         self.contentHolder.addSubview(self.photoEditView)
         self.contentHolder.addSubview(self.visibilityGroup)
+        self.contentHolder.addSubview(self.usersButton)
 
         if self.mode == .insert {
 
             Reporting.screen("ChannelNew")
             self.banner.text = "New Channel"
+            self.usersButton.isHidden = true
 
             /* Navigation bar buttons */
             let closeButton = UIBarButtonItem(barButtonSystemItem: .stop, target: self, action: #selector(closeAction(sender:)))
@@ -290,7 +298,7 @@ class ChannelEditViewController: BaseEditViewController {
 
     func bind() {
         
-        self.nameField.textField.text = self.channel.name
+        self.nameField.text = self.channel.name
         self.purposeField.text = self.channel.purpose
         
         if let photo = self.channel.photo, photo.uploading == nil {
@@ -319,15 +327,13 @@ class ChannelEditViewController: BaseEditViewController {
         self.processing = true
         
         let groupId = self.inputGroupId!
-        let channelName = self.nameField.textField.text!
+        let channelName = self.nameField.text!
         
         FireController.instance.channelNameExists(groupId: groupId, channelName: channelName, next: { exists in
             if exists {
                 self.progress?.hide(true)
                 self.processing = false
-                self.nameField.errorLabel.text = "Choose another channel name"
-                self.view.setNeedsLayout()
-                self.nameField.errorLabel.fadeIn()
+                self.nameField.errorMessage = "Choose another channel name"
             }
             else {
                 let channelId = "ch-\(Utils.genRandomId())"
@@ -358,8 +364,8 @@ class ChannelEditViewController: BaseEditViewController {
                     channelMap["purpose"] = self.purposeField.text
                 }
                 
-                if !(self.nameField.textField.text?.isEmpty)! {
-                    channelMap["name"] = self.nameField.textField.text
+                if !(self.nameField.text?.isEmpty)! {
+                    channelMap["name"] = self.nameField.text
                 }
                 
                 if photoMap != nil {
@@ -382,7 +388,7 @@ class ChannelEditViewController: BaseEditViewController {
 
     func isDirty() -> Bool {
 
-        if !self.nameField.textField.text!.isEmpty {
+        if !self.nameField.text!.isEmpty {
             return true
         }
         if !self.purposeField.text!.isEmpty {
@@ -396,20 +402,20 @@ class ChannelEditViewController: BaseEditViewController {
 
     func isValid() -> Bool {
         
-        if self.nameField.textField.isEmpty {
-            showError(self.nameField, error: "Name your channel")
+        if self.nameField.isEmpty {
+            self.nameField.errorMessage = "Name your channel"
             return false
         }
         
-        let channelName = nameField.textField.text!
+        let channelName = nameField.text!
         let characterSet: NSCharacterSet = NSCharacterSet(charactersIn: "abcdefghijklmnopqrstuvwxyz0123456789_-")
         if channelName.rangeOfCharacter(from: characterSet.inverted) != nil {
-            showError(self.nameField, error: "Channel name must be lower case and cannot contain spaces or periods.")
+            self.nameField.errorMessage = "Channel name must be lower case and cannot contain spaces or periods."
             return false
         }
         
-        if (nameField.textField.text!.utf16.count > 21) {
-            showError(self.nameField, error: "Channel name must be 21 characters or less.")
+        if (nameField.text!.utf16.count > 21) {
+            self.nameField.errorMessage = "Channel name must be 21 characters or less."
             return false
         }
 

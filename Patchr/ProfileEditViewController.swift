@@ -22,7 +22,6 @@ class ProfileEditViewController: BaseEditViewController {
     var firstNameField = AirTextField()
     var lastNameField = AirTextField()
     var phoneField = AirPhoneField()
-    var skypeField = AirTextField()
     var accountButton = AirButton()
 
     var fullName: String? {
@@ -81,9 +80,8 @@ class ProfileEditViewController: BaseEditViewController {
         self.firstNameField.alignUnder(self.photoEditView, matchingCenterWithTopPadding: 16, width: 288, height: 48)
         self.lastNameField.alignUnder(self.firstNameField, matchingCenterWithTopPadding: 8, width: 288, height: 48)
         self.phoneField.alignUnder(self.lastNameField, matchingCenterWithTopPadding: 8, width: 288, height: 48)
-        self.skypeField.alignUnder(self.phoneField, matchingCenterWithTopPadding: 8, width: 288, height: 48)
 
-        self.accountButton.alignUnder(self.skypeField, matchingCenterWithTopPadding: 12, width: 288, height: 48)
+        self.accountButton.alignUnder(self.phoneField, matchingCenterWithTopPadding: 12, width: 288, height: 48)
 
         super.viewWillLayoutSubviews()
     }
@@ -140,14 +138,6 @@ class ProfileEditViewController: BaseEditViewController {
                     ])
             }
         }
-        else if textField == self.skypeField {
-            if emptyToNil(self.skypeField.text) != self.user.profile?.skype {
-                FireController.db.child(self.user.path).updateChildValues([
-                    "modified_at": FIRServerValue.timestamp(),
-                    "profile/skype": emptyToNull(self.skypeField.text)
-                    ])
-            }
-        }
     }
     
     override func textFieldShouldReturn(_ textField: UITextField) -> Bool {
@@ -157,8 +147,6 @@ class ProfileEditViewController: BaseEditViewController {
             lastNameField.becomeFirstResponder()
         case lastNameField:
             phoneField.becomeFirstResponder()
-        case phoneField:
-            skypeField.becomeFirstResponder()
         default:
             textField.resignFirstResponder()
         }
@@ -247,14 +235,6 @@ class ProfileEditViewController: BaseEditViewController {
         self.phoneField.keyboardType = .phonePad
         self.phoneField.returnKeyType = .done
         
-        self.skypeField.placeholder = "Skype username"
-        self.skypeField.font = Theme.fontTextDisplay
-        self.skypeField.delegate = self
-        self.skypeField.autocapitalizationType = .none
-        self.skypeField.autocorrectionType = .no
-        self.skypeField.keyboardType = .default
-        self.skypeField.returnKeyType = .done
-
         self.accountButton.setTitle("Account settings".uppercased(), for: .normal)
         self.accountButton.addTarget(self, action: #selector(accountAction(sender:)), for: .touchUpInside)
         
@@ -263,7 +243,6 @@ class ProfileEditViewController: BaseEditViewController {
         self.contentHolder.addSubview(self.firstNameField)
         self.contentHolder.addSubview(self.lastNameField)
         self.contentHolder.addSubview(self.phoneField)
-        self.contentHolder.addSubview(self.skypeField)
         self.contentHolder.addSubview(self.accountButton)
         
         if self.presented {
@@ -282,7 +261,6 @@ class ProfileEditViewController: BaseEditViewController {
         self.firstNameField.text = self.user.profile?.firstName
         self.lastNameField.text = self.user.profile?.lastName
         self.phoneField.text = self.user.profile?.phone
-        self.skypeField.text = self.user.profile?.skype
         
         if let photo = self.user.profile?.photo, photo.uploading == nil {
             if let photoUrl = PhotoUtils.url(prefix: photo.filename, source: photo.source, category: SizeCategory.standard) {

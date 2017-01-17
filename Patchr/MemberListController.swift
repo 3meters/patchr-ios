@@ -24,6 +24,7 @@ class MemberListController: BaseTableController, UITableViewDelegate {
     
     var scope: ListScope = .group
     var target: MemberTarget = .group
+    var manage = false
     
     /*--------------------------------------------------------------------------------------------
      * Lifecycle
@@ -93,8 +94,9 @@ class MemberListController: BaseTableController, UITableViewDelegate {
         if let button = sender as? AirButton, let user = button.data as? FireUser {
             let groupId = self.channel.group!
             let channelId = self.channel.id!
+            let channelName = self.channel.name!
             let userId = user.id!
-            FireController.instance.removeUserFromChannel(userId: userId, groupId: groupId, channelId: channelId)
+            FireController.instance.removeUserFromChannel(userId: userId, groupId: groupId, channelId: channelId, channelName: channelName)
         }
     }
     
@@ -119,7 +121,7 @@ class MemberListController: BaseTableController, UITableViewDelegate {
         
         if self.presented {
             let closeButton = UIBarButtonItem(barButtonSystemItem: .stop, target: self, action: #selector(self.closeAction(sender:)))
-            self.navigationItem.rightBarButtonItems = [closeButton]
+            self.navigationItem.leftBarButtonItems = [closeButton]
         }
     }
 
@@ -144,9 +146,6 @@ class MemberListController: BaseTableController, UITableViewDelegate {
                 let inviteButton = UIBarButtonItem(title: "Invite", style: .plain, target: self, action: #selector(groupInviteAction(sender:)))
                 self.navigationItem.rightBarButtonItems = [inviteButton]
             }
-            
-            let closeButton = UIBarButtonItem(barButtonSystemItem: .stop, target: self, action: #selector(self.closeAction(sender:)))
-            self.navigationItem.leftBarButtonItems = [closeButton]
         }
         
         self.navigationItem.title = self.scope == .channel ? "# \(self.channel!.name!)" : group.title!
@@ -161,25 +160,27 @@ class MemberListController: BaseTableController, UITableViewDelegate {
                 let userQuery = UserQuery(userId: userId, groupId: groupId)
                 
                 cell.reset()
-
+                
                 userQuery.once(with: { user in
                     if user != nil {
                         cell.bind(user: user!)
-                        if self?.scope == .group {
-                            if let role = StateController.instance.group!.role, (role == "owner" || role == "admin") {
-                                cell.actionButton?.isHidden = false
-                                cell.actionButton?.setTitle("Manage", for: .normal)
-                                cell.actionButton?.data = user
-                                cell.actionButton?.addTarget(self, action: #selector(self?.manageUserAction(sender:)), for: .touchUpInside)
-                            }
-                        }
-                        else if self?.scope == .channel {
-                            if let role = StateController.instance.group!.role, (role == "owner" || role == "admin") {
-                                if user!.id != UserController.instance.userId {
+                        if (self?.manage)! {
+                            if self?.scope == .group {
+                                if let role = StateController.instance.group!.role, (role == "owner" || role == "admin") {
                                     cell.actionButton?.isHidden = false
-                                    cell.actionButton?.setTitle("Remove", for: .normal)
+                                    cell.actionButton?.setTitle("Manage", for: .normal)
                                     cell.actionButton?.data = user
-                                    cell.actionButton?.addTarget(self, action: #selector(self?.removeMemberAction(sender:)), for: .touchUpInside)
+                                    cell.actionButton?.addTarget(self, action: #selector(self?.manageUserAction(sender:)), for: .touchUpInside)
+                                }
+                            }
+                            else if self?.scope == .channel {
+                                if let role = StateController.instance.group!.role, (role == "owner" || role == "admin") {
+                                    if user!.id != UserController.instance.userId {
+                                        cell.actionButton?.isHidden = false
+                                        cell.actionButton?.setTitle("Remove", for: .normal)
+                                        cell.actionButton?.data = user
+                                        cell.actionButton?.addTarget(self, action: #selector(self?.removeMemberAction(sender:)), for: .touchUpInside)
+                                    }
                                 }
                             }
                         }

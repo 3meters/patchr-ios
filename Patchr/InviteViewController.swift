@@ -27,7 +27,6 @@ class InviteViewController: BaseEditViewController {
     var channelButton = AirButton()
     var inviteGuestsComment = AirLabelDisplay()
     var inviteListButton = AirLinkButton()
-    var dropdownIndicator: UIImageView!
 
     var channels: [String: Any] = [:]
     var inputGroupId: String?
@@ -60,7 +59,6 @@ class InviteViewController: BaseEditViewController {
         self.channelButton.alignUnder(self.inviteGuestsLabel, matchingCenterWithTopPadding: 4, width: 288, height: max(self.channelButton.height(), 48))
         self.inviteGuestsComment.alignUnder(self.channelButton, matchingCenterWithTopPadding: 12, width: 280, height: inviteGuestsCommentSize.height)
         self.inviteListButton.alignUnder(self.inviteGuestsComment, matchingCenterWithTopPadding: 12, width: 288, height: 48)
-        self.dropdownIndicator.anchorCenterRight(withRightPadding: 24, width: 14, height: 10)
 		
         super.viewWillLayoutSubviews()
 	}
@@ -176,9 +174,10 @@ class InviteViewController: BaseEditViewController {
             self.inviteListButton.setTitle("Pending and accepted invites".uppercased(), for: .normal)
             self.inviteListButton.addTarget(self, action: #selector(inviteListAction(sender:)), for: .touchUpInside)
 
-            self.dropdownIndicator = UIImageView(image: UIImage(named: "imgArrowDownLight"))
-            self.dropdownIndicator.tintColor = Colors.white
             
+            self.channelButton.imageRight = UIImageView(image: UIImage(named: "imgArrowDownLight"))
+            self.channelButton.imageRight?.tintColor = Colors.white
+            self.channelButton.imageRight?.bounds.size = CGSize(width: 14, height: 10)
             self.channelButton.titleLabel?.textAlignment = .center
             self.channelButton.titleLabel?.numberOfLines = 0
             self.channelButton.titleEdgeInsets = UIEdgeInsets(top: 0, left: 36, bottom: 0, right: 36)
@@ -187,7 +186,6 @@ class InviteViewController: BaseEditViewController {
             self.channelButton.layer.cornerRadius = 6
             self.channelButton.setTitleColor(Colors.white, for: .normal)
             self.channelButton.setTitleColor(Colors.gray90pcntColor, for: .highlighted)
-            self.channelButton.addSubview(self.dropdownIndicator)
             self.channelButton.addTarget(self, action: #selector(pickChannel(sender:)), for: .touchUpInside)
             
             if let groupId = StateController.instance.groupId,
