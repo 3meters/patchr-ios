@@ -748,7 +748,7 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
                         let channelId = self.channel.id!
                         FireController.instance.channelRoleCount(groupId: groupId, channelId: channelId, role: "owner") { count in
                             if count != nil && count! < 2 {
-                                self.Alert(title: "Only Owner", message: "Channels need at least one owner.")
+                                self.alert(title: "Only Owner", message: "Channels need at least one owner.")
                                 return
                             }
                             self.leaveChannelAction(sender: nil)

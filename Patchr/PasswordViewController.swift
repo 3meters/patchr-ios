@@ -93,7 +93,7 @@ class PasswordViewController: BaseEditViewController {
     func passwordResetAction(sender: AnyObject) {
         FIRAuth.auth()?.sendPasswordReset(withEmail: self.inputEmail) { error in
             if error == nil {
-                self.Alert(title: "A password reset email has been sent to your email address.")
+                self.alert(title: "A password reset email has been sent to your email address.")
             }
         }
     }

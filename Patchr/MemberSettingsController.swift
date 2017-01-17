@@ -12,6 +12,7 @@ import MBProgressHUD
 class MemberSettingsController: UITableViewController {
     
     var inputUser: FireUser!
+    var inputChannelId: String!
     
     var progress: AirProgress?
     var channelsBefore: [String: Any] = [:]
@@ -25,6 +26,7 @@ class MemberSettingsController: UITableViewController {
     var removeFromGroupButton = AirLinkButton()
     
     var roleValue: String? = nil
+    var target: MemberTarget = .group
 
     /*--------------------------------------------------------------------------------------------
     * Lifecycle
@@ -53,12 +55,7 @@ class MemberSettingsController: UITableViewController {
     }
 
     func closeAction(sender: AnyObject?) {
-        if self.presented {
-            self.dismiss(animated: true, completion: nil)
-        }
-        else {
-            let _ = self.navigationController?.popViewController(animated: true)
-        }
+        self.close(animated: true)
     }
 
     /*--------------------------------------------------------------------------------------------
@@ -286,6 +283,11 @@ extension MemberSettingsController {
     
     override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         return 48
+    }
+    
+    enum MemberTarget: Int {
+        case group
+        case channel
     }
 }
 

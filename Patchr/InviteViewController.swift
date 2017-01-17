@@ -241,7 +241,7 @@ class InviteViewController: BaseEditViewController {
     func isValid() -> Bool {
         if self.validateFor == "guests" {
             if (self.channelButton.titleLabel?.text?.isEmpty)! {
-                Alert(title: "Select a channel")
+                alert(title: "Select a channel")
                 return false
             }
             /* Check for channel that exists */

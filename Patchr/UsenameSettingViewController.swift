@@ -107,19 +107,19 @@ class UsernameSettingViewController: UITableViewController, UITextFieldDelegate 
     func isValid() -> Bool {
         
         if self.usernameCell.textField.isEmpty {
-            Alert(title: "Choose your username for this group")
+            alert(title: "Choose your username for this group")
             return false
         }
         
         let username = usernameCell.textField.text!
         let characterSet: NSCharacterSet = NSCharacterSet(charactersIn: "abcdefghijklmnopqrstuvwxyz0123456789_-")
         if username.rangeOfCharacter(from: characterSet.inverted) != nil {
-            Alert(title: "Username must be lower case and cannot contain spaces or periods.")
+            alert(title: "Username must be lower case and cannot contain spaces or periods.")
             return false
         }
         
         if (usernameCell.textField.text!.utf16.count > 21) {
-            Alert(title: "Username must be 21 characters or less.")
+            alert(title: "Username must be 21 characters or less.")
             return false
         }
         

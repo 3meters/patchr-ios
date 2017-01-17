@@ -171,7 +171,7 @@ class ContactPickerController: BaseTableController, UITableViewDelegate, UITable
                 }
             }
             else {
-                self.Alert(title: "Access to contacts has been denied. Check your privacy settings to allow access.")
+                self.alert(title: "Access to contacts has been denied. Check your privacy settings to allow access.")
             }
         })
     }

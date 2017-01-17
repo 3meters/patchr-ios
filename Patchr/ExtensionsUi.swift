@@ -315,15 +315,30 @@ extension UIViewController {
         if self.tabBarController?.presentingViewController is UITabBarController { return true }
         return false
     }
-	
-	func dismissToast(sender: AnyObject) {
+
+    func close(animated: Bool = true) {
+        /* Override in subclasses for control of dismiss/pop process */
+        if self.presented {
+            if self.navigationController != nil {
+                self.navigationController!.dismiss(animated: animated, completion: nil)
+            }
+            else {
+                self.dismiss(animated: animated, completion: nil)
+            }
+        }
+        else {
+            let _ = self.navigationController?.popViewController(animated: true)
+        }
+    }
+
+    func dismissToast(sender: AnyObject) {
 		if let gesture = sender as? UIGestureRecognizer, let hud = gesture.view as? MBProgressHUD {
 			hud.animationType = MBProgressHUDAnimation.zoomIn
 			hud.hide(true)
 		}
 	}
         
-	func Alert(title: String?, message: String? = nil, cancelButtonTitle: String = "OK", onDismiss: (() -> Void)? = nil) {
+	func alert(title: String?, message: String? = nil, cancelButtonTitle: String = "OK", onDismiss: (() -> Void)? = nil) {
 		let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
 		let okAction = UIAlertAction(title: cancelButtonTitle, style: .cancel, handler: { _ in onDismiss?() })
 		alert.addAction(okAction)

@@ -175,7 +175,7 @@ class ChannelPickerController: BaseTableController, CLTokenInputViewDelegate {
     func isValid() -> Bool {
         
         if self.channels.count == 0 {
-            Alert(title: "Select a channel")
+            alert(title: "Select a channel")
             return false
         }
         

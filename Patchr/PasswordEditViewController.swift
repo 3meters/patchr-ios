@@ -139,7 +139,7 @@ class PasswordEditViewController: BaseEditViewController {
     func isValid() -> Bool {
 		
         if (passwordField.text!.utf16.count < 6) {
-            Alert(title: "Enter a new password with six characters or more.")
+            alert(title: "Enter a new password with six characters or more.")
             return false
         }
         return true

@@ -77,21 +77,6 @@ class BaseViewController: UIViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(viewDidBecomeActive(sender:)), name: NSNotification.Name.UIApplicationDidBecomeActive, object: nil)
 	}
 	
-	func close(animated: Bool = true) {
-		/* Override in subclasses for control of dismiss/pop process */
-		if self.presented {
-			if self.navigationController != nil {
-				self.navigationController!.dismiss(animated: animated, completion: nil)
-			}
-			else {
-				self.dismiss(animated: animated, completion: nil)
-			}
-		}
-		else {
-			let _ = self.navigationController?.popViewController(animated: true)
-		}
-	}
-    
     override var preferredStatusBarUpdateAnimation: UIStatusBarAnimation {
         return UIStatusBarAnimation.slide
     }
