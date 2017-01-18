@@ -25,12 +25,19 @@ class MemberViewController: BaseViewController, UIScrollViewDelegate, UITextFiel
     var skype = AirLabelStack()
     var editButton = AirButton()
     var callButton = AirButton()
+    var messageButton = AirButton()
     var buttonGroup = UIView()
     var profileGroup = UIView()
     
     var originalRect: CGRect?
     var originalScrollTop = CGFloat(-64.0)
     var lastContentOffset = CGFloat(0)
+    
+    /*
+     * Buttons
+     * Logged in user: Message, Edit Profile
+     * Other users: Message, Call, Options:
+     */
 
 	/*--------------------------------------------------------------------------------------------
 	 * Lifecycle

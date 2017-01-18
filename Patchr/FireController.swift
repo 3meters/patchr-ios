@@ -160,7 +160,7 @@ class FireController: NSObject {
     }
     
     func addUserToChannel(userId: String, groupId: String, channelId: String, channelName: String?,
-                          role: String! = "member", inviter: String? = nil, then: ((Bool) -> Void)? = nil) {
+                          role: String! = "member", inviter: String? = nil, adminId: String? = nil, then: ((Bool) -> Void)? = nil) {
         
         let channelLink = channelMemberMap(timestamp: Utils.now(), priorityIndex: 4, role: role /* neutral */)
         var updates: [String: Any] = [:]
@@ -172,7 +172,8 @@ class FireController: NSObject {
                 if inviter != nil {
                     text = channelName != nil ? "joined #\(channelName!) by invitation from @\(inviter!)." : "joined by invitation from @\(inviter!)."
                 }
-                self.sendAdminMessage(channelId: channelId, userId: userId, text: text)
+                let adminId = adminId ?? userId
+                self.sendAdminMessage(channelId: channelId, userId: adminId, text: text)
             }
             then?(error == nil)
         }
@@ -616,6 +617,7 @@ class FireController: NSObject {
     }
     
     func emailProviderExists(email: String, next: @escaping ((Bool) -> Void)) {
+        /* Currently unused */
         FIRAuth.auth()?.fetchProviders(forEmail: email, completion: { providers, error in
             next(error == nil && providers != nil && providers!.count > 0)
         })

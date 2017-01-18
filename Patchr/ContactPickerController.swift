@@ -69,6 +69,18 @@ class ContactPickerController: BaseTableController, UITableViewDelegate, UITable
     * Events
     *--------------------------------------------------------------------------------------------*/
     
+    func closeAction(sender: AnyObject?) {
+        let groupId = self.inputGroupId!
+        FireController.instance.findFirstChannel(groupId: groupId) { firstChannelId in
+            if firstChannelId != nil {
+                StateController.instance.setChannelId(channelId: firstChannelId!, groupId: groupId)
+                MainController.instance.showChannel(groupId: groupId, channelId: firstChannelId!)
+                let _ = self.navigationController?.popToRootViewController(animated: false)
+                self.close()
+            }
+        }
+    }
+    
     func inviteAction(sender: AnyObject?) {
         invite()
     }
@@ -79,8 +91,7 @@ class ContactPickerController: BaseTableController, UITableViewDelegate, UITable
             if firstChannelId != nil {
                 StateController.instance.setChannelId(channelId: firstChannelId!, groupId: groupId)
                 MainController.instance.showChannel(groupId: groupId, channelId: firstChannelId!)
-                let _ = self.navigationController?.popToRootViewController(animated: false)
-                self.close()
+                self.navigationController?.close()
             }
         }
     }
@@ -136,6 +147,11 @@ class ContactPickerController: BaseTableController, UITableViewDelegate, UITable
         
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(notification:)), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(notification:)), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
+        
+        if self.flow == .internalCreate {
+            let closeButton = UIBarButtonItem(barButtonSystemItem: .stop, target: self, action: #selector(closeAction(sender:)))
+            self.navigationItem.leftBarButtonItems = [closeButton]
+        }
         
         self.inviteButton = UIBarButtonItem(title: "Invite", style: .plain, target: self, action: #selector(inviteAction(sender:)))
         self.inviteButton.isEnabled = false
@@ -257,8 +273,8 @@ class ContactPickerController: BaseTableController, UITableViewDelegate, UITable
         
         if self.role == "members" {
             
-            let groupId = StateController.instance.group?.id ?? self.inputGroupId!
-            let groupTitle = StateController.instance.group?.title ?? self.inputGroupTitle!
+            let groupId = self.inputGroupId ?? StateController.instance.groupId!
+            let groupTitle = self.inputGroupTitle ?? StateController.instance.group!.title!
             let username = UserController.instance.user!.username!
             
             for key in self.invites.keys {
@@ -287,7 +303,7 @@ class ContactPickerController: BaseTableController, UITableViewDelegate, UITable
                         
                         let queueRef = FireController.db.child("queue/emails").childByAutoId()
                         queueRef.setValue(task)
-                        if self.flow == .onboardCreate {
+                        if self.flow == .onboardCreate || self.flow == .internalCreate {
                             self.onboardAction(sender: nil)
                         }
                         else {

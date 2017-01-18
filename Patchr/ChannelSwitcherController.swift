@@ -76,10 +76,9 @@ class ChannelSwitcherController: BaseTableController {
     func addAction(sender: AnyObject?) {
         let groupId = StateController.instance.groupId!
         let controller = ChannelEditViewController()
-        let wrapper = AirNavigationController()
+        let wrapper = AirNavigationController(rootViewController: controller)
         controller.mode = .insert
         controller.inputGroupId = groupId
-        wrapper.viewControllers = [controller]
         self.slideMenuController()?.closeLeft()
         self.present(wrapper, animated: true, completion: nil)
     }

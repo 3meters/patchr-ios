@@ -93,8 +93,8 @@ class GalleryGridViewController: UICollectionViewController {
 	 * Events
 	 *--------------------------------------------------------------------------------------------*/
     
-    func closeAction(sender: AnyObject){
-        self.dismiss(animated: true, completion: nil)
+    func closeAction(sender: AnyObject) {
+        self.close(animated: true)
     }
     
 	/*--------------------------------------------------------------------------------------------

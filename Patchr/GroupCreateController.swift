@@ -8,6 +8,7 @@
 
 import UIKit
 import MBProgressHUD
+import Contacts
 import FirebaseAuth
 import Firebase
 
@@ -57,7 +58,7 @@ class GroupCreateController: BaseEditViewController {
     }
 
     func cancelAction(sender: AnyObject?) {
-        close()
+        self.close(animated: true)
     }
     
     /*--------------------------------------------------------------------------------------------
@@ -93,7 +94,7 @@ class GroupCreateController: BaseEditViewController {
         let createButton = UIBarButtonItem(title: "Create", style: UIBarButtonItemStyle.plain, target: self, action: #selector(doneAction(sender:)))
         self.navigationItem.rightBarButtonItems = [createButton]
         
-        if self.flow == .none {
+        if self.flow == .none || self.flow == .internalCreate {
             let closeButton = UIBarButtonItem(barButtonSystemItem: .stop, target: self, action: #selector(cancelAction(sender:)))
             self.navigationItem.leftBarButtonItems = [closeButton]
         }
@@ -114,22 +115,22 @@ class GroupCreateController: BaseEditViewController {
             self.processing = false
 
             if success {
-                if self.flow == .onboardCreate {
-                    let controller = InviteViewController()
-                    controller.flow = .onboardCreate
+                if CNContactStore.authorizationStatus(for: .contacts) == .authorized {
+                    /* Straight to contact picker */
+                    let controller = ContactPickerController()
+                    controller.role = "members"
+                    controller.flow = self.flow
                     controller.inputGroupId = groupId
                     controller.inputGroupTitle = self.groupTitleField.text!
-                    self.navigationController?.pushViewController(controller, animated: true)
+                    self.navigationController?.setViewControllers([controller], animated: true)
                 }
                 else {
-                    FireController.instance.findFirstChannel(groupId: groupId) { firstChannelId in
-                        if firstChannelId != nil {
-                            StateController.instance.setChannelId(channelId: firstChannelId!, groupId: groupId)
-                            MainController.instance.showChannel(groupId: groupId, channelId: firstChannelId!)
-                            let _ = self.navigationController?.popToRootViewController(animated: false)
-                            self.cancelAction(sender: nil)
-                        }
-                    }
+                    /* Show invite doorstep so they know why contacts are needed. */
+                    let controller = InviteViewController()
+                    controller.flow = self.flow
+                    controller.inputGroupId = groupId
+                    controller.inputGroupTitle = self.groupTitleField.text!
+                    self.navigationController?.setViewControllers([controller], animated: true)
                 }
             }
         })

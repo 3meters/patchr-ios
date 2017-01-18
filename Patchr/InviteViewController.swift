@@ -118,18 +118,13 @@ class InviteViewController: BaseEditViewController {
 		super.initialize()
 		
 		Reporting.screen("PatchInvite")
-		
-        if self.flow != .onboardCreate {
-            self.message.text = "Invite people to \(StateController.instance.group.title!)."
-        }
-        else {
-            self.message.text = "Invite people to \(self.inputGroupTitle!)."
-        }
         
+        let groupTitle = self.flow != .onboardCreate ? StateController.instance.group.title! : self.inputGroupTitle!
+        self.message.text = "Invite people to \(groupTitle)."
 		self.message.textAlignment = NSTextAlignment.center
 		self.message.numberOfLines = 0
         
-        if self.flow == .onboardCreate {
+        if self.flow == .onboardCreate || self.flow == .internalCreate {
             /*
              * Invite dialog doesn't show if user is already a member or pending.
              */
@@ -263,31 +258,5 @@ extension InviteViewController: PickerDelegate {
         self.inviteGuestsLabel.text = channels.count > 1 ? "Selected channels" : "Selected channel"
         self.channelButton.setTitle(channelsLabel, for: .normal)
         self.view.setNeedsLayout()
-    }
-}
-
-extension InviteViewController: MFMailComposeViewControllerDelegate {
-    func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Error?) {
-        
-        switch result {
-        case MFMailComposeResult.cancelled:    // 0
-            UIShared.Toast(message: "Invites cancelled", controller: self, addToWindow: false)
-        case MFMailComposeResult.saved:        // 1
-            UIShared.Toast(message: "Invites saved", controller: self, addToWindow: false)
-        case MFMailComposeResult.sent:        // 2
-            Reporting.track("Sent Invites")
-            UIShared.Toast(message: "Invites sent", controller: self, addToWindow: false)
-            if self.flow == .onboardCreate {
-                doneAction(sender: nil)
-            }
-        case MFMailComposeResult.failed:    // 3
-            UIShared.Toast(message: "Invites send failure: \(error!.localizedDescription)", controller: self, addToWindow: false)
-            break
-        }
-        
-        self.dismiss(animated: true) {
-            MailComposer = nil
-            MailComposer = MFMailComposeViewController()
-        }
     }
 }

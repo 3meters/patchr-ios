@@ -21,12 +21,16 @@ class UserQuery: NSObject {
     
     var block: ((FireUser?) -> ())?
 
-    init(userId: String, groupId: String?, trackPresence: Bool = false) {
+    init(userId: String, groupId: String?, channelId: String? = nil, trackPresence: Bool = false) {
         super.init()
         self.userPath = "users/\(userId)"
-        if groupId != nil {
+        if channelId != nil {
+            self.linkPath = "member-channels/\(userId)/\(groupId!)/\(channelId!)"
+        }
+        else if groupId != nil {
             self.linkPath = "group-members/\(groupId!)/\(userId)"
         }
+        
         if trackPresence {
             self.onlineHandle = FireController.db.child(".info/connected").observe(.value, with: { snap in
                 if !(snap.value is NSNull) {

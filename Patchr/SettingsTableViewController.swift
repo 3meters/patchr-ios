@@ -123,13 +123,8 @@ class SettingsTableViewController: UITableViewController {
         self.progress!.hide(true)
     }
     
-    func closeAction(sender: AnyObject?){
-        if self.presented {
-            self.dismiss(animated: true)
-        }
-        else {
-            let _ = self.navigationController?.popViewController(animated: true)
-        }
+    func closeAction(sender: AnyObject?) {
+        close(animated: true)
     }
 
     /*--------------------------------------------------------------------------------------------

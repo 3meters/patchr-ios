@@ -16,13 +16,15 @@ import FirebaseDatabaseUI
 
 class MemberPickerController: BaseTableController, UITableViewDelegate {
     
+    var inputChannelId: String?
+    
     var submitButton: UIBarButtonItem!
     var tableView = UITableView(frame: CGRect.zero, style: .plain)
     var tableViewDataSource: FUITableViewDataSource!
     let cellReuseIdentifier = "user-cell"
     
     var invites: [String: Any] = [:]
-    
+    var flow: Flow = .none
     var channel: FireChannel!
     
     /*--------------------------------------------------------------------------------------------
@@ -34,7 +36,7 @@ class MemberPickerController: BaseTableController, UITableViewDelegate {
         initialize()
         
         let groupId = StateController.instance.groupId!
-        let channelId = StateController.instance.channelId!
+        let channelId = self.inputChannelId ?? StateController.instance.channelId!
         let userId = UserController.instance.userId!
         let channelQuery = ChannelQuery(groupId: groupId, channelId: channelId, userId: userId)
         
@@ -60,7 +62,13 @@ class MemberPickerController: BaseTableController, UITableViewDelegate {
     }
     
     func closeAction(sender: AnyObject?) {
-        close()
+        if self.flow == .internalCreate {
+            let groupId = StateController.instance.groupId!
+            let channelId = self.inputChannelId ?? StateController.instance.channelId!
+            StateController.instance.setChannelId(channelId: channelId, groupId: groupId, next: nil) // We know it's good
+            MainController.instance.showChannel(groupId: groupId, channelId: channelId)
+        }
+        self.close(animated: true)
     }
     
     /*--------------------------------------------------------------------------------------------
@@ -150,7 +158,14 @@ class MemberPickerController: BaseTableController, UITableViewDelegate {
                 for userId in self.invites.keys {
                     FireController.instance.addUserToChannel(userId: userId, groupId: groupId, channelId: channelId, channelName: channelName)
                 }
-                self.close()
+                if self.flow == .none {
+                    self.close(animated: true)
+                }
+                else if self.flow == .internalCreate {
+                    StateController.instance.setChannelId(channelId: channelId, groupId: groupId, next: nil) // We know it's good
+                    MainController.instance.showChannel(groupId: groupId, channelId: channelId)
+                    self.close(animated: true)
+                }
             }
         })
     }
@@ -177,5 +192,10 @@ class MemberPickerController: BaseTableController, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 64
+    }
+    
+    enum Flow: Int {
+        case internalCreate
+        case none
     }
 }

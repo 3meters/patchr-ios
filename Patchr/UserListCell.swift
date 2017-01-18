@@ -81,7 +81,7 @@ class UserListCell: UITableViewCell {
         self.subtitle?.text = email!
     }
     
-    func bind(user: FireUser) {
+    func bind(user: FireUser, target: String = "group") {
         
         self.user = user
         self.presenceView?.bind(online: user.presence)
@@ -101,20 +101,27 @@ class UserListCell: UITableViewCell {
         if user.username != nil {
             self.subtitle?.text = "@\(user.username!)"
         }
-
-        self.roleLabel?.text = user.role
         
-        if user.role == "owner" {
-            self.roleLabel?.textColor = MaterialColor.deepOrange.base
+        if target == "group" {
+            self.roleLabel?.text = user.role
+            if user.role == "owner" {
+                self.roleLabel?.textColor = MaterialColor.deepOrange.base
+            }
+            else if user.role == "admin" {
+                self.roleLabel?.textColor = MaterialColor.amber.base
+            }
+            else if user.role == "member" {
+                self.roleLabel?.textColor = MaterialColor.lightGreen.base
+            }
+            else if user.role == "guest" {
+                self.roleLabel?.textColor = MaterialColor.lightBlue.base
+            }
         }
-        else if user.role == "admin" {
-            self.roleLabel?.textColor = MaterialColor.amber.base
-        }
-        else if user.role == "member" {
-            self.roleLabel?.textColor = MaterialColor.lightGreen.base
-        }
-        else if user.role == "guest" {
-            self.roleLabel?.textColor = MaterialColor.lightBlue.base
+        else {
+            if user.role == "owner" {
+                self.roleLabel?.text = user.role
+                self.roleLabel?.textColor = MaterialColor.deepOrange.base
+            }
         }
         
         let fullName = user.profile?.fullName ?? user.username

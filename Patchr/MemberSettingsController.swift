@@ -12,7 +12,7 @@ import MBProgressHUD
 class MemberSettingsController: UITableViewController {
     
     var inputUser: FireUser!
-    var inputChannelId: String!
+    var inputChannel: FireChannel!
     
     var progress: AirProgress?
     var channelsBefore: [String: Any] = [:]
@@ -22,10 +22,11 @@ class MemberSettingsController: UITableViewController {
     var roleMemberCell = AirTableViewCell()
     var roleGuestCell = AirTableViewCell()
     var guestChannelsCell = AirTableViewCell()
-    var removeFromGroupCell = AirTableViewCell()
-    var removeFromGroupButton = AirLinkButton()
+    var removeCell = AirTableViewCell()
+    var removeButton = AirLinkButton()
     
-    var roleValue: String? = nil
+    var role: String? = nil
+    var roleNext: String? = nil
     var target: MemberTarget = .group
 
     /*--------------------------------------------------------------------------------------------
@@ -42,7 +43,7 @@ class MemberSettingsController: UITableViewController {
         super.viewWillLayoutSubviews()
         let viewWidth = min(CONTENT_WIDTH_MAX, self.tableView.bounds.size.width)
         self.tableView.bounds.size.width = viewWidth
-        self.removeFromGroupButton.fillSuperview()
+        self.removeButton.fillSuperview()
     }
     
     /*--------------------------------------------------------------------------------------------
@@ -51,11 +52,26 @@ class MemberSettingsController: UITableViewController {
 
     func doneAction(sender: AnyObject?) {
         update()
-        closeAction(sender: nil)
     }
 
     func closeAction(sender: AnyObject?) {
-        self.close(animated: true)
+        close(animated: true)
+    }
+
+    func removeAction(sender: AnyObject?) {
+        if self.role == "owner" {    // Check if only owner
+            let groupId = StateController.instance.groupId!
+            let channelId = self.inputChannel.id!
+            FireController.instance.channelRoleCount(groupId: groupId, channelId: channelId, role: "owner") { count in
+                if count != nil && count! < 2 {
+                    self.alert(title: "Only Owner", message: "Channels need at least one owner.")
+                    return
+                }
+                self.remove()
+            }
+            return
+        }
+        remove()
     }
 
     /*--------------------------------------------------------------------------------------------
@@ -87,11 +103,11 @@ class MemberSettingsController: UITableViewController {
         self.guestChannelsCell.textLabel?.lineBreakMode = .byWordWrapping
         self.guestChannelsCell.bounds = CGRect(x: 0, y: 0, width: self.view.width(), height: 9999)
         
-        let groupTitle = StateController.instance.group.title!
-        self.removeFromGroupCell.contentView.addSubview(self.removeFromGroupButton)
-        self.removeFromGroupCell.accessoryType = .none
-        self.removeFromGroupButton.setTitle("Remove from \(groupTitle) ".uppercased(), for: .normal)        
-        self.removeFromGroupButton.addTarget(self, action: #selector(removeFromGroupAction(sender:)), for: .touchUpInside)
+        let targetTitle = self.target == .group ? StateController.instance.group.title! : self.inputChannel.name!
+        self.removeCell.contentView.addSubview(self.removeButton)
+        self.removeCell.accessoryType = .none
+        self.removeButton.setTitle("Remove from \(targetTitle) ".uppercased(), for: .normal)
+        self.removeButton.addTarget(self, action: #selector(removeAction(sender:)), for: .touchUpInside)
         
         let closeButton = UIBarButtonItem(barButtonSystemItem: .stop, target: self, action: #selector(closeAction(sender:)))
         self.navigationItem.leftBarButtonItems = [closeButton]
@@ -100,29 +116,45 @@ class MemberSettingsController: UITableViewController {
     }
     
     func bind() {
-        self.roleValue = self.inputUser.role
-        self.roleOwnerCell.accessoryType = self.roleValue == "owner" ? .checkmark : .none
-        self.roleMemberCell.accessoryType = self.roleValue == "member" ? .checkmark : .none
-        self.roleGuestCell.accessoryType = self.roleValue == "guest" ? .checkmark : .none
-        
+
         let groupId = StateController.instance.groupId!
         let userId = self.inputUser.id!
-        FireController.db.child("member-channels/\(userId)/\(groupId)")
-            .observeSingleEvent(of: .value, with: { snap in
-                if !(snap.value is NSNull) {
-                    let channels = snap.value as! [String: Any]
-                    for channelId in channels.keys {
-                        FireController.db.child("group-channels/\(groupId)/\(channelId)")
-                            .observeSingleEvent(of: .value, with: { snap in
-                                if let channel = snap.value as? [String: Any] {
-                                    self.channelsBefore[channelId] = channel["name"]
-                                    self.channelsAfter[channelId] = channel["name"]
-                                    self.tableView.reloadData()
-                                }
-                        })
+        
+        if self.target == .group {
+            
+            self.role = self.inputUser.role
+            self.roleOwnerCell.accessoryType = self.role == "owner" ? .checkmark : .none
+            self.roleMemberCell.accessoryType = self.role == "member" ? .checkmark : .none
+            self.roleGuestCell.accessoryType = self.role == "guest" ? .checkmark : .none
+
+            FireController.db.child("member-channels/\(userId)/\(groupId)")
+                    .observeSingleEvent(of: .value, with: { snap in
+                        if !(snap.value is NSNull) {
+                            let channels = snap.value as! [String: Any]
+                            for channelId in channels.keys {
+                                FireController.db.child("group-channels/\(groupId)/\(channelId)")
+                                        .observeSingleEvent(of: .value, with: { snap in
+                                            if let channel = snap.value as? [String: Any] {
+                                                self.channelsBefore[channelId] = channel["name"]
+                                                self.channelsAfter[channelId] = channel["name"]
+                                                self.tableView.reloadData()
+                                            }
+                                        })
+                            }
+                        }
+                    })
+        }
+        else {
+            let channelId = self.inputChannel.id!
+            FireController.db.child("member-channels/\(userId)/\(groupId)/\(channelId)/role")
+                .observeSingleEvent(of: .value, with: { snap in
+                    if let memberRole = snap.value as? String {
+                        self.role = memberRole
+                        self.roleOwnerCell.accessoryType = self.role == "owner" ? .checkmark : .none
+                        self.roleMemberCell.accessoryType = self.role == "member" ? .checkmark : .none
                     }
-                }
-        })
+                })
+        }
     }
     
     func bindChannels() {
@@ -143,79 +175,116 @@ class MemberSettingsController: UITableViewController {
         
         let groupId = StateController.instance.groupId!
         let userId = self.inputUser.id!
-        
-        if self.roleValue != self.inputUser.role {
-            
-            let role = self.roleValue!
-            let memberGroupsPath = "member-groups/\(userId)/\(groupId)/role"
-            let groupMembersPath = "group-members/\(groupId)/\(userId)/role"
-            
-            let updates: [String: Any] = [
-                groupMembersPath: role,
-                memberGroupsPath: role
-            ]
-            
-            FireController.db.updateChildValues(updates)
-            
-            /* Switching to full member */
-            if self.inputUser.role == "guest" {
-                FireController.db.child("groups/\(groupId)/default_channels")
-                    .observeSingleEvent(of: .value, with: { snap in
-                    if let channelIds = snap.value as? [String] {
-                        for channelId in channelIds {
-                            if self.channelsAfter[channelId] == nil {
-                                FireController.instance.addUserToChannel(userId: userId, groupId: groupId, channelId: channelId, channelName: nil)
-                            }
+
+        if self.target == .group {
+            if self.roleNext != self.role {
+
+                let role = self.roleNext!
+                let memberGroupsPath = "member-groups/\(userId)/\(groupId)/role"
+                let groupMembersPath = "group-members/\(groupId)/\(userId)/role"
+
+                let updates: [String: Any] = [
+                    groupMembersPath: role,
+                    memberGroupsPath: role
+                ]
+
+                FireController.db.updateChildValues(updates)
+
+                /* Switching to full member */
+                if self.role == "guest" {
+                    FireController.db.child("groups/\(groupId)/default_channels")
+                            .observeSingleEvent(of: .value, with: { snap in
+                                if let channelIds = snap.value as? [String] {
+                                    for channelId in channelIds {
+                                        if self.channelsAfter[channelId] == nil {
+                                            FireController.instance.addUserToChannel(userId: userId, groupId: groupId, channelId: channelId, channelName: nil)
+                                        }
+                                    }
+                                }
+                            })
+                }
+            }
+
+            /* Find channel removals */
+            for channelId in self.channelsBefore.keys {
+                if self.channelsAfter[channelId] == nil {
+                    let channelName = self.channelsBefore[channelId] as! String
+                    FireController.instance.removeUserFromChannel(userId: userId, groupId: groupId, channelId: channelId, channelName: channelName)
+                }
+            }
+
+            /* Find channel additions */
+            for channelId in self.channelsAfter.keys {
+                if self.channelsBefore[channelId] == nil {
+                    let channelName = self.channelsAfter[channelId] as! String
+                    FireController.instance.addUserToChannel(userId: userId, groupId: groupId, channelId: channelId, channelName: channelName)
+                }
+            }
+            closeAction(sender: nil)
+        }
+        else {
+            if self.roleNext != self.role {
+                if self.role == "owner" {    // Check if only owner
+                    let groupId = StateController.instance.groupId!
+                    let channelId = self.inputChannel.id!
+                    FireController.instance.channelRoleCount(groupId: groupId, channelId: channelId, role: "owner") { count in
+                        if count != nil && count! < 2 {
+                            self.alert(title: "Only Owner", message: "Channels need at least one owner.")
+                            return
                         }
+                        let channelId = self.inputChannel.id!
+                        let memberPath = "member-channels/\(userId)/\(groupId)/\(channelId)/role"
+                        FireController.db.child(memberPath).setValue(self.roleNext!)
+                        self.closeAction(sender: nil)
                     }
-                })
-            }
-        }
-            
-        /* Find channel removals */
-        for channelId in self.channelsBefore.keys {
-            if self.channelsAfter[channelId] == nil {
-                let channelName = self.channelsBefore[channelId] as! String
-                FireController.instance.removeUserFromChannel(userId: userId, groupId: groupId, channelId: channelId, channelName: channelName)
-            }
-        }
-        
-        /* Find channel additions */
-        for channelId in self.channelsAfter.keys {
-            if self.channelsBefore[channelId] == nil {
-                let channelName = self.channelsAfter[channelId] as! String
-                FireController.instance.addUserToChannel(userId: userId, groupId: groupId, channelId: channelId, channelName: channelName)
+                    return
+                }
+                let channelId = self.inputChannel.id!
+                let memberPath = "member-channels/\(userId)/\(groupId)/\(channelId)/role"
+                FireController.db.child(memberPath).setValue(self.roleNext!)
+                closeAction(sender: nil)
             }
         }
     }
     
-    func removeFromGroupAction(sender: AnyObject?) {
-        
+    func remove() {
         let userTitle = self.inputUser!.profile?.fullName ?? self.inputUser!.username!
-
+        let targetTitle = self.target == .group ? "group" : "channel"
+        
         DeleteConfirmationAlert(
             title: "Confirm",
-            message: "Are you sure you want to remove \(userTitle) from this group?",
-            actionTitle: "Remove", cancelTitle: "Cancel", delegate: self) { doIt in
-                if doIt {
-                    self.progress = AirProgress.showAdded(to: self.view.window!, animated: true)
-                    self.progress!.mode = MBProgressHUDMode.indeterminate
-                    self.progress!.styleAs(progressStyle: .activityWithText)
-                    self.progress!.minShowTime = 0.5
-                    self.progress!.labelText = "Removing..."
-                    self.progress!.removeFromSuperViewOnHide = true
-                    self.progress!.show(true)
-                    
-                    if let group = StateController.instance.group {
-                        let userId = self.inputUser.id!
-                        FireController.instance.removeUserFromGroup(userId: userId, groupId: group.id!, then: { success in
-                            self.progress?.hide(true)
-                            if success {
-                                self.closeAction(sender: nil)
-                            }
-                        })
+            message: "Are you sure you want to remove \(userTitle) from this \(targetTitle)?",
+        actionTitle: "Remove", cancelTitle: "Cancel", delegate: self) { doIt in
+            if doIt {
+                self.progress = AirProgress.showAdded(to: self.view.window!, animated: true)
+                self.progress!.mode = MBProgressHUDMode.indeterminate
+                self.progress!.styleAs(progressStyle: .activityWithText)
+                self.progress!.minShowTime = 0.5
+                self.progress!.labelText = "Removing..."
+                self.progress!.removeFromSuperViewOnHide = true
+                self.progress!.show(true)
+                
+                let userId = self.inputUser.id!
+                let groupId = StateController.instance.groupId!
+                if self.target == .group {
+                    FireController.instance.removeUserFromGroup(userId: userId, groupId: groupId) { success in
+                        self.progress?.hide(true)
+                        if success {
+                            self.closeAction(sender: nil)
+                        }
                     }
                 }
+                else {
+                    let channelId = self.inputChannel.id!
+                    let channelName = self.inputChannel.name!
+                    FireController.instance.removeUserFromChannel(userId: userId, groupId: groupId, channelId: channelId, channelName: channelName) { success in
+                        self.progress?.hide(true)
+                        if success {
+                            self.closeAction(sender: nil)
+                        }
+                    }
+                }
+            }
         }
     }
 }
@@ -223,60 +292,90 @@ class MemberSettingsController: UITableViewController {
 extension MemberSettingsController {
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        
-        if indexPath.section == 0 {
-            let selectedCell = tableView.cellForRow(at: indexPath)
-            
-            self.roleValue = selectedCell?.textLabel!.text!.lowercased()
-            self.roleOwnerCell.accessoryType = .none
-            self.roleMemberCell.accessoryType = .none
-            self.roleGuestCell.accessoryType = .none
-            
-            selectedCell!.accessoryType = .checkmark
-            self.tableView.reloadData()
-        }
-        else if self.roleValue == "guest" && indexPath.section == 1 {
-            let controller = ChannelPickerController()
-            let wrapper = AirNavigationController(rootViewController: controller)
-            if self.channelsAfter.count > 0 {
-                for channelId in self.channelsAfter.keys {
-                    let channel = self.channelsAfter[channelId]
-                    controller.channels[channelId] = channel
-                }
+
+        if self.target == .group {
+            if indexPath.section == 0 {
+                let selectedCell = tableView.cellForRow(at: indexPath)
+                self.roleNext = selectedCell?.textLabel!.text!.lowercased()
+                self.roleOwnerCell.accessoryType = .none
+                self.roleMemberCell.accessoryType = .none
+                self.roleGuestCell.accessoryType = .none
+                selectedCell!.accessoryType = .checkmark
+                self.tableView.reloadData()
             }
-            controller.delegate = self
-            self.navigationController?.present(wrapper, animated: true, completion: nil)
+            else if self.roleNext == "guest" && indexPath.section == 1 {
+                let controller = ChannelPickerController()
+                let wrapper = AirNavigationController(rootViewController: controller)
+                if self.channelsAfter.count > 0 {
+                    for channelId in self.channelsAfter.keys {
+                        let channel = self.channelsAfter[channelId]
+                        controller.channels[channelId] = channel
+                    }
+                }
+                controller.delegate = self
+                self.navigationController?.present(wrapper, animated: true, completion: nil)
+            }
+        }
+        else {
+            if indexPath.section == 0 {
+                let selectedCell = tableView.cellForRow(at: indexPath)
+                self.roleNext = selectedCell?.textLabel!.text!.lowercased()
+                self.roleOwnerCell.accessoryType = .none
+                self.roleMemberCell.accessoryType = .none
+                selectedCell!.accessoryType = .checkmark
+                self.tableView.reloadData()
+            }
         }
     }
 
     override func numberOfSections(in: UITableView) -> Int {
-        return self.roleValue == "guest" ? 3 : 2
+        if self.target == .group {
+            return self.roleNext == "guest" ? 3 : 2
+        }
+        return 2
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if section == 0 { return 3 }
+        if self.target == .group {
+            if section == 0 { return 3 }
+            return 1
+        }
+        if section == 0 { return 2 }
         return 1
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        if self.target == .group {
+            if indexPath.section == 0 {
+                if indexPath.row == 0 { return self.roleOwnerCell }
+                if indexPath.row == 1 { return self.roleMemberCell }
+                if indexPath.row == 2 { return self.roleGuestCell }
+            }
+            if (self.roleNext == "guest" && indexPath.section == 1) {
+                bindChannels()
+                return self.guestChannelsCell
+            }
+            return self.removeCell
+        }
         if indexPath.section == 0 {
             if indexPath.row == 0 { return self.roleOwnerCell }
             if indexPath.row == 1 { return self.roleMemberCell }
-            if indexPath.row == 2 { return self.roleGuestCell }
         }
-        if (self.roleValue == "guest" && indexPath.section == 1) {
-            bindChannels()
-            return self.guestChannelsCell
-        }
-        return self.removeFromGroupCell
+        return self.removeCell
     }
 
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        if section == 0 {
-            return "Group role".uppercased()
+        if self.target == .group {
+            if section == 0 {
+                return "Group role".uppercased()
+            }
+            if self.roleNext == "guest" && section == 1 {
+                return "Guest channels".uppercased()
+            }
+            return nil
         }
-        if self.roleValue == "guest" && section == 1 {
-            return "Guest channels".uppercased()
+        if section == 0 {
+            return "Channel role".uppercased()
         }
         return nil
     }
@@ -297,4 +396,3 @@ extension MemberSettingsController: PickerDelegate {
         self.tableView.reloadData()
     }
 }
-

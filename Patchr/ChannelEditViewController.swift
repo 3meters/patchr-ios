@@ -373,9 +373,11 @@ class ChannelEditViewController: BaseEditViewController {
                 }
                 
                 FireController.instance.addChannelToGroup(channelId: channelId, channelMap: channelMap, groupId: groupId) { result in
-                    StateController.instance.setChannelId(channelId: channelId, groupId: groupId, next: nil) // We know it's good
-                    MainController.instance.showChannel(groupId: groupId, channelId: channelId)
-                    self.close(animated: true)
+                    let controller = MemberPickerController()
+                    let wrapper = AirNavigationController(rootViewController: controller)
+                    controller.flow = .internalCreate
+                    controller.inputChannelId = channelId
+                    self.navigationController?.setViewControllers([controller], animated: true)
                 }
             }
         })

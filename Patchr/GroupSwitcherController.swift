@@ -85,8 +85,8 @@ class GroupSwitcherController: BaseTableController {
     
     func addAction(sender: AnyObject?) {
         let controller = GroupCreateController()
-        let wrapper = AirNavigationController()
-        wrapper.viewControllers = [controller]
+        let wrapper = AirNavigationController(rootViewController: controller)
+        controller.flow = .internalCreate
         self.slideMenuController()?.closeLeft()
         self.present(wrapper, animated: true, completion: nil)
     }

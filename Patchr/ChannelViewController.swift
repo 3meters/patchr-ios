@@ -724,6 +724,11 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
             sheet.addAction(delete)
             sheet.addAction(cancel)
         }
+        else if self.channel.role == "owner" {
+            sheet.addAction(like)
+            sheet.addAction(delete)
+            sheet.addAction(cancel)
+        }
         else {
             sheet.addAction(like)
             sheet.addAction(cancel)

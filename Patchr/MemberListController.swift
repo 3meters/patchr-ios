@@ -1,8 +1,3 @@
-
-
-
-
-
 //
 //  NavigationController.swift
 //
@@ -55,6 +50,7 @@ class MemberListController: BaseTableController, UITableViewDelegate {
         if let indexPath = self.tableView.indexPathForSelectedRow {
             self.tableView.deselectRow(at: indexPath, animated: animated)
         }
+        self.tableView.reloadData()
     }
     
     override func viewWillLayoutSubviews() {
@@ -86,17 +82,11 @@ class MemberListController: BaseTableController, UITableViewDelegate {
             let controller = MemberSettingsController()
             let wrapper = AirNavigationController(rootViewController: controller)
             controller.inputUser = user
+            if self.target == .channel {
+                controller.inputChannel = self.channel
+                controller.target = .channel
+            }
             self.present(wrapper, animated: true)
-        }
-    }
-    
-    func removeMemberAction(sender: AnyObject?) {
-        if let button = sender as? AirButton, let user = button.data as? FireUser {
-            let groupId = self.channel.group!
-            let channelId = self.channel.id!
-            let channelName = self.channel.name!
-            let userId = user.id!
-            FireController.instance.removeUserFromChannel(userId: userId, groupId: groupId, channelId: channelId, channelName: channelName)
         }
     }
     
@@ -157,16 +147,25 @@ class MemberListController: BaseTableController, UITableViewDelegate {
                 
                 let cell = view.dequeueReusableCell(withIdentifier: (self?.cellReuseIdentifier)!, for: indexPath) as! UserListCell
                 let userId = snap.key
-                let userQuery = UserQuery(userId: userId, groupId: groupId)
+                
+                var userQuery: UserQuery!
+                if self?.target == .group {
+                    userQuery = UserQuery(userId: userId, groupId: groupId)
+                }
+                else {
+                    let channelId = self?.channel.id!
+                    userQuery = UserQuery(userId: userId, groupId: groupId, channelId: channelId)
+                }
                 
                 cell.reset()
                 
                 userQuery.once(with: { user in
                     if user != nil {
-                        cell.bind(user: user!)
+                        let target = (self?.target == .group) ? "group" : "channel"
+                        cell.bind(user: user!, target: target)
                         if (self?.manage)! {
                             if self?.scope == .group {
-                                if let role = StateController.instance.group!.role, (role == "owner" || role == "admin") {
+                                if let role = StateController.instance.group!.role, role == "owner" {
                                     cell.actionButton?.isHidden = false
                                     cell.actionButton?.setTitle("Manage", for: .normal)
                                     cell.actionButton?.data = user
@@ -174,13 +173,11 @@ class MemberListController: BaseTableController, UITableViewDelegate {
                                 }
                             }
                             else if self?.scope == .channel {
-                                if let role = StateController.instance.group!.role, (role == "owner" || role == "admin") {
-                                    if user!.id != UserController.instance.userId {
-                                        cell.actionButton?.isHidden = false
-                                        cell.actionButton?.setTitle("Remove", for: .normal)
-                                        cell.actionButton?.data = user
-                                        cell.actionButton?.addTarget(self, action: #selector(self?.removeMemberAction(sender:)), for: .touchUpInside)
-                                    }
+                                if let role = self?.channel.role, role == "owner" {
+                                    cell.actionButton?.isHidden = false
+                                    cell.actionButton?.setTitle("Manage", for: .normal)
+                                    cell.actionButton?.data = user
+                                    cell.actionButton?.addTarget(self, action: #selector(self?.manageUserAction(sender:)), for: .touchUpInside)
                                 }
                             }
                         }
