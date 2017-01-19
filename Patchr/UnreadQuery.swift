@@ -29,54 +29,26 @@ class UnreadQuery: NSObject {
             var total = 0
             if !(snap.value is NSNull) {
                 if self.level == .channel  {
-                    let messages = snap.value as! [String: Any]
-                    total = messages.count
+                    if let messages = snap.value as? [String: Any] {
+                        total = messages.count
+                    }
                 }
                 else if self.level == .group {
                     let channels = snap.value as! [String: Any]
                     for channelId in channels.keys {
-                        let messages = channels[channelId] as! [String: Any]
-                        total += messages.count
-                    }
-                }
-                else if self.level == .user {
-                    let groups = snap.value as! [String: Any]
-                    for groupId in groups.keys {
-                        let channels = groups[groupId] as! [String: Any]
-                        for channelId in channels.keys {
-                            let messages = channels[channelId] as! [String: Any]
+                        if let messages = channels[channelId] as? [String: Any] {
                             total += messages.count
                         }
                     }
                 }
-                self.total = total
-            }
-            block(total)
-        })
-    }
-    
-    func once(with block: @escaping (Int) -> Void) {
-        FireController.db.child(self.path).observeSingleEvent(of: .value, with: { snap in
-            var total = 0
-            if !(snap.value is NSNull) {
-                if self.level == .channel  {
-                    let messages = snap.value as! [String: Any]
-                    total = messages.count
-                }
-                else if self.level == .group {
-                    let channels = snap.value as! [String: Any]
-                    for channelId in channels.keys {
-                        let messages = channels[channelId] as! [String: Any]
-                        total += messages.count
-                    }
-                }
                 else if self.level == .user {
                     let groups = snap.value as! [String: Any]
                     for groupId in groups.keys {
                         let channels = groups[groupId] as! [String: Any]
                         for channelId in channels.keys {
-                            let messages = channels[channelId] as! [String: Any]
-                            total += messages.count
+                            if let messages = channels[channelId] as? [String: Any] {
+                                total += messages.count
+                            }
                         }
                     }
                 }

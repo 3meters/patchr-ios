@@ -195,7 +195,6 @@ class MessageViewCell: AirUIView {
         self.addSubview(self.createdDate)
         self.addSubview(self.edited)
         self.addSubview(self.unread)
-        self.addSubview(self.optionsButton)
     }
 
     func reset() {
@@ -244,10 +243,10 @@ class MessageViewCell: AirUIView {
         if let photo = message.attachments?.values.first?.photo {
             self.photoView?.isHidden = false
             if !self.template { // Don't fetch if acting as template
-                if photo.uploading == nil {
-                    if let url = PhotoUtils.url(prefix: photo.filename, source: photo.source, category: SizeCategory.standard) {
-                        if !self.photoView.associated(withUrl: url) {
-                            self.photoView?.image = nil
+                if let url = PhotoUtils.url(prefix: photo.filename, source: photo.source, category: SizeCategory.standard) {
+                    if !self.photoView.associated(withUrl: url) {
+                        self.photoView?.image = nil
+                        if photo.uploading == nil {
                             let fallbackUrl = PhotoUtils.fallbackUrl(prefix: photo.filename!)
                             self.photoView.setImageWithUrl(url: url, fallbackUrl: fallbackUrl, animate: true)
                         }

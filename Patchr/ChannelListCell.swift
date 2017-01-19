@@ -19,7 +19,7 @@ class ChannelListCell: UITableViewCell {
     @IBOutlet weak var checkBox: AirCheckBox?
     
     var channel: FireChannel!
-    var unreadQuery: UnreadQuery?
+    var unreadQuery: UnreadQuery?   // Passed in by table data source
     var query: ChannelQuery?
     var selectedOn = false
     
