@@ -113,37 +113,39 @@ class EmailViewController: BaseEditViewController {
         
         let email = self.emailField.text!
         
-        FireController.instance.emailExists(email: email, next: { exists in
+        FireController.instance.emailProviderExists(email: email, next: { exists in
             
             self.progress?.hide(true)
             self.processing = false
             
-            if self.flow == .onboardLogin {
-                if !exists {
-                    self.emailField.errorMessage = "No account found."
+            if let exists = exists {
+                if self.flow == .onboardLogin {
+                    if !exists {
+                        self.emailField.errorMessage = "No account found."
+                    }
+                    else {
+                        let controller = PasswordViewController()
+                        controller.flow = self.flow
+                        controller.branch = .login
+                        controller.inputEmail = email
+                        self.navigationController?.pushViewController(controller, animated: true)
+                    }
                 }
-                else {
+                else if self.flow == .onboardInvite {
                     let controller = PasswordViewController()
                     controller.flow = self.flow
-                    controller.branch = .login
+                    controller.branch = exists ? .login : .signup
+                    controller.inputEmail = email
+                    controller.inputInviteLink = self.inputInviteLink
+                    self.navigationController?.pushViewController(controller, animated: true)
+                }
+                else if self.flow == .onboardCreate {
+                    let controller = PasswordViewController()
+                    controller.flow = self.flow
+                    controller.branch = exists ? .login : .signup
                     controller.inputEmail = email
                     self.navigationController?.pushViewController(controller, animated: true)
                 }
-            }
-            else if self.flow == .onboardInvite {
-                let controller = PasswordViewController()
-                controller.flow = self.flow
-                controller.branch = exists ? .login : .signup
-                controller.inputEmail = email
-                controller.inputInviteLink = self.inputInviteLink
-                self.navigationController?.pushViewController(controller, animated: true)
-            }
-            else if self.flow == .onboardCreate {
-                let controller = PasswordViewController()
-                controller.flow = self.flow
-                controller.branch = exists ? .login : .signup
-                controller.inputEmail = email
-                self.navigationController?.pushViewController(controller, animated: true)
             }
         })
     }

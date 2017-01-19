@@ -641,7 +641,7 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
             
             if cell.view == nil {
                 let recognizer = UILongPressGestureRecognizer(target: self, action: #selector(self.longPressAction(sender:)))
-                recognizer.minimumPressDuration = TimeInterval(0.3)
+                recognizer.minimumPressDuration = TimeInterval(0.2)
                 cell.addGestureRecognizer(recognizer)
                 
                 let view = MessageViewCell(frame: CGRect(x: 0, y: 0, width: self.view.width(), height: 40))

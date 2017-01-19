@@ -608,6 +608,11 @@ class FireController: NSObject {
     }
     
     func emailExists(email: String, next: @escaping ((Bool) -> Void)) {
+        /* 
+         * Currently unused
+         * Can't access users unless authenticated which we might not
+         * be if user is logging in.
+         */
         FireController.db.child("users")
             .queryOrdered(byChild: "email")
             .queryEqual(toValue: email)
@@ -616,11 +621,18 @@ class FireController: NSObject {
         })
     }
     
-    func emailProviderExists(email: String, next: @escaping ((Bool) -> Void)) {
-        /* Currently unused */
-        FIRAuth.auth()?.fetchProviders(forEmail: email, completion: { providers, error in
-            next(error == nil && providers != nil && providers!.count > 0)
-        })
+    func emailProviderExists(email: String, next: @escaping ((Bool?) -> Void)) {
+        /*
+         * Can be accessed even if user is not authenticated.
+         */
+        if FIRAuth.auth() != nil {
+            FIRAuth.auth()!.fetchProviders(forEmail: email, completion: { providers, error in
+                next(error == nil && providers != nil && providers!.count > 0)
+            })
+        }
+        else {
+            next(nil)
+        }
     }
 }
 

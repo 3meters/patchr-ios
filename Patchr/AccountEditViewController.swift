@@ -166,14 +166,16 @@ class AccountEditViewController: BaseEditViewController {
         
         let email = self.emailField.textField.text!
         
-        FireController.instance.emailExists(email: email, next: { exists in
-            if exists {
-                self.progress?.hide(true)
-                self.processing = false
-                self.showError(self.emailField, error: "Email is already being used")
-            }
-            else {
-                self.updateEmail()
+        FireController.instance.emailProviderExists(email: email, next: { exists in
+            if let exists = exists {
+                if exists {
+                    self.progress?.hide(true)
+                    self.processing = false
+                    self.showError(self.emailField, error: "Email is already being used")
+                }
+                else {
+                    self.updateEmail()
+                }
             }
         })
     }
