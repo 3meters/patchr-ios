@@ -190,8 +190,13 @@ extension GalleryGridViewController { /* UICollectionViewDelegate, UICollectionV
 		if let displayPhoto = self.imageForIndexPath(indexPath: indexPath as NSIndexPath) {
             if !cell!.displayImageView.associated(withUrl: displayPhoto.photoURL!) {
                 cell!.displayImageView.image = nil
-                cell!.displayPhoto = displayPhoto                
-                cell!.displayImageView.setImageWithUrl(url: displayPhoto.photoURL!, fallbackUrl: displayPhoto.fallbackUrl, animate: false)
+                cell!.displayPhoto = displayPhoto
+                if displayPhoto.uploading != nil {
+                    cell!.displayImageView.setImageFromCache(url: displayPhoto.photoURL!, animate: true)
+                }
+                else {
+                    cell!.displayImageView.setImageWithUrl(url: displayPhoto.photoURL!, fallbackUrl: displayPhoto.fallbackUrl, animate: false)
+                }
             }
 		}
 		

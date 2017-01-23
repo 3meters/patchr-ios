@@ -73,7 +73,22 @@ class AirImageView: UIImageView {
         }
         return false
     }
-	
+    
+    func setImageFromCache(url: URL, animate: Bool = true, then: ((Bool) -> Void)? = nil) {
+        if ImageUtils.imageCached(url: url) {
+            self.setImageWithUrl(url: url, fallbackUrl: nil, animate: animate, then: then)
+            return
+        }
+        Utils.delay(1.0) {
+            if ImageUtils.imageCached(url: url) {
+                self.setImageWithUrl(url: url, fallbackUrl: nil, animate: animate, then: then)
+            }
+            else {
+                then?(false)
+            }
+        }
+    }
+    
     func setImageWithUrl(url: URL, fallbackUrl: URL?, animate: Bool = true, then: ((Bool) -> Void)? = nil) {
         
 		/* Stash the url we are loading so we can check for a match later when download is completed. */

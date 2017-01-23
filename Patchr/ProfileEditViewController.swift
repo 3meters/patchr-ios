@@ -262,8 +262,11 @@ class ProfileEditViewController: BaseEditViewController {
         self.lastNameField.text = self.user.profile?.lastName
         self.phoneField.text = self.user.profile?.phone
         
-        if let photo = self.user.profile?.photo, photo.uploading == nil {
-            if let photoUrl = ImageUtils.url(prefix: photo.filename, source: photo.source, category: SizeCategory.standard) {
+        if let photo = self.user.profile?.photo {
+            if photo.uploading != nil {
+                self.photoEditView.bind(url: URL(string: photo.cacheKey)!, fallbackUrl: nil, uploading: true)
+            }
+            else if let photoUrl = ImageUtils.url(prefix: photo.filename, source: photo.source, category: SizeCategory.standard) {
                 self.photoEditView.bind(url: photoUrl, fallbackUrl: ImageUtils.fallbackUrl(prefix: photo.filename!))
             }
         }

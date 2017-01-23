@@ -202,6 +202,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FIRMessagingDelegate {
             let messageId = userInfo["messageId"] as! String
             let userInfo = ["groupId": groupId, "channelId": channelId, "messageId": messageId]
             NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.UnreadChange), object: self, userInfo: userInfo)
+            if UserDefaults.standard.bool(forKey: PatchrUserDefaultKey(subKey: "SoundEffects")) {
+                AudioController.instance.play(sound: Sound.notification.rawValue)
+            }
         }
         
         FIRMessaging.messaging().appDidReceiveMessage(userInfo)

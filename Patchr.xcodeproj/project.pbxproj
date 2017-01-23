@@ -63,7 +63,7 @@
 		E238BAD01B5088A40094AF41 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E238BACF1B5088A40094AF41 /* MobileCoreServices.framework */; };
 		E238BAD61B50907F0094AF41 /* Accounts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E238BAD51B50907F0094AF41 /* Accounts.framework */; };
 		E238BAD81B5090870094AF41 /* Social.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E238BAD71B5090870094AF41 /* Social.framework */; };
-		E238BB061B571AFF0094AF41 /* PhotoUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = E238BB051B571AFF0094AF41 /* PhotoUtils.swift */; };
+		E238BB061B571AFF0094AF41 /* ImageUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = E238BB051B571AFF0094AF41 /* ImageUtils.swift */; };
 		E23C010F1CE4D73B009C56B2 /* DisplayPhoto.swift in Sources */ = {isa = PBXBuildFile; fileRef = E23C010E1CE4D73B009C56B2 /* DisplayPhoto.swift */; };
 		E23C01111CE4F771009C56B2 /* CaptionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E23C01101CE4F771009C56B2 /* CaptionView.swift */; };
 		E23EC4CE1DBD44DB00EBCD42 /* ChannelListCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E23EC4CD1DBD44DB00EBCD42 /* ChannelListCell.swift */; };
@@ -269,7 +269,7 @@
 		E238BAD51B50907F0094AF41 /* Accounts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accounts.framework; path = System/Library/Frameworks/Accounts.framework; sourceTree = SDKROOT; };
 		E238BAD71B5090870094AF41 /* Social.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Social.framework; path = System/Library/Frameworks/Social.framework; sourceTree = SDKROOT; };
 		E238BAEE1B5405380094AF41 /* Patchr.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = Patchr.entitlements; path = Patchr/Patchr.entitlements; sourceTree = SOURCE_ROOT; };
-		E238BB051B571AFF0094AF41 /* PhotoUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotoUtils.swift; sourceTree = "<group>"; };
+		E238BB051B571AFF0094AF41 /* ImageUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageUtils.swift; sourceTree = "<group>"; };
 		E23C010C1CE243F2009C56B2 /* Keys.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = Keys.md; sourceTree = "<group>"; };
 		E23C010E1CE4D73B009C56B2 /* DisplayPhoto.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = DisplayPhoto.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		E23C01101CE4F771009C56B2 /* CaptionView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = CaptionView.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
@@ -796,9 +796,9 @@
 				E25327B11B0FCE9C00990A81 /* Constants.swift */,
 				E2DA16DE1DD142E00096D86F /* Emoji.swift */,
 				E2BC533D1DE5E7EC00C97A2C /* Http.swift */,
+				E238BB051B571AFF0094AF41 /* ImageUtils.swift */,
 				E2C0D9301B6C415100E28CE9 /* Log.swift */,
 				9FDCC7A62C9C1A632319795D /* MaterialColor.swift */,
-				E238BB051B571AFF0094AF41 /* PhotoUtils.swift */,
 				E281776D1B5B0EE200D65AC1 /* Reporting.swift */,
 				E2D12A7E1C0A090200DE507E /* Theming.swift */,
 				E20C1FB61AFE462500A471E9 /* UIShared.swift */,
@@ -1162,7 +1162,7 @@
 				E297305C1C13644800B9433B /* AirTextView.swift in Sources */,
 				E25B0F461DCE778B00021D5B /* MemberListController.swift in Sources */,
 				E2C720C71B4EDAFE00714B53 /* AirLabel.swift in Sources */,
-				E238BB061B571AFF0094AF41 /* PhotoUtils.swift in Sources */,
+				E238BB061B571AFF0094AF41 /* ImageUtils.swift in Sources */,
 				E281776E1B5B0EE200D65AC1 /* Reporting.swift in Sources */,
 				E20C3A7B1BD6A717008CCED1 /* BaseView.swift in Sources */,
 				E2DA16DB1DD114230096D86F /* AirStarButton.swift in Sources */,

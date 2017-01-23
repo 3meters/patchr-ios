@@ -82,10 +82,15 @@ class GroupListCell: UITableViewCell {
             }
         })
         
-        if let photo = group.photo, photo.uploading == nil {
-            if let url = ImageUtils.url(prefix: photo.filename!, source: photo.source!, category: SizeCategory.profile) {
-                let fallbackUrl = ImageUtils.fallbackUrl(prefix: photo.filename!)
-                self.photoControl!.bind(url: url, fallbackUrl: fallbackUrl , name: nil, colorSeed: group.id)
+        if let photo = group.photo {
+            if photo.uploading != nil {
+                self.photoControl?.bind(url: URL(string: photo.cacheKey)!, fallbackUrl: nil, name: nil, colorSeed: nil, uploading: true)
+            }
+            else {
+                if let url = ImageUtils.url(prefix: photo.filename!, source: photo.source!, category: SizeCategory.profile) {
+                    let fallbackUrl = ImageUtils.fallbackUrl(prefix: photo.filename!)
+                    self.photoControl!.bind(url: url, fallbackUrl: fallbackUrl , name: nil, colorSeed: group.id)
+                }
             }
         }
         else {

@@ -74,6 +74,12 @@ class ChannelSwitcherController: BaseTableController {
     *--------------------------------------------------------------------------------------------*/
     
     func addAction(sender: AnyObject?) {
+        
+        if self.role == "guest" {
+            UIShared.Toast(message: "Guests can\'t create new channels.")
+            return
+        }
+        
         let groupId = StateController.instance.groupId!
         let controller = ChannelEditViewController()
         let wrapper = AirNavigationController(rootViewController: controller)
@@ -203,18 +209,13 @@ class ChannelSwitcherController: BaseTableController {
             let groupId = StateController.instance.groupId {
             FireController.db.child("member-groups/\(userId)/\(groupId)/role").observeSingleEvent(of: .value, with: { [weak self] snap in
                 if let role = snap.value as? String {
+                    self?.role = role
                     self?.searchController.role = role
                     self?.searchController.load()
                     
-                    if role == "guest" {
-                        self?.navigationController?.setToolbarHidden(true, animated: true)
-                        self?.toolbarItems = []
-                    }
-                    else {
-                        self?.navigationController?.setToolbarHidden(false, animated: true)
-                        let addButton = UIBarButtonItem(title: "New Channel", style: .plain, target: self, action: #selector(self?.addAction(sender:)))
-                        self?.toolbarItems = [spacerFlex, addButton, spacerFlex]
-                    }
+                    self?.navigationController?.setToolbarHidden(false, animated: true)
+                    let addButton = UIBarButtonItem(title: "New Channel", style: .plain, target: self, action: #selector(self?.addAction(sender:)))
+                    self?.toolbarItems = [spacerFlex, addButton, spacerFlex]
                 }
             })
             

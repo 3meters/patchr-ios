@@ -102,7 +102,7 @@ enum ResizeDimension{
 
 class GooglePlusProxy {
     /*
-	* - Used for bing images and as a fallback if imgix can't deliver an image yet.
+	* - Used for images that are not currently stored in s3 like bing image search.
     * - Setting refresh to 60 minutes by default.
     */
     static func convert(uri: String, size: Int, dimension: ResizeDimension!) -> String {

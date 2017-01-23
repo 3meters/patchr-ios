@@ -244,8 +244,13 @@ class PhotoEditView: UIView {
 		self.setPhotoButton.addTarget(self, action: #selector(setPhotoAction(sender:)), for: .touchUpInside)
 	}
 	
-    func bind(url: URL, fallbackUrl: URL?) {
-        self.imageButton.setImageWithUrl(url: url, fallbackUrl: fallbackUrl, animate: true)
+    func bind(url: URL, fallbackUrl: URL?, uploading: Bool = false) {
+        if uploading {
+            self.imageButton.setImageFromCache(url: url, animate: true)
+        }
+        else {
+            self.imageButton.setImageWithUrl(url: url, fallbackUrl: fallbackUrl, animate: true)
+        }
         self.usingPhotoDefault = false
         self.photoActive = true
     }

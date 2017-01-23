@@ -98,10 +98,15 @@ class UserHeaderView: BaseDetailView {
             self.fullName.isHidden = (self.fullName.text == nil || self.fullName.text!.isEmpty)
             let fullName = self.fullName.text
             
-            if let photo = user!.profile?.photo, photo.uploading == nil {
-                if let url = ImageUtils.url(prefix: photo.filename, source: photo.source, category: SizeCategory.profile) {
-                    let fallbackUrl = ImageUtils.fallbackUrl(prefix: photo.filename!)
-                    self.photoControl.bind(url: url, fallbackUrl: fallbackUrl, name: fullName, colorSeed: user!.id)
+            if let photo = user!.profile?.photo {
+                if photo.uploading != nil {
+                    self.photoControl.bind(url: URL(string: photo.cacheKey)!, fallbackUrl: nil, name: nil, colorSeed: nil, uploading: true)
+                }
+                else {
+                    if let url = ImageUtils.url(prefix: photo.filename, source: photo.source, category: SizeCategory.profile) {
+                        let fallbackUrl = ImageUtils.fallbackUrl(prefix: photo.filename!)
+                        self.photoControl.bind(url: url, fallbackUrl: fallbackUrl, name: fullName, colorSeed: user!.id)
+                    }
                 }
             }
             else {

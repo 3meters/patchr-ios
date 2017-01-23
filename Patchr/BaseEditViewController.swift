@@ -88,9 +88,7 @@ class BaseEditViewController: BaseViewController, UITextFieldDelegate, UITextVie
             "uploading": true ] as [String: Any]
         
         /* Prime the cache so offline has something to work with */
-        if let url = ImageUtils.url(prefix: imageKey, source: PhotoSource.aircandi_images, category: SizeCategory.standard) {
-            ImageUtils.addImageToCache(image: image, url: url)
-        }
+        ImageUtils.addImageToCache(image: image, url: URL(string: "https://\(imageKey)")!)
         
         /* Upload */
         DispatchQueue.global().async {

@@ -18,6 +18,9 @@ class AudioController: NSObject {
     func play(sound: String) {
         do {
             player = try AVAudioPlayer(contentsOf: self.uriForFile(fileName: sound) as URL, fileTypeHint: nil)
+            if sound == Sound.notification.rawValue {
+                player.volume = 0.10
+            }
             player.prepareToPlay()
             player.play()
         } catch {

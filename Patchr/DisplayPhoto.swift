@@ -3,15 +3,16 @@ import IDMPhotoBrowser
 
 class DisplayPhoto: IDMPhoto {
 	
-    var createdDateLabel	: String?
-	var createdDateValue	: Date?
-	var creatorName			: String?
-	var creatorUrl			: URL?
-	var entityId			: String?
-	var userLikes			= false
-	var userLikesId			: String?
-	var size				: CGSize?
-    var fallbackUrl         : URL?
+    var createdDateLabel: String?
+	var createdDateValue: Date?
+	var creatorName: String?
+	var creatorUrl: URL?
+    var entityId: String?
+	var userLikes = false
+	var userLikesId: String?
+	var size: CGSize?
+    var fallbackUrl: URL?
+    var uploading: String?
     
     static func fromMessage(message: FireMessage) -> DisplayPhoto {
         
@@ -21,8 +22,14 @@ class DisplayPhoto: IDMPhoto {
         displayPhoto.entityId = message.id
         
         if let photo = message.attachments?.values.first?.photo {
-            displayPhoto.photoURL = ImageUtils.url(prefix: photo.filename, source: photo.source, category: SizeCategory.standard) as URL!
-            displayPhoto.fallbackUrl = ImageUtils.fallbackUrl(prefix: photo.filename!)
+            displayPhoto.uploading = photo.uploading
+            if photo.uploading != nil {
+                displayPhoto.photoURL = URL(string: photo.cacheKey)
+            }
+            else {
+                displayPhoto.photoURL = ImageUtils.url(prefix: photo.filename, source: photo.source, category: SizeCategory.standard) as URL!
+                displayPhoto.fallbackUrl = ImageUtils.fallbackUrl(prefix: photo.filename!)
+            }
             if photo.width != nil && photo.height != nil {
                 displayPhoto.size = CGSize(width: CGFloat(photo.width!), height: CGFloat(photo.height!))
             }

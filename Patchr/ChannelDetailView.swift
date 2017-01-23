@@ -164,11 +164,16 @@ class ChannelDetailView: UIView {
             self.purpose.isHidden = false
         }
         
-        if let photo = channel.photo, photo.uploading == nil {
+        if let photo = channel.photo {
+            
             self.starButton.tintColor = Colors.brandColor
             self.optionsButton.tintColor = Colors.brandColor
             self.photoView.backgroundColor = Theme.colorBackgroundImage
-            if let url = ImageUtils.url(prefix: photo.filename, source: photo.source, category: SizeCategory.standard) {
+            
+            if (photo.uploading != nil) {
+                self.photoView.setImageFromCache(url: URL(string: photo.cacheKey)!, animate: true)
+            }
+            else if let url = ImageUtils.url(prefix: photo.filename, source: photo.source, category: SizeCategory.standard) {
                 if !self.photoView.associated(withUrl: url) {
                     let fallbackUrl = ImageUtils.fallbackUrl(prefix: photo.filename!)
                     self.photoView.setImageWithUrl(url: url, fallbackUrl: fallbackUrl) { success in

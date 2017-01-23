@@ -79,10 +79,15 @@ class InviteListCell: UITableViewCell {
             
             let fullName = user.profile?.fullName ?? user.username
             let userId = user.id!
-            if let photo = user.profile?.photo, photo.uploading == nil {
-                if let url = ImageUtils.url(prefix: photo.filename, source: photo.source, category: SizeCategory.profile) {
-                    let fallbackUrl = ImageUtils.fallbackUrl(prefix: photo.filename!)
-                    self.photoControl!.bind(url: url, fallbackUrl: fallbackUrl, name: fullName, colorSeed: userId)
+            if let photo = user.profile?.photo {
+                if photo.uploading != nil {
+                    self.photoControl?.bind(url: URL(string: photo.cacheKey)!, fallbackUrl: nil, name: nil, colorSeed: nil, uploading: true)
+                }
+                else {
+                    if let url = ImageUtils.url(prefix: photo.filename, source: photo.source, category: SizeCategory.profile) {
+                        let fallbackUrl = ImageUtils.fallbackUrl(prefix: photo.filename!)
+                        self.photoControl!.bind(url: url, fallbackUrl: fallbackUrl, name: fullName, colorSeed: userId)
+                    }
                 }
             }
             else {

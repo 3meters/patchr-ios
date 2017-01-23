@@ -144,13 +144,18 @@ class MemberDetailView: UIView {
 
         let fullName = user.profile?.fullName ?? user.username
         
-        if let photo = user.profile?.photo, photo.uploading == nil {
-            if let url = ImageUtils.url(prefix: photo.filename, source: photo.source, category: SizeCategory.standard) {
-                if !self.photoView.associated(withUrl: url) {
-                    self.gradient.isHidden = true
-                    let fallbackUrl = ImageUtils.fallbackUrl(prefix: photo.filename!)
-                    self.photoView.setImageWithUrl(url: url, fallbackUrl: fallbackUrl) { success in
-                        self.gradient.isHidden = false
+        if let photo = user.profile?.photo {
+            if photo.uploading != nil {
+                self.photoView.setImageFromCache(url: URL(string: photo.cacheKey)!, animate: true)
+            }
+            else {
+                if let url = ImageUtils.url(prefix: photo.filename, source: photo.source, category: SizeCategory.standard) {
+                    if !self.photoView.associated(withUrl: url) {
+                        self.gradient.isHidden = true
+                        let fallbackUrl = ImageUtils.fallbackUrl(prefix: photo.filename!)
+                        self.photoView.setImageWithUrl(url: url, fallbackUrl: fallbackUrl) { success in
+                            self.gradient.isHidden = false
+                        }
                     }
                 }
             }

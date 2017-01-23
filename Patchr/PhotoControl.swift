@@ -75,22 +75,26 @@ class PhotoControl: UIControl {
         self.nameLabel.isHidden = (image != nil)
     }
 	
-    func bind(url: URL?, fallbackUrl: URL?, name: String?, colorSeed: String?, color: UIColor? = nil) {
+    func bind(url: URL?, fallbackUrl: URL?, name: String?, colorSeed: String?, color: UIColor? = nil, uploading: Bool = false) {
         
         if url != nil && self.photoView.associated(withUrl: url!) {
             return
         }
 		
-        //self.photoView.image = nil
         self.nameLabel.text = nil
 		self.photoView.isHidden = true
 		self.nameLabel.isHidden = false
 		
 		if url != nil {
-            self.photoView.setImageWithUrl(url: url!, fallbackUrl: fallbackUrl) { [weak self] success in
-                if success {
-                    self?.nameLabel.isHidden = true
-                    self?.photoView.isHidden = false
+            if uploading {
+                self.photoView.setImageFromCache(url: url!, animate: true)
+            }
+            else {
+                self.photoView.setImageWithUrl(url: url!, fallbackUrl: fallbackUrl) { [weak self] success in
+                    if success {
+                        self?.nameLabel.isHidden = true
+                        self?.photoView.isHidden = false
+                    }
                 }
             }
 		}

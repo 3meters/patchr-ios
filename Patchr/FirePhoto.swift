@@ -16,6 +16,9 @@ class FirePhoto: NSObject {
     var source: String?
     var takenAt: Int?
     var uploading: String?
+    var cacheKey: String {
+        return "https://\(filename!)"
+    }
     
     static func from(dict: [String: Any]?) -> FirePhoto? {
         if dict != nil {

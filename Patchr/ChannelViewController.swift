@@ -609,6 +609,13 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
         
         Log.d("Observe query triggered for channel messages")
         self.tableView.dataSource = self.tableViewDataSource
+        
+        if !MainController.instance.introPlayed {
+            if UserDefaults.standard.bool(forKey: PatchrUserDefaultKey(subKey: "SoundEffects")) {
+                AudioController.instance.play(sound: Sound.greeting.rawValue)
+            }
+            MainController.instance.introPlayed = true
+        }
     }
     
     func cleanupUnreads() {
@@ -891,9 +898,7 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
             options: UIViewAnimationOptions.curveEaseOut,
             animations: {
                 self.messageBar.alpha = 1
-            }) { _ in
-            Animation.bounce(view: self.messageBar)
-        }
+            })
     }
 
     func hideMessageBar() {

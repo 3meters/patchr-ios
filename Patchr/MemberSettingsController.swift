@@ -98,7 +98,7 @@ class MemberSettingsController: UITableViewController {
         self.roleMemberCell.selectionStyle = .none
         self.roleGuestCell.selectionStyle = .none
         
-        self.guestChannelsCell.textLabel?.numberOfLines = 0
+        self.guestChannelsCell.textLabel?.numberOfLines = 10
         self.guestChannelsCell.textLabel?.text = nil
         self.guestChannelsCell.textLabel?.lineBreakMode = .byWordWrapping
         self.guestChannelsCell.bounds = CGRect(x: 0, y: 0, width: self.view.width(), height: 9999)
@@ -123,6 +123,7 @@ class MemberSettingsController: UITableViewController {
         if self.target == .group {
             
             self.role = self.inputUser.role
+            self.roleNext = self.inputUser.role
             self.roleOwnerCell.accessoryType = self.role == "owner" ? .checkmark : .none
             self.roleMemberCell.accessoryType = self.role == "member" ? .checkmark : .none
             self.roleGuestCell.accessoryType = self.role == "guest" ? .checkmark : .none
@@ -150,6 +151,7 @@ class MemberSettingsController: UITableViewController {
                 .observeSingleEvent(of: .value, with: { snap in
                     if let memberRole = snap.value as? String {
                         self.role = memberRole
+                        self.roleNext = memberRole
                         self.roleOwnerCell.accessoryType = self.role == "owner" ? .checkmark : .none
                         self.roleMemberCell.accessoryType = self.role == "member" ? .checkmark : .none
                     }

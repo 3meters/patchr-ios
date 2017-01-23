@@ -19,6 +19,7 @@ class MainController: NSObject, iRateDelegate {
     static let instance = MainController()
     var window: UIWindow?
     var upgradeRequired = false
+    var introPlayed = false
     static let channelPicker = ChannelSwitcherController()
     static let groupPicker = GroupSwitcherController()
 
