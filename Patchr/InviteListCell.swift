@@ -80,8 +80,8 @@ class InviteListCell: UITableViewCell {
             let fullName = user.profile?.fullName ?? user.username
             let userId = user.id!
             if let photo = user.profile?.photo, photo.uploading == nil {
-                if let url = PhotoUtils.url(prefix: photo.filename, source: photo.source, category: SizeCategory.profile) {
-                    let fallbackUrl = PhotoUtils.fallbackUrl(prefix: photo.filename!)
+                if let url = ImageUtils.url(prefix: photo.filename, source: photo.source, category: SizeCategory.profile) {
+                    let fallbackUrl = ImageUtils.fallbackUrl(prefix: photo.filename!)
                     self.photoControl!.bind(url: url, fallbackUrl: fallbackUrl, name: fullName, colorSeed: userId)
                 }
             }

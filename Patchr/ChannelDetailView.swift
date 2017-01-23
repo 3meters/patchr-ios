@@ -168,9 +168,9 @@ class ChannelDetailView: UIView {
             self.starButton.tintColor = Colors.brandColor
             self.optionsButton.tintColor = Colors.brandColor
             self.photoView.backgroundColor = Theme.colorBackgroundImage
-            if let url = PhotoUtils.url(prefix: photo.filename, source: photo.source, category: SizeCategory.standard) {
+            if let url = ImageUtils.url(prefix: photo.filename, source: photo.source, category: SizeCategory.standard) {
                 if !self.photoView.associated(withUrl: url) {
-                    let fallbackUrl = PhotoUtils.fallbackUrl(prefix: photo.filename!)
+                    let fallbackUrl = ImageUtils.fallbackUrl(prefix: photo.filename!)
                     self.photoView.setImageWithUrl(url: url, fallbackUrl: fallbackUrl) { success in
                         self.gradient.isHidden = false
                     }

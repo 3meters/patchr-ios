@@ -180,7 +180,7 @@ class ChannelSwitcherController: BaseTableController {
         gradient.shouldRasterize = true
         gradient.rasterizationScale = UIScreen.main.scale
         
-        self.gradientImage = PhotoUtils.imageFromLayer(layer: gradient)
+        self.gradientImage = ImageUtils.imageFromLayer(layer: gradient)
         
         let titleWidth = (NAVIGATION_DRAWER_WIDTH - 112)
         let titleView = AirLabelDisplay(frame: CGRect(x: 0, y: 0, width: titleWidth, height: 24))

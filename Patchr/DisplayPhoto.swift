@@ -21,8 +21,8 @@ class DisplayPhoto: IDMPhoto {
         displayPhoto.entityId = message.id
         
         if let photo = message.attachments?.values.first?.photo {
-            displayPhoto.photoURL = PhotoUtils.url(prefix: photo.filename, source: photo.source, category: SizeCategory.standard) as URL!
-            displayPhoto.fallbackUrl = PhotoUtils.fallbackUrl(prefix: photo.filename!)
+            displayPhoto.photoURL = ImageUtils.url(prefix: photo.filename, source: photo.source, category: SizeCategory.standard) as URL!
+            displayPhoto.fallbackUrl = ImageUtils.fallbackUrl(prefix: photo.filename!)
             if photo.width != nil && photo.height != nil {
                 displayPhoto.size = CGSize(width: CGFloat(photo.width!), height: CGFloat(photo.height!))
             }
@@ -35,7 +35,7 @@ class DisplayPhoto: IDMPhoto {
         if let creator = message.creator {
             displayPhoto.creatorName = creator.username
             if let userPhoto = creator.profile?.photo {
-                displayPhoto.creatorUrl = PhotoUtils.url(prefix: userPhoto.filename, source: userPhoto.source, category: SizeCategory.profile)! as URL
+                displayPhoto.creatorUrl = ImageUtils.url(prefix: userPhoto.filename, source: userPhoto.source, category: SizeCategory.profile)! as URL
             }
         }
         

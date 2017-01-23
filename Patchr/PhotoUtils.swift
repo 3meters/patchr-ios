@@ -10,7 +10,7 @@ import Foundation
 import UIKit
 import SDWebImage
 
-class PhotoUtils {
+class ImageUtils {
     
     static let useGoogle = false
     
@@ -37,7 +37,7 @@ class PhotoUtils {
             let width = (category == SizeCategory.standard) ? 400 : 100
             if google {
                 let dimension = (category == SizeCategory.profile) ? ResizeDimension.width : ResizeDimension.height
-                let imageUrl = PhotoUtils.fallbackUrl(prefix: prefix!).absoluteString
+                let imageUrl = ImageUtils.fallbackUrl(prefix: prefix!).absoluteString
                 path = GooglePlusProxy.convert(uri: imageUrl, size: width, dimension: dimension)
             }
             else {
@@ -102,9 +102,8 @@ enum ResizeDimension{
 
 class GooglePlusProxy {
     /*
-	* Currently used for bing images only.
-	*
-    * Setting refresh to 60 minutes.
+	* - Used for bing images and as a fallback if imgix can't deliver an image yet.
+    * - Setting refresh to 60 minutes by default.
     */
     static func convert(uri: String, size: Int, dimension: ResizeDimension!) -> String {
         let encodedUrl = uri.stringByAddingPercentEncodingForUrl()

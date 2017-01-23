@@ -230,8 +230,8 @@ class MessageViewCell: AirUIView {
         
         if let photo = message.creator?.profile?.photo, photo.uploading == nil {
             if !self.template {
-                if let url = PhotoUtils.url(prefix: photo.filename, source: photo.source, category: SizeCategory.profile) {
-                    let fallbackUrl = PhotoUtils.fallbackUrl(prefix: photo.filename!)
+                if let url = ImageUtils.url(prefix: photo.filename, source: photo.source, category: SizeCategory.profile) {
+                    let fallbackUrl = ImageUtils.fallbackUrl(prefix: photo.filename!)
                     self.userPhotoControl.bind(url: url, fallbackUrl: fallbackUrl, name: fullName, colorSeed: message.creator?.id)
                 }
             }
@@ -243,19 +243,19 @@ class MessageViewCell: AirUIView {
         if let photo = message.attachments?.values.first?.photo {
             self.photoView?.isHidden = false
             if !self.template { // Don't fetch if acting as template
-                if let url = PhotoUtils.url(prefix: photo.filename, source: photo.source, category: SizeCategory.standard) {
+                if let url = ImageUtils.url(prefix: photo.filename, source: photo.source, category: SizeCategory.standard) {
                     if !self.photoView.associated(withUrl: url) {
                         self.photoView?.image = nil
-                        if (photo.uploading != nil) && !PhotoUtils.imageCached(url: url) {
+                        if (photo.uploading != nil) && !ImageUtils.imageCached(url: url) {
                             Utils.delay(1.0) {
-                                if photo.uploading == nil || PhotoUtils.imageCached(url: url) {
-                                    let fallbackUrl = PhotoUtils.fallbackUrl(prefix: photo.filename!)
+                                if photo.uploading == nil || ImageUtils.imageCached(url: url) {
+                                    let fallbackUrl = ImageUtils.fallbackUrl(prefix: photo.filename!)
                                     self.photoView.setImageWithUrl(url: url, fallbackUrl: fallbackUrl, animate: true)
                                 }
                             }
                         }
-                        else if photo.uploading == nil || PhotoUtils.imageCached(url: url) {
-                            let fallbackUrl = PhotoUtils.fallbackUrl(prefix: photo.filename!)
+                        else if photo.uploading == nil || ImageUtils.imageCached(url: url) {
+                            let fallbackUrl = ImageUtils.fallbackUrl(prefix: photo.filename!)
                             self.photoView.setImageWithUrl(url: url, fallbackUrl: fallbackUrl, animate: true)
                         }
                     }

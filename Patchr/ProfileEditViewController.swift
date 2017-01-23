@@ -175,7 +175,7 @@ class ProfileEditViewController: BaseEditViewController {
             "profile/photo": photoMap!
         ])
         
-        let photoUrl = PhotoUtils.url(prefix: photoMap!["filename"] as! String?, source: photoMap!["source"] as! String?, category: SizeCategory.profile)
+        let photoUrl = ImageUtils.url(prefix: photoMap!["filename"] as! String?, source: photoMap!["source"] as! String?, category: SizeCategory.profile)
         let changeRequest = FIRAuth.auth()?.currentUser?.profileChangeRequest()
         changeRequest?.photoURL = photoUrl
         changeRequest?.commitChanges()
@@ -263,8 +263,8 @@ class ProfileEditViewController: BaseEditViewController {
         self.phoneField.text = self.user.profile?.phone
         
         if let photo = self.user.profile?.photo, photo.uploading == nil {
-            if let photoUrl = PhotoUtils.url(prefix: photo.filename, source: photo.source, category: SizeCategory.standard) {
-                self.photoEditView.bind(url: photoUrl, fallbackUrl: PhotoUtils.fallbackUrl(prefix: photo.filename!))
+            if let photoUrl = ImageUtils.url(prefix: photo.filename, source: photo.source, category: SizeCategory.standard) {
+                self.photoEditView.bind(url: photoUrl, fallbackUrl: ImageUtils.fallbackUrl(prefix: photo.filename!))
             }
         }
     }

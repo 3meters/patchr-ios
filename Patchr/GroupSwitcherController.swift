@@ -146,7 +146,7 @@ class GroupSwitcherController: BaseTableController {
             gradient.shouldRasterize = true
             gradient.rasterizationScale = UIScreen.main.scale
 
-            self.gradientImage = PhotoUtils.imageFromLayer(layer: gradient)
+            self.gradientImage = ImageUtils.imageFromLayer(layer: gradient)
 
             self.tableView.backgroundColor = Theme.colorBackgroundTable
             self.tableView.delegate = self

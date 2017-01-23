@@ -32,7 +32,7 @@ class BranchProvider: NSObject {
         let referrer = UserController.instance.user
         let referrerId = UserController.instance.userId
         let referrerName = referrer!.profile?.fullName ?? username
-        let photoUrl = PhotoUtils.url(prefix: referrer?.profile?.photo?.filename, source: referrer?.profile?.photo?.source, category: SizeCategory.profile)
+        let photoUrl = ImageUtils.url(prefix: referrer?.profile?.photo?.filename, source: referrer?.profile?.photo?.source, category: SizeCategory.profile)
         let path = "group/\(groupId)"
         let applink = BranchUniversalObject(canonicalIdentifier: path)
         
@@ -86,7 +86,7 @@ class BranchProvider: NSObject {
         let referrer = UserController.instance.user
         let referrerId = UserController.instance.userId
         let referrerName = referrer!.profile?.fullName ?? UserController.instance.user?.username
-        let photoUrl = PhotoUtils.url(prefix: referrer?.profile?.photo?.filename, source: referrer?.profile?.photo?.source, category: SizeCategory.profile)
+        let photoUrl = ImageUtils.url(prefix: referrer?.profile?.photo?.filename, source: referrer?.profile?.photo?.source, category: SizeCategory.profile)
         let path = "group/\(group.id!)"
         let applink = BranchUniversalObject(canonicalIdentifier: path)
         
