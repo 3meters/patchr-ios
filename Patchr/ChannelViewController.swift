@@ -513,16 +513,17 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
         Log.d("Binding to: \(channelId)")
         
         let userId = UserController.instance.userId!
+        let username = UserController.instance.user!.username!
         
         self.typingRef = FireController.db.child("typing/\(groupId)/\(channelId)")
         self.typingRef.child(userId).onDisconnectRemoveValue()
         self.typingHandle = self.typingRef.observe(.value, with: { [weak self] snap in
-            if self != nil && !(snap.value is NSNull) && snap.hasChildren() {
-                if snap.childrenCount == 1 && self!.isTyping { return }  // Just me
-                for item in snap.children {
-                    let typer = item as! FIRDataSnapshot
-                    if let username = typer.value as? String {
-                        self!.typingIndicatorView?.insertUsername(username)
+            if self != nil {
+                if let typers = snap.value as? [String: String] {
+                    for typerName in typers.values {
+                        if typerName != username {
+                            self!.typingIndicatorView?.insertUsername(typerName)
+                        }
                     }
                 }
             }

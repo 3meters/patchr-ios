@@ -374,7 +374,6 @@ class ChannelEditViewController: BaseEditViewController {
                 
                 FireController.instance.addChannelToGroup(channelId: channelId, channelMap: channelMap, groupId: groupId) { result in
                     let controller = MemberPickerController()
-                    let wrapper = AirNavigationController(rootViewController: controller)
                     controller.flow = .internalCreate
                     controller.inputChannelId = channelId
                     self.navigationController?.setViewControllers([controller], animated: true)
@@ -416,8 +415,8 @@ class ChannelEditViewController: BaseEditViewController {
             return false
         }
         
-        if (nameField.text!.utf16.count > 21) {
-            self.nameField.errorMessage = "Channel name must be 21 characters or less."
+        if (nameField.text!.utf16.count > 50) {
+            self.nameField.errorMessage = "Channel name must be 50 characters or less."
             return false
         }
 

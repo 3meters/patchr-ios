@@ -246,7 +246,15 @@ class MessageViewCell: AirUIView {
                 if let url = PhotoUtils.url(prefix: photo.filename, source: photo.source, category: SizeCategory.standard) {
                     if !self.photoView.associated(withUrl: url) {
                         self.photoView?.image = nil
-                        if photo.uploading == nil {
+                        if (photo.uploading != nil) && !PhotoUtils.imageCached(url: url) {
+                            Utils.delay(1.0) {
+                                if photo.uploading == nil || PhotoUtils.imageCached(url: url) {
+                                    let fallbackUrl = PhotoUtils.fallbackUrl(prefix: photo.filename!)
+                                    self.photoView.setImageWithUrl(url: url, fallbackUrl: fallbackUrl, animate: true)
+                                }
+                            }
+                        }
+                        else if photo.uploading == nil || PhotoUtils.imageCached(url: url) {
                             let fallbackUrl = PhotoUtils.fallbackUrl(prefix: photo.filename!)
                             self.photoView.setImageWithUrl(url: url, fallbackUrl: fallbackUrl, animate: true)
                         }

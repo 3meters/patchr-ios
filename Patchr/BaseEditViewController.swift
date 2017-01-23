@@ -87,6 +87,11 @@ class BaseEditViewController: BaseViewController, UITextFieldDelegate, UITextVie
             "filename": imageKey,
             "uploading": true ] as [String: Any]
         
+        /* Prime the cache so offline has something to work with */
+        if let url = PhotoUtils.url(prefix: imageKey, source: PhotoSource.aircandi_images, category: SizeCategory.standard) {
+            PhotoUtils.addImageToCache(image: image, url: url)
+        }
+        
         /* Upload */
         DispatchQueue.global().async {
             S3.instance.upload(image: preparedImage, imageKey: imageKey, progress: progress) { task, error in

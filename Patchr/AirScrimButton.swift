@@ -23,8 +23,8 @@ class AirScrimButton: AirButtonBase {
 	}
 	
 	func initialize() {
-        self.setBackgroundImage(Utils.imageFromColor(color: Colors.gray75pcntColor), for: .highlighted)
-        self.setBackgroundImage(Utils.imageFromColor(color: Colors.clear), for: .normal)
+        self.setBackgroundImage(PhotoUtils.imageFromColor(color: Colors.gray75pcntColor), for: .highlighted)
+        self.setBackgroundImage(PhotoUtils.imageFromColor(color: Colors.clear), for: .normal)
     }
 	
 	override func layoutSubviews() {

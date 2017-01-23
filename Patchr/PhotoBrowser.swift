@@ -18,9 +18,10 @@ class PhotoBrowser: IDMPhotoBrowser {
     var mode: PhotoBrowserMode = .browse
     
     /* UI specialized for previewing photos from the photo picker. */
-    var browseDelegate	: PhotoBrowseControllerDelegate?  // Used by photo preview feature in photo search
-    var imageResult		: ImageResult?
-    var target			: AnyObject?
+    var browseDelegate: PhotoBrowseControllerDelegate?  // Used by photo preview feature in photo search
+    var imageResult: ImageResult?
+    var image: UIImage?
+    var target: AnyObject?
 	
     /*--------------------------------------------------------------------------------------------
     * Lifecycle
@@ -38,7 +39,7 @@ class PhotoBrowser: IDMPhotoBrowser {
      *--------------------------------------------------------------------------------------------*/
     
     func selectAction() {
-        browseDelegate?.photoBrowseController!(didFinishPickingPhoto: self.imageResult!)
+        self.browseDelegate?.photoBrowseController!(didFinishPickingPhoto: self.image, imageResult: self.imageResult)
     }
 	
     /*--------------------------------------------------------------------------------------------
@@ -66,9 +67,6 @@ class PhotoBrowser: IDMPhotoBrowser {
             items.append(flexSpacer)
             
             toolbar.items = items
-            
-            let closeButton = UIBarButtonItem(barButtonSystemItem: .stop, target: self, action: #selector(IDMPhotoBrowser.doneButtonPressed(_:)))
-            self.navigationItem.rightBarButtonItems = [closeButton]
         }
         else {
             if self.message?.createdBy != nil {
@@ -106,7 +104,19 @@ class PhotoBrowser: IDMPhotoBrowser {
             }
         }
     }
-	
+    
+    override func performLayout() {
+        super.performLayout()
+        if self.mode == .browse {
+            let doneButton = UIBarButtonItem(title: "Done", style: .plain, target: self, action: #selector(IDMPhotoBrowser.doneButtonPressed(_:)))
+            self.navigationItem.rightBarButtonItems = [doneButton]
+        }
+        else {
+            let closeButton = UIBarButtonItem(barButtonSystemItem: .stop, target: self, action: #selector(IDMPhotoBrowser.doneButtonPressed(_:)))
+            self.navigationItem.rightBarButtonItems = [closeButton]
+        }
+    }
+    
 	func bind(message: FireMessage!) {
 		self.message = message
         self.likeButton.bind(message: message)

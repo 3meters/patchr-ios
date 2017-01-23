@@ -33,7 +33,7 @@ class UnreadBackView: UIView {
         self.badge.textAlignment = .center
         self.backImage.image = UIImage(named: "imgArrowDownLight")
         self.backImage.tintColor = Colors.white
-        self.buttonScrim.setBackgroundImage(Utils.imageFromColor(color: Colors.clear), for: .highlighted)
+        self.buttonScrim.setBackgroundImage(PhotoUtils.imageFromColor(color: Colors.clear), for: .highlighted)
         self.addSubview(self.backImage)
         self.addSubview(self.badge)
         self.addSubview(self.buttonScrim)

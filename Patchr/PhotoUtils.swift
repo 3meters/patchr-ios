@@ -8,6 +8,7 @@
 
 import Foundation
 import UIKit
+import SDWebImage
 
 class PhotoUtils {
     
@@ -63,6 +64,33 @@ class PhotoUtils {
         }
 		
         return URL(string: path)
+    }
+    
+    static func imageCached(url: URL) -> Bool {
+        return SDImageCache.shared().diskImageExists(withKey: url.absoluteString)
+    }
+    
+    static func addImageToCache(image: UIImage, url: URL) {
+        SDImageCache.shared().store(image, forKey: url.absoluteString, toDisk: true)
+    }
+    
+    static func imageFromColor(color: UIColor) -> UIImage {
+        let rect = CGRect(x: 0, y: 0, width: 1, height: 1)
+        UIGraphicsBeginImageContext(rect.size)
+        let context = UIGraphicsGetCurrentContext()
+        context!.setFillColor(color.cgColor)
+        context!.fill(rect)
+        let image = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        return image!
+    }
+    
+    static func imageFromLayer(layer: CALayer) -> UIImage {
+        UIGraphicsBeginImageContext(layer.frame.size)
+        layer.render(in: UIGraphicsGetCurrentContext()!)
+        let outputImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        return outputImage!
     }
 }
 

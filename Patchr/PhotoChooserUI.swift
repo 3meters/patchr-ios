@@ -11,6 +11,7 @@ import Foundation
 import UIKit
 import MobileCoreServices
 import Photos
+import IDMPhotoBrowser
 
 // PhotoChooserUI
 //
@@ -128,16 +129,16 @@ class PhotoChooserUI: NSObject, UINavigationControllerDelegate {
 }
 
 @objc protocol PhotoBrowseControllerDelegate {
-    @objc optional func photoBrowseController(didFinishPickingPhoto imageResult: ImageResult) -> Void
+    @objc optional func photoBrowseController(didFinishPickingPhoto: UIImage?, imageResult: ImageResult?) -> Void
     @objc optional func photoBrowseController(didLikePhoto liked: Bool) -> Void
     @objc optional func photoBrowseControllerDidCancel() -> Void
 }
 
 extension PhotoChooserUI: PhotoBrowseControllerDelegate {
     
-    func photoBrowseController(didFinishPickingPhoto imageResult: ImageResult) -> Void {
+    func photoBrowseController(didFinishPickingPhoto image: UIImage?, imageResult: ImageResult?) -> Void {
         hostViewController?.dismiss(animated: true, completion: nil)
-        self.finishedChoosing!(nil, imageResult, false)
+        self.finishedChoosing!(image, imageResult, false)
     }
     
     func photoBrowseController(didLikePhoto liked: Bool) { }
@@ -152,11 +153,11 @@ extension PhotoChooserUI: UIImagePickerControllerDelegate {
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
         
-		hostViewController?.dismiss(animated: true, completion: nil)
 		if let image = info[UIImagePickerControllerOriginalImage] as? UIImage {
             
 			/* If the user took a photo then add it to the patchr photo album */
             if self.chosenPhotoFunction == .TakePhoto {
+                hostViewController?.dismiss(animated: true, completion: nil)
                 if PHPhotoLibrary.authorizationStatus() == .authorized {
                     self.addPhotoToAlbum(image: image, toAlbum: "Patchr") { success in
                         print("Image added to Patchr album: \(success)");
@@ -168,7 +169,19 @@ extension PhotoChooserUI: UIImagePickerControllerDelegate {
                 }
             }
             else {
-                self.finishedChoosing!(image, nil, false)
+                let photo = IDMPhoto(image: image)!
+                let photos = Array([photo])
+                let browser = PhotoBrowser(photos: photos as [AnyObject], animatedFrom: nil)
+                
+                browser?.mode = .preview
+                browser?.usePopAnimation = true
+                browser?.scaleImage = image  // Used because final image might have different aspect ratio than initially
+                browser?.useWhiteBackgroundColor = true
+                browser?.disableVerticalSwipe = false
+                browser?.browseDelegate = self
+                browser?.image = image
+                
+                picker.present(browser!, animated:true, completion:nil)
             }
 		}
 	}
