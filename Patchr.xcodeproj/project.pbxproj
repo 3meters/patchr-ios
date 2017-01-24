@@ -143,6 +143,7 @@
 		E2A5A8801B6FCE98006D6E81 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = E2A5A87F1B6FCE98006D6E81 /* GoogleService-Info.plist */; };
 		E2A5A8851B703B9B006D6E81 /* PhotoEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2A5A8841B703B9B006D6E81 /* PhotoEditView.swift */; };
 		E2A603241CD97B7A00FBD55B /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = E2A603221CD97B7A00FBD55B /* InfoPlist.strings */; };
+		E2AC5FAC1E37DC6400C95A60 /* DropdownTransitionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2AC5FAB1E37DC6400C95A60 /* DropdownTransitionManager.swift */; };
 		E2B2CAB21C553A8900CAE183 /* BaseEditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2B2CAB11C553A8900CAE183 /* BaseEditViewController.swift */; };
 		E2B4590E1BC1E76C00155659 /* SwiftyJSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D01FA3A1A705D8700DD6DFA /* SwiftyJSON.swift */; };
 		E2B756A51D84566000C102EC /* GroupSwitcherController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2B756A41D84565F00C102EC /* GroupSwitcherController.swift */; };
@@ -353,6 +354,7 @@
 		E2A5A87F1B6FCE98006D6E81 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		E2A5A8841B703B9B006D6E81 /* PhotoEditView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = PhotoEditView.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		E2A603231CD97B7A00FBD55B /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		E2AC5FAB1E37DC6400C95A60 /* DropdownTransitionManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DropdownTransitionManager.swift; sourceTree = "<group>"; };
 		E2B2CAB11C553A8900CAE183 /* BaseEditViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = BaseEditViewController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		E2B756A41D84565F00C102EC /* GroupSwitcherController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GroupSwitcherController.swift; sourceTree = "<group>"; };
 		E2B756A81D84600E00C102EC /* ChannelsHeaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = ChannelsHeaderView.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
@@ -567,6 +569,7 @@
 			children = (
 				9FDCC87DC2923CE4A6F17C1E /* SlideAnimationController.swift */,
 				9FDCCE482E821C4491DB4117 /* SlideBounceAnimationController.swift */,
+				E2AC5FAB1E37DC6400C95A60 /* DropdownTransitionManager.swift */,
 			);
 			name = Animation;
 			sourceTree = "<group>";
@@ -1151,6 +1154,7 @@
 				84EF12AC1AA904700043EBBA /* Utils.swift in Sources */,
 				E2CA16FF1DB95DDB00F99E1D /* FireAttachment.swift in Sources */,
 				E23C01111CE4F771009C56B2 /* CaptionView.swift in Sources */,
+				E2AC5FAC1E37DC6400C95A60 /* DropdownTransitionManager.swift in Sources */,
 				E25327B81B103ECA00990A81 /* AirImageButton.swift in Sources */,
 				E26A02FF1DF5DC5800EE32D3 /* AirContactView.swift in Sources */,
 				E26BBF991DB5734F00038754 /* PHPhotoLibrary+PhotoAsset.swift in Sources */,

@@ -173,7 +173,8 @@ class MainController: NSObject, iRateDelegate {
             , leftMenuViewController: drawerWrapper
             , rightMenuViewController: menuController)
         
-        drawerWrapper.viewControllers = [MainController.groupPicker, MainController.channelPicker]
+        drawerWrapper.viewControllers = [MainController.channelPicker]
+        drawerWrapper.view.backgroundColor = Theme.colorBackgroundTable
         
         if let emptyController = self.window?.rootViewController as? EmptyViewController,
             !emptyController.scenePlayed {

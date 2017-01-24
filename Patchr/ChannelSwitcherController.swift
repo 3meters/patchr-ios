@@ -24,6 +24,7 @@ class ChannelSwitcherController: BaseTableController {
     var searchTableView = AirTableView(frame: CGRect.zero, style: .plain)
     var searchOn = false
     var rule = UIView()
+    var transitionManager = PushDownAnimationController()
     
     var gradientImage: UIImage!
     var backButton: UIBarButtonItem!
@@ -89,12 +90,9 @@ class ChannelSwitcherController: BaseTableController {
         self.present(wrapper, animated: true, completion: nil)
     }
 
-    func switchAction(sender: AnyObject?) {
-        let _ = self.navigationController?.popToRootViewController(animated: true)
-    }
-    
     func backAction(sender: AnyObject?) {
-        let _ = self.navigationController?.popToRootViewController(animated: true)
+        let controller = MainController.groupPicker
+        let _ = self.navigationController?.pushViewController(controller, animated: true)
     }
     
     func searchAction(sender: AnyObject?) {
@@ -196,6 +194,7 @@ class ChannelSwitcherController: BaseTableController {
         self.navigationItem.leftBarButtonItem = self.titleButton
         self.navigationItem.rightBarButtonItems = [self.backButton, self.searchButton]
         self.navigationItem.hidesBackButton = true
+        self.navigationController?.delegate = self
         
         NotificationCenter.default.addObserver(self, selector: #selector(userDidSwitch(notification:)), name: NSNotification.Name(rawValue: Events.UserDidSwitch), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(groupDidSwitch(notification:)), name: NSNotification.Name(rawValue: Events.GroupDidSwitch), object: nil)
@@ -215,6 +214,7 @@ class ChannelSwitcherController: BaseTableController {
                     
                     self?.navigationController?.setToolbarHidden(false, animated: true)
                     let addButton = UIBarButtonItem(title: "New Channel", style: .plain, target: self, action: #selector(self?.addAction(sender:)))
+                    addButton.tintColor = Colors.brandColor
                     self?.toolbarItems = [spacerFlex, addButton, spacerFlex]
                 }
             })
@@ -336,6 +336,16 @@ class ChannelSwitcherController: BaseTableController {
         })
         
         return cell
+    }
+}
+
+extension ChannelSwitcherController: UINavigationControllerDelegate {
+    func navigationController(_ navigationController: UINavigationController
+        , animationControllerFor operation: UINavigationControllerOperation
+        , from fromVC: UIViewController
+        , to toVC: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+        self.transitionManager.presenting = (operation == .push)
+        return self.transitionManager
     }
 }
 

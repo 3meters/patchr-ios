@@ -8,27 +8,29 @@ import pop
 
 class SlideBounceAnimationController: NSObject, UIViewControllerAnimatedTransitioning, UIViewControllerTransitioningDelegate {
 
-    fileprivate var presenting: Bool = false
+    /* UIViewControllerAnimatedTransitioning */
+    
+    var presenting: Bool = false
+    var duration = 0.5
 
     func transitionDuration(using transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval {
-        return 2.0
+        return self.duration
     }
 
     func animateTransition(using transitionContext: UIViewControllerContextTransitioning) {
 
         let containerView = transitionContext.containerView
-        let toViewController = transitionContext.viewController(forKey: UITransitionContextViewControllerKey.to)!
-        let fromViewController = transitionContext.viewController(forKey: UITransitionContextViewControllerKey.from)!
-        let toView = toViewController.view
-        let fromView = fromViewController.view
+        let fromView = transitionContext.view(forKey: UITransitionContextViewKey.from)!
+        let toView = transitionContext.view(forKey: UITransitionContextViewKey.to)!
 
         if !presenting {
-            toView?.frame = CGRect(x: 0, y: 0, width: containerView.width(), height: containerView.height())
-            toView?.center = containerView.center
-            toView?.center.y = containerView.center.y + containerView.height()
+            toView.frame = CGRect(x: 0, y: 0, width: containerView.width(), height: containerView.height())
+            toView.center = containerView.center
+            toView.center.y = containerView.center.y + containerView.height()
 
-            containerView.addSubview(toView!)
-            containerView.sendSubview(toBack: fromView!)
+            /* add the both views to our view controller */
+            containerView.addSubview(toView)
+            containerView.sendSubview(toBack: fromView)
 
             let spring = POPSpringAnimation(propertyNamed: kPOPLayerPositionY)
             spring?.toValue = containerView.center.y
@@ -37,15 +39,15 @@ class SlideBounceAnimationController: NSObject, UIViewControllerAnimatedTransiti
             spring?.completionBlock = { finished in
                 transitionContext.completeTransition(!transitionContext.transitionWasCancelled)
             }
-            toView?.layer.pop_add(spring, forKey: "positionAnimation")
+            toView.layer.pop_add(spring, forKey: "positionAnimation")
         }
         else {
-            fromView?.frame = CGRect(x: 0, y: 0, width: containerView.width(), height: containerView.height())
-            fromView?.center = containerView.center
-            fromView?.center.y = containerView.center.y
+            fromView.frame = CGRect(x: 0, y: 0, width: containerView.width(), height: containerView.height())
+            fromView.center = containerView.center
+            fromView.center.y = containerView.center.y
 
-            containerView.addSubview(toView!)
-            containerView.sendSubview(toBack: toView!)
+            containerView.addSubview(toView)
+            containerView.sendSubview(toBack: toView)
 
             let spring = POPSpringAnimation(propertyNamed: kPOPLayerPositionY)
             spring?.toValue = containerView.center.y + containerView.height()
@@ -54,7 +56,7 @@ class SlideBounceAnimationController: NSObject, UIViewControllerAnimatedTransiti
             spring?.completionBlock = { finished in
                 transitionContext.completeTransition(!transitionContext.transitionWasCancelled)
             }
-            fromView?.layer.pop_add(spring, forKey: "positionAnimation")
+            fromView.layer.pop_add(spring, forKey: "positionAnimation")
         }
     }
     

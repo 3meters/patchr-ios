@@ -92,11 +92,6 @@ class GroupSwitcherController: BaseTableController {
     }
     
     func closeAction(sender: AnyObject?) {
-        if self.simplePicker {
-            let controller = MainController.channelPicker
-            self.navigationController?.pushViewController(controller, animated: true)
-            return
-        }
         close(animated: true)
     }
     
@@ -332,14 +327,13 @@ extension GroupSwitcherController: UITableViewDelegate {
         if !self.simplePicker {
             StateController.instance.setChannelId(channelId: channelId, groupId: groupId)
             MainController.instance.showChannel(groupId: groupId, channelId: channelId)
-            let _ = self.navigationController?.popToRootViewController(animated: false)
+            let _ = self.navigationController?.popViewController(animated: true)
             self.closeAction(sender: nil)
         }
         else {
             StateController.instance.setChannelId(channelId: channelId, groupId: groupId)
             MainController.instance.showChannel(groupId: groupId, channelId: channelId)
-            let controller = MainController.channelPicker
-            self.navigationController?.pushViewController(controller, animated: true)
+            let _ = self.navigationController?.popViewController(animated: true)
         }
     }
 }
