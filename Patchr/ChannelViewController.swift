@@ -583,6 +583,9 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
                     , width: (self?.headerView.contentGroup.width())! + 48
                     , height: (self?.headerView.contentGroup.height())! + 72)
                 
+                let tap = UITapGestureRecognizer(target: self, action: #selector(self?.showChannelActions(sender:)))
+                self?.headerView.addGestureRecognizer(tap)
+                
                 self?.originalRect = self?.headerView.photoView.frame
                 self?.originalHeaderRect = self?.headerView.frame
                 self?.originalScrollInset = self?.tableView.contentInset
@@ -924,8 +927,10 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
     
     func scrollToLastRow(animated: Bool = true) {
         let itemCount = self.tableViewDataSource.items.count
-        let indexPath = IndexPath(row: itemCount - 1, section: 0)
-        self.tableView.scrollToRow(at: indexPath, at: .bottom, animated: true)
+        if itemCount > 0 {
+            let indexPath = IndexPath(row: itemCount - 1, section: 0)
+            self.tableView.scrollToRow(at: indexPath, at: .bottom, animated: true)
+        }
     }
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {

@@ -29,7 +29,7 @@ class PhotoChooserUI: NSObject, UINavigationControllerDelegate {
     weak var hostViewController: UIViewController?
     var chosenPhotoFunction: PhotoButtonFunction?
     
-    fileprivate var finishedChoosing: ((UIImage?, ImageResult?, Bool) -> Void)? = nil
+    fileprivate var finishedChoosing: ((UIImage?, ImageResult?, PHAsset?, Bool) -> Void)? = nil
 
 	fileprivate lazy var imagePickerController: UIImagePickerController = {
 		return UIImagePickerController(rootViewController: self.hostViewController!)
@@ -40,7 +40,7 @@ class PhotoChooserUI: NSObject, UINavigationControllerDelegate {
 		super.init()
 	}
 
-	func choosePhoto(sender: AnyObject, finishedChoosing: @escaping (UIImage?, ImageResult?, Bool) -> Void) {
+	func choosePhoto(sender: AnyObject, finishedChoosing: @escaping (UIImage?, ImageResult?, PHAsset?, Bool) -> Void) {
 		
 		self.finishedChoosing = finishedChoosing
 		let cameraAvailable       = UIImagePickerController.isSourceTypeAvailable(.camera)
@@ -69,7 +69,7 @@ class PhotoChooserUI: NSObject, UINavigationControllerDelegate {
 		
 		let cancel = UIAlertAction(title: "Cancel", style: .cancel) { action in
 			sheet.dismiss(animated: true, completion: nil)
-			self.finishedChoosing!(nil, nil, true)
+			self.finishedChoosing!(nil, nil, nil, true)
 		}
 		
 		sheet.addAction(cancel)
@@ -129,23 +129,23 @@ class PhotoChooserUI: NSObject, UINavigationControllerDelegate {
 }
 
 @objc protocol PhotoBrowseControllerDelegate {
-    @objc optional func photoBrowseController(didFinishPickingPhoto: UIImage?, imageResult: ImageResult?) -> Void
+    @objc optional func photoBrowseController(didFinishPickingPhoto: UIImage?, imageResult: ImageResult?, asset: PHAsset?) -> Void
     @objc optional func photoBrowseController(didLikePhoto liked: Bool) -> Void
     @objc optional func photoBrowseControllerDidCancel() -> Void
 }
 
 extension PhotoChooserUI: PhotoBrowseControllerDelegate {
     
-    func photoBrowseController(didFinishPickingPhoto image: UIImage?, imageResult: ImageResult?) -> Void {
+    func photoBrowseController(didFinishPickingPhoto image: UIImage?, imageResult: ImageResult?, asset: PHAsset?) -> Void {
         hostViewController?.dismiss(animated: true, completion: nil)
-        self.finishedChoosing!(image, imageResult, false)
+        self.finishedChoosing!(image, imageResult, asset, false)
     }
     
     func photoBrowseController(didLikePhoto liked: Bool) { }
     
     func photoBrowseControllerDidCancel() {
         hostViewController?.dismiss(animated: true, completion: nil)
-		self.finishedChoosing!(nil, nil, true)
+		self.finishedChoosing!(nil, nil, nil, true)
     }
 }
 
@@ -155,17 +155,23 @@ extension PhotoChooserUI: UIImagePickerControllerDelegate {
         
 		if let image = info[UIImagePickerControllerOriginalImage] as? UIImage {
             
+            var asset: PHAsset?
+            if let url = info[UIImagePickerControllerReferenceURL] as? URL {
+                let fetchResult = PHAsset.fetchAssets(withALAssetURLs: [url], options: nil)
+                asset = fetchResult.firstObject! as PHAsset
+            }
+            
 			/* If the user took a photo then add it to the patchr photo album */
             if self.chosenPhotoFunction == .TakePhoto {
                 hostViewController?.dismiss(animated: true, completion: nil)
                 if PHPhotoLibrary.authorizationStatus() == .authorized {
                     self.addPhotoToAlbum(image: image, toAlbum: "Patchr") { success in
                         print("Image added to Patchr album: \(success)");
-                        self.finishedChoosing!(image, nil, false)
+                        self.finishedChoosing!(image, nil, asset, false)
                     }
                 }
                 else {
-                    self.finishedChoosing!(image, nil, false)
+                    self.finishedChoosing!(image, nil, asset, false)
                 }
             }
             else {
@@ -180,6 +186,7 @@ extension PhotoChooserUI: UIImagePickerControllerDelegate {
                 browser?.disableVerticalSwipe = false
                 browser?.browseDelegate = self
                 browser?.image = image
+                browser?.asset = asset
                 
                 picker.present(browser!, animated:true, completion:nil)
             }

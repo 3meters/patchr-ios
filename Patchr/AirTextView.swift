@@ -13,13 +13,25 @@ class AirTextView: JVFloatLabeledTextView {
 	
 	var rule = UIView()
     
+    required init(coder aDecoder: NSCoder) {
+        /* Called when instantiated from XIB or Storyboard */
+        super.init(coder: aDecoder)!
+        initialize()
+    }
+    
+    override init(frame: CGRect, textContainer: NSTextContainer?) {
+        /* Called when instantiated from code */
+        super.init(frame: frame, textContainer: textContainer)
+        initialize()
+    }
+
 	func initialize() {
 		
         NotificationCenter.default.addObserver(self, selector: #selector(editingBegin(notification:)), name: NSNotification.Name.UITextFieldTextDidBeginEditing, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(editingBegin(notification:)), name: NSNotification.Name.UITextViewTextDidBeginEditing, object: nil)
 		
+        self.font = Theme.fontText
 		self.textColor = Theme.colorText
-		self.font = Theme.fontText
         self.floatingLabelActiveTextColor = Colors.accentColorTextLight
         self.floatingLabelFont = Theme.fontComment
         self.floatingLabelTextColor = Theme.colorTextPlaceholder
@@ -29,8 +41,8 @@ class AirTextView: JVFloatLabeledTextView {
 		self.textContainerInset = UIEdgeInsetsMake(12, 0, 12, 0)
 		self.autocapitalizationType = .sentences
 		self.autocorrectionType = .yes
-		self.keyboardType = UIKeyboardType.default
-		self.returnKeyType = UIReturnKeyType.default
+		self.keyboardType = .default
+		self.returnKeyType = .default
 		
 		self.rule.backgroundColor = Theme.colorRule
 		self.addSubview(self.rule)

@@ -9,6 +9,7 @@
 import UIKit
 import IDMPhotoBrowser
 import Firebase
+import Photos
 
 class PhotoBrowser: IDMPhotoBrowser {
     
@@ -21,6 +22,7 @@ class PhotoBrowser: IDMPhotoBrowser {
     var browseDelegate: PhotoBrowseControllerDelegate?  // Used by photo preview feature in photo search
     var imageResult: ImageResult?
     var image: UIImage?
+    var asset: PHAsset?
     var target: AnyObject?
 	
     /*--------------------------------------------------------------------------------------------
@@ -39,7 +41,7 @@ class PhotoBrowser: IDMPhotoBrowser {
      *--------------------------------------------------------------------------------------------*/
     
     func selectAction() {
-        self.browseDelegate?.photoBrowseController!(didFinishPickingPhoto: self.image, imageResult: self.imageResult)
+        self.browseDelegate?.photoBrowseController!(didFinishPickingPhoto: self.image, imageResult: self.imageResult, asset: self.asset)
     }
 	
     /*--------------------------------------------------------------------------------------------

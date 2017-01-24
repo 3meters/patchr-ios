@@ -76,7 +76,7 @@ class ChannelDetailView: UIView {
             self.purpose.bounds.size.width = viewWidth - 32
             self.purpose.sizeToFit()
             self.purpose.anchorTopLeft(withLeftPadding: 12, topPadding: 12, width: self.purpose.width(), height: self.purpose.height())
-            self.infoGroup.alignUnder(self.contentGroup, matchingLeftAndRightWithTopPadding: 0, height: self.purpose.height() + 32)
+            self.infoGroup.alignUnder(self.contentGroup, matchingLeftAndRightWithTopPadding: 0, height: self.purpose.height() + 24)
         }
         else {
             self.infoGroup.isHidden = true

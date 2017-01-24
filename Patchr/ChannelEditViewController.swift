@@ -57,20 +57,19 @@ class ChannelEditViewController: BaseEditViewController {
          * - scrolling when self.view is a scrollview
          */
         let bannerSize = self.banner.sizeThatFits(CGSize(width:288, height:CGFloat.greatestFiniteMagnitude))
-        let descriptionSize = self.purposeField.sizeThatFits(CGSize(width:288, height:CGFloat.greatestFiniteMagnitude))
+        let purposeSize = self.purposeField.sizeThatFits(CGSize(width:288, height:CGFloat.greatestFiniteMagnitude))
         
         self.visibilityLabel.sizeToFit()
 
         self.banner.anchorTopCenter(withTopPadding: 0, width: 288, height: bannerSize.height)
-        self.nameField.alignUnder(self.banner, matchingCenterWithTopPadding: 8, width: 288, height: 48)
-        self.purposeField.alignUnder(self.nameField, matchingCenterWithTopPadding: 16, width: 288, height: max(48, descriptionSize.height))
+        self.usersButton.alignUnder(self.banner, matchingCenterWithTopPadding: 24, width: 288, height: self.usersButton.isHidden ? 0 : 48)
+        self.nameField.alignUnder(self.usersButton, matchingCenterWithTopPadding: 16, width: 288, height: 48)
+        self.purposeField.alignUnder(self.nameField, matchingCenterWithTopPadding: 16, width: 288, height: max(48, purposeSize.height))
         self.photoEditView.alignUnder(self.purposeField, matchingCenterWithTopPadding: 16, width: 288, height: 288 * 0.56)
         
         self.visibilityGroup.alignUnder(self.photoEditView, matchingCenterWithTopPadding: 8, width: 288, height: 48)
         self.visibilityLabel.anchorCenterLeft(withLeftPadding: 0, width: 144, height: self.visibilityLabel.height())
         self.visibilitySwitch.anchorCenterRight(withRightPadding: 0, width: self.visibilitySwitch.width(), height: self.visibilitySwitch.height())
-        
-        self.usersButton.alignUnder(self.photoEditView, matchingCenterWithTopPadding: 16, width: 288, height: 48)
 
         super.viewWillLayoutSubviews()
     }
@@ -153,6 +152,10 @@ class ChannelEditViewController: BaseEditViewController {
         }
     }
     
+    func textViewDidChange(_ textView: UITextView) {
+        self.view.setNeedsLayout()
+    }
+    
     override func textFieldDidEndEditing(_ textField: UITextField) {
         super.textFieldDidEndEditing(textField)
         
@@ -192,9 +195,10 @@ class ChannelEditViewController: BaseEditViewController {
         
         if self.mode == .update {
             let image = self.photoEditView.imageButton.image
+            let asset = self.photoEditView.imageButton.asset
             let path = self.channel.path
             var photoMap: [String: Any]?
-            photoMap = postPhoto(image: image!, progress: self.photoEditView.progressBlock, next: { error in
+            photoMap = postPhoto(image: image!, asset: asset, progress: self.photoEditView.progressBlock, next: { error in
                 if error == nil {
                     photoMap!["uploading"] = NSNull()
                     FireController.db.child(path).updateChildValues(["photo": photoMap!])
@@ -344,7 +348,8 @@ class ChannelEditViewController: BaseEditViewController {
                 
                 var photoMap: [String: Any]?
                 if let image = self.photoEditView.imageButton.image {
-                    photoMap = self.postPhoto(image: image, next: { error in
+                    let asset = self.photoEditView.imageButton.asset
+                    photoMap = self.postPhoto(image: image, asset: asset, next: { error in
                         if error != nil {
                             photoMap!["uploading"] = NSNull()
                             refChannel.child("photo").setValue(photoMap!)

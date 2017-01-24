@@ -8,6 +8,7 @@
 
 import UIKit
 import SDWebImage
+import Photos
 
 class AirImageView: UIImageView {
 
@@ -17,6 +18,7 @@ class AirImageView: UIImageView {
     var activity = UIActivityIndicatorView(activityIndicatorStyle: .gray)
     var sizeCategory = SizeCategory.thumbnail
     var enableLogging = true
+    var asset: PHAsset?
     
     override var image: UIImage? {
         didSet {

@@ -9,6 +9,7 @@
 import UIKit
 import AWSS3
 import SlackTextViewController
+import Photos
 import Firebase
 import FirebaseDatabaseUI
 
@@ -96,11 +97,11 @@ class BaseSlackController: SLKTextViewController {
         super.didPressLeftButton(sender)
         
         self.dismissKeyboard(true)
-        self.photoEditView.photoChooser?.choosePhoto(sender: sender as AnyObject) { [weak self] image, imageResult, cancelled in
+        self.photoEditView.photoChooser?.choosePhoto(sender: sender as AnyObject) { [weak self] image, imageResult, asset, cancelled in
             if !cancelled {
                 if image != nil || imageResult != nil {
                     DispatchQueue.main.async {
-                        self?.photoEditView.photoChosen(image: image, imageResult: imageResult)
+                        self?.photoEditView.photoChosen(image: image, imageResult: imageResult, asset: asset)
                         self?.showPhotoEdit()
                     }
                 }
@@ -265,7 +266,8 @@ class BaseSlackController: SLKTextViewController {
         
         var photoMap: [String: Any]?
         if let image = self.photoEditView.imageButton.image {
-            photoMap = postPhoto(image: image, progress: self.photoEditView.progressBlock, next: { error in
+            let asset = self.photoEditView.imageButton.asset
+            photoMap = postPhoto(image: image, asset: asset, progress: self.photoEditView.progressBlock, next: { error in
                 if error == nil {
                     photoMap!["uploading"] = NSNull()
                     messageRef.child("attachments/\(attachmentId)").setValue(["photo": photoMap!])
@@ -318,7 +320,8 @@ class BaseSlackController: SLKTextViewController {
             var photoMap: [String: Any]?
             let attachmentId = "at-\(Utils.genRandomId())"
             if let image = self.photoEditView.imageButton.image {
-                photoMap = postPhoto(image: image, progress: self.photoEditView.progressBlock, next: { error in
+                let asset = self.photoEditView.imageButton.asset
+                photoMap = postPhoto(image: image, asset: asset, progress: self.photoEditView.progressBlock, next: { error in
                     if error == nil {
                         photoMap!["uploading"] = NSNull()
                         FireController.db.child(path).child("attachments/\(attachmentId)").setValue(["photo": photoMap!])
@@ -342,6 +345,7 @@ class BaseSlackController: SLKTextViewController {
     }
     
     func postPhoto(image: UIImage
+        , asset: PHAsset?
         , progress: AWSS3TransferUtilityProgressBlock? = nil
         , next: ((Any?) -> Void)? = nil) -> [String: Any] {
         
@@ -351,12 +355,23 @@ class BaseSlackController: SLKTextViewController {
         /* Generate image key */
         let imageKey = "\(Utils.genImageKey()).jpg"
         
-        let photoMap = [
+        var photoMap = [
             "width": Int(preparedImage.size.width), // width/height are in points...should be pixels?
             "height": Int(preparedImage.size.height),
             "source": S3.instance.imageSource,
             "filename": imageKey,
             "uploading": "true"] as [String: Any]
+        
+        if asset != nil {
+            if let takenDate = asset!.creationDate {
+                photoMap["taken_at"] = Int64(takenDate.timeIntervalSince1970 * 1000)
+                Log.d("Photo taken: \(takenDate)")
+            }
+            if let coordinate = asset!.location?.coordinate {
+                photoMap["location"] = ["lat": coordinate.latitude, "lng": coordinate.longitude]
+                Log.d("Photo lat/lng: \(coordinate)")
+            }
+        }
         
         /* Prime the cache so offline has something to work with */
         ImageUtils.addImageToCache(image: image, url: URL(string: "https://\(imageKey)")!)

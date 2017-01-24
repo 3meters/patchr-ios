@@ -8,6 +8,7 @@
 
 import Foundation
 import AWSS3
+import Photos
 
 enum PhotoMode: Int {
     case None
@@ -137,16 +138,16 @@ class PhotoEditView: UIView {
 	}
 	
 	func setPhotoAction(sender: AnyObject) {
-		self.photoChooser?.choosePhoto(sender: sender) { [weak self] image, imageResult, cancelled in
+		self.photoChooser?.choosePhoto(sender: sender) { [weak self] image, imageResult, asset, cancelled in
 			if !cancelled {
                 DispatchQueue.main.async {
-                    self?.photoChosen(image: image, imageResult: imageResult)
+                    self?.photoChosen(image: image, imageResult: imageResult, asset: asset)
                 }
 			}
 		}
 	}
 	
-	func photoChosen(image: UIImage?, imageResult: ImageResult?) -> Void {
+    func photoChosen(image: UIImage?, imageResult: ImageResult?, asset: PHAsset?) -> Void {
 		
         self.usingPhotoDefault = false
         self.photoDirty = true
@@ -157,6 +158,7 @@ class PhotoEditView: UIView {
         
 		if image != nil {
 			self.imageButton.image = image
+            self.imageButton.asset = asset
             NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.PhotoDidChange), object: self)
 		}
 		else if imageResult != nil {
@@ -310,7 +312,7 @@ class PhotoEditView: UIView {
 extension PhotoEditView: AdobeUXImageEditorViewControllerDelegate {
 	
 	func photoEditor(_ editor: AdobeUXImageEditorViewController, finishedWith image: UIImage?) {
-        self.photoChosen(image: image, imageResult: nil)
+        self.photoChosen(image: image, imageResult: nil, asset: self.imageButton.asset)
 		Reporting.track("Edited Photo")
 		self.controller!.dismiss(animated: true, completion: nil)
 	}

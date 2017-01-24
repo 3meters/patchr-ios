@@ -9,6 +9,7 @@
 import UIKit
 import AWSS3
 import Firebase
+import Photos
 
 class BaseEditViewController: BaseViewController, UITextFieldDelegate, UITextViewDelegate {
 	
@@ -71,6 +72,7 @@ class BaseEditViewController: BaseViewController, UITextFieldDelegate, UITextVie
 	}
     
     func postPhoto(image: UIImage
+        , asset: PHAsset?
         , progress: AWSS3TransferUtilityProgressBlock? = nil
         , next: ((Any?) -> Void)? = nil) -> [String: Any] {
         
@@ -80,12 +82,23 @@ class BaseEditViewController: BaseViewController, UITextFieldDelegate, UITextVie
         /* Generate image key */
         let imageKey = "\(Utils.genImageKey()).jpg"
         
-        let photoMap = [
+        var photoMap = [
             "width": Int(preparedImage.size.width), // width/height are in points...should be pixels?
             "height": Int(preparedImage.size.height),
             "source": S3.instance.imageSource,
             "filename": imageKey,
             "uploading": true ] as [String: Any]
+        
+        if asset != nil {
+            if let takenDate = asset!.creationDate {
+                photoMap["taken_at"] = Int64(takenDate.timeIntervalSince1970 * 1000)
+                Log.d("Photo taken: \(takenDate)")
+            }
+            if let coordinate = asset!.location?.coordinate {
+                photoMap["location"] = ["lat": coordinate.latitude, "lng": coordinate.longitude]
+                Log.d("Photo lat/lng: \(coordinate)")
+            }
+        }
         
         /* Prime the cache so offline has something to work with */
         ImageUtils.addImageToCache(image: image, url: URL(string: "https://\(imageKey)")!)
