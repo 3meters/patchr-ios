@@ -37,21 +37,11 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
     var messageBar = UILabel()
     var messageBarTop = CGFloat(0)
     
-    var activity = UIActivityIndicatorView(activityIndicatorStyle: .whiteLarge)
-    var progressOffsetY = Float(-48)
-    var progressOffsetX = Float(8)
-    
     var titleView: ChannelTitleView!
     var navButton: UIBarButtonItem!
     var titleButton: UIBarButtonItem!
     
     var viewIsVisible = false
-
-    /* Load more button displayed in table footer */
-    var footerView			= UIView()
-    var loadMoreButton		= UIButton(type: UIButtonType.roundedRect)
-    var loadMoreActivity	= UIActivityIndicatorView(activityIndicatorStyle: .white)
-    var loadMoreMessage		= "LOAD MORE"
 
     /* Only used for row sizing */
     var rowHeights			: NSMutableDictionary = [:]
@@ -116,22 +106,15 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
     }
     
     override func viewWillLayoutSubviews() {
+        let viewWidth = min(CONTENT_WIDTH_MAX, self.view.width())
+        self.view.anchorTopCenter(withTopPadding: 0, width: viewWidth, height: self.view.height())
+        
         super.viewWillLayoutSubviews()
         
-        let viewWidth = min(CONTENT_WIDTH_MAX, self.tableView.width())
+        let headerHeight = (viewWidth * 0.625) + self.headerView.infoGroup.height()
         
         self.tableView.fillSuperview()
-        
-        self.footerView.frame.size.height = CGFloat(48 + 16)
-        self.loadMoreButton.anchorTopCenterFillingWidth(withLeftAndRightPadding: 8, topPadding: 8, height: 48)
-        self.loadMoreActivity.anchorTopCenter(withTopPadding: 8, width: 48, height: 48)
-        
-        self.activity.anchorInCenter(withWidth: 20, height: 20)
-        self.activity.frame.origin.y += CGFloat(self.progressOffsetY)
-        self.activity.frame.origin.x += CGFloat(self.progressOffsetX)
-        
-        let viewHeight = (viewWidth * 0.625) + self.headerView.infoGroup.height()
-        self.tableView.tableHeaderView?.bounds.size = CGSize(width: viewWidth, height: viewHeight)    // Triggers layoutSubviews on header
+        self.tableView.tableHeaderView?.bounds.size = CGSize(width: viewWidth, height: headerHeight)    // Triggers layoutSubviews on header
         
         if self.messageBar.alpha > 0.0 {
             self.messageBar.alignUnder(self.navigationController?.navigationBar, centeredFillingWidthWithLeftAndRightPadding: 0, topPadding: 0, height: 40)
@@ -268,15 +251,6 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
         }
     }
 
-    func nextPageAction(sender: AnyObject?) {
-        if let button = self.footerView.viewWithTag(1) as? UIButton,
-            let spinner = self.footerView.viewWithTag(2) as? UIActivityIndicatorView {
-            button.isHidden = true
-            spinner.isHidden = false
-            spinner.startAnimating()
-        }
-    }
-
     func longPressAction(sender: UILongPressGestureRecognizer) {
         if sender.state == UIGestureRecognizerState.began {
             let point = sender.location(in: self.tableView)
@@ -306,6 +280,11 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
         self.viewIsVisible = (self.view.window != nil)
         if self.viewIsVisible {
             cleanupUnreads()
+        }
+        if let wrapper = self.slideMenuController()?.leftViewController as? AirNavigationController {
+            if wrapper.topViewController is GroupSwitcherController {
+                wrapper.popViewController(animated: false)
+            }
         }
     }
     
@@ -419,27 +398,7 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
         
         self.titleView = (Bundle.main.loadNibNamed("ChannelTitleView", owner: nil, options: nil)?.first as? ChannelTitleView)!
         
-        /* Simple activity indicator (frame sizing) */
-        self.activity.color = Theme.colorActivityIndicator
-        self.activity.hidesWhenStopped = true
-        
-        /* Footer */
-        self.loadMoreButton.tag = 1
-        self.loadMoreButton.backgroundColor = Theme.colorBackgroundTile
-        self.loadMoreButton.layer.cornerRadius = 8
-        self.loadMoreButton.addTarget(self, action: #selector(ChannelViewController.nextPageAction(sender:)), for: UIControlEvents.touchUpInside)
-        self.loadMoreButton.setTitle(self.loadMoreMessage, for: .normal)
-        self.footerView.addSubview(self.loadMoreButton)
-        
-        self.loadMoreActivity.tag = 2
-        self.loadMoreActivity.color = Theme.colorActivityIndicator
-        self.loadMoreActivity.isHidden = true
-        
         self.itemTemplate.template = true
-        
-        self.footerView.frame.size.height = CGFloat(48 + 16)
-        self.footerView.addSubview(self.loadMoreActivity)
-        self.footerView.backgroundColor = Theme.colorBackgroundTileList
         
         /* Navigation button */
         var button = UIButton(type: .custom)
@@ -484,9 +443,6 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
         self.navigationItem.setLeftBarButtonItems([self.navButton, spacerFixed, self.titleButton], animated: true)
         self.navigationItem.setRightBarButtonItems([moreButton, photosButton], animated: true)
 
-        self.progressOffsetY = 80
-        self.loadMoreMessage = "LOAD MORE MESSAGES"
-
         /* Message bar */
         self.messageBar.font = Theme.fontTextDisplay
         self.messageBar.text = "Connection is offline"
@@ -500,8 +456,6 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
         self.typingIndicatorView?.textFont = Theme.fontTextList
         self.typingIndicatorView?.highlightFont = Theme.fontTextListBold
         self.typingIndicatorView?.textColor = Colors.accentColorTextLight
-        
-        self.view.addSubview(self.activity)
         
         NotificationCenter.default.addObserver(self, selector: #selector(reachabilityChanged), name: ReachabilityChangedNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(messageDidChange(notification:)), name: NSNotification.Name(rawValue: Events.MessageDidUpdate), object: nil)
@@ -631,6 +585,10 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
             }
             self.unreadRefs.removeAll()
         }
+        /* Clean-up all unreads for the chanhnel in case of orphans */
+        let channelId = self.inputChannelId!
+        let groupId = self.inputGroupId!
+        FireController.instance.clearChannelUnreads(channelId: channelId, groupId: groupId)
     }
     
     func populateCell(_ tableView: UITableView, cellForRowAt indexPath: IndexPath, snap: FIRDataSnapshot) -> UITableViewCell {

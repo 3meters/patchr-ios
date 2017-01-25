@@ -93,7 +93,22 @@ class PhotoChooserUI: NSObject, UINavigationControllerDelegate {
         pickerController.sourceType = .photoLibrary
 		pickerController.delegate = self
 		pickerController.mediaTypes = [kUTTypeImage as String]
-		self.hostViewController?.present(pickerController, animated: true, completion: nil)
+        
+        if let hostController = self.hostViewController {
+            if UIDevice.current.userInterfaceIdiom == .phone {
+                hostController.present(pickerController, animated: true, completion: nil)
+            }
+            else {
+                pickerController.modalPresentationStyle = .popover
+                hostController.present(pickerController, animated: true, completion: nil)
+                if let presentationController = pickerController.popoverPresentationController,
+                    let hostView = hostController.view {
+                    presentationController.sourceView = hostView
+                    presentationController.sourceRect = CGRect(x: hostView.frame.size.width / 2, y: hostView.frame.size.height / 4, width: 0, height: 0)
+                    presentationController.permittedArrowDirections = UIPopoverArrowDirection.any
+                }
+            }
+        }
 	}
 
 	private func takePhotoWithCamera() {

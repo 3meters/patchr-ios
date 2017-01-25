@@ -66,6 +66,7 @@ class ChannelSwitcherController: BaseTableController {
     
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
+        self.view.anchorTopCenter(withTopPadding: 74, width: NAVIGATION_DRAWER_WIDTH, height: self.view.height())
         self.searchTableView.fillSuperview()
         self.tableView.fillSuperview()
     }
@@ -92,6 +93,7 @@ class ChannelSwitcherController: BaseTableController {
 
     func backAction(sender: AnyObject?) {
         let controller = MainController.groupPicker
+        controller.view.setNeedsLayout()
         let _ = self.navigationController?.pushViewController(controller, animated: true)
     }
     

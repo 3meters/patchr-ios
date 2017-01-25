@@ -35,7 +35,8 @@ class BaseTableController: UIViewController {
     }
     
     override func viewWillLayoutSubviews() {
-        //self.activity.anchorInCenter(withWidth: 20, height: 20)
+        let viewWidth = min(CONTENT_WIDTH_MAX, self.view.width())
+        self.view.anchorTopCenter(withTopPadding: 0, width: viewWidth, height: self.view.height())
     }
 	
 	/*--------------------------------------------------------------------------------------------

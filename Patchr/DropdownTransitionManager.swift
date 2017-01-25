@@ -27,9 +27,9 @@ class PushDownAnimationController: NSObject, UIViewControllerAnimatedTransitioni
         let toView = transitionContext.view(forKey: UITransitionContextViewKey.to)!
         
         /* Set up the transforms for sliding */
-        let offScreenAbove = CGAffineTransform(translationX: 0, y: -(container.frame.height + 10))
-        let onScreenTop = CGAffineTransform(translationX: 0, y: 64)
-        let moveBack = CGAffineTransform(scaleX: CGFloat(0.85), y: CGFloat(0.85))
+        let offScreenAbove = CGAffineTransform(translationX: 0, y: -container.frame.height)
+        let onScreenTop = CGAffineTransform(translationX: 0, y: 74)
+        //let moveBack = CGAffineTransform(scaleX: CGFloat(0.85), y: CGFloat(0.85))
         
         /* add the both views to our view controller */
         if self.presenting {
@@ -50,12 +50,10 @@ class PushDownAnimationController: NSObject, UIViewControllerAnimatedTransitioni
             , options: [.curveEaseIn]
             , animations: {
                 if self.presenting {
-                    fromView.transform = moveBack
                     toView.transform = onScreenTop
                 }
                 else {
                     fromView.transform = offScreenAbove
-                    toView.transform = CGAffineTransform.identity
                 }
             }
             , completion: { finished in

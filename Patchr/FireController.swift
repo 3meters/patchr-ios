@@ -508,6 +508,12 @@ class FireController: NSObject {
         }
     }
     
+    func clearChannelUnreads(channelId: String, groupId: String) {
+        let userId = UserController.instance.userId!
+        let unreadPath = "unreads/\(userId)/\(groupId)/\(channelId)"
+        FireController.db.child(unreadPath).removeValue()
+    }
+    
     func clearMessageUnread(messageId: String, channelId: String, groupId: String) {
         let userId = UserController.instance.userId!
         let unreadPath = "unreads/\(userId)/\(groupId)/\(channelId)/\(messageId)"

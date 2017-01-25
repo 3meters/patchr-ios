@@ -56,17 +56,14 @@ class GroupSwitcherController: BaseTableController {
         super.viewWillLayoutSubviews()
         
         if self.simplePicker {
+            self.view.anchorTopCenter(withTopPadding: 74, width: NAVIGATION_DRAWER_WIDTH, height: self.view.height())
             self.tableView.fillSuperview()
             return
         }
         
         let messageSize = self.messageLabel.sizeThatFits(CGSize(width:288, height:CGFloat.greatestFiniteMagnitude))
-        if self.navigationController != nil {
-            self.messageLabel.alignUnder(self.navigationController?.navigationBar, matchingCenterWithTopPadding: 16, width: 288, height: messageSize.height + 24)
-        }
-        else {
-            self.messageLabel.anchorTopCenter(withTopPadding: 24, width: 288, height:  messageSize.height + 24)
-        }
+        
+        self.messageLabel.anchorTopCenter(withTopPadding: 64, width: 288, height:  messageSize.height + 24)
         self.rule.alignUnder(self.messageLabel, centeredFillingWidthWithLeftAndRightPadding: 0, topPadding: 0, height: 1)
         
         if self.groupAvailable {
@@ -324,16 +321,16 @@ extension GroupSwitcherController: UITableViewDelegate {
     }
     
     func showChannel(channelId: String, groupId: String) {
-        if !self.simplePicker {
+        if self.simplePicker {
             StateController.instance.setChannelId(channelId: channelId, groupId: groupId)
             MainController.instance.showChannel(groupId: groupId, channelId: channelId)
             let _ = self.navigationController?.popViewController(animated: true)
-            self.closeAction(sender: nil)
         }
         else {
             StateController.instance.setChannelId(channelId: channelId, groupId: groupId)
             MainController.instance.showChannel(groupId: groupId, channelId: channelId)
             let _ = self.navigationController?.popViewController(animated: true)
+            self.closeAction(sender: nil)
         }
     }
 }

@@ -42,12 +42,16 @@ class GroupListCell: UITableViewCell {
             self.backgroundColor = Theme.colorBackgroundSelected
             self.title?.font = UIFont(name: "HelveticaNeue-Medium", size: (self.title?.font.pointSize)!)
             self.subtitle?.textColor = Colors.black
+            self.layer.borderColor = Colors.gray80pcntColor.cgColor
+            self.layer.borderWidth = 1.0
             self.accessoryType = self.badge!.isHidden ? .checkmark : .none
         }
         else {
             self.backgroundColor = Colors.white
             self.title?.font = UIFont(name: "HelveticaNeue-Light", size: (self.title?.font.pointSize)!)
             self.subtitle?.textColor = Theme.colorTextSecondary
+            self.layer.borderColor = Colors.clear.cgColor
+            self.layer.borderWidth = 0.0
             self.accessoryType = .none
         }
     }
