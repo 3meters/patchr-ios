@@ -152,7 +152,7 @@ class GroupEditViewController: BaseEditViewController {
         self.message.textAlignment = .center
 
         self.photoEditView.photoSchema = Schema.ENTITY_PATCH
-        self.photoEditView.setHostController(controller: self)
+        self.photoEditView.setHost(controller: self, view: self.photoEditView)
         self.photoEditView.configureTo(photoMode: .Placeholder)
 
         self.titleField.placeholder = "Group Name"

@@ -22,7 +22,7 @@ class PhotoBrowser: IDMPhotoBrowser {
     var browseDelegate: PhotoBrowseControllerDelegate?  // Used by photo preview feature in photo search
     var imageResult: ImageResult?
     var image: UIImage?
-    var asset: PHAsset?
+    var asset: Any?
     var target: AnyObject?
 	
     /*--------------------------------------------------------------------------------------------

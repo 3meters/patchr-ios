@@ -235,7 +235,7 @@ class ChannelEditViewController: BaseEditViewController {
         self.banner.textAlignment = .center
 
         self.photoEditView.photoSchema = Schema.ENTITY_PATCH
-        self.photoEditView.setHostController(controller: self)
+        self.photoEditView.setHost(controller: self, view: self.photoEditView)
         self.photoEditView.configureTo(photoMode: .Placeholder)
 
         self.nameField.placeholder = "Channel name"

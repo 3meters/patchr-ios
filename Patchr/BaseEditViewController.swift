@@ -72,7 +72,7 @@ class BaseEditViewController: BaseViewController, UITextFieldDelegate, UITextVie
 	}
     
     func postPhoto(image: UIImage
-        , asset: PHAsset?
+        , asset: Any?
         , progress: AWSS3TransferUtilityProgressBlock? = nil
         , next: ((Any?) -> Void)? = nil) -> [String: Any] {
         
@@ -89,14 +89,20 @@ class BaseEditViewController: BaseViewController, UITextFieldDelegate, UITextVie
             "filename": imageKey,
             "uploading": true ] as [String: Any]
         
-        if asset != nil {
-            if let takenDate = asset!.creationDate {
+        if let asset = asset as? PHAsset {
+            if let takenDate = asset.creationDate {
                 photoMap["taken_at"] = Int64(takenDate.timeIntervalSince1970 * 1000)
                 Log.d("Photo taken: \(takenDate)")
             }
-            if let coordinate = asset!.location?.coordinate {
+            if let coordinate = asset.location?.coordinate {
                 photoMap["location"] = ["lat": coordinate.latitude, "lng": coordinate.longitude]
                 Log.d("Photo lat/lng: \(coordinate)")
+            }
+        }
+        else if let asset = asset as? [String: Any] {
+            if let takenDate = asset["taken_at"] as? Int64 {
+                photoMap["taken_at"] = takenDate
+                Log.d("Photo taken: \(takenDate)")
             }
         }
         

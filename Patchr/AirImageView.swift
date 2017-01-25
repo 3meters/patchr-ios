@@ -18,7 +18,7 @@ class AirImageView: UIImageView {
     var activity = UIActivityIndicatorView(activityIndicatorStyle: .gray)
     var sizeCategory = SizeCategory.thumbnail
     var enableLogging = true
-    var asset: PHAsset?
+    var asset: Any?
     
     override var image: UIImage? {
         didSet {

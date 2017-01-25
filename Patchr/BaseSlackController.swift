@@ -96,8 +96,15 @@ class BaseSlackController: SLKTextViewController {
     override func didPressLeftButton(_ sender: Any!) {
         super.didPressLeftButton(sender)
         
+        if let controller = self as? ChannelViewController {
+            controller.isTyping = true
+        }
+        
         self.dismissKeyboard(true)
         self.photoEditView.photoChooser?.choosePhoto(sender: sender as AnyObject) { [weak self] image, imageResult, asset, cancelled in
+            if let controller = self as? ChannelViewController {
+                controller.isTyping = false
+            }
             if !cancelled {
                 if image != nil || imageResult != nil {
                     DispatchQueue.main.async {
@@ -121,6 +128,10 @@ class BaseSlackController: SLKTextViewController {
             let indexPath = IndexPath(row: 0, section: 0)
             let scrollPosition: UITableViewScrollPosition = self.isInverted ? .bottom : .bottom
             self.tableView.scrollToRow(at: indexPath, at: scrollPosition, animated: true)
+        }
+        
+        if let controller = self as? ChannelViewController {
+            controller.isTyping = false
         }
         
         super.didPressRightButton(sender)
@@ -192,7 +203,7 @@ class BaseSlackController: SLKTextViewController {
         self.photoHolder.alpha = 0.0
         
         self.photoEditView = PhotoEditView()
-        self.photoEditView.setHostController(controller: self)
+        self.photoEditView.setHost(controller: self, view: self.leftButton)
         self.photoEditView.configureTo(photoMode: .Photo)
         
         self.rule.backgroundColor = Theme.colorRule
@@ -296,7 +307,7 @@ class BaseSlackController: SLKTextViewController {
         messageMap["channel"] = channelId
         messageMap["source"] = "user"
         
-        if let text = self.textInputbar.textView.text {
+        if let text = self.textInputbar.textView.text, !text.isEmpty {
             messageMap["text"] = text
             notificationMap["text"] = text
         }
@@ -345,7 +356,7 @@ class BaseSlackController: SLKTextViewController {
     }
     
     func postPhoto(image: UIImage
-        , asset: PHAsset?
+        , asset: Any?
         , progress: AWSS3TransferUtilityProgressBlock? = nil
         , next: ((Any?) -> Void)? = nil) -> [String: Any] {
         
@@ -362,14 +373,20 @@ class BaseSlackController: SLKTextViewController {
             "filename": imageKey,
             "uploading": "true"] as [String: Any]
         
-        if asset != nil {
-            if let takenDate = asset!.creationDate {
+        if let asset = asset as? PHAsset {
+            if let takenDate = asset.creationDate {
                 photoMap["taken_at"] = Int64(takenDate.timeIntervalSince1970 * 1000)
                 Log.d("Photo taken: \(takenDate)")
             }
-            if let coordinate = asset!.location?.coordinate {
+            if let coordinate = asset.location?.coordinate {
                 photoMap["location"] = ["lat": coordinate.latitude, "lng": coordinate.longitude]
                 Log.d("Photo lat/lng: \(coordinate)")
+            }
+        }
+        else if let asset = asset as? [String: Any] {
+            if let takenDate = asset["taken_at"] as? Int64 {
+                photoMap["taken_at"] = takenDate
+                Log.d("Photo taken: \(takenDate)")
             }
         }
         

@@ -20,6 +20,7 @@ class ChannelSwitcherController: BaseTableController {
     
     var tableView = AirTableView(frame: CGRect.zero, style: .plain)
     var searchBar: UISearchBar!
+    var searchBarHolder = UIView()
     var searchController: SearchController!
     var searchTableView = AirTableView(frame: CGRect.zero, style: .plain)
     var searchOn = false
@@ -148,13 +149,20 @@ class ChannelSwitcherController: BaseTableController {
         self.searchBar.placeholder = "Search"
         self.searchBar.searchBarStyle = .prominent
         self.searchBar.autocapitalizationType = .none
+        self.searchBar.backgroundColor = Colors.clear
+        
         for subview in self.searchBar.subviews[0].subviews {
             if subview is UITextField {
                 subview.tintColor = Colors.accentColor
             }
+            if subview.isKind(of: NSClassFromString("UISearchBarBackground")!) {
+                subview.alpha = 0.0
+            }
         }
         
-        self.searchBarButton = UIBarButtonItem(customView: self.searchBar)
+        self.searchBarHolder.addSubview(self.searchBar)
+        
+        self.searchBarButton = UIBarButtonItem(customView: self.searchBarHolder)
         self.searchController = SearchController(tableView: self.searchTableView)
         self.searchButton = UIBarButtonItem(barButtonSystemItem: .search, target: self, action: #selector(searchAction(sender:)))
         
@@ -273,7 +281,8 @@ class ChannelSwitcherController: BaseTableController {
             self.navigationItem.title = nil
             self.navigationItem.setLeftBarButton(self.searchBarButton, animated: true)
             self.navigationItem.setRightBarButtonItems(nil, animated: true)
-            self.searchBar.frame = CGRect(x: 0, y: 0, width: (self.navigationController?.navigationBar.width())! - 32, height: 44)
+            self.searchBarHolder.frame = CGRect(x: 0, y: 0, width: (self.navigationController?.navigationBar.width())! - 32, height: 44)
+            self.searchBar.fillSuperview()
             self.searchBar.becomeFirstResponder()
         }
         else {

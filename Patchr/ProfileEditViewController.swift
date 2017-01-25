@@ -210,7 +210,7 @@ class ProfileEditViewController: BaseEditViewController {
         self.message.textAlignment = .center
 
         self.photoEditView.photoSchema = Schema.ENTITY_USER
-        self.photoEditView.setHostController(controller: self)
+        self.photoEditView.setHost(controller: self, view: self.photoEditView)
 
         self.firstNameField.placeholder = "First name"
         self.firstNameField.font = Theme.fontTextDisplay

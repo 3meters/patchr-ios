@@ -147,7 +147,7 @@ class PhotoEditView: UIView {
 		}
 	}
 	
-    func photoChosen(image: UIImage?, imageResult: ImageResult?, asset: PHAsset?) -> Void {
+    func photoChosen(image: UIImage?, imageResult: ImageResult?, asset: Any?) -> Void {
 		
         self.usingPhotoDefault = false
         self.photoDirty = true
@@ -265,9 +265,9 @@ class PhotoEditView: UIView {
         self.photoChosen = false
     }
 
-	func setHostController(controller: UIViewController) {
+    func setHost(controller: UIViewController, view: UIView?) {
 		self.controller = controller
-		self.photoChooser = PhotoChooserUI(hostViewController: controller)
+        self.photoChooser = PhotoChooserUI(hostViewController: controller, hostView: view)
 	}
 	
 	func configureTo (photoMode: PhotoMode) {

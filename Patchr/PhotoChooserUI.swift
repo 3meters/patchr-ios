@@ -27,20 +27,22 @@ class PhotoChooserUI: NSObject, UINavigationControllerDelegate {
     typealias CompletionHandler = (_ success:Bool) -> Void
     
     weak var hostViewController: UIViewController?
+    weak var hostView: UIView?
     var chosenPhotoFunction: PhotoButtonFunction?
     
-    fileprivate var finishedChoosing: ((UIImage?, ImageResult?, PHAsset?, Bool) -> Void)? = nil
+    fileprivate var finishedChoosing: ((UIImage?, ImageResult?, Any?, Bool) -> Void)? = nil
 
 	fileprivate lazy var imagePickerController: UIImagePickerController = {
 		return UIImagePickerController(rootViewController: self.hostViewController!)
 	}()
 
-	init(hostViewController: UIViewController) {
+    init(hostViewController: UIViewController, hostView: UIView?) {
 		self.hostViewController = hostViewController
+        self.hostView = hostView
 		super.init()
 	}
 
-	func choosePhoto(sender: AnyObject, finishedChoosing: @escaping (UIImage?, ImageResult?, PHAsset?, Bool) -> Void) {
+	func choosePhoto(sender: AnyObject, finishedChoosing: @escaping (UIImage?, ImageResult?, Any?, Bool) -> Void) {
 		
 		self.finishedChoosing = finishedChoosing
 		let cameraAvailable       = UIImagePickerController.isSourceTypeAvailable(.camera)
@@ -102,9 +104,9 @@ class PhotoChooserUI: NSObject, UINavigationControllerDelegate {
                 pickerController.modalPresentationStyle = .popover
                 hostController.present(pickerController, animated: true, completion: nil)
                 if let presentationController = pickerController.popoverPresentationController,
-                    let hostView = hostController.view {
+                    let hostView = self.hostView {
                     presentationController.sourceView = hostView
-                    presentationController.sourceRect = CGRect(x: hostView.frame.size.width / 2, y: hostView.frame.size.height / 4, width: 0, height: 0)
+                    presentationController.sourceRect = hostView.bounds
                     presentationController.permittedArrowDirections = UIPopoverArrowDirection.any
                 }
             }
@@ -144,14 +146,14 @@ class PhotoChooserUI: NSObject, UINavigationControllerDelegate {
 }
 
 @objc protocol PhotoBrowseControllerDelegate {
-    @objc optional func photoBrowseController(didFinishPickingPhoto: UIImage?, imageResult: ImageResult?, asset: PHAsset?) -> Void
+    @objc optional func photoBrowseController(didFinishPickingPhoto: UIImage?, imageResult: ImageResult?, asset: Any?) -> Void
     @objc optional func photoBrowseController(didLikePhoto liked: Bool) -> Void
     @objc optional func photoBrowseControllerDidCancel() -> Void
 }
 
 extension PhotoChooserUI: PhotoBrowseControllerDelegate {
     
-    func photoBrowseController(didFinishPickingPhoto image: UIImage?, imageResult: ImageResult?, asset: PHAsset?) -> Void {
+    func photoBrowseController(didFinishPickingPhoto image: UIImage?, imageResult: ImageResult?, asset: Any?) -> Void {
         hostViewController?.dismiss(animated: true, completion: nil)
         self.finishedChoosing!(image, imageResult, asset, false)
     }
@@ -170,10 +172,13 @@ extension PhotoChooserUI: UIImagePickerControllerDelegate {
         
 		if let image = info[UIImagePickerControllerOriginalImage] as? UIImage {
             
-            var asset: PHAsset?
+            var asset: Any?
             if let url = info[UIImagePickerControllerReferenceURL] as? URL {
                 let fetchResult = PHAsset.fetchAssets(withALAssetURLs: [url], options: nil)
                 asset = fetchResult.firstObject! as PHAsset
+            }
+            else {
+                asset = ["taken_at": Utils.now()] 
             }
             
 			/* If the user took a photo then add it to the patchr photo album */

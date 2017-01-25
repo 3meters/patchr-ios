@@ -56,13 +56,15 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
         }
         set {
             self.localTyping = newValue
-            if let username = UserController.instance.user?.username {
-                let userId = UserController.instance.userId!
-                if self.localTyping {
-                    self.typingRef.child(userId).setValue(username)
-                }
-                else {
-                    self.typingRef.child(userId).removeValue()
+            if !self.textInputbar.isEditing {   // Only use indicator if not editing
+                if let username = UserController.instance.user?.username {
+                    let userId = UserController.instance.userId!
+                    if self.localTyping {
+                        self.typingRef.child(userId).setValue(username)
+                    }
+                    else {
+                        self.typingRef.child(userId).removeValue()
+                    }
                 }
             }
         }
@@ -256,18 +258,11 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
             let point = sender.location(in: self.tableView)
             if let indexPath = self.tableView.indexPathForRow(at: point) {
                 dismissKeyboard(true)
+                let cell = self.tableView.cellForRow(at: indexPath) as! WrapperTableViewCell
                 let snap = self.tableViewDataSource.object(at: UInt(indexPath.row)) as! FIRDataSnapshot
                 let message = FireMessage.from(dict: snap.value as? [String: Any], id: snap.key)
-                showMessageActions(message: message!)
+                showMessageActions(message: message!, sourceView: cell.view)
             }
-        }
-    }
-    
-    func messageOptionsAction(sender: AnyObject?) {
-        if let button = sender as? AirLinkButton,
-            let message = button.data as? FireMessage {
-            dismissKeyboard(true)
-            showMessageActions(message: message)
         }
     }
     
@@ -290,17 +285,14 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
     
     override func showPhotoEdit() {
         super.showPhotoEdit()
-        self.isTyping = true
     }
     
     override func didPressLeftButton(_ sender: Any!) {
         super.didPressLeftButton(sender)
-        self.isTyping = true
     }
     
     override func didPressRightButton(_ sender: Any!) {
         super.didPressRightButton(sender)
-        self.isTyping = false
     }
     
     override func textDidUpdate(_ animated: Bool) {
@@ -628,8 +620,6 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
             if let messageView = cell.view! as? MessageViewCell {
                 
                 messageView.bind(message: message)
-                messageView.optionsButton.addTarget(self, action: #selector(self.messageOptionsAction(sender:)), for: .touchUpInside)
-                messageView.optionsButton.data = message
 
                 if message.creator != nil {
                     messageView.userPhotoControl.target = message.creator
@@ -658,7 +648,7 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
         return cell
     }
     
-    func showMessageActions(message: FireMessage) {
+    func showMessageActions(message: FireMessage, sourceView: UIView?) {
         
         let userId = UserController.instance.userId
         let sheet = UIAlertController(title: nil, message: nil, preferredStyle: UIAlertControllerStyle.actionSheet)
@@ -703,6 +693,11 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
             sheet.addAction(cancel)
         }
         
+        if let presenter = sheet.popoverPresentationController, let sourceView = sourceView {
+            presenter.sourceView = sourceView
+            presenter.sourceRect = sourceView.bounds
+        }
+
         present(sheet, animated: true, completion: nil)
     }
     
