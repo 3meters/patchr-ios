@@ -761,12 +761,6 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
                 UIViewController.topMostViewController()?.present(wrapper, animated: true, completion: nil)
             }
             
-            let addMembersAction = UIAlertAction(title: "Add members to channel", style: .default) { action in
-                let controller = MemberPickerController()
-                let wrapper = AirNavigationController(rootViewController: controller)
-                UIViewController.topMostViewController()?.present(wrapper, animated: true, completion: nil)
-            }
-            
             let cancel = UIAlertAction(title: "Cancel", style: .cancel) {
                 action in
                 sheet.dismiss(animated: true, completion: nil)
@@ -779,7 +773,6 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
                 if !self.channel!.general! {
                     sheet.addAction(statusAction)
                 }
-                sheet.addAction(addMembersAction)   // Owners only
                 sheet.addAction(editAction)         // Owners only
                 sheet.addAction(cancel)
             }

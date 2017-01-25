@@ -226,6 +226,11 @@ class MemberSettingsController: UITableViewController {
         }
         else {
             if self.roleNext != self.role {
+                
+                let channelId = self.inputChannel.id!
+                let memberChannelsPath = "member-channels/\(userId)/\(groupId)/\(channelId)/role"
+                let channelMembersPath = "channel-member/\(channelId)/\(userId)/role"
+
                 if self.role == "owner" {    // Check if only owner
                     let groupId = StateController.instance.groupId!
                     let channelId = self.inputChannel.id!
@@ -234,16 +239,21 @@ class MemberSettingsController: UITableViewController {
                             self.alert(title: "Only Owner", message: "Channels need at least one owner.")
                             return
                         }
-                        let channelId = self.inputChannel.id!
-                        let memberPath = "member-channels/\(userId)/\(groupId)/\(channelId)/role"
-                        FireController.db.child(memberPath).setValue(self.roleNext!)
+                        let updates: [String: Any] = [
+                            memberChannelsPath: self.roleNext!,
+                            channelMembersPath: self.roleNext!
+                        ]
+                        FireController.db.updateChildValues(updates)
                         self.closeAction(sender: nil)
                     }
                     return
                 }
-                let channelId = self.inputChannel.id!
-                let memberPath = "member-channels/\(userId)/\(groupId)/\(channelId)/role"
-                FireController.db.child(memberPath).setValue(self.roleNext!)
+
+                let updates: [String: Any] = [
+                    memberChannelsPath: self.roleNext!,
+                    channelMembersPath: self.roleNext!
+                ]
+                FireController.db.updateChildValues(updates)
                 closeAction(sender: nil)
             }
         }

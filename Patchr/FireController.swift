@@ -164,7 +164,7 @@ class FireController: NSObject {
         
         let channelLink = channelMemberMap(timestamp: Utils.now(), priorityIndex: 4, role: role /* neutral */)
         var updates: [String: Any] = [:]
-        updates["channel-members/\(channelId)/\(userId)"] = true
+        updates["channel-members/\(channelId)/\(userId)"] = ["muted": false, "role": role]
         updates["member-channels/\(userId)/\(groupId)/\(channelId)"] = channelLink
         FireController.db.updateChildValues(updates) { error, ref in
             if error == nil {
@@ -566,21 +566,15 @@ class FireController: NSObject {
             .observeSingleEvent(of: .value, with: { snap in
                 if let members = snap.value as? [String: Any] {
                     var roleCount = 0
-                    var userCount = members.keys.count
-                    for userId in members.keys {
-                        FireController.db.child("member-channels/\(userId)/\(groupId)/\(channelId)/role")
-                            .observeSingleEvent(of: .value, with: { snap in
-                                if let memberRole = snap.value as? String {
-                                    if memberRole == role {
-                                        roleCount += 1
-                                    }
-                                }
-                                userCount -= 1
-                                if userCount == 0 {
-                                    then(roleCount)
-                                }
-                        })
+                    for value in members.values {
+                        let member = value as! [String: Any]
+                        if let memberRole = member["role"] as? String {
+                            if memberRole == role {
+                                roleCount += 1
+                            }
+                        }
                     }
+                    then(roleCount)
                 }
                 else {
                     then(nil)
