@@ -204,7 +204,7 @@ class GroupEditViewController: BaseEditViewController {
     }
 
     func delete() {
-        FireController.instance.delete(groupId: self.group.id!, then: { updates in
+        FireController.instance.deleteGroup(groupId: self.group.id!, then: { updates in
             if updates != nil {
                 StateController.instance.clearGroup()   // Make sure group and channel are both unset
                 self.close(animated: true)

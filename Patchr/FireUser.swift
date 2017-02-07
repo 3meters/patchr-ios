@@ -19,6 +19,7 @@ class FireUser: NSObject {
 
     var id: String?
     var createdAt: Int?
+    var createdBy: String?
     var modifiedAt: Int?
     var presence: Any?
     var email: String?
@@ -43,6 +44,7 @@ class FireUser: NSObject {
             let user = FireUser()
             user.id = id
             user.createdAt = dict!["created_at"] as? Int
+            user.createdBy = dict!["created_by"] as? String
             user.modifiedAt = dict!["modified_at"] as? Int
             user.presence = dict!["presence"]
             user.email = dict!["email"] as? String

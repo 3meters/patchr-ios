@@ -11,9 +11,9 @@ class MessageQuery: NSObject {
     var messageHandle: UInt!
     var message: FireMessage!
     
-    init(channelId: String, messageId: String) {
+    init(channelId: String, groupId: String, messageId: String) {
         super.init()
-        self.messagePath = "channel-messages/\(channelId)/\(messageId)"
+        self.messagePath = "group-messages/\(groupId)/\(channelId)/\(messageId)"
     }
     
     func observe(with block: @escaping (FireMessage?) -> Swift.Void) {

@@ -10,12 +10,11 @@ import Foundation
 
 class FireProfile: NSObject {
     
-    var firstName: String?
-    var lastName: String?
-    var fullName: String?
-    var phone: String?
-    var skype: String?
     var developer: Bool?
+    var firstName: String?
+    var fullName: String?
+    var lastName: String?
+    var phone: String?
     var photo: FirePhoto?
     
     static func from(dict: [String: Any]?) -> FireProfile? {
@@ -25,7 +24,6 @@ class FireProfile: NSObject {
             profile.lastName = dict!["last_name"] as? String
             profile.fullName = dict!["full_name"] as? String
             profile.phone = dict!["phone"] as? String
-            profile.skype = dict!["skype"] as? String
             profile.developer = dict!["developer"] as? Bool
             profile.photo = FirePhoto.from(dict: dict!["photo"] as! [String : Any]?)
             return profile

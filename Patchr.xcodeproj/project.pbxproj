@@ -84,7 +84,6 @@
 		E25327CF1B13DB3000990A81 /* notification_carme.aac in Resources */ = {isa = PBXBuildFile; fileRef = E25327C81B13D34200990A81 /* notification_carme.aac */; };
 		E25327D01B13DB3000990A81 /* notification_pop.aac in Resources */ = {isa = PBXBuildFile; fileRef = E25327C91B13D34200990A81 /* notification_pop.aac */; };
 		E25327D21B13DEF800990A81 /* AudioController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E25327D11B13DEF800990A81 /* AudioController.swift */; };
-		E2539EA21E268C6A000FFE40 /* PresenceQuery.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2539EA11E268C6A000FFE40 /* PresenceQuery.swift */; };
 		E2539EA41E269E45000FFE40 /* InviteListController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2539EA31E269E45000FFE40 /* InviteListController.swift */; };
 		E2539EA61E26A2B4000FFE40 /* InviteListCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2539EA51E26A2B4000FFE40 /* InviteListCell.swift */; };
 		E2539EA81E26A2E7000FFE40 /* InvitePendingListCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E2539EA71E26A2E7000FFE40 /* InvitePendingListCell.xib */; };
@@ -292,7 +291,6 @@
 		E25327C81B13D34200990A81 /* notification_carme.aac */ = {isa = PBXFileReference; lastKnownFileType = file; path = notification_carme.aac; sourceTree = "<group>"; };
 		E25327C91B13D34200990A81 /* notification_pop.aac */ = {isa = PBXFileReference; lastKnownFileType = file; path = notification_pop.aac; sourceTree = "<group>"; };
 		E25327D11B13DEF800990A81 /* AudioController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AudioController.swift; path = Patchr/AudioController.swift; sourceTree = "<group>"; };
-		E2539EA11E268C6A000FFE40 /* PresenceQuery.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PresenceQuery.swift; sourceTree = "<group>"; };
 		E2539EA31E269E45000FFE40 /* InviteListController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InviteListController.swift; sourceTree = "<group>"; };
 		E2539EA51E26A2B4000FFE40 /* InviteListCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = InviteListCell.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		E2539EA71E26A2E7000FFE40 /* InvitePendingListCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = InvitePendingListCell.xib; sourceTree = "<group>"; };
@@ -502,7 +500,6 @@
 				9FDCCE483C7DF6C69EC46E17 /* ChannelQuery.swift */,
 				9FDCC2AE42A7C32316E95CE2 /* GroupQuery.swift */,
 				9FDCCEFC8FC05526D291A77B /* MessageQuery.swift */,
-				E2539EA11E268C6A000FFE40 /* PresenceQuery.swift */,
 				E2D654FA1E0C9EBB00714BA9 /* UnreadQuery.swift */,
 				9FDCC5452372EFCC98BA01BF /* UserQuery.swift */,
 			);
@@ -1179,7 +1176,6 @@
 				E2DA16DF1DD142E00096D86F /* Emoji.swift in Sources */,
 				E227294D1CEA7D0600913041 /* GalleryViewCell.swift in Sources */,
 				9FDCC8FD0E124B99BA23D71A /* FireGroup.swift in Sources */,
-				E2539EA21E268C6A000FFE40 /* PresenceQuery.swift in Sources */,
 				E259082E1DC69BBE00CB6C3F /* MemberViewController.swift in Sources */,
 				9FDCC0B1FBF9425A99BD2185 /* FireChannel.swift in Sources */,
 				9FDCC775425D3AEFD715E7C3 /* FireMessage.swift in Sources */,

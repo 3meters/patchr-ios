@@ -17,16 +17,17 @@ class FireGroup: NSObject {
         return "groups/\(self.id!)"
     }
     
-    var id: String?
-    var title: String?
-    var desc: String?
-    var photo: FirePhoto?
-    var defaultChannels: [String]?
-    var ownedBy: String?
     var createdAt: Int?
     var createdBy: String?
+    var defaultChannels: [String]?
     var modifiedAt: Int?
     var modifiedBy: String?
+    var ownedBy: String?
+    var photo: FirePhoto?
+    var title: String?
+    
+    /* Local */
+    var id: String?
     
     /* Link properties for the current user */
     var disabled: Bool?
@@ -38,16 +39,15 @@ class FireGroup: NSObject {
     static func from(dict: [String: Any]?, id: String?) -> FireGroup? {
         if dict != nil {
             let group = FireGroup()
-            group.id = id
-            group.title = dict!["title"] as? String
-            group.desc = dict!["description"] as? String
-            group.defaultChannels = dict!["default_channels"] as? [String]
-            group.ownedBy = dict!["owned_by"] as? String
             group.createdAt = dict!["created_at"] as? Int
             group.createdBy = dict!["created_by"] as? String
+            group.defaultChannels = dict!["default_channels"] as? [String]
+            group.id = id
             group.modifiedAt = dict!["modified_at"] as? Int
             group.modifiedBy = dict!["modified_by"] as? String
+            group.ownedBy = dict!["owned_by"] as? String
             group.photo = FirePhoto.from(dict: dict!["photo"] as! [String : Any]?)
+            group.title = dict!["title"] as? String
             return group
         }
         return nil

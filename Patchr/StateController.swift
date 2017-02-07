@@ -50,7 +50,7 @@ class StateController: NSObject {
                 return
             }
             
-            if let groupId = UserDefaults.standard.string(forKey: "groupId"),
+            if let groupId = UserDefaults.standard.string(forKey: "group_id"),
                 let userId = UserController.instance.userId {
                 
                 if let settings = UserDefaults.standard.dictionary(forKey: groupId),
@@ -117,7 +117,7 @@ class StateController: NSObject {
             
             self.groupId = groupId
             NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.GroupDidSwitch), object: self, userInfo: userInfo)
-            UserDefaults.standard.set(groupId, forKey: "groupId")
+            UserDefaults.standard.set(groupId, forKey: "group_id")
 
             /* Stash channelId for general channel */
             FireController.instance.findGeneralChannel(groupId: groupId) { channelId in
@@ -127,15 +127,26 @@ class StateController: NSObject {
             setChannelId(channelId: channelId, groupId: groupId, bundle: userInfo, next: next)
             
             /* Convenience for other parts of the code that need quick access to the group object */
-            let userId = UserController.instance.userId
+            let userId = UserController.instance.userId!
             self.groupQuery?.remove()
-            self.groupQuery = GroupQuery(groupId: groupId, userId: userId!)
+            self.groupQuery = GroupQuery(groupId: groupId, userId: userId)
             self.groupQuery!.observe(with: { group in
                 
                 guard group != nil else {
                     Log.w("Requested group invalid: \(groupId)")
                     self.clearGroup()
-                    next?(nil)
+                    if next != nil {
+                        next?(nil)
+                    }
+                    else {
+                        /* Group has been deleted from under us. Try to switch to something reasonable. */
+                        FireController.instance.autoPickGroupAndChannel(userId: userId) { groupId, channelId in
+                            if groupId != nil && channelId != nil {
+                                StateController.instance.setChannelId(channelId: channelId!, groupId: groupId!)
+                                MainController.instance.showChannel(groupId: groupId!, channelId: channelId!)
+                            }
+                        }
+                    }
                     return
                 }
                 
@@ -144,7 +155,7 @@ class StateController: NSObject {
                 }
                 
                 self.group = group
-                NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.GroupDidUpdate), object: self, userInfo: ["groupId": groupId])
+                NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.GroupDidUpdate), object: self, userInfo: ["group_id": groupId])
             })
         }
         else {
@@ -181,7 +192,7 @@ class StateController: NSObject {
         self.groupId = nil
         self.group = nil
         self.groupQuery = nil
-        UserDefaults.standard.removeObject(forKey: "groupId")
+        UserDefaults.standard.removeObject(forKey: "group_id")
     }
     
     func clearChannel() {

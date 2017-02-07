@@ -51,6 +51,38 @@ func PatchrUserDefaultKey(subKey: String) -> String {
     return NAMESPACE + subKey
 }
 
+enum AppConfiguration {
+    case debug
+    case testFlight
+    case appStore
+}
+
+struct Config {
+    /* This is private because the use of 'appConfiguration' is preferred. */
+    private static let isTestFlight = Bundle.main.appStoreReceiptURL?.lastPathComponent == "sandboxReceipt"
+    
+    // This can be used to add debug statements.
+    static var isDebug: Bool {
+        #if DEBUG
+            return true
+        #else
+            return false
+        #endif
+    }
+    
+    static var appConfiguration: AppConfiguration {
+        if isDebug {
+            return .debug
+        }
+        else if isTestFlight {
+            return .testFlight
+        }
+        else {
+            return .appStore
+        }
+    }
+}
+
 public struct Events {
     static let ChannelDidSwitch = "ChannelDidSwitch"
     static let ChannelDidUpdate = "ChannelDidUpdate"

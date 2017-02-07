@@ -29,29 +29,27 @@ class BranchProvider: NSObject {
     static func inviteMember(groupId: String, groupTitle: String, username: String?, email: String, inviteId: String, completion: @escaping CompletionBlock) {
         
         let group = StateController.instance.group
-        let referrer = UserController.instance.user
-        let referrerId = UserController.instance.userId
-        let referrerName = referrer!.profile?.fullName ?? username
-        let photoUrl = ImageUtils.url(prefix: referrer?.profile?.photo?.filename, source: referrer?.profile?.photo?.source, category: SizeCategory.profile)
+        let inviter = UserController.instance.user
+        let inviterId = UserController.instance.userId
+        let inviterName = inviter!.profile?.fullName ?? username
+        let photoUrl = ImageUtils.url(prefix: inviter?.profile?.photo?.filename, source: inviter?.profile?.photo?.source, category: SizeCategory.profile)
         let path = "group/\(groupId)"
         let applink = BranchUniversalObject(canonicalIdentifier: path)
         
-        applink.metadata?["referrerId"] = referrerId
-        applink.metadata?["referrerName"] = referrerName
-        
-        if photoUrl != nil {
-            applink.metadata?["referrerPhotoUrl"] = photoUrl
-        }
-        
-        applink.metadata?["role"] = "member"
-        applink.metadata?["email"] = email
-        applink.metadata?["inviteId"] = inviteId
-        applink.metadata?["groupId"] = groupId
-        applink.metadata?["groupTitle"] = groupTitle
         applink.metadata?["created_at"] = Utils.now()
-            
+        applink.metadata?["email"] = email
+        applink.metadata?["group_id"] = groupId
+        applink.metadata?["groupTitle"] = groupTitle
+        applink.metadata?["invite_id"] = inviteId
+        applink.metadata?["invited_by"] = inviterId
+        applink.metadata?["inviterName"] = inviterName
+        if photoUrl != nil {
+            applink.metadata?["inviterPhotoUrl"] = photoUrl
+        }
+        applink.metadata?["role"] = "member"
+        
         /* $og_title */
-        applink.title = "Invite by \(referrerName!) to the \(groupTitle) group"
+        applink.title = "Invite by \(inviterName!) to the \(groupTitle) group"
         
         /* $og_image */
         if let photo = group?.photo {
@@ -61,9 +59,7 @@ class BranchProvider: NSObject {
         }
         
         /* $og_description */
-        if let desc = group?.desc, !desc.isEmpty {
-            applink.contentDescription = desc
-        }
+        applink.contentDescription = "Group messaging for control freaks."
         
         let linkProperties = BranchLinkProperties()
         linkProperties.channel = "patchr-ios"
@@ -83,35 +79,37 @@ class BranchProvider: NSObject {
     
     static func inviteGuest(group: FireGroup, channels: [String: Any], email: String, inviteId: String, completion: @escaping CompletionBlock) {
         
-        let referrer = UserController.instance.user
-        let referrerId = UserController.instance.userId
-        let referrerName = referrer!.profile?.fullName ?? UserController.instance.user?.username
-        let photoUrl = ImageUtils.url(prefix: referrer?.profile?.photo?.filename, source: referrer?.profile?.photo?.source, category: SizeCategory.profile)
+        let inviter = UserController.instance.user
+        let inviterId = UserController.instance.userId
+        let inviterName = inviter!.profile?.fullName ?? UserController.instance.user?.username
+        let photoUrl = ImageUtils.url(prefix: inviter?.profile?.photo?.filename, source: inviter?.profile?.photo?.source, category: SizeCategory.profile)
         let path = "group/\(group.id!)"
         let applink = BranchUniversalObject(canonicalIdentifier: path)
         
-        applink.metadata?["referrerId"] = referrerId
-        applink.metadata?["referrerName"] = referrerName
-        
-        if photoUrl != nil {
-            applink.metadata?["referrerPhotoUrl"] = photoUrl
-        }
-        
-        applink.metadata?["role"] = "guest"
-        applink.metadata?["email"] = email
-        applink.metadata?["inviteId"] = inviteId
-        applink.metadata?["groupId"] = group.id!
-        applink.metadata?["groupTitle"] = group.title!
         applink.metadata?["channels"] = channels
+        applink.metadata?["created_at"] = Utils.now()
+        applink.metadata?["email"] = email
+        applink.metadata?["group_id"] = group.id!
+        applink.metadata?["groupTitle"] = group.title!
+        applink.metadata?["invite_id"] = inviteId
+        applink.metadata?["invited_by"] = inviterId
+        applink.metadata?["inviterName"] = inviterName
+        if photoUrl != nil {
+            applink.metadata?["inviterPhotoUrl"] = photoUrl
+        }
+        applink.metadata?["role"] = "guest"
         
         /* $og_title */
         let channelName = channels.first?.value as! String
         if channels.count == 1 {
-            applink.title = "Invite by \(referrerName!) to the \(channelName) channel"
+            applink.title = "Invite by \(inviterName!) to the \(channelName) channel"
         }
         else {
-            applink.title = "Invite by \(referrerName!) to the \(channelName) channel plus more"
+            applink.title = "Invite by \(inviterName!) to the \(channelName) channel plus more"
         }
+        
+        /* $og_description */
+        applink.contentDescription = "Group messaging for control freaks."
         
         let linkProperties = BranchLinkProperties()
         linkProperties.channel = "patchr-ios"

@@ -127,7 +127,7 @@ class UserController: NSObject {
             }
             
             /* So unread lookups will work right */
-            UserDefaults.standard.set(userId, forKey: "userId")
+            UserDefaults.standard.set(userId, forKey: "user_id")
             Reporting.updateUser(user: FIRAuth.auth()?.currentUser)
             NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.UserDidSwitch), object: nil, userInfo: nil)
         })

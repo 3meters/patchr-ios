@@ -130,7 +130,7 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
     }
     
     deinit {
-        Log.d("ChannelViewController deallocated")
+        Log.d("ChannelViewController released")
         if self.typingHandle != nil {
             self.typingRef.removeObserver(withHandle: self.typingHandle)
         }
@@ -184,7 +184,7 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
                     let groupId = self.channel.group!
                     let channelId = message.channel!
                     let messageId = message.id!
-                    FireController.instance.delete(messageId: messageId, channelId: channelId, groupId: groupId)
+                    FireController.instance.deleteMessage(messageId: messageId, channelId: channelId, groupId: groupId)
                 }
         }
     }
@@ -329,7 +329,7 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
     }
     
     func messageDidChange(notification: NSNotification) {
-        if let userInfo = notification.userInfo, let messageId = userInfo["messageId"] as? String {
+        if let userInfo = notification.userInfo, let messageId = userInfo["message_id"] as? String {
             self.rowHeights.removeObject(forKey: messageId)
         }
     }
@@ -340,8 +340,8 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
         
         /* Turn on unread indicator if we already have the message */
         
-        if let channelId = notification?.userInfo?["channelId"] as? String,
-            let messageId = notification?.userInfo?["messageId"] as? String,
+        if let channelId = notification?.userInfo?["channel_id"] as? String,
+            let messageId = notification?.userInfo?["message_id"] as? String,
             channelId == self.channel.id {
             
             var index = 0
@@ -545,7 +545,7 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
             }
         })
         
-        self.messagesQuery = FireController.db.child("channel-messages/\(channelId)").queryOrdered(byChild: "created_at_desc")
+        self.messagesQuery = FireController.db.child("group-messages/\(groupId)/\(channelId)").queryOrdered(byChild: "created_at_desc")
         
         self.tableViewDataSource = MessagesDataSource(
             query: self.messagesQuery,
@@ -570,9 +570,9 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
     func cleanupUnreads() {
         if self.unreadRefs.count > 0 {
             for ref in self.unreadRefs {
-                let groupId = ref["groupId"] as! String
-                let channelId = ref["channelId"] as! String
-                let messageId = ref["messageId"] as! String
+                let groupId = ref["group_id"] as! String
+                let channelId = ref["channel_id"] as! String
+                let messageId = ref["message_id"] as! String
                 FireController.instance.clearMessageUnread(messageId: messageId, channelId: channelId, groupId: groupId)
             }
             self.unreadRefs.removeAll()
@@ -636,9 +636,9 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
                         }
                         else {
                             var task: [String: Any] = [:]
-                            task["groupId"] = groupId
-                            task["channelId"] = channelId
-                            task["messageId"] = messageId
+                            task["group_id"] = groupId
+                            task["channel_id"] = channelId
+                            task["message_id"] = messageId
                             self.unreadRefs.append(task)
                         }
                     }
@@ -657,7 +657,7 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
         let likeTitle = likes ? "Remove like" : "Add like"
         let like = UIAlertAction(title: likeTitle, style: .default) { action in
             NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.MessageDidUpdate)
-                , object: self, userInfo: ["messageId": message.id!])
+                , object: self, userInfo: ["message_id": message.id!])
             self.rowHeights.removeObject(forKey: message.id!)
             if likes {
                 message.removeReaction(emoji: .thumbsup)

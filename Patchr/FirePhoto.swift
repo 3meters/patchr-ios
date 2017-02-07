@@ -11,11 +11,13 @@ import Foundation
 class FirePhoto: NSObject {
     
     var filename: String?
-    var width: Int?
     var height: Int?
     var source: String?
     var takenAt: Int?
     var uploading: String?
+    var width: Int?
+    
+    /* Local */
     var cacheKey: String {
         return "https://\(filename!)"
     }

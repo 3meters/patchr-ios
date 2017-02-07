@@ -124,7 +124,7 @@ class MemberListController: BaseTableController, UITableViewDelegate {
         
         if self.scope == .channel {
             let channelId = StateController.instance.channelId!
-            query = FireController.db.child("channel-members/\(channelId)")
+            query = FireController.db.child("group-channel-members/\(groupId)/\(channelId)")
         }
         
         if (self.scope == .channel && self.channel.role == "owner") || StateController.instance.group?.role == "owner" {

@@ -81,7 +81,7 @@ class BaseSlackController: SLKTextViewController {
     }
     
     deinit {
-        Log.d("BaseSlackController deallocated")
+        Log.d("BaseSlackController released")
     }
 	
 	/*--------------------------------------------------------------------------------------------
@@ -273,7 +273,7 @@ class BaseSlackController: SLKTextViewController {
         }
         
         let attachmentId = "at-\(Utils.genRandomId())"
-        let messageRef = FireController.db.child("channel-messages/\(channelId)").childByAutoId()
+        let messageRef = FireController.db.child("group-messages/\(groupId)/\(channelId)").childByAutoId()
         
         var photoMap: [String: Any]?
         if let image = self.photoEditView.imageButton.image {
@@ -291,20 +291,21 @@ class BaseSlackController: SLKTextViewController {
         let timestampReversed = -1 * timestamp
         
         var notificationMap: [String: Any] = [:]
+        notificationMap["channel_id"] = channelId
         notificationMap["channelName"] = channelName
-        notificationMap["username"] = username
         notificationMap["created_at"] = Int(timestamp)
         notificationMap["created_by"] = userId
-        notificationMap["channelId"] = channelId
-        notificationMap["groupId"] = groupId
+        notificationMap["group_id"] = groupId
+        notificationMap["username"] = username
         
         var messageMap: [String: Any] = [:]
-        messageMap["modified_at"] = Int(timestamp)
+        messageMap["channel_id"] = channelId
         messageMap["created_at"] = Int(timestamp)
         messageMap["created_at_desc"] = Int(timestampReversed)
-        messageMap["modified_by"] = userId
         messageMap["created_by"] = userId
-        messageMap["channel"] = channelId
+        messageMap["group_id"] = groupId
+        messageMap["modified_at"] = Int(timestamp)
+        messageMap["modified_by"] = userId
         messageMap["source"] = "user"
         
         if let text = self.textInputbar.textView.text, !text.isEmpty {
@@ -319,7 +320,7 @@ class BaseSlackController: SLKTextViewController {
         
         messageRef.setValue(messageMap)
         FireController.db.child("queue/notifications/\(messageRef.key)").setValue(notificationMap)
-        NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.MessageDidUpdate), object: self, userInfo: ["messageId":messageRef.key])
+        NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.MessageDidUpdate), object: self, userInfo: ["message_id":messageRef.key])
     }
     
     func updateMessage() {
@@ -352,7 +353,7 @@ class BaseSlackController: SLKTextViewController {
         updateMap["text"] = (text == nil || text!.isEmpty) ? NSNull() : text
         
         FireController.db.child(path).updateChildValues(updateMap)
-        NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.MessageDidUpdate), object: self, userInfo: ["messageId":self.editingMessage.id!])
+        NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.MessageDidUpdate), object: self, userInfo: ["message_id":self.editingMessage.id!])
     }
     
     func postPhoto(image: UIImage

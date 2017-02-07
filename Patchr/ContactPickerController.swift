@@ -164,11 +164,14 @@ class ContactPickerController: BaseTableController, UITableViewDelegate, UITable
         self.invitedEmails.removeAll()
         FireController.db.child("invites/\(groupId)").observeSingleEvent(of: .value, with: { snap in
             if !(snap.value is NSNull) && snap.hasChildren() {
-                for item in snap.children {
-                    let snapInvite = item as! FIRDataSnapshot
-                    let map = snapInvite.value as! [String: Any]
-                    let status = map["status"] as? String
-                    self.invitedEmails[map["email"] as! String] = status
+                for item in snap.children  {
+                    let snapInviter = item as! FIRDataSnapshot
+                    for item in snapInviter.children {
+                        let snapInvite = item as! FIRDataSnapshot
+                        let map = snapInvite.value as! [String: Any]
+                        let status = map["status"] as? String
+                        self.invitedEmails[map["email"] as! String] = status
+                    }
                 }
             }
             
@@ -294,14 +297,14 @@ class ContactPickerController: BaseTableController, UITableViewDelegate, UITable
                         let username = UserController.instance.user?.username
                         
                         var task: [String: Any] = [:]
+                        task["group"] = ["id": groupId, "title": groupTitle]
+                        task["inviter"] = ["id": userId, "title": userTitle, "username": username, "email": userEmail]
+                        task["invite_id"] = inviteId
+                        task["link"] = inviteUrl
                         task["recipients"] = [email]
                         task["type"] = "invite-members"
-                        task["group"] = ["id": groupId, "title": groupTitle]
-                        task["user"] = ["id": userId, "title": userTitle, "username": username, "email": userEmail]
-                        task["inviteId"] = inviteId
-                        task["link"] = inviteUrl
                         
-                        let queueRef = FireController.db.child("queue/emails").childByAutoId()
+                        let queueRef = FireController.db.child("queue/invites").childByAutoId()
                         queueRef.setValue(task)
                         if self.flow == .onboardCreate || self.flow == .internalCreate {
                             self.onboardAction(sender: nil)
@@ -342,15 +345,15 @@ class ContactPickerController: BaseTableController, UITableViewDelegate, UITable
                             channels[channelId] = channelName
                         }
                         let type = (self.channels.count > 1) ? "invite-guests-multi-channel" : "invite-guests"
+                        task["channels"] = channels
+                        task["group"] = ["id": groupId, "title": groupTitle]
+                        task["inviter"] = ["id": userId, "title": userTitle, "username": username, "email": userEmail]
+                        task["invite_id"] = inviteId
+                        task["link"] = inviteUrl
                         task["recipients"] = [email]
                         task["type"] = type
-                        task["group"] = ["id": groupId, "title": groupTitle]
-                        task["user"] = ["id": userId, "title": userTitle, "username": username, "email": userEmail]
-                        task["inviteId"] = inviteId
-                        task["link"] = inviteUrl
-                        task["channels"] = channels
                         
-                        let queueRef = FireController.db.child("queue/emails").childByAutoId()
+                        let queueRef = FireController.db.child("queue/invites").childByAutoId()
                         queueRef.setValue(task)
                         self.close()
                         UIShared.Toast(message: "Invites sent")

@@ -299,6 +299,11 @@ class PasswordViewController: BaseEditViewController {
                 self.userNameField.errorMessage = "Username must be 21 characters or less."
                 return false
             }
+            
+            if (userNameField.text!.utf16.count < 3) {
+                self.userNameField.errorMessage = "Username must be at least 3 characters."
+                return false
+            }
         }
 
         return true

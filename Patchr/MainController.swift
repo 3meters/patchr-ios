@@ -32,8 +32,11 @@ class MainController: NSObject, iRateDelegate {
     func stateInitialized(notification: NSNotification) {
         NotificationCenter.default.removeObserver(self, name: NSNotification.Name(rawValue: Events.StateInitialized), object: nil)
         Log.d("State initialized - app state: \(Utils.appState())")
-        checkCompatibility()
-        route()
+        checkCompatibility() { compatible in
+            if compatible {
+                self.route()
+            }
+        }
     }
 
     /*--------------------------------------------------------------------------------------------
@@ -115,6 +118,9 @@ class MainController: NSObject, iRateDelegate {
 
         /* Turn on network activity indicator */
         AFNetworkActivityIndicatorManager.shared().isEnabled = true
+        
+        /* Put anything to keep synched here */
+        FireController.db.child("clients").child("ios").keepSynced(true)
 
         NotificationCenter.default.addObserver(self, selector: #selector(stateInitialized(notification:)), name: NSNotification.Name(rawValue: Events.StateInitialized), object: nil)
     }
@@ -209,7 +215,7 @@ class MainController: NSObject, iRateDelegate {
          * Logged in: open in channel
          * Not logged in: email -> username|password -> open channel
          */
-        let groupId = (link["groupId"] as! String)
+        let groupId = (link["group_id"] as! String)
         var member = false
         var role = link["role"] as! String
         
@@ -238,16 +244,12 @@ class MainController: NSObject, iRateDelegate {
                         
                         /* We only get here if not a member already or is a guest member */
                         
-                        let inviteId = (link["inviteId"] as! String)
-                        FireController.db.child("invites/\(groupId)")
-                            .queryOrdered(byChild: "inviteId")
-                            .queryEqual(toValue: inviteId)
+                        let inviteId = (link["invite_id"] as! String)
+                        let inviterId = (link["invited_by"] as! String)
+                        FireController.db.child("invites/\(groupId)/\(inviterId)/\(inviteId)")
                             .observeSingleEvent(of: .value, with: { snap in
-                                if !(snap.value is NSNull) {
-                                    /* invite exists for the email and group */
-                                    let inviteWithKey = snap.value as! [String: Any]
-                                    var invite = inviteWithKey.first?.value as! [String: Any]
-                                    invite["key"] = inviteWithKey.first?.key
+                                if var invite = snap.value as? [String: Any] {
+                                    invite["id"] = inviteId
                                     self.processInvite(link: link, invite: invite, member: member)
                                 }
                                 else {
@@ -281,26 +283,26 @@ class MainController: NSObject, iRateDelegate {
         if let topController = UIViewController.topMostViewController() {
             
             let userId = UserController.instance.userId!
-            let groupId = (link["groupId"] as! String)
+            let groupId = (link["group_id"] as! String)
             let email = (link["email"] as! String)
             let groupTitle = link["groupTitle"] as! String
-            let referrerName = link["referrerName"] as! String
+            let inviterName = link["inviterName"] as! String
             
             /* Invite trumps link */
             let role = invite["role"] as! String
             let channels = invite["channels"] as? [String: Any]
             
-            var message = "\(referrerName) has invited you to join the \"\(groupTitle)\" Patchr group."
+            var message = "\(inviterName) has invited you to join the \"\(groupTitle)\" Patchr group."
             if channels != nil && channels!.count > 0 {
                 if channels!.count > 1 {
-                    message = "\(referrerName) has invited you to join these channels in the \(groupTitle) Patchr group.\n"
+                    message = "\(inviterName) has invited you to join these channels in the \(groupTitle) Patchr group.\n"
                     for channelName in channels!.values {
                         message += "\n#\(channelName)"
                     }
                 }
                 else {
                     let channelName = channels!.first!.value as! String
-                    message = "\(referrerName) has invited you to join the #\(channelName) channel in the \(groupTitle) Patchr group."
+                    message = "\(inviterName) has invited you to join the #\(channelName) channel in the \(groupTitle) Patchr group."
                 }
             }
             
@@ -314,7 +316,7 @@ class MainController: NSObject, iRateDelegate {
             
             let joinButton = DefaultButton(title: "Join".uppercased(), height: 48) {
                 if member && channels != nil {
-                    FireController.instance.addUserToChannels(userId: userId, groupId: groupId, channels: channels!, inviter: referrerName) { success in
+                    FireController.instance.addUserToChannels(userId: userId, groupId: groupId, channels: channels!, invite: invite) { success in
                         if success {
                             self.afterInvite(groupId: groupId, groupTitle: groupTitle, channels: channels)
                         }
@@ -322,7 +324,7 @@ class MainController: NSObject, iRateDelegate {
                     return
                 }
                 
-                FireController.instance.addUserToGroup(userId: userId, groupId: groupId, channels: channels, role: role, email: email, then: { success in
+                FireController.instance.addUserToGroup(userId: userId, groupId: groupId, channels: channels, role: role, invite: invite, email: email, then: { success in
                     if success {
                         if channels != nil {
                             self.afterInvite(groupId: groupId, groupTitle: groupTitle, channels: channels)
@@ -388,7 +390,7 @@ class MainController: NSObject, iRateDelegate {
         }
     }
     
-    func checkCompatibility() {
+    func checkCompatibility(then: ((Bool) -> Void)? = nil) {
         FireController.db.child("clients").child("ios").observeSingleEvent(of: .value, with: { snap in
             if let minVersion = snap.value as? Int {
                 if !UIShared.versionIsValid(versionMin: Int(minVersion)) {
@@ -396,6 +398,7 @@ class MainController: NSObject, iRateDelegate {
                     UIShared.compatibilityUpgrade()
                 }
             }
+            then?(!self.upgradeRequired)
         })
     }
     

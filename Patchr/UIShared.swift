@@ -24,9 +24,12 @@ struct UIShared {
 					cancelTitle: "Later") {
 						doIt in
 						if doIt {
-							Log.w("Incompatible version: Update selected")
-							Reporting.track("Selected to Update Incompatible Version")
-							let appStoreURL = "itms-apps://itunes.apple.com/app/id\(APPLE_APP_ID)"
+                            Log.w("Incompatible version: Update selected")
+                            Reporting.track("Selected to Update Incompatible Version")
+                            var appStoreURL = "itms-apps://itunes.apple.com/app/id\(APPLE_APP_ID)"
+                            if Config.appConfiguration == .testFlight {
+                                appStoreURL = "https://beta.itunes.apple.com/v1/app/\(APPLE_APP_ID)"
+                            }
 							if let url = NSURL(string: appStoreURL) {
 								UIApplication.shared.openURL(url as URL)
 							}

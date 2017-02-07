@@ -11,8 +11,8 @@ import Foundation
 class FireAttachment: NSObject {
     
     var id: String?
-    var title: String?
     var photo: FirePhoto?
+    var title: String?
     
     static func from(dict: [String: Any]?, id: String?) -> FireAttachment? {
         if dict != nil {

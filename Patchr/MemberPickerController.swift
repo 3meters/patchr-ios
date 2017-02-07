@@ -118,7 +118,7 @@ class MemberPickerController: BaseTableController, UITableViewDelegate {
 
                 userQuery.once(with: { user in
                     if user != nil {
-                        FireController.instance.isChannelMember(userId: userId, channelId: channelId, next: { member in
+                        FireController.instance.isChannelMember(userId: userId, channelId: channelId, groupId: groupId, next: { member in
                             cell.bind(user: user!)
                             if member {
                                 cell.roleLabel?.isHidden = false

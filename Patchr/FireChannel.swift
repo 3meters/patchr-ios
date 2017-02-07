@@ -17,17 +17,20 @@ class FireChannel: NSObject {
         return "group-channels/\(self.group!)/\(self.id!)"
     }
     
-    var id: String?
-    var name: String?
+    var archived: Bool?
+    var createdAt: Int?
+    var createdBy: String?
+    var general: Bool?
     var group: String?
+    var name: String?
+    var ownedBy: String?
     var photo: FirePhoto?
     var purpose: String?
     var type: String?
     var visibility: String?
-    var general: Bool?
-    var archived: Bool?
-    var createdAt: Int?
-    var createdBy: String?
+    
+    /* Local */
+    var id: String?
     
     /* Channel link properties for the current user */
     var priority: Int?
@@ -39,17 +42,18 @@ class FireChannel: NSObject {
     static func from(dict: [String: Any]?, id: String?) -> FireChannel? {
         if dict != nil {
             let channel = FireChannel()
-            channel.id = id
-            channel.name = dict!["name"] as? String
-            channel.group = dict!["group"] as? String
-            channel.purpose = dict!["purpose"] as? String
-            channel.type = dict!["type"] as? String
-            channel.visibility = dict!["visibility"] as? String
-            channel.general = dict!["general"] as? Bool
             channel.archived = dict!["archived"] as? Bool
             channel.createdAt = dict!["created_at"] as? Int
             channel.createdBy = dict!["created_by"] as? String
+            channel.general = dict!["general"] as? Bool
+            channel.group = dict!["group_id"] as? String
+            channel.id = id
+            channel.name = dict!["name"] as? String
+            channel.ownedBy = dict!["owned_by"] as? String
             channel.photo = FirePhoto.from(dict: dict!["photo"] as! [String : Any]?)
+            channel.purpose = dict!["purpose"] as? String
+            channel.type = dict!["type"] as? String
+            channel.visibility = dict!["visibility"] as? String
             return channel
         }
         return nil
@@ -74,8 +78,9 @@ class FireChannel: NSObject {
     }
     
     func star(on: Bool) {
-        let userId = UserController.instance.userId
-        let path = "member-channels/\(userId!)/\(self.group!)/\(self.id!)"
+        let userId = UserController.instance.userId!
+        let pathByMember = "member-channels/\(userId)/\(self.group!)/\(self.id!)"
+        let pathByGroup = "group-channel-members/\(self.group!)/\(self.id!)/\(userId)"
         let priority = on ? 1 : 4
         let index = Int("\(FireController.instance.priorities[priority])\(self.joinedAt!)")
         let indexReversed = Int("-\(FireController.instance.priorities.reversed()[priority])\(self.joinedAt!)")
@@ -86,14 +91,16 @@ class FireChannel: NSObject {
             "index_priority_joined_at_desc": indexReversed!
         ]
         
-        FireController.db.child(path).updateChildValues(updates)
+        FireController.db.child(pathByMember).updateChildValues(updates)
+        FireController.db.child(pathByGroup).updateChildValues(updates)
     }
     
     func clearUnreadSorting() {
         
         /* Reset priority to normal */
         let userId = UserController.instance.userId!
-        let path = "member-channels/\(userId)/\(self.group!)/\(self.id!)"
+        let pathByMember = "member-channels/\(userId)/\(self.group!)/\(self.id!)"
+        let pathByGroup = "group-channel-members/\(self.group!)/\(self.id!)/\(userId)"
         let priority = self.starred! ? 1 : 4
         let index = Int("\(FireController.instance.priorities[priority])\(self.joinedAt!)")
         let indexReversed = Int("-\(FireController.instance.priorities.reversed()[priority])\(self.joinedAt!)")
@@ -103,7 +110,8 @@ class FireChannel: NSObject {
             "index_priority_joined_at_desc": indexReversed!
         ]
         
-        FireController.db.child(path).updateChildValues(updates)
+        FireController.db.child(pathByMember).updateChildValues(updates)
+        FireController.db.child(pathByGroup).updateChildValues(updates)
     }
     
     func mute(on: Bool) {
@@ -111,6 +119,6 @@ class FireChannel: NSObject {
         let groupId = self.group!
         let channelId = self.id!
         FireController.db.child("member-channels/\(userId)/\(groupId)/\(channelId)/muted").setValue(on)
-        FireController.db.child("channel-members/\(channelId)/\(userId)/muted").setValue(on)
+        FireController.db.child("group-channel-members/\(groupId)/\(channelId)/\(userId)/muted").setValue(on)
     }
 }

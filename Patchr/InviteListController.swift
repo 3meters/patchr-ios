@@ -58,9 +58,11 @@ class InviteListController: BaseTableController, UITableViewDelegate {
     func resendInviteAction(sender: AnyObject?) {
         if let button = sender as? AirButton,
             let invite = button.data as? [String: Any],
-            let inviteId = invite["key"] as? String,
+            let inviteId = invite["id"] as? String,
+            let inviter = invite["inviter"] as? [String: Any],
+            let inviterId = inviter["id"] as? String,
             let groupId = StateController.instance.groupId {
-                FireController.instance.deleteInvite(groupId: groupId, inviteId: inviteId)
+            FireController.instance.deleteInvite(groupId: groupId, inviterId: inviterId, inviteId: inviteId)
                 resendInvite(invite: invite)
         }
     }
@@ -73,9 +75,11 @@ class InviteListController: BaseTableController, UITableViewDelegate {
                 if doIt {
                     if let button = sender as? AirButton,
                         let invite = button.data as? [String: Any],
-                        let inviteId = invite["key"] as? String,
+                        let inviteId = invite["id"] as? String,
+                        let inviter = invite["inviter"] as? [String: Any],
+                        let inviterId = inviter["id"] as? String,
                         let groupId = StateController.instance.groupId {
-                        FireController.instance.deleteInvite(groupId: groupId, inviteId: inviteId)
+                        FireController.instance.deleteInvite(groupId: groupId, inviterId: inviterId, inviteId: inviteId)
                         UIShared.Toast(message: "Invite revoked")
                     }
                 }
@@ -119,8 +123,9 @@ class InviteListController: BaseTableController, UITableViewDelegate {
     func bind() {
 
         let groupId = StateController.instance.groupId!
+        let userId = UserController.instance.userId!
         let group = StateController.instance.group!
-        let query = FireController.db.child("invites/\(groupId)").queryOrdered(byChild: "status").queryEqual(toValue: self.currentStatus)
+        let query = FireController.db.child("invites/\(groupId)/\(userId)").queryOrdered(byChild: "status").queryEqual(toValue: self.currentStatus)
         
         self.navigationItem.title = "Invites: \(group.title!)"
         
@@ -136,7 +141,7 @@ class InviteListController: BaseTableController, UITableViewDelegate {
                 
                 var invite = snap.value as! [String: Any]
                 let status = invite["status"] as! String
-                invite["key"] = snap.key
+                invite["id"] = snap.key
                 
                 let reuseIdentifier = status
                 let cell = view.dequeueReusableCell(withIdentifier: reuseIdentifier, for: indexPath) as! InviteListCell
@@ -173,17 +178,17 @@ class InviteListController: BaseTableController, UITableViewDelegate {
         let type = (role == "member") ? "invite-members" : "invite-guests"
         
         var task: [String: Any] = [:]
-        task["recipients"] = [email]
-        task["type"] = type
-        task["group"] = invite["group"]
-        task["user"] = invite["inviter"]
-        task["link"] = invite["link"]
-        task["inviteId"] = invite["inviteId"]
         if invite["channels"] != nil {
             task["channels"] = invite["channels"]
         }
+        task["group"] = invite["group"]
+        task["inviter"] = invite["inviter"]
+        task["invite_id"] = invite["id"]
+        task["link"] = invite["link"]
+        task["recipients"] = [email]
+        task["type"] = type
         
-        let queueRef = FireController.db.child("queue/emails").childByAutoId()
+        let queueRef = FireController.db.child("queue/invites").childByAutoId()
         queueRef.setValue(task)
         UIShared.Toast(message: "Invite re-sent")
     }

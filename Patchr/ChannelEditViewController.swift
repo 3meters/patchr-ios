@@ -334,6 +334,7 @@ class ChannelEditViewController: BaseEditViewController {
         self.processing = true
         
         let groupId = self.inputGroupId!
+        let userId = UserController.instance.userId!
         let channelName = self.nameField.text!
         
         FireController.instance.channelNameExists(groupId: groupId, channelName: channelName, next: { exists in
@@ -357,28 +358,26 @@ class ChannelEditViewController: BaseEditViewController {
                     })
                 }
                 
-                let timestamp = Utils.now() + (FireController.instance.serverOffset ?? 0)
+                let timestamp = FireController.instance.getServerTimestamp()
                 
                 var channelMap: [String: Any] = [:]
-                channelMap["group"] = self.inputGroupId!
-                channelMap["type"] = "channel"
-                channelMap["general"] = false
                 channelMap["archived"] = false
-                channelMap["visibility"] = self.visibilityValue
                 channelMap["created_at"] = Int(timestamp)
-                channelMap["created_by"] = UserController.instance.userId!
-                
-                if !self.purposeField.text.isEmpty {
-                    channelMap["purpose"] = self.purposeField.text
-                }
-                
+                channelMap["created_by"] = userId
+                channelMap["general"] = false
+                channelMap["group_id"] = self.inputGroupId!
                 if !(self.nameField.text?.isEmpty)! {
                     channelMap["name"] = self.nameField.text
                 }
-                
+                channelMap["owned_by"] = userId
                 if photoMap != nil {
                     channelMap["photo"] = photoMap!
                 }
+                if !self.purposeField.text.isEmpty {
+                    channelMap["purpose"] = self.purposeField.text
+                }
+                channelMap["type"] = "channel"
+                channelMap["visibility"] = self.visibilityValue
                 
                 FireController.instance.addChannelToGroup(channelId: channelId, channelMap: channelMap, groupId: groupId) { result in
                     let controller = MemberPickerController()
@@ -392,7 +391,7 @@ class ChannelEditViewController: BaseEditViewController {
 
     func delete() {
         self.close(animated: true)
-        FireController.instance.delete(channelId: self.channel.id!, groupId: self.channel.group!)
+        FireController.instance.deleteChannel(channelId: self.channel.id!, groupId: self.channel.group!)
     }
 
     func isDirty() -> Bool {
@@ -425,6 +424,11 @@ class ChannelEditViewController: BaseEditViewController {
         
         if (nameField.text!.utf16.count > 50) {
             self.nameField.errorMessage = "Channel name must be 50 characters or less."
+            return false
+        }
+
+        if (nameField.text!.utf16.count < 3) {
+            self.nameField.errorMessage = "Channel name must be at least 3 characters."
             return false
         }
 

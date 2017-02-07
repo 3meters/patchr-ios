@@ -197,10 +197,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FIRMessagingDelegate {
             }
         }
         else if application.applicationState == .active {
-            let groupId = userInfo["groupId"] as! String
-            let channelId = userInfo["channelId"] as! String
-            let messageId = userInfo["messageId"] as! String
-            let userInfo = ["groupId": groupId, "channelId": channelId, "messageId": messageId]
+            let groupId = userInfo["group_id"] as! String
+            let channelId = userInfo["channel_id"] as! String
+            let messageId = userInfo["message_id"] as! String
+            let userInfo = ["group_id": groupId, "channel_id": channelId, "message_id": messageId]
             NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.UnreadChange), object: self, userInfo: userInfo)
             if UserDefaults.standard.bool(forKey: PatchrUserDefaultKey(subKey: "SoundEffects")) {
                 AudioController.instance.play(sound: Sound.notification.rawValue)
@@ -234,7 +234,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FIRMessagingDelegate {
     
     func showChannel(notification: [AnyHashable: Any]?) {
         if notification != nil {
-            if let channelId = notification!["channelId"] as? String, let groupId = notification!["groupId"] as? String {
+            if let channelId = notification!["channel_id"] as? String, let groupId = notification!["group_id"] as? String {
                 StateController.instance.setChannelId(channelId: channelId, groupId: groupId)
                 MainController.instance.showChannel(groupId: groupId, channelId: channelId)
             }

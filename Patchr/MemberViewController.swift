@@ -22,7 +22,6 @@ class MemberViewController: BaseViewController, UIScrollViewDelegate, UITextFiel
     var headerView = MemberDetailView()
     var email = AirLabelStack()
     var phone = AirLabelStack()
-    var skype = AirLabelStack()
     var editButton = AirButton()
     var callButton = AirButton()
     var messageButton = AirButton()
@@ -79,7 +78,6 @@ class MemberViewController: BaseViewController, UIScrollViewDelegate, UITextFiel
         self.profileGroup.alignUnder(self.buttonGroup, matchingLeftAndRightFillingHeightWithTopPadding: 8, bottomPadding: 0)
         self.phone.anchorTopCenterFillingWidth(withLeftAndRightPadding: 0, topPadding: 0, height: self.phone.isHidden ? 0 : 64)
         self.email.alignUnder(self.phone, centeredFillingWidthWithLeftAndRightPadding: 0, topPadding: 0, height: self.email.isHidden ? 0 : 64)
-        self.skype.alignUnder(self.email, centeredFillingWidthWithLeftAndRightPadding: 0, topPadding: 0, height: self.skype.isHidden ? 0 : 64)
         
         self.contentHolder.resizeToFitSubviews()
         
@@ -153,9 +151,6 @@ class MemberViewController: BaseViewController, UIScrollViewDelegate, UITextFiel
         self.email.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(emailAction(sender:))))
         self.email.isHidden = true
         
-        self.skype.caption.text = "Skype"
-        self.skype.isHidden = true
-        
         self.editButton.setTitle("Edit profile".uppercased(), for: .normal)
         self.editButton.addTarget(self, action: #selector(editAction(sender:)), for: .touchUpInside)
         self.callButton.setTitle("Call".uppercased(), for: .normal)
@@ -165,7 +160,6 @@ class MemberViewController: BaseViewController, UIScrollViewDelegate, UITextFiel
         self.buttonGroup.addSubview(self.callButton)
         self.profileGroup.addSubview(self.phone)
         self.profileGroup.addSubview(self.email)
-        self.profileGroup.addSubview(self.skype)
         
         self.contentHolder.addSubview(self.headerView)
         self.contentHolder.addSubview(self.buttonGroup)
@@ -194,7 +188,6 @@ class MemberViewController: BaseViewController, UIScrollViewDelegate, UITextFiel
         self.buttonGroup.isHidden = (self.callButton.isHidden && self.editButton.isHidden)
         
         self.phone.isHidden = (self.user?.profile?.phone?.isEmpty ?? true)
-        self.skype.isHidden = (self.user?.profile?.skype?.isEmpty ?? true)
         
         if self.user?.profile?.phone != nil {
             self.phone.label.text = self.user!.profile!.phone!
@@ -206,10 +199,6 @@ class MemberViewController: BaseViewController, UIScrollViewDelegate, UITextFiel
                 self.email.isHidden = false
                 self.email.label.text = self.user!.email!
             }
-        }
-        
-        if self.user?.profile?.skype != nil {
-            self.skype.label.text = self.user!.profile!.skype!
         }
         
         self.view?.setNeedsLayout()
