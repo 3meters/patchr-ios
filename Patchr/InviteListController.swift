@@ -172,24 +172,30 @@ class InviteListController: BaseTableController, UITableViewDelegate {
     }
     
     func resendInvite(invite: [String: Any]) {
-        
+
+        let userId = UserController.instance.userId!
         let email = invite["email"] as! String
         let role = invite["role"] as! String
         let type = (role == "member") ? "invite-members" : "invite-guests"
+        let ref = FireController.db.child("queue/invites").childByAutoId()
+        let timestamp = FireController.instance.getServerTimestamp()
         
         var task: [String: Any] = [:]
         if invite["channels"] != nil {
             task["channels"] = invite["channels"]
         }
+        task["created_at"] = Int(timestamp)
+        task["created_by"] = userId
         task["group"] = invite["group"]
         task["inviter"] = invite["inviter"]
         task["invite_id"] = invite["id"]
         task["link"] = invite["link"]
+        task["id"] = ref.key
         task["recipients"] = [email]
+        task["state"] = "waiting"
         task["type"] = type
         
-        let queueRef = FireController.db.child("queue/invites").childByAutoId()
-        queueRef.setValue(task)
+        ref.setValue(task)
         UIShared.Toast(message: "Invite re-sent")
     }
 }

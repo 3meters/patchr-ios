@@ -56,7 +56,7 @@ class StateController: NSObject {
                 if let settings = UserDefaults.standard.dictionary(forKey: groupId),
                     let lastChannelId = settings["currentChannelId"] as? String {
                     let channelQuery = ChannelQuery(groupId: groupId, channelId: lastChannelId, userId: userId)
-                    channelQuery.once(with: { channel in
+                    channelQuery.once(with: { error, channel in
                         if channel == nil {
                             Log.w("Last channel invalid: \(lastChannelId): trying first channel")
                             FireController.instance.findFirstChannel(groupId: groupId) { firstChannelId in
@@ -105,7 +105,7 @@ class StateController: NSObject {
         queue.run()
     }
     
-    func setChannelId(channelId: String, groupId: String, bundle: [String: Any]? = nil, next: ((Any?) -> Void)? = nil) {
+    func setChannelId(channelId: String?, groupId: String, bundle: [String: Any]? = nil, next: ((Any?) -> Void)? = nil) {
         
         var userInfo: [String: Any] = [:]
         userInfo["fromGroupId"] = bundle?["fromGroupId"] ?? self.groupId
@@ -124,7 +124,9 @@ class StateController: NSObject {
                 self.groupGeneralId = channelId
             }
             
-            setChannelId(channelId: channelId, groupId: groupId, bundle: userInfo, next: next)
+            if channelId != nil {
+                setChannelId(channelId: channelId, groupId: groupId, bundle: userInfo, next: next)
+            }
             
             /* Convenience for other parts of the code that need quick access to the group object */
             let userId = UserController.instance.userId!
@@ -170,14 +172,14 @@ class StateController: NSObject {
                 return
             }
             
-            Log.d("Current channel: \(channelId)")
+            Log.d("Current channel: \(channelId!)")
             
             userInfo["fromChannelId"] = self.channelId
-            userInfo["toChannelId"] = channelId
-            self.channelId = channelId
+            userInfo["toChannelId"] = channelId!
+            self.channelId = channelId!
             
             var groupSettings: [String: Any] = (UserDefaults.standard.dictionary(forKey: groupId) ?? [:])!
-            groupSettings["currentChannelId"] = channelId
+            groupSettings["currentChannelId"] = channelId!
             UserDefaults.standard.set(groupSettings, forKey: groupId)
             NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.ChannelDidSwitch), object: self, userInfo: userInfo)
             

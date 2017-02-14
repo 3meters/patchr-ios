@@ -36,6 +36,9 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
 
     var messageBar = UILabel()
     var messageBarTop = CGFloat(0)
+    var joinBar = UIView()
+    var joinBarLabel = AirLabel()
+    var joinBarButton = AirFeaturedButton()
     
     var titleView: ChannelTitleView!
     var navButton: UIBarButtonItem!
@@ -121,6 +124,12 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
         if self.messageBar.alpha > 0.0 {
             self.messageBar.alignUnder(self.navigationController?.navigationBar, centeredFillingWidthWithLeftAndRightPadding: 0, topPadding: 0, height: 40)
         }
+        
+        if self.joinBar.alpha > 0.0 {
+            self.joinBar.anchorBottomCenterFillingWidth(withLeftAndRightPadding: 0, bottomPadding: 0, height: 88)
+            self.joinBarButton.anchorBottomCenterFillingWidth(withLeftAndRightPadding: 8, bottomPadding: 8, height: 48)
+            self.joinBarLabel.anchorTopCenterFillingWidth(withLeftAndRightPadding: 8, topPadding: 0, height: 32)
+        }
     }
 
     override func didReceiveMemoryWarning() {
@@ -181,8 +190,8 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
             actionTitle: "Delete", cancelTitle: "Cancel", delegate: self) {
                 doIt in
                 if doIt {
-                    let groupId = self.channel.group!
-                    let channelId = message.channel!
+                    let groupId = self.channel.groupId!
+                    let channelId = message.channelId!
                     let messageId = message.id!
                     FireController.instance.deleteMessage(messageId: messageId, channelId: channelId, groupId: groupId)
                 }
@@ -194,7 +203,7 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
         let wrapper = AirNavigationController()
         controller.mode = .update
         controller.inputChannelId = self.channel.id
-        controller.inputGroupId = self.channel.group
+        controller.inputGroupId = self.channel.groupId
         wrapper.viewControllers = [controller]
         self.present(wrapper, animated: true, completion: nil)
     }
@@ -444,6 +453,16 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
         self.messageBar.layer.backgroundColor = Colors.accentColorFill.cgColor
         self.messageBar.alpha = 0.0
         
+        /* Join bar */
+        self.joinBar.backgroundColor = Colors.white
+        self.joinBarLabel.textAlignment = .center
+        self.joinBarLabel.textColor = Theme.colorTextSecondary
+        self.joinBarLabel.font = Theme.fontComment
+        self.joinBarButton.setTitle("Join Channel", for: .normal)
+        self.joinBar.addSubview(self.joinBarLabel)
+        self.joinBar.addSubview(self.joinBarButton)
+        self.joinBarButton.addTarget(self, action: #selector(joinChannelAction(sender:)), for: .touchUpInside)
+        
         self.typingIndicatorView?.interval = TimeInterval(8.0)
         self.typingIndicatorView?.textFont = Theme.fontTextList
         self.typingIndicatorView?.highlightFont = Theme.fontTextListBold
@@ -483,16 +502,18 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
         
         self.channelQuery?.remove()
         self.channelQuery = ChannelQuery(groupId: groupId, channelId: channelId, userId: userId)
-        self.channelQuery!.observe(with: { [weak self] channel in
+        self.channelQuery!.observe(with: { [weak self] error, channel in
             
             guard channel != nil else {
-                /* The channel has been deleted from under us. */
-                self?.channelQuery?.remove()
-                FireController.instance.findFirstChannel(groupId: groupId) { firstChannelId in
-                    if firstChannelId != nil {
-                        StateController.instance.setChannelId(channelId: firstChannelId!, groupId: groupId)
-                        MainController.instance.showChannel(groupId: groupId, channelId: StateController.instance.channelId!)
-                    }
+                if error == nil {
+                    /* The channel has been deleted from under us. */
+                    self?.channelQuery?.remove()
+                    FireController.instance.findFirstChannel(groupId: groupId) { firstChannelId in
+                        if firstChannelId != nil {
+                            StateController.instance.setChannelId(channelId: firstChannelId!, groupId: groupId)
+                            MainController.instance.showChannel(groupId: groupId, channelId: StateController.instance.channelId!)
+                        }
+                    }                    
                 }
                 return
             }
@@ -500,19 +521,27 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
             Log.d("ChannelViewController: observe callback for channel: \(channel!)")
             
             self?.channel = channel
-            
             self?.titleView.subtitle?.text = "#\((self?.channel.name!)!)"
-            self?.textView.placeholder = "Message #\((self?.channel.name!)!)"
             
-            self?.unreadQuery = UnreadQuery(level: .channel, userId: userId, groupId: groupId, channelId: channelId)
-            self?.unreadQuery!.observe(with: { [weak self] total in
-                if self != nil {
-                    Log.d("ChannelViewController: observe callback for channel unreads: \(total): \(channel!.name!)")
-                    if total == 0 && self!.channel?.priority == 0 {
-                        self!.channel?.clearUnreadSorting()
+            if channel?.joinedAt != nil {
+                self?.hideJoinBar()
+                self?.setTextInputbarHidden(false, animated: true)
+                self?.textView.placeholder = "Message #\((self?.channel.name!)!)"
+                self?.unreadQuery = UnreadQuery(level: .channel, userId: userId, groupId: groupId, channelId: channelId)
+                self?.unreadQuery!.observe(with: { [weak self] total in
+                    if self != nil {
+                        Log.d("ChannelViewController: observe callback for channel unreads: \(total): \(channel!.name!)")
+                        if total == 0 && self!.channel?.priority == 0 {
+                            self!.channel?.clearUnreadSorting()
+                        }
                     }
-                }
-            })
+                })
+            }
+            else {
+                self?.showJoinBar()
+                self?.joinBarLabel.text = "This is a preview of #\((self?.channel.name!)!)"
+                self?.setTextInputbarHidden(true, animated: true)
+            }
             
             /* We do this here so we have tableView sizing */
             Log.d("Bind channel header")
@@ -588,14 +617,22 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
         let cell = tableView.dequeueReusableCell(withIdentifier: self.cellReuseIdentifier, for: indexPath) as! WrapperTableViewCell
         let message = FireMessage.from(dict: snap.value as? [String: Any], id: snap.key)! as FireMessage
         let userId = UserController.instance.userId!
-        let groupId = self.channel.group!
+        if self.channel == nil {
+            return cell
+        }
+        let groupId = self.channel.groupId!
         let channelId = self.channel.id!
+        let userQuery: UserQuery!
         
         if let messageView = cell.view as? MessageViewCell {
             messageView.reset()
         }
         
-        let userQuery = UserQuery(userId: message.createdBy!, groupId: groupId)
+        guard message.createdBy != nil else {
+            return cell
+        }
+        
+        userQuery = UserQuery(userId: message.createdBy!, groupId: groupId)
         userQuery.once(with: { user in
             
             message.creator = user
@@ -620,14 +657,14 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
             if let messageView = cell.view! as? MessageViewCell {
                 
                 messageView.bind(message: message)
-
+                
                 if message.creator != nil {
                     messageView.userPhotoControl.target = message.creator
                     messageView.userPhotoControl.addTarget(self, action: #selector(self.browseMemberAction(sender:)), for: .touchUpInside)
                 }
                 
-                let unreadPath = "unreads/\(userId)/\(groupId)/\(channelId)/\(message.id!)"
                 let messageId = message.id!
+                let unreadPath = "unreads/\(userId)/\(groupId)/\(channelId)/\(messageId)"
                 FireController.db.child(unreadPath).observeSingleEvent(of: .value, with: { snap in
                     if !(snap.value is NSNull) {
                         messageView.unread.isHidden = false
@@ -645,6 +682,7 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
                 })
             }
         })
+        
         return cell
     }
     
@@ -656,6 +694,11 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
         let likes = message.getReaction(emoji: .thumbsup, userId: userId!)
         let likeTitle = likes ? "Remove like" : "Add like"
         let like = UIAlertAction(title: likeTitle, style: .default) { action in
+            if self.channel?.joinedAt == nil {
+                UIShared.Toast(message: "Join this channel to like messages.")
+                return
+            }
+
             NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.MessageDidUpdate)
                 , object: self, userInfo: ["message_id": message.id!])
             self.rowHeights.removeObject(forKey: message.id!)
@@ -707,7 +750,8 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
             let sheet = UIAlertController(title: nil, message: nil, preferredStyle: UIAlertControllerStyle.actionSheet)
             
             let isMember = (self.channel.joinedAt != nil)
-            let isOwner = (self.channel.role == "owner")
+            let userId = UserController.instance.userId!
+            let isOwner = (self.channel.role == "owner" || self.channel.ownedBy == userId)
             
             let statusTitle = isMember ? "Leave channel" : "Join channel"
             let statusAction = UIAlertAction(title: statusTitle, style: .default) { action in
@@ -735,17 +779,19 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
             var starAction: UIAlertAction? = nil
             
             if isMember || isOwner {
-                let muted = self.channel.muted
-                let mutedTitle = muted! ? "Unmute channel" : "Mute channel"
-                muteAction = UIAlertAction(title: mutedTitle, style: .default) { action in
-                    self.channel.mute(on: !muted!)
+                if let muted = self.channel.muted {
+                    let mutedTitle = muted ? "Unmute channel" : "Mute channel"
+                    muteAction = UIAlertAction(title: mutedTitle, style: .default) { action in
+                        self.channel.mute(on: !muted)
+                    }
                 }
                 
-                let starred = self.channel.starred
-                let starredTitle = starred! ? "Unstar channel" : "Star channel"
-                starAction = UIAlertAction(title: starredTitle, style: .default) { action in
-                    self.channel.star(on: !starred!)
-                    self.headerView.starButton.toggle(on: !starred!, animate: true)
+                if let starred = self.channel.starred {
+                    let starredTitle = starred ? "Unstar channel" : "Star channel"
+                    starAction = UIAlertAction(title: starredTitle, style: .default) { action in
+                        self.channel.star(on: !starred)
+                        self.headerView.starButton.toggle(on: !starred, animate: true)
+                    }
                 }
             }
 
@@ -760,16 +806,32 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
                 controller.target = .channel
                 UIViewController.topMostViewController()?.present(wrapper, animated: true, completion: nil)
             }
-            
+
+            let inviteAction = UIAlertAction(title: "Invite", style: .default) { action in
+                let controller = ContactPickerController()
+                controller.role = "guests"
+                controller.flow = BaseEditViewController.Flow.internalInvite
+                controller.channels = [self.channel.id!: self.channel.name!]
+                controller.inputGroupId = StateController.instance.groupId
+                controller.inputGroupTitle = StateController.instance.group.title
+                let wrapper = AirNavigationController(rootViewController: controller)
+                UIViewController.topMostViewController()?.present(wrapper, animated: true, completion: nil)
+            }
+
             let cancel = UIAlertAction(title: "Cancel", style: .cancel) {
                 action in
                 sheet.dismiss(animated: true, completion: nil)
             }
             
             if isOwner {
-                sheet.addAction(starAction!)
-                sheet.addAction(muteAction!)
+                if starAction != nil {
+                    sheet.addAction(starAction!)
+                }
+                if muteAction != nil {
+                    sheet.addAction(muteAction!)
+                }
                 sheet.addAction(browseMembersAction)
+                sheet.addAction(inviteAction)
                 if !self.channel!.general! {
                     sheet.addAction(statusAction)
                 }
@@ -777,9 +839,14 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
                 sheet.addAction(cancel)
             }
             else if isMember {
-                sheet.addAction(starAction!)
-                sheet.addAction(muteAction!)
+                if starAction != nil {
+                    sheet.addAction(starAction!)
+                }
+                if muteAction != nil {
+                    sheet.addAction(muteAction!)
+                }
                 sheet.addAction(browseMembersAction)
+                sheet.addAction(inviteAction)
                 if !self.channel!.general! {
                     sheet.addAction(statusAction)
                 }
@@ -862,6 +929,30 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
         }
     }
     
+    func showJoinBar() {
+        self.view.insertSubview(self.joinBar, at: self.view.subviews.count)
+        self.joinBar.anchorBottomCenterFillingWidth(withLeftAndRightPadding: 0, bottomPadding: 0, height: 88)
+        UIView.animate(
+            withDuration: 0.10,
+            delay: 0,
+            options: UIViewAnimationOptions.curveEaseOut,
+            animations: {
+                self.joinBar.alpha = 1
+        })
+    }
+    
+    func hideJoinBar() {
+        UIView.animate(
+            withDuration: 0.30,
+            delay: 0,
+            options: UIViewAnimationOptions.curveEaseOut,
+            animations: {
+                self.joinBar.alpha = 0
+        }) { _ in
+            self.joinBar.removeFromSuperview()
+        }
+    }
+    
     func scrollToHeader(animated: Bool = true) {
         self.tableView.scrollRectToVisible(CGRect(x: 0, y: 0, width: 1, height: 1), animated: animated)
     }
@@ -892,7 +983,7 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
         var viewHeight = CGFloat(100)
         let snap = self.tableViewDataSource.object(at: UInt(indexPath.row)) as! FIRDataSnapshot
         
-        if let message = FireMessage.from(dict: snap.value as? [String: Any], id: snap.key) {
+        if let message = FireMessage.from(dict: snap.value as? [String: Any], id: snap.key), message.channelId != nil {
             
             if message.id != nil {
                 if let cachedHeight = self.rowHeights.object(forKey: message.id!) as? CGFloat {

@@ -45,15 +45,23 @@ class GroupCreateController: BaseEditViewController {
         if isValid() {
             self.activeTextField?.resignFirstResponder()
             
-            self.progress = AirProgress.showAdded(to: self.view.window!, animated: true)
-            self.progress?.mode = MBProgressHUDMode.indeterminate
-            self.progress?.styleAs(progressStyle: .activityWithText)
-            self.progress?.minShowTime = 0.5
-            self.progress?.labelText = "Activating..."
-            self.progress?.removeFromSuperViewOnHide = true
-            self.progress?.show(true)
-
-            createGroup()
+            FireController.instance.isConnected() { connected in
+                if connected == nil || !connected! {
+                    let message = "Creating a group requires a network connection."
+                    self.alert(title: "Not connected", message: message, cancelButtonTitle: "OK")
+                }
+                else {
+                    self.progress = AirProgress.showAdded(to: self.view.window!, animated: true)
+                    self.progress?.mode = MBProgressHUDMode.indeterminate
+                    self.progress?.styleAs(progressStyle: .activityWithText)
+                    self.progress?.minShowTime = 0.5
+                    self.progress?.labelText = "Activating..."
+                    self.progress?.removeFromSuperViewOnHide = true
+                    self.progress?.show(true)
+                    
+                    self.createGroup()
+                }
+            }
         }
     }
 
@@ -107,9 +115,9 @@ class GroupCreateController: BaseEditViewController {
         
         /* Not checking username uniqueness because group doesn't have any yet */
         let groupId = "gr-\(Utils.genRandomId())"
-        var groupMap: [String: Any] = ["title": self.groupTitleField.text!]
+        let title = self.groupTitleField.text!
 
-        FireController.instance.addGroup(groupId: groupId, groupMap: &groupMap, then: { success in
+        FireController.instance.addGroup(groupId: groupId, title: title, then: { success in
             
             self.progress?.hide(true)
             self.processing = false

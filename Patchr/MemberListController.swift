@@ -34,7 +34,7 @@ class MemberListController: BaseTableController, UITableViewDelegate {
             let channelId = StateController.instance.channelId!
             let userId = UserController.instance.userId!
             let channelQuery = ChannelQuery(groupId: groupId, channelId: channelId, userId: userId)
-            channelQuery.once(with: { channel in
+            channelQuery.once(with: { error, channel in
                 if channel != nil {
                     self.channel = channel
                     self.bind()

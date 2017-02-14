@@ -20,27 +20,30 @@ class ChannelQuery: NSObject {
         super.init()
         self.channelPath = "group-channels/\(groupId)/\(channelId)"
         if userId != nil {
-            self.linkPath = "member-channels/\(userId!)/\(groupId)/\(channelId)"
+            self.linkPath = "group-channel-members/\(groupId)/\(channelId)/\(userId!)"
         }
     }
 
-    func observe(with block: @escaping (FireChannel?) -> Swift.Void) {
+    func observe(with block: @escaping (Error?, FireChannel?) -> Swift.Void) {
 
         self.channelHandle = FireController.db.child(self.channelPath).observe(.value, with: { snap in
             if !(snap.value is NSNull) {
                 self.channel = FireChannel.from(dict: snap.value as? [String: Any], id: snap.key)
                 if self.linkPath == nil || self.linkMapMiss {
-                    block(self.channel)  // May or may not have link info
+                    block(nil, self.channel)  // May or may not have link info
                 }
                 else if self.linkMap != nil {
                     self.channel!.membershipFrom(dict: self.linkMap)
-                    block(self.channel)  // May or may not have link info
+                    block(nil, self.channel)  // May or may not have link info
                 }
             }
             else {
                 Log.w("Channel snapshot is null: \(self.channelPath!)")
-                block(nil)
+                block(nil, nil)
             }
+        }, withCancel: { error in
+            Log.w("Permission denied trying to read channel: \(self.channelPath!)")
+            block(error, nil)
         })
 
         if self.linkPath != nil {
@@ -49,7 +52,7 @@ class ChannelQuery: NSObject {
                     self.linkMap = snap.value as! [String: Any]
                     if self.channel != nil {
                         self.channel!.membershipFrom(dict: self.linkMap)
-                        block(self.channel)
+                        block(nil, self.channel)
                     }
                 }
                 else {
@@ -57,14 +60,17 @@ class ChannelQuery: NSObject {
                     self.linkMapMiss = true
                     if self.channel != nil {
                         self.channel!.membershipClear()
-                        block(self.channel)
+                        block(nil, self.channel)
                     }
                 }
+            }, withCancel: { error in
+                Log.w("Permission denied trying to read channel membership: \(self.linkPath!)")
+                block(error, nil)
             })
         }
     }
 
-    func once(with block: @escaping (FireChannel?) -> Swift.Void) {
+    func once(with block: @escaping (Error?, FireChannel?) -> Swift.Void) {
         
         var fired = false
 
@@ -74,20 +80,23 @@ class ChannelQuery: NSObject {
                     self.channel = FireChannel.from(dict: snap.value as? [String: Any], id: snap.key)
                     if self.linkPath == nil || self.linkMapMiss {
                         fired = true
-                        block(self.channel)  // May or may not have link info
+                        block(nil, self.channel)  // May or may not have link info
                     }
                     else if self.linkMap != nil {
                         fired = true
                         self.channel!.membershipFrom(dict: self.linkMap)
-                        block(self.channel)  // May or may not have link info
+                        block(nil, self.channel)  // May or may not have link info
                     }
                 }
                 else {
                     fired = true
                     Log.w("Channel snapshot is null: \(self.channelPath!)")
-                    block(nil)
+                    block(nil, nil)
                 }
             }
+        }, withCancel: { error in
+            Log.w("Permission denied trying to read channel: \(self.channelPath!)")
+            block(error, nil)
         })
         
         if self.linkPath != nil {
@@ -98,7 +107,7 @@ class ChannelQuery: NSObject {
                         if self.channel != nil {
                             fired = true
                             self.channel!.membershipFrom(dict: self.linkMap)
-                            block(self.channel)
+                            block(nil, self.channel)
                         }
                     }
                     else {
@@ -106,11 +115,14 @@ class ChannelQuery: NSObject {
                         self.linkMapMiss = true
                         if self.channel != nil {
                             fired = true
-                            block(self.channel)
+                            block(nil, self.channel)
                         }
                     }
                     
                 }
+            }, withCancel: { error in
+                Log.w("Permission denied trying to read channel membership: \(self.linkPath!)")
+                block(error, nil)
             })
         }
     }

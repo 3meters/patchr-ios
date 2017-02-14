@@ -179,6 +179,7 @@ class BaseEditViewController: BaseViewController, UITextFieldDelegate, UITextVie
         case onboardCreate
         case onboardInvite
         case internalCreate
+        case internalInvite
         case none
     }
 

@@ -81,11 +81,20 @@ class GroupSwitcherController: BaseTableController {
      *--------------------------------------------------------------------------------------------*/
     
     func addAction(sender: AnyObject?) {
-        let controller = GroupCreateController()
-        let wrapper = AirNavigationController(rootViewController: controller)
-        controller.flow = .internalCreate
-        self.slideMenuController()?.closeLeft()
-        self.present(wrapper, animated: true, completion: nil)
+        
+        FireController.instance.isConnected() { connected in
+            if connected == nil || !connected! {
+                let message = "Creating a group requires a network connection."
+                self.alert(title: "Not connected", message: message, cancelButtonTitle: "OK")
+            }
+            else {
+                let controller = GroupCreateController()
+                let wrapper = AirNavigationController(rootViewController: controller)
+                controller.flow = .internalCreate
+                self.slideMenuController()?.closeLeft()
+                self.present(wrapper, animated: true, completion: nil)
+            }
+        }
     }
     
     func closeAction(sender: AnyObject?) {
@@ -292,7 +301,7 @@ extension GroupSwitcherController: UITableViewDelegate {
         if let settings = UserDefaults.standard.dictionary(forKey: groupId),
             let lastChannelId = settings["currentChannelId"] as? String {
             let validateQuery = ChannelQuery(groupId: groupId, channelId: lastChannelId, userId: userId!)
-            validateQuery.once(with: { channel in
+            validateQuery.once(with: { error, channel in
                 if channel == nil {
                     Log.w("Last channel invalid: \(lastChannelId): trying first channel")
                     FireController.instance.findFirstChannel(groupId: groupId) { channelId in
@@ -313,7 +322,15 @@ extension GroupSwitcherController: UITableViewDelegate {
                 }
                 else {
                     FireController.instance.findGeneralChannel(groupId: groupId) { channelId in
-                        self.showChannel(channelId: channelId!, groupId: groupId)
+                        if channelId != nil {
+                            self.showChannel(channelId: channelId!, groupId: groupId)
+                        }
+                        else {
+                            StateController.instance.setChannelId(channelId: nil, groupId: groupId)
+                            MainController.instance.showEmpty() // Replaced if we ever get a real channel
+                            let _ = self.navigationController?.popViewController(animated: true)
+                            self.closeAction(sender: nil)
+                        }
                     }
                 }
             }

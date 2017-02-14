@@ -24,7 +24,7 @@ class UnreadQuery: NSObject {
         }
     }
     
-    func observe(with block: @escaping (Int) -> Void) {
+    func observe(with block: @escaping (Int?) -> Void) {
         self.handle = FireController.db.child(self.path).observe(.value, with: { snap in
             var total = 0
             if !(snap.value is NSNull) {
@@ -55,6 +55,9 @@ class UnreadQuery: NSObject {
                 self.total = total
             }
             block(total)
+        }, withCancel: { error in
+            Log.w("Permission denied trying to read unreads: \(self.path!)")
+            block(nil)
         })
     }
     

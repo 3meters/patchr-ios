@@ -88,9 +88,18 @@ class LobbyViewController: UIViewController {
 	}
 	
 	func signupAction(sender: AnyObject?) {
-        let controller = EmailViewController()
-        controller.flow = .onboardCreate
-        self.navigationController?.pushViewController(controller, animated: true)
+        
+        FireController.instance.isConnected() { connected in
+            if connected == nil || !connected! {
+                let message = "Creating a group requires a network connection."
+                self.alert(title: "Not connected", message: message, cancelButtonTitle: "OK")
+            }
+            else {
+                let controller = EmailViewController()
+                controller.flow = .onboardCreate
+                self.navigationController?.pushViewController(controller, animated: true)
+            }
+        }
 	}
 	
     /*--------------------------------------------------------------------------------------------

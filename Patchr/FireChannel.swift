@@ -14,14 +14,14 @@ import FirebaseDatabase
 class FireChannel: NSObject {
     
     var path: String {
-        return "group-channels/\(self.group!)/\(self.id!)"
+        return "group-channels/\(self.groupId!)/\(self.id!)"
     }
     
     var archived: Bool?
     var createdAt: Int?
     var createdBy: String?
     var general: Bool?
-    var group: String?
+    var groupId: String?
     var name: String?
     var ownedBy: String?
     var photo: FirePhoto?
@@ -46,7 +46,7 @@ class FireChannel: NSObject {
             channel.createdAt = dict!["created_at"] as? Int
             channel.createdBy = dict!["created_by"] as? String
             channel.general = dict!["general"] as? Bool
-            channel.group = dict!["group_id"] as? String
+            channel.groupId = dict!["group_id"] as? String
             channel.id = id
             channel.name = dict!["name"] as? String
             channel.ownedBy = dict!["owned_by"] as? String
@@ -79,8 +79,8 @@ class FireChannel: NSObject {
     
     func star(on: Bool) {
         let userId = UserController.instance.userId!
-        let pathByMember = "member-channels/\(userId)/\(self.group!)/\(self.id!)"
-        let pathByGroup = "group-channel-members/\(self.group!)/\(self.id!)/\(userId)"
+        let pathByMember = "member-channels/\(userId)/\(self.groupId!)/\(self.id!)"
+        let pathByGroup = "group-channel-members/\(self.groupId!)/\(self.id!)/\(userId)"
         let priority = on ? 1 : 4
         let index = Int("\(FireController.instance.priorities[priority])\(self.joinedAt!)")
         let indexReversed = Int("-\(FireController.instance.priorities.reversed()[priority])\(self.joinedAt!)")
@@ -99,8 +99,8 @@ class FireChannel: NSObject {
         
         /* Reset priority to normal */
         let userId = UserController.instance.userId!
-        let pathByMember = "member-channels/\(userId)/\(self.group!)/\(self.id!)"
-        let pathByGroup = "group-channel-members/\(self.group!)/\(self.id!)/\(userId)"
+        let pathByMember = "member-channels/\(userId)/\(self.groupId!)/\(self.id!)"
+        let pathByGroup = "group-channel-members/\(self.groupId!)/\(self.id!)/\(userId)"
         let priority = self.starred! ? 1 : 4
         let index = Int("\(FireController.instance.priorities[priority])\(self.joinedAt!)")
         let indexReversed = Int("-\(FireController.instance.priorities.reversed()[priority])\(self.joinedAt!)")
@@ -116,7 +116,7 @@ class FireChannel: NSObject {
     
     func mute(on: Bool) {
         let userId = UserController.instance.userId!
-        let groupId = self.group!
+        let groupId = self.groupId!
         let channelId = self.id!
         FireController.db.child("member-channels/\(userId)/\(groupId)/\(channelId)/muted").setValue(on)
         FireController.db.child("group-channel-members/\(groupId)/\(channelId)/\(userId)/muted").setValue(on)

@@ -78,16 +78,24 @@ class GroupEditViewController: BaseEditViewController {
 
         guard !self.processing else { return }
         
-        DeleteConfirmationAlert(
-            title: "Confirm group delete",
-            message: "Deleting the group will erase all channels and messages for the group and cannot be undone. Enter YES to confirm.",
-            actionTitle: "Delete",
-            cancelTitle: "Cancel",
-            destructConfirmation: true,
-            delegate: self) { doIt in
-                if doIt {
-                    self.delete()
+        FireController.instance.isConnected() { connected in
+            if connected == nil || !connected! {
+                let message = "Deleting a group requires a network connection."
+                self.alert(title: "Not connected", message: message, cancelButtonTitle: "OK")
+            }
+            else {
+                self.DeleteConfirmationAlert(
+                    title: "Confirm group delete",
+                    message: "Deleting the group will erase all channels and messages for the group and cannot be undone. Enter YES to confirm.",
+                    actionTitle: "Delete",
+                    cancelTitle: "Cancel",
+                    destructConfirmation: true,
+                    delegate: self) { doIt in
+                        if doIt {
+                            self.delete()
+                        }
                 }
+            }
         }
     }
     

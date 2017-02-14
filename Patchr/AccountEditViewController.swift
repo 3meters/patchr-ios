@@ -222,7 +222,8 @@ class AccountEditViewController: BaseEditViewController {
         FireController.instance.usernameExists(username: username, next: { exists in
             self.progress?.hide(true)
             self.processing = false
-            if exists {
+            if exists == nil { return }
+            if exists! {
                 self.showError(self.userNameField, error: "Choose another username")
             }
             else {

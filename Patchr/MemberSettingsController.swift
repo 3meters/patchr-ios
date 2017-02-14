@@ -147,7 +147,7 @@ class MemberSettingsController: UITableViewController {
         }
         else {
             let channelId = self.inputChannel.id!
-            FireController.db.child("member-channels/\(userId)/\(groupId)/\(channelId)/role")
+            FireController.db.child("group-channel-members/\(groupId)/\(channelId)/\(userId)/role")
                 .observeSingleEvent(of: .value, with: { snap in
                     if let memberRole = snap.value as? String {
                         self.role = memberRole
@@ -230,7 +230,7 @@ class MemberSettingsController: UITableViewController {
                 let groupId = StateController.instance.groupId!
                 let channelId = self.inputChannel.id!
                 let memberChannelsPath = "member-channels/\(userId)/\(groupId)/\(channelId)/role"
-                let channelMembersPath = "group-channel-members/\(groupId)\(channelId)/\(userId)/role"
+                let channelMembersPath = "group-channel-members/\(groupId)/\(channelId)/\(userId)/role"
 
                 if self.role == "owner" {    // Check if only owner
                     FireController.instance.channelRoleCount(groupId: groupId, channelId: channelId, role: "owner") { count in
@@ -324,6 +324,7 @@ extension MemberSettingsController {
                     }
                 }
                 controller.delegate = self
+                controller.simplePicker = true
                 self.navigationController?.present(wrapper, animated: true, completion: nil)
             }
         }

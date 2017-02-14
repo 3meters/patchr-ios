@@ -136,8 +136,8 @@ class UserController: NSObject {
         self.unreadQuery = UnreadQuery(level: .user, userId: userId)
         self.unreadQuery!.observe(with: { [weak self] total in
             Log.d("UserController: Observe query result for user unreads: \(total)")
-            self?.unreads = total
-            UIApplication.shared.applicationIconBadgeNumber = total
+            self?.unreads = total ?? 0
+            UIApplication.shared.applicationIconBadgeNumber = total ?? 0
             FireController.db.child("counters/\(userId)/unreads").runTransactionBlock { currentData -> FIRTransactionResult in
                 currentData.value = total
                 return FIRTransactionResult.success(withValue: currentData)

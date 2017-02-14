@@ -24,9 +24,15 @@ class ChannelPickerController: BaseTableController, CLTokenInputViewDelegate {
     var selectedStyle: SelectedStyle = .prominent
     
     var channels: [String: Any] = [:]
+    var inputGroupId: String?
+    var inputGroupTitle: String?
+
     var filterText: String?
     var filterActive = false
     var allowMultiSelect = true
+    var simplePicker = false
+    
+    var flow: BaseEditViewController.Flow = .none
     
     /*--------------------------------------------------------------------------------------------
     * MARK: - Lifecycle
@@ -38,6 +44,12 @@ class ChannelPickerController: BaseTableController, CLTokenInputViewDelegate {
         bind()
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        if !self.simplePicker {
+            let _ = self.channelsView.beginEditing()
+        }
+    }
+
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
         
@@ -53,8 +65,19 @@ class ChannelPickerController: BaseTableController, CLTokenInputViewDelegate {
     
     func doneAction(sender: AnyObject?) {
         if isValid() {
-            self.delegate?.update(channels: self.channels)
-            close()
+            if self.simplePicker {
+                self.delegate?.update(channels: self.channels)
+                close()
+                return
+            }
+            
+            let controller = ContactPickerController()
+            controller.role = "guests"
+            controller.flow = self.flow
+            controller.channels = self.channels
+            controller.inputGroupId = self.inputGroupId
+            controller.inputGroupTitle = self.inputGroupTitle
+            self.navigationController?.pushViewController(controller, animated: true)
         }
     }
     
@@ -112,16 +135,23 @@ class ChannelPickerController: BaseTableController, CLTokenInputViewDelegate {
         self.view.addSubview(self.tableView)
         
         self.selectedStyle = .normal
-        self.navigationItem.title = "Select channel for guest"
+        self.navigationItem.title = "Select channel(s) for guest"
         
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(notification:)), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(notification:)), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
         
-        let closeButton = UIBarButtonItem(barButtonSystemItem: .stop, target: self, action: #selector(closeAction(sender:)))
-        self.navigationItem.leftBarButtonItems = [closeButton]
-        self.doneButton = UIBarButtonItem(title: "Done", style: .plain, target: self, action: #selector(doneAction(sender:)))
-        self.doneButton.isEnabled = false
-        self.navigationItem.rightBarButtonItems = [doneButton]
+        if self.simplePicker {
+            let closeButton = UIBarButtonItem(barButtonSystemItem: .stop, target: self, action: #selector(closeAction(sender:)))
+            self.navigationItem.leftBarButtonItems = [closeButton]
+            self.doneButton = UIBarButtonItem(title: "Done", style: .plain, target: self, action: #selector(doneAction(sender:)))
+            self.doneButton.isEnabled = false
+            self.navigationItem.rightBarButtonItems = [doneButton]
+        }
+        else {
+            self.doneButton = UIBarButtonItem(title: "Next", style: .plain, target: self, action: #selector(doneAction(sender:)))
+            self.doneButton.isEnabled = false
+            self.navigationItem.rightBarButtonItems = [doneButton]
+        }
         
         if self.channels.count > 0 {
             for (channelId, channelName) in self.channels {

@@ -40,7 +40,7 @@ class MemberPickerController: BaseTableController, UITableViewDelegate {
         let userId = UserController.instance.userId!
         let channelQuery = ChannelQuery(groupId: groupId, channelId: channelId, userId: userId)
         
-        channelQuery.once(with: { channel in
+        channelQuery.once(with: { error, channel in
             if channel != nil {
                 self.channel = channel
                 self.bind()
@@ -120,7 +120,8 @@ class MemberPickerController: BaseTableController, UITableViewDelegate {
                     if user != nil {
                         FireController.instance.isChannelMember(userId: userId, channelId: channelId, groupId: groupId, next: { member in
                             cell.bind(user: user!)
-                            if member {
+                            if member == nil { return }
+                            if member! {
                                 cell.roleLabel?.isHidden = false
                                 cell.roleLabel?.text = "already a member"
                                 cell.roleLabel?.textColor = MaterialColor.lightGreen.base
@@ -153,7 +154,7 @@ class MemberPickerController: BaseTableController, UITableViewDelegate {
         
         UpdateConfirmationAlert(title: "Add to channel", message: message, actionTitle: "Add", cancelTitle: "Cancel", delegate: nil, onDismiss: { doit in
             if doit {
-                let groupId = self.channel.group!
+                let groupId = self.channel.groupId!
                 let channelId = self.channel.id!
                 for userId in self.invites.keys {
                     FireController.instance.addUserToChannel(userId: userId, groupId: groupId, channelId: channelId, channelName: channelName)

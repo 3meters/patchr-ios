@@ -24,9 +24,9 @@ class ContactPickerController: BaseTableController, UITableViewDelegate, UITable
     var contactsMapped = [String: [CNContact]]()
     var contactsFiltered = [CNContact]()
     
-    var invites: [AnyHashable: Any] = [:]
-    var emails: [AnyHashable: Any] = [:]
-    var invitedEmails: [AnyHashable: Any] = [:]
+    var invites = [AnyHashable: Any]()
+    var emails = [AnyHashable: Any]()
+    var invitedEmails = [AnyHashable: [[String: Any]]]()
     
     var role = "members"
     var channels: [String: Any] = [:]
@@ -56,6 +56,10 @@ class ContactPickerController: BaseTableController, UITableViewDelegate, UITable
         bind()
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        let _ = self.contactsView.beginEditing()
+    }
+
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
         
@@ -70,6 +74,11 @@ class ContactPickerController: BaseTableController, UITableViewDelegate, UITable
     *--------------------------------------------------------------------------------------------*/
     
     func closeAction(sender: AnyObject?) {
+        if self.flow == .internalInvite {
+            self.close()
+            return
+        }
+
         let groupId = self.inputGroupId!
         FireController.instance.findFirstChannel(groupId: groupId) { firstChannelId in
             if firstChannelId != nil {
@@ -148,29 +157,38 @@ class ContactPickerController: BaseTableController, UITableViewDelegate, UITable
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(notification:)), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(notification:)), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
         
-        if self.flow == .internalCreate {
+        if self.flow == .internalCreate || self.flow == .internalInvite {
             let closeButton = UIBarButtonItem(barButtonSystemItem: .stop, target: self, action: #selector(closeAction(sender:)))
             self.navigationItem.leftBarButtonItems = [closeButton]
+            self.inviteButton = UIBarButtonItem(title: "Invite", style: .plain, target: self, action: #selector(inviteAction(sender:)))
+            self.inviteButton.isEnabled = false
+            self.navigationItem.rightBarButtonItems = [inviteButton]
         }
-        
-        self.inviteButton = UIBarButtonItem(title: "Invite", style: .plain, target: self, action: #selector(inviteAction(sender:)))
-        self.inviteButton.isEnabled = false
-        self.navigationItem.rightBarButtonItems = [inviteButton]
+        else {
+            self.inviteButton = UIBarButtonItem(title: "Done", style: .plain, target: self, action: #selector(inviteAction(sender:)))
+            self.navigationItem.rightBarButtonItems = [inviteButton]
+        }
     }
     
     func bind() {
         
         let groupId = StateController.instance.group?.id ?? self.inputGroupId!
+        let userId = UserController.instance.userId!
         self.invitedEmails.removeAll()
-        FireController.db.child("invites/\(groupId)").observeSingleEvent(of: .value, with: { snap in
+        FireController.db.child("invites/\(groupId)/\(userId)").observeSingleEvent(of: .value, with: { snap in
             if !(snap.value is NSNull) && snap.hasChildren() {
                 for item in snap.children  {
-                    let snapInviter = item as! FIRDataSnapshot
-                    for item in snapInviter.children {
-                        let snapInvite = item as! FIRDataSnapshot
-                        let map = snapInvite.value as! [String: Any]
-                        let status = map["status"] as? String
-                        self.invitedEmails[map["email"] as! String] = status
+                    let snapInvite = item as! FIRDataSnapshot
+                    let map = snapInvite.value as! [String: Any]
+                    if let role = map["role"] as? String {
+                        if (self.role == "members" && role == "member") ||
+                            (self.role == "guests" && role == "guest") {
+                            let email = map["email"] as! String
+                            if self.invitedEmails[email] == nil {
+                                self.invitedEmails[email] = []
+                            }
+                            self.invitedEmails[email]?.append(map)
+                        }
                     }
                 }
             }
@@ -295,17 +313,22 @@ class ContactPickerController: BaseTableController, UITableViewDelegate, UITable
                         let userEmail = UserController.instance.userEmail
                         let userId = UserController.instance.userId!
                         let username = UserController.instance.user?.username
+                        let ref = FireController.db.child("queue/invites").childByAutoId()
+                        let timestamp = FireController.instance.getServerTimestamp()
                         
                         var task: [String: Any] = [:]
+                        task["created_at"] = Int(timestamp)
+                        task["created_by"] = userId
                         task["group"] = ["id": groupId, "title": groupTitle]
+                        task["id"] = ref.key
                         task["inviter"] = ["id": userId, "title": userTitle, "username": username, "email": userEmail]
                         task["invite_id"] = inviteId
                         task["link"] = inviteUrl
                         task["recipients"] = [email]
+                        task["state"] = "waiting"
                         task["type"] = "invite-members"
                         
-                        let queueRef = FireController.db.child("queue/invites").childByAutoId()
-                        queueRef.setValue(task)
+                        ref.setValue(task)
                         if self.flow == .onboardCreate || self.flow == .internalCreate {
                             self.onboardAction(sender: nil)
                         }
@@ -338,6 +361,8 @@ class ContactPickerController: BaseTableController, UITableViewDelegate, UITable
                         let group = StateController.instance.group!
                         let groupTitle = group.title!
                         let groupId = StateController.instance.group?.id ?? self.inputGroupId!
+                        let timestamp = FireController.instance.getServerTimestamp()
+                        let ref = FireController.db.child("queue/invites").childByAutoId()
                         
                         var task: [String: Any] = [:]
                         var channels = [String: Any]()
@@ -346,16 +371,19 @@ class ContactPickerController: BaseTableController, UITableViewDelegate, UITable
                         }
                         let type = (self.channels.count > 1) ? "invite-guests-multi-channel" : "invite-guests"
                         task["channels"] = channels
+                        task["created_at"] = Int(timestamp)
+                        task["created_by"] = userId
                         task["group"] = ["id": groupId, "title": groupTitle]
+                        task["id"] = ref.key
                         task["inviter"] = ["id": userId, "title": userTitle, "username": username, "email": userEmail]
                         task["invite_id"] = inviteId
                         task["link"] = inviteUrl
                         task["recipients"] = [email]
+                        task["state"] = "waiting"
                         task["type"] = type
                         
-                        let queueRef = FireController.db.child("queue/invites").childByAutoId()
-                        queueRef.setValue(task)
-                        self.close()
+                        ref.setValue(task)
+                        self.close(root: (self.flow != .internalInvite))
                         UIShared.Toast(message: "Invites sent")
                     }
                 })
@@ -419,23 +447,64 @@ extension ContactPickerController {
         }
     }
     
+    func statusFromInvites(invites: [[String: Any]]?) -> String {
+        guard invites != nil && invites!.count > 0 else {
+            return "none"
+        }
+        
+        if self.role == "members" {
+            for invite in invites! {
+                let inviteStatus = (invite["status"] as? String) ?? "none"
+                if inviteStatus == "accepted" {
+                    return "accepted"
+                }
+            }
+            return "pending"
+        }
+        else if self.role == "guests" {
+            /* Do current invites cover all the targeted channels */
+            var status = "accepted"
+            for channelId in self.channels.keys {
+                var hit = false
+                for invite in invites! {
+                    let inviteStatus = invite["status"] as! String
+                    if let inviteChannels = invite["channels"] as? [String: String] {
+                        for inviteChannelId in inviteChannels.keys {
+                            if inviteChannelId == channelId {
+                                hit = true
+                                if inviteStatus == "pending" {
+                                    status = "pending"
+                                }
+                            }
+                        }
+                    }
+                }
+                if !hit {
+                    return "none"
+                }
+            }
+            return status
+        }
+        return "none"
+    }
+    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "contact-cell", for: indexPath) as! UserListCell
+        var contact: CNContact!
         cell.selectionStyle = .none
         
         if self.sectionTitles != nil {
             let sectionTitle = self.sectionTitles?[indexPath.section]
-            let contact = self.contactsMapped[sectionTitle!]?[indexPath.row]
-            let email = contact!.emailAddresses.first?.value as String!
-            let status = (self.invitedEmails[email!] as? String) ?? "none"
-            cell.bind(contact: contact!, status: status)
+            contact = self.contactsMapped[sectionTitle!]?[indexPath.row]
         }
         else {
-            let contact = self.contactsFiltered[indexPath.row]
-            let email = contact.emailAddresses.first?.value as String!
-            let status = (self.invitedEmails[email!] as? String) ?? "none"
-            cell.bind(contact: contact, status: status)
+            contact = self.contactsFiltered[indexPath.row]
         }
+        
+        let email = contact.emailAddresses.first?.value as String!
+        let invites: [[String: Any]]? = self.invitedEmails[email!]
+        let status = statusFromInvites(invites: invites)
+        cell.bind(contact: contact, status: status)
         
         cell.checkBox?.on = false
         if let contact = cell.contact {
@@ -456,7 +525,12 @@ extension ContactPickerController {
     }
     
     func tokenInputView(_ view: CLTokenInputView, didAdd token: CLToken) {
-        self.inviteButton.isEnabled = (self.contactsView.allTokens.count > 0)
+        if self.flow == .internalCreate || self.flow == .internalInvite {
+            self.inviteButton.isEnabled = (self.contactsView.allTokens.count > 0)
+        }
+        else if self.contactsView.allTokens.count > 0 {
+            self.inviteButton.title = "Invite"
+        }
         self.contactsView.searchImage.fadeOut(duration: 0.0)
         self.contactsView.placeholder.fadeOut(duration: 0.0)
     }
@@ -466,6 +540,12 @@ extension ContactPickerController {
         if self.contactsView.allTokens.count == 0 {
             self.contactsView.searchImage.fadeIn(duration: 0.2)
             self.contactsView.placeholder.fadeIn(duration: 0.2)
+            if self.flow == .internalCreate || self.flow == .internalInvite {
+                self.inviteButton.isEnabled = false
+            }
+            else if self.contactsView.allTokens.count > 0 {
+                self.inviteButton.title = "Done"
+            }
         }
         if let cell = token.context as? UserListCell, let contact = cell.contact {
             cell.setSelected(false, animated: true)

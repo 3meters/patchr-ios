@@ -61,8 +61,12 @@ class UserListCell: UITableViewCell {
         self.contact = contact
         
         self.roleLabel?.isHidden = (status == "none")
-        if status != "none" {
-            self.roleLabel?.text = status
+        if status == "accepted" {
+            self.roleLabel?.text = "invite accepted"
+            self.roleLabel?.textColor = MaterialColor.lightGreen.darken1
+        }
+        else if status == "pending" {
+            self.roleLabel?.text = "invited"
             self.roleLabel?.textColor = MaterialColor.lightBlue.base
         }
         

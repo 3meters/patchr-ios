@@ -273,7 +273,7 @@ class BaseSlackController: SLKTextViewController {
         }
         
         let attachmentId = "at-\(Utils.genRandomId())"
-        let messageRef = FireController.db.child("group-messages/\(groupId)/\(channelId)").childByAutoId()
+        let ref = FireController.db.child("group-messages/\(groupId)/\(channelId)").childByAutoId()
         
         var photoMap: [String: Any]?
         if let image = self.photoEditView.imageButton.image {
@@ -281,46 +281,55 @@ class BaseSlackController: SLKTextViewController {
             photoMap = postPhoto(image: image, asset: asset, progress: self.photoEditView.progressBlock, next: { error in
                 if error == nil {
                     photoMap!["uploading"] = NSNull()
-                    messageRef.child("attachments/\(attachmentId)").setValue(["photo": photoMap!])
+                    ref.child("attachments/\(attachmentId)").setValue(["photo": photoMap!])
                     Log.d("*** Cleared uploading timestamp: \(photoMap!["filename"]!)")
                 }
             })
         }
         
-        let timestamp = Utils.now() + (FireController.instance.serverOffset ?? 0)
+        let timestamp = FireController.instance.getServerTimestamp()
         let timestampReversed = -1 * timestamp
         
-        var notificationMap: [String: Any] = [:]
-        notificationMap["channel_id"] = channelId
-        notificationMap["channelName"] = channelName
-        notificationMap["created_at"] = Int(timestamp)
-        notificationMap["created_by"] = userId
-        notificationMap["group_id"] = groupId
-        notificationMap["username"] = username
+        var task: [String: Any] = [:]
+        task["channel_id"] = channelId
+        task["channelName"] = channelName
+        task["created_at"] = Int(timestamp)
+        task["created_by"] = userId
+        task["group_id"] = groupId
+        task["id"] = ref.key
+        task["state"] = "waiting"
+        task["username"] = username
         
-        var messageMap: [String: Any] = [:]
-        messageMap["channel_id"] = channelId
-        messageMap["created_at"] = Int(timestamp)
-        messageMap["created_at_desc"] = Int(timestampReversed)
-        messageMap["created_by"] = userId
-        messageMap["group_id"] = groupId
-        messageMap["modified_at"] = Int(timestamp)
-        messageMap["modified_by"] = userId
-        messageMap["source"] = "user"
+        var message: [String: Any] = [:]
+        message["channel_id"] = channelId
+        message["created_at"] = Int(timestamp)
+        message["created_at_desc"] = Int(timestampReversed)
+        message["created_by"] = userId
+        message["group_id"] = groupId
+        message["modified_at"] = Int(timestamp)
+        message["modified_by"] = userId
+        message["source"] = "user"
         
         if let text = self.textInputbar.textView.text, !text.isEmpty {
-            messageMap["text"] = text
-            notificationMap["text"] = text
+            message["text"] = text
+            task["text"] = text
         }
         
         if photoMap != nil {
-            messageMap["attachments"] = [attachmentId: ["photo": photoMap!]]
-            notificationMap["photo"] = photoMap!
+            message["attachments"] = [attachmentId: ["photo": photoMap!]]
+            task["photo"] = photoMap!
         }
         
-        messageRef.setValue(messageMap)
-        FireController.db.child("queue/notifications/\(messageRef.key)").setValue(notificationMap)
-        NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.MessageDidUpdate), object: self, userInfo: ["message_id":messageRef.key])
+        ref.setValue(message)
+        
+        let path = "queue/notifications/\(ref.key)"
+        FireController.db.child(path).setValue(task) { error, ref in
+            if error != nil {
+                Log.w("Permission denied: \(path)")
+            } else {
+                NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.MessageDidUpdate), object: self, userInfo: ["message_id":ref.key])
+            }
+        }
     }
     
     func updateMessage() {
@@ -368,11 +377,11 @@ class BaseSlackController: SLKTextViewController {
         let imageKey = "\(Utils.genImageKey()).jpg"
         
         var photoMap = [
-            "width": Int(preparedImage.size.width), // width/height are in points...should be pixels?
+            "filename": imageKey,
             "height": Int(preparedImage.size.height),
             "source": S3.instance.imageSource,
-            "filename": imageKey,
-            "uploading": "true"] as [String: Any]
+            "width": Int(preparedImage.size.width), // width/height are in points...should be pixels?
+            "uploading": true] as [String: Any]
         
         if let asset = asset as? PHAsset {
             if let takenDate = asset.creationDate {

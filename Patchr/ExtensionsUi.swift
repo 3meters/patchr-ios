@@ -316,7 +316,7 @@ extension UIViewController {
         return false
     }
 
-    func close(animated: Bool = true) {
+    func close(animated: Bool = true, root: Bool = false) {
         /* Override in subclasses for control of dismiss/pop process */
         if self.presented {
             if self.navigationController != nil {
@@ -327,6 +327,10 @@ extension UIViewController {
             }
         }
         else {
+            if root {
+                let _ = self.navigationController?.popToRootViewController(animated: animated)
+                return
+            }
             let _ = self.navigationController?.popViewController(animated: true)
         }
     }

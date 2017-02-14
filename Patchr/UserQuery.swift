@@ -25,7 +25,7 @@ class UserQuery: NSObject {
         super.init()
         self.userPath = "users/\(userId)"
         if channelId != nil {
-            self.linkPath = "member-channels/\(userId)/\(groupId!)/\(channelId!)"
+            self.linkPath = "group-channel-members/\(groupId!)/\(channelId!)/\(userId)"
         }
         else if groupId != nil {
             self.linkPath = "group-members/\(groupId!)/\(userId)"
@@ -59,6 +59,9 @@ class UserQuery: NSObject {
                 Log.w("User snapshot is null")
                 self.block?(nil)
             }
+        }, withCancel: { error in
+            Log.w("Permission denied trying to read user: \(self.userPath!)")
+            block(nil)
         })
         
         if self.linkPath != nil {
@@ -78,6 +81,9 @@ class UserQuery: NSObject {
                         self.block?(self.user)
                     }
                 }
+            }, withCancel: { error in
+                Log.w("Permission denied trying to read user membership: \(self.linkPath!)")
+                block(nil)
             })
         }
     }
@@ -107,6 +113,9 @@ class UserQuery: NSObject {
                     self.block?(nil)
                 }
             }
+        }, withCancel: { error in
+            Log.w("Permission denied trying to read user: \(self.userPath!)")
+            block(nil)
         })
         
         if self.linkPath != nil {
@@ -128,6 +137,9 @@ class UserQuery: NSObject {
                         }
                     }
                 }
+            }, withCancel: { error in
+                Log.w("Permission denied trying to read user membership: \(self.linkPath!)")
+                block(nil)
             })
         }
     }

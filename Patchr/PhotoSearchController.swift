@@ -111,9 +111,10 @@ class PhotoSearchController: UICollectionViewController, UITableViewDelegate, UI
 
             self.searchBarBoundsY = navHeight + statusHeight
             self.searchBar = UISearchBar(frame: CGRect(x:0, y:self.searchBarBoundsY!, width:UIScreen.main.bounds.size.width, height:44))
-            self.searchBar!.searchBarStyle = UISearchBarStyle.prominent
+            self.searchBar!.autocapitalizationType = .none
             self.searchBar!.delegate = self
             self.searchBar!.placeholder = "Search for photos"
+            self.searchBar!.searchBarStyle = .prominent
         }
         
 		/* Scroll inset */
@@ -184,8 +185,9 @@ class PhotoSearchController: UICollectionViewController, UITableViewDelegate, UI
 					
 					self.activity?.stopAnimating()
 					var userInfo: [AnyHashable: Any] = ["error": (error != nil)]
-					
-					if error == nil {
+                    
+                    if error == nil {
+                        
                         let json = JSON(response!)
                         var imagesFiltered: [ImageResult] = [ImageResult]()
                         let offsetAddCount = json["nextOffsetAddCount"].int
@@ -205,24 +207,12 @@ class PhotoSearchController: UICollectionViewController, UITableViewDelegate, UI
                                 let imageResult = ImageResult.setPropertiesFromDictionary(dictionary: imageResultDict as! NSDictionary, onObject: ImageResult())
                                 var usable = (imageResult.contentSize! <= self.maxImageSize)
                                 
-                                //Log.v("Image size: \(imageResult.contentSize!), width: \(imageResult.width!), height: \(imageResult.height!)")
-                                
-                                if !usable {
-                                    //Log.w("Image rejected: download size > \(self.maxImageSize)")
-                                }
-                                
                                 if usable {
                                     usable = imageResult.height! <= self.maxDimen && imageResult.width! <= self.maxDimen
-                                    if !usable {
-                                        //Log.w("Image rejected: dimension > \(self.maxDimen)")
-                                    }
                                 }
                                 
                                 if usable {
                                     usable = imageResult.thumbnailUrl != nil
-                                    if !usable {
-                                        //Log.w("Image rejected: missing thumbnail")
-                                    }
                                 }
                                 
                                 if (usable) {

@@ -25,6 +25,9 @@ class MessageQuery: NSObject {
             else {
                 Log.w("Message snapshot is null")
             }
+        }, withCancel: { error in
+            Log.w("Permission denied trying to read message: \(self.messagePath!)")
+            block(nil)
         })
     }
     
@@ -37,6 +40,9 @@ class MessageQuery: NSObject {
             else {
                 Log.w("Message snapshot is null")
             }
+        }, withCancel: { error in
+            Log.w("Permission denied trying to read message: \(self.messagePath!)")
+            block(nil)
         })
     }
     

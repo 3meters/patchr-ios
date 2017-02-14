@@ -30,6 +30,7 @@ let THIRD_PARTY_AUTH_ENABLED = false
 
 let TIMEOUT_REQUEST: Int = 10    // Seconds
 let BLOCKING = false
+let debugAuth = true
 
 let IMAGE_DIMENSION_MAX = CGFloat(1600)
 let CONTENT_WIDTH_MAX = CGFloat(462)

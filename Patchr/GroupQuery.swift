@@ -41,6 +41,9 @@ class GroupQuery: NSObject {
                 Log.w("Group snapshot is null")
                 block(nil)
             }
+        }, withCancel: { error in
+            Log.w("Permission denied trying to read group: \(self.groupPath!)")
+            block(nil)
         })
         
         if self.linkPath != nil {
@@ -60,6 +63,9 @@ class GroupQuery: NSObject {
                         block(self.group)
                     }
                 }
+            }, withCancel: { error in
+                Log.w("Permission denied trying to read group membership: \(self.linkPath!)")
+                block(nil)
             })
         }
     }
@@ -88,6 +94,9 @@ class GroupQuery: NSObject {
                     block(nil)
                 }
             }
+        }, withCancel: { error in
+            Log.w("Permission denied trying to read group: \(self.groupPath!)")
+            block(nil)
         })
 
         if self.linkPath != nil {
@@ -109,6 +118,9 @@ class GroupQuery: NSObject {
                         }
                     }
                 }
+            }, withCancel: { error in
+                Log.w("Permission denied trying to read group membership: \(self.linkPath!)")
+                block(nil)
             })
         }
     }

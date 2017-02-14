@@ -173,46 +173,8 @@ class PasswordViewController: BaseEditViewController {
         let email = self.inputEmail!
         
         if self.branch == .login {
-            
-            FIRAuth.auth()?.signIn(withEmail: email, password: password) { (user, error) in
-                
-                self.processing = false
-                self.progress?.hide(true)
-                
-                if error == nil {
-                    Reporting.track("Logged In")
-                    UserController.instance.setUserId(userId: (user?.uid)!) { [weak self] result in
-                        if self != nil {
-                            if self!.flow == .onboardLogin {
-                                let controller = GroupSwitcherController()
-                                self!.navigationController?.pushViewController(controller, animated: true)
-                            }
-                            else if self!.flow == .onboardCreate {
-                                let controller = GroupCreateController()
-                                controller.flow = self!.flow
-                                self!.navigationController?.pushViewController(controller, animated: true)
-                            }
-                            else if self!.flow == .onboardInvite {
-                                let controller = EmptyViewController()
-                                self!.navigationController?.setViewControllers([controller], animated: true)
-                                MainController.instance.routeDeepLink(link: self!.inputInviteLink, error: nil)
-                            }
-                        }
-                    }
-                }
-                else {
-                    var errorMessage = error?.localizedDescription
-                    if error!._code == FIRAuthErrorCode.errorCodeEmailAlreadyInUse.rawValue {
-                        errorMessage = "Email already used"
-                    }
-                    else if error!._code == FIRAuthErrorCode.errorCodeInvalidEmail.rawValue {
-                        errorMessage = "Email address is not valid"
-                    }
-                    else if error!._code == FIRAuthErrorCode.errorCodeWrongPassword.rawValue {
-                        errorMessage = "Wrong email and password combination"
-                    }
-                    self.passwordField.errorMessage = errorMessage
-                }
+            FIRAuth.auth()?.signIn(withEmail: email, password: password) { user, error in
+                self.authenticated(user: user, error: error)
             }
         }
         else {  // Only happens if creating group
@@ -248,6 +210,46 @@ class PasswordViewController: BaseEditViewController {
                     self.passwordField.errorMessage = error?.localizedDescription
                 }
             })
+        }
+    }
+    
+    func authenticated(user: FIRUser?, error: Error?) {
+        self.processing = false
+        self.progress?.hide(true)
+        
+        if error == nil {
+            Reporting.track("Logged In")
+            UserController.instance.setUserId(userId: (user?.uid)!) { [weak self] result in
+                if self != nil {
+                    if self!.flow == .onboardLogin {
+                        let controller = GroupSwitcherController()
+                        self!.navigationController?.pushViewController(controller, animated: true)
+                    }
+                    else if self!.flow == .onboardCreate {
+                        let controller = GroupCreateController()
+                        controller.flow = self!.flow
+                        self!.navigationController?.pushViewController(controller, animated: true)
+                    }
+                    else if self!.flow == .onboardInvite {
+                        let controller = EmptyViewController()
+                        self!.navigationController?.setViewControllers([controller], animated: true)
+                        MainController.instance.routeDeepLink(link: self!.inputInviteLink, error: nil)
+                    }
+                }
+            }
+        }
+        else {
+            var errorMessage = error?.localizedDescription
+            if error!._code == FIRAuthErrorCode.errorCodeEmailAlreadyInUse.rawValue {
+                errorMessage = "Email already used"
+            }
+            else if error!._code == FIRAuthErrorCode.errorCodeInvalidEmail.rawValue {
+                errorMessage = "Email address is not valid"
+            }
+            else if error!._code == FIRAuthErrorCode.errorCodeWrongPassword.rawValue {
+                errorMessage = "Wrong email and password combination"
+            }
+            self.passwordField.errorMessage = errorMessage
         }
     }
     

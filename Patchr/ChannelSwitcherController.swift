@@ -83,13 +83,21 @@ class ChannelSwitcherController: BaseTableController {
             return
         }
         
-        let groupId = StateController.instance.groupId!
-        let controller = ChannelEditViewController()
-        let wrapper = AirNavigationController(rootViewController: controller)
-        controller.mode = .insert
-        controller.inputGroupId = groupId
-        self.slideMenuController()?.closeLeft()
-        self.present(wrapper, animated: true, completion: nil)
+        FireController.instance.isConnected() { connected in
+            if connected == nil || !connected! {
+                let message = "Creating a channel requires a network connection."
+                self.alert(title: "Not connected", message: message, cancelButtonTitle: "OK")
+            }
+            else {
+                let groupId = StateController.instance.groupId!
+                let controller = ChannelEditViewController()
+                let wrapper = AirNavigationController(rootViewController: controller)
+                controller.mode = .insert
+                controller.inputGroupId = groupId
+                self.slideMenuController()?.closeLeft()
+                self.present(wrapper, animated: true, completion: nil)
+            }
+        }
     }
 
     func backAction(sender: AnyObject?) {
@@ -145,11 +153,11 @@ class ChannelSwitcherController: BaseTableController {
         self.tableView.register(UINib(nibName: "ChannelListCell", bundle: nil), forCellReuseIdentifier: "channel-list-cell")
         
         self.searchBar = UISearchBar(frame: CGRect.zero)
+        self.searchBar.autocapitalizationType = .none
+        self.searchBar.backgroundColor = Colors.clear
         self.searchBar.delegate = self
         self.searchBar.placeholder = "Search"
         self.searchBar.searchBarStyle = .prominent
-        self.searchBar.autocapitalizationType = .none
-        self.searchBar.backgroundColor = Colors.clear
         
         for subview in self.searchBar.subviews[0].subviews {
             if subview is UITextField {
@@ -246,7 +254,7 @@ class ChannelSwitcherController: BaseTableController {
             self.unreadsTotalQuery = UnreadQuery(level: .user, userId: userId)
             self.unreadsTotalQuery!.observe(with: { total in
                 if total != self.unreadTotal {
-                    self.unreadTotal = total
+                    self.unreadTotal = total ?? 0
                     self.unreadOther = self.unreadTotal - self.unreadGroup
                 }
             })
@@ -255,7 +263,7 @@ class ChannelSwitcherController: BaseTableController {
             self.unreadsGroupQuery = UnreadQuery(level: .group, userId: userId, groupId: groupId)
             self.unreadsGroupQuery!.observe(with: { total in
                 if total != self.unreadGroup {
-                    self.unreadGroup = total
+                    self.unreadGroup = total ?? 0
                     self.unreadOther = self.unreadTotal - self.unreadGroup
                 }
             })
@@ -323,14 +331,14 @@ class ChannelSwitcherController: BaseTableController {
         let channelId = snap.key
         
         cell.query = ChannelQuery(groupId: groupId, channelId: channelId, userId: userId)    // Just channel lookup
-        cell.query!.observe(with: { channel in
+        cell.query!.observe(with: { error, channel in
             
             if channel != nil {
                 cell.selected(on: (channelId == StateController.instance.channelId), style: .prominent)
                 cell.bind(channel: channel!)
                 cell.unreadQuery = UnreadQuery(level: .channel, userId: userId, groupId: groupId, channelId: channelId)
                 cell.unreadQuery!.observe(with: { total in
-                    if total > 0 {
+                    if total != nil && total! > 0 {
                         cell.badge?.text = "\(total)"
                         cell.badge?.isHidden = false
                         cell.accessoryType = .none
@@ -366,7 +374,7 @@ extension ChannelSwitcherController: UITableViewDelegate {
         
         let cell = tableView.cellForRow(at: indexPath) as! ChannelListCell
         let channelId = cell.channel.id!
-        let groupId = cell.channel.group!
+        let groupId = cell.channel.groupId!
         self.slideMenuController()?.closeLeft()
         if let currentChannelId = StateController.instance.channelId {
             if channelId != currentChannelId {

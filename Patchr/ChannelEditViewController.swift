@@ -38,7 +38,7 @@ class ChannelEditViewController: BaseEditViewController {
         
         if self.mode == .update {
             let channelQuery = ChannelQuery(groupId: self.inputGroupId, channelId: self.inputChannelId, userId: nil)
-            channelQuery.once(with: { channel in
+            channelQuery.once(with: { error, channel in
                 guard channel != nil else {
                     assertionFailure("Channel not found or no longer exists")
                     return
@@ -104,14 +104,22 @@ class ChannelEditViewController: BaseEditViewController {
         
         guard !self.processing else { return }
         
-        DeleteConfirmationAlert(
-            title: "Confirm Delete",
-            message: "Are you sure you want to delete this?",
-            actionTitle: "Delete", cancelTitle: "Cancel", delegate: self) {
-                doIt in
-                if doIt {
-                    self.delete()
+        FireController.instance.isConnected() { connected in
+            if connected == nil || !connected! {
+                let message = "Deleting a channel requires a network connection."
+                self.alert(title: "Not connected", message: message, cancelButtonTitle: "OK")
+            }
+            else {
+                self.DeleteConfirmationAlert(
+                    title: "Confirm Delete",
+                    message: "Are you sure you want to delete this?",
+                    actionTitle: "Delete", cancelTitle: "Cancel", delegate: self) {
+                        doIt in
+                        if doIt {
+                            self.delete()
+                        }
                 }
+            }
         }
     }
     
@@ -128,7 +136,16 @@ class ChannelEditViewController: BaseEditViewController {
         if self.mode == .insert {
             guard isValid() else { return }
             guard !self.processing else { return }
-            post()
+            
+            FireController.instance.isConnected() { connected in
+                if connected == nil || !connected! {
+                    let message = "Creating a channel requires a network connection."
+                    self.alert(title: "Not connected", message: message, cancelButtonTitle: "OK")
+                }
+                else {
+                    self.post()
+                }
+            }
         }
         else {
             self.activeTextField?.resignFirstResponder()
@@ -337,61 +354,71 @@ class ChannelEditViewController: BaseEditViewController {
         let userId = UserController.instance.userId!
         let channelName = self.nameField.text!
         
-        FireController.instance.channelNameExists(groupId: groupId, channelName: channelName, next: { exists in
-            if exists {
+        FireController.instance.channelNameExistsTask(groupId: groupId, channelName: channelName) { error, result in
+            if error != nil {
                 self.progress?.hide(true)
                 self.processing = false
-                self.nameField.errorMessage = "Choose another channel name"
+                return
             }
-            else {
-                let channelId = "ch-\(Utils.genRandomId())"
-                let refChannel = FireController.db.child("group-channels/\(groupId)/\(channelId)")
-                
-                var photoMap: [String: Any]?
-                if let image = self.photoEditView.imageButton.image {
-                    let asset = self.photoEditView.imageButton.asset
-                    photoMap = self.postPhoto(image: image, asset: asset, next: { error in
-                        if error != nil {
-                            photoMap!["uploading"] = NSNull()
-                            refChannel.child("photo").setValue(photoMap!)
+            
+            if let exists = result as? Bool {
+                if exists {
+                    self.progress?.hide(true)
+                    self.processing = false
+                    self.nameField.errorMessage = "Choose another channel name"
+                }
+                else {
+                    let channelId = "ch-\(Utils.genRandomId())"
+                    let refChannel = FireController.db.child("group-channels/\(groupId)/\(channelId)")
+                    
+                    var photoMap: [String: Any]?
+                    if let image = self.photoEditView.imageButton.image {
+                        let asset = self.photoEditView.imageButton.asset
+                        photoMap = self.postPhoto(image: image, asset: asset, next: { error in
+                            if error != nil {
+                                photoMap!["uploading"] = NSNull()
+                                refChannel.child("photo").setValue(photoMap!)
+                            }
+                        })
+                    }
+                    
+                    let timestamp = FireController.instance.getServerTimestamp()
+                    
+                    var channelMap: [String: Any] = [:]
+                    channelMap["archived"] = false
+                    channelMap["created_at"] = Int(timestamp)
+                    channelMap["created_by"] = userId
+                    channelMap["general"] = false
+                    channelMap["group_id"] = self.inputGroupId!
+                    if !(self.nameField.text?.isEmpty)! {
+                        channelMap["name"] = self.nameField.text
+                    }
+                    channelMap["owned_by"] = userId
+                    if photoMap != nil {
+                        channelMap["photo"] = photoMap!
+                    }
+                    if !self.purposeField.text.isEmpty {
+                        channelMap["purpose"] = self.purposeField.text
+                    }
+                    channelMap["type"] = "channel"
+                    channelMap["visibility"] = self.visibilityValue
+                    
+                    FireController.instance.addChannelToGroup(channelId: channelId, channelMap: channelMap, groupId: groupId) { success in
+                        if success {
+                            let controller = MemberPickerController()
+                            controller.flow = .internalCreate
+                            controller.inputChannelId = channelId
+                            self.navigationController?.setViewControllers([controller], animated: true)
                         }
-                    })
-                }
-                
-                let timestamp = FireController.instance.getServerTimestamp()
-                
-                var channelMap: [String: Any] = [:]
-                channelMap["archived"] = false
-                channelMap["created_at"] = Int(timestamp)
-                channelMap["created_by"] = userId
-                channelMap["general"] = false
-                channelMap["group_id"] = self.inputGroupId!
-                if !(self.nameField.text?.isEmpty)! {
-                    channelMap["name"] = self.nameField.text
-                }
-                channelMap["owned_by"] = userId
-                if photoMap != nil {
-                    channelMap["photo"] = photoMap!
-                }
-                if !self.purposeField.text.isEmpty {
-                    channelMap["purpose"] = self.purposeField.text
-                }
-                channelMap["type"] = "channel"
-                channelMap["visibility"] = self.visibilityValue
-                
-                FireController.instance.addChannelToGroup(channelId: channelId, channelMap: channelMap, groupId: groupId) { result in
-                    let controller = MemberPickerController()
-                    controller.flow = .internalCreate
-                    controller.inputChannelId = channelId
-                    self.navigationController?.setViewControllers([controller], animated: true)
+                    }
                 }
             }
-        })
+        }
     }
 
     func delete() {
         self.close(animated: true)
-        FireController.instance.deleteChannel(channelId: self.channel.id!, groupId: self.channel.group!)
+        FireController.instance.deleteChannel(channelId: self.channel.id!, groupId: self.channel.groupId!)
     }
 
     func isDirty() -> Bool {
