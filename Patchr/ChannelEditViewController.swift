@@ -27,6 +27,7 @@ class ChannelEditViewController: BaseEditViewController {
     var visibilityLabel	= AirLabelDisplay()
     var visibilityValue = "open"
     var usersButton = AirButton()
+    var doneButton: UIBarButtonItem!
 
     /*--------------------------------------------------------------------------------------------
     * Lifecycle
@@ -80,23 +81,47 @@ class ChannelEditViewController: BaseEditViewController {
 
     func closeAction(sender: AnyObject){
         
-        if self.mode == .insert {
-            if !isDirty() {
-                self.close(animated: true)
-                return
-            }
-            
-            DeleteConfirmationAlert(
-                title: "Do you want to discard your editing changes?",
-                actionTitle: "Discard", cancelTitle: "Cancel", delegate: self) {
-                    doIt in
-                    if doIt {
-                        self.close(animated: true)
-                    }
+        if !isDirty() {
+            self.close(animated: true)
+            return
+        }
+        
+        DeleteConfirmationAlert(
+            title: "Do you want to discard your editing changes?",
+            actionTitle: "Discard", cancelTitle: "Cancel", delegate: self) {
+                doIt in
+                if doIt {
+                    self.close(animated: true)
+                }
+        }
+    }
+    
+    func doneAction(sender: AnyObject){
+        
+        guard !self.processing else { return }
+        
+        if self.mode == .update {
+            self.activeTextField?.resignFirstResponder()
+            isValid() { valid in
+                if valid {
+                    self.post()
+                }
             }
         }
-        else {
-            self.close(animated: true)
+        else if self.mode == .insert {
+            FireController.instance.isConnected() { connected in
+                if connected == nil || !connected! {
+                    let message = "Creating a channel requires a network connection."
+                    self.alert(title: "Not connected", message: message, cancelButtonTitle: "OK")
+                }
+                else {
+                    self.isValid() { valid in
+                        if valid {
+                            self.post()
+                        }
+                    }
+                }
+            }
         }
     }
     
@@ -131,75 +156,26 @@ class ChannelEditViewController: BaseEditViewController {
         self.navigationController?.pushViewController(controller, animated: true)
     }
     
-    func doneAction(sender: AnyObject){
-        
-        if self.mode == .insert {
-            guard isValid() else { return }
-            guard !self.processing else { return }
-            
-            FireController.instance.isConnected() { connected in
-                if connected == nil || !connected! {
-                    let message = "Creating a channel requires a network connection."
-                    self.alert(title: "Not connected", message: message, cancelButtonTitle: "OK")
-                }
-                else {
-                    self.post()
-                }
-            }
-        }
-        else {
-            self.activeTextField?.resignFirstResponder()
-            if isValid() {
-                self.close(animated: true)
-            }
-        }
-    }
-    
-    override func textViewDidEndEditing(_ textView: UITextView) {
-        super.textViewDidEndEditing(textView)
-        if self.mode == .update {
-            if textView == self.purposeField {
-                if emptyToNil(self.purposeField.text) != self.channel!.purpose {
-                    FireController.db.child(self.channel.path).updateChildValues([
-                        "modified_at": FIRServerValue.timestamp(),
-                        "purpose": emptyToNull(self.purposeField.text)
-                    ])
-                }
-            }
-        }
+    func textFieldDidChange(_ textField: UITextField) {
+        self.doneButton.isEnabled = isDirty()
     }
     
     func textViewDidChange(_ textView: UITextView) {
         self.view.setNeedsLayout()
+        self.doneButton.isEnabled = isDirty()
     }
     
-    override func textFieldDidEndEditing(_ textField: UITextField) {
-        super.textFieldDidEndEditing(textField)
-        
-        if self.mode == .update {
-            if textField == self.nameField {
-                if isValid() {
-                    FireController.db.child(self.channel.path).updateChildValues([
-                        "modified_at": FIRServerValue.timestamp(),
-                        "name": emptyToNull(self.nameField.text)
-                    ])
-                }
-            }
-        }
+    override func textViewDidEndEditing(_ textView: UITextView) {
+        super.textViewDidEndEditing(textView)
+        self.doneButton.isEnabled = isDirty()
     }
     
     func visibilityChanged(sender: AnyObject) {
+        self.doneButton.isEnabled = isDirty()
         if let switchView = sender as? UISwitch {
             self.visibilityValue = (switchView.isOn) ? "private" : "open"
             self.banner.text = (self.visibilityValue == "private") ? "New Private Channel" : "New Channel"
             self.view.setNeedsLayout()
-            
-            if self.mode == .update {
-                FireController.db.child(self.channel.path).updateChildValues([
-                    "modified_at": FIRServerValue.timestamp(),
-                    "visibility": (switchView.isOn) ? "private" : "open"
-                ])
-            }
         }
     }
     
@@ -209,35 +185,12 @@ class ChannelEditViewController: BaseEditViewController {
     
     override func photoDidChange(sender: NSNotification) {
         super.photoDidChange(sender: sender)
-        
-        if self.mode == .update {
-            let image = self.photoEditView.imageButton.image
-            let asset = self.photoEditView.imageButton.asset
-            let path = self.channel.path
-            var photoMap: [String: Any]?
-            photoMap = postPhoto(image: image!, asset: asset, progress: self.photoEditView.progressBlock, next: { error in
-                if error == nil {
-                    photoMap!["uploading"] = NSNull()
-                    FireController.db.child(path).updateChildValues(["photo": photoMap!])
-                }
-            })
-            
-            FireController.db.child(path).updateChildValues([
-                "modified_at": FIRServerValue.timestamp(),
-                "photo": photoMap!
-            ])
-        }
+        self.doneButton.isEnabled = isDirty()
     }
     
     override func photoRemoved(sender: NSNotification) {
         super.photoRemoved(sender: sender)
-        
-        if self.mode == .update {
-            FireController.db.child(self.channel.path).updateChildValues([
-                "modified_at": FIRServerValue.timestamp(),
-                "photo": NSNull()
-            ])
-        }
+        self.doneButton.isEnabled = isDirty()
     }
 
     /*--------------------------------------------------------------------------------------------
@@ -272,7 +225,6 @@ class ChannelEditViewController: BaseEditViewController {
 
         self.visibilityLabel.text = "Private Channel"
         self.visibilitySwitch.isOn = false
-        self.visibilitySwitch.addTarget(self, action: #selector(visibilityChanged(sender:)), for: .touchUpInside)
         
         self.usersButton.setTitle("Manage Channel Members".uppercased(), for: .normal)
         self.usersButton.imageRight = UIImageView(image: UIImage(named: "imgArrowRightLight"))
@@ -298,7 +250,8 @@ class ChannelEditViewController: BaseEditViewController {
 
             /* Navigation bar buttons */
             let closeButton = UIBarButtonItem(barButtonSystemItem: .stop, target: self, action: #selector(closeAction(sender:)))
-            let doneButton = UIBarButtonItem(title: "Create", style: .plain, target: self, action: #selector(doneAction(sender:)))
+            self.doneButton = UIBarButtonItem(title: "Create", style: .plain, target: self, action: #selector(doneAction(sender:)))
+            self.doneButton.isEnabled = false
             self.navigationItem.leftBarButtonItems = [closeButton]
             self.navigationItem.rightBarButtonItems = [doneButton]
         }
@@ -310,8 +263,14 @@ class ChannelEditViewController: BaseEditViewController {
 
             /* Navigation bar buttons */
             let closeButton = UIBarButtonItem(barButtonSystemItem: .stop, target: self, action: #selector(closeAction(sender:)))
+            self.doneButton = UIBarButtonItem(title: "Save", style: .plain, target: self, action: #selector(doneAction(sender:)))
+            self.doneButton.isEnabled = false
             self.navigationItem.leftBarButtonItems = [closeButton]
+            self.navigationItem.rightBarButtonItems = [doneButton]
         }
+        
+        self.nameField.addTarget(self, action: #selector(textFieldDidChange(_:)), for: .editingChanged)
+        self.visibilitySwitch.addTarget(self, action: #selector(visibilityChanged(sender:)), for: .touchUpInside)
         
         NotificationCenter.default.addObserver(self, selector: #selector(photoDidChange(sender:)), name: NSNotification.Name(rawValue: Events.PhotoDidChange), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(photoRemoved(sender:)), name: NSNotification.Name(rawValue: Events.PhotoRemoved), object: nil)
@@ -332,13 +291,14 @@ class ChannelEditViewController: BaseEditViewController {
             }
         }
         
-        let doneButton = UIBarButtonItem(title: "Done", style: UIBarButtonItemStyle.plain, target: self, action: #selector(doneAction(sender:)))
-        let deleteButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.trash, target: self, action: #selector(deleteAction(sender:)))
-        if self.channel.general! {
-            self.navigationItem.setRightBarButtonItems([doneButton], animated: true)
-        }
-        else {
-            self.navigationItem.setRightBarButtonItems([doneButton, deleteButton], animated: true)
+        /* Delete */
+        if !self.channel.general! && self.mode == .update {
+            self.navigationController?.setToolbarHidden(false, animated: true)
+            let deleteIconButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.trash, target: self, action: #selector(deleteAction(sender:)))
+            let deleteTitleButton = UIBarButtonItem(title: "Delete", style: .plain, target: self, action: #selector(deleteAction(sender:)))
+            deleteIconButton.tintColor = Colors.brandColor
+            deleteTitleButton.tintColor = Colors.brandColor
+            self.toolbarItems = [spacerFlex, deleteIconButton, deleteTitleButton]
         }
 
         /* Visibility */
@@ -352,65 +312,83 @@ class ChannelEditViewController: BaseEditViewController {
         
         let groupId = self.inputGroupId!
         let userId = UserController.instance.userId!
-        let channelName = self.nameField.text!
         
-        FireController.instance.channelNameExistsTask(groupId: groupId, channelName: channelName) { error, result in
-            if error != nil {
-                self.progress?.hide(true)
-                self.processing = false
-                return
-            }
+        if self.mode == .update {
             
-            if let exists = result as? Bool {
-                if exists {
-                    self.progress?.hide(true)
-                    self.processing = false
-                    self.nameField.errorMessage = "Choose another channel name"
+            var updates = [String: Any]()
+            if self.nameField.text != self.channel!.name {
+                updates["name"] = self.nameField.text
+            }
+            if emptyToNil(self.purposeField.text) != self.channel!.purpose {
+                updates["purpose"] = emptyToNull(self.purposeField.text)
+            }
+            if self.photoEditView.photoDirty {
+                if self.photoEditView.photoActive {
+                    let image = self.photoEditView.imageButton.image
+                    let asset = self.photoEditView.imageButton.asset
+                    let path = self.channel.path
+                    var photoMap: [String: Any]?
+                    photoMap = postPhoto(image: image!, asset: asset, progress: self.photoEditView.progressBlock, next: { error in
+                        if error == nil {
+                            photoMap!["uploading"] = NSNull()
+                            FireController.db.child(path).updateChildValues(["photo": photoMap!])
+                        }
+                    })
+                    updates["photo"] = photoMap!
                 }
                 else {
-                    let channelId = "ch-\(Utils.genRandomId())"
-                    let refChannel = FireController.db.child("group-channels/\(groupId)/\(channelId)")
-                    
-                    var photoMap: [String: Any]?
-                    if let image = self.photoEditView.imageButton.image {
-                        let asset = self.photoEditView.imageButton.asset
-                        photoMap = self.postPhoto(image: image, asset: asset, next: { error in
-                            if error != nil {
-                                photoMap!["uploading"] = NSNull()
-                                refChannel.child("photo").setValue(photoMap!)
-                            }
-                        })
+                    updates["photo"] = NSNull()
+                }
+            }
+            
+            if updates.keys.count > 0 {
+                updates["modified_at"] = FIRServerValue.timestamp()
+                FireController.db.child(self.channel.path).updateChildValues(updates)
+            }
+            self.close(animated: true)
+            return
+        }
+        
+        if self.mode == .insert {
+            
+            let timestamp = FireController.instance.getServerTimestamp()
+            let channelId = "ch-\(Utils.genRandomId())"
+            let ref = FireController.db.child("group-channels/\(groupId)/\(channelId)")
+            
+            var photoMap: [String: Any]?
+            if let image = self.photoEditView.imageButton.image {
+                let asset = self.photoEditView.imageButton.asset
+                photoMap = self.postPhoto(image: image, asset: asset, next: { error in
+                    if error != nil {
+                        photoMap!["uploading"] = NSNull()
+                        ref.child("photo").setValue(photoMap!)
                     }
-                    
-                    let timestamp = FireController.instance.getServerTimestamp()
-                    
-                    var channelMap: [String: Any] = [:]
-                    channelMap["archived"] = false
-                    channelMap["created_at"] = Int(timestamp)
-                    channelMap["created_by"] = userId
-                    channelMap["general"] = false
-                    channelMap["group_id"] = self.inputGroupId!
-                    if !(self.nameField.text?.isEmpty)! {
-                        channelMap["name"] = self.nameField.text
-                    }
-                    channelMap["owned_by"] = userId
-                    if photoMap != nil {
-                        channelMap["photo"] = photoMap!
-                    }
-                    if !self.purposeField.text.isEmpty {
-                        channelMap["purpose"] = self.purposeField.text
-                    }
-                    channelMap["type"] = "channel"
-                    channelMap["visibility"] = self.visibilityValue
-                    
-                    FireController.instance.addChannelToGroup(channelId: channelId, channelMap: channelMap, groupId: groupId) { success in
-                        if success {
-                            let controller = MemberPickerController()
-                            controller.flow = .internalCreate
-                            controller.inputChannelId = channelId
-                            self.navigationController?.setViewControllers([controller], animated: true)
-                        }
-                    }
+                })
+            }
+            
+            var channelMap: [String: Any] = [:]
+            channelMap["archived"] = false
+            channelMap["created_at"] = Int(timestamp)
+            channelMap["created_by"] = userId
+            channelMap["general"] = false
+            channelMap["group_id"] = self.inputGroupId!
+            channelMap["name"] = self.nameField.text!
+            channelMap["owned_by"] = userId
+            if photoMap != nil {
+                channelMap["photo"] = photoMap!
+            }
+            if !self.purposeField.text.isEmpty {
+                channelMap["purpose"] = self.purposeField.text
+            }
+            channelMap["type"] = "channel"
+            channelMap["visibility"] = self.visibilityValue
+            
+            FireController.instance.addChannelToGroup(channelId: channelId, channelMap: channelMap, groupId: groupId) { success in
+                if success {
+                    let controller = MemberPickerController()
+                    controller.flow = .internalCreate
+                    controller.inputChannelId = channelId
+                    self.navigationController?.setViewControllers([controller], animated: true)
                 }
             }
         }
@@ -422,44 +400,80 @@ class ChannelEditViewController: BaseEditViewController {
     }
 
     func isDirty() -> Bool {
+        
+        if self.mode == .update {
+            if !stringsAreEqual(string1: self.nameField.text, string2: self.channel.name) {
+                return true
+            }
+            if !stringsAreEqual(string1: self.purposeField.text, string2: self.channel.purpose) {
+                return true
+            }
+            if self.photoEditView.photoDirty {
+                return true
+            }
+        }
+        else {
+            if !self.nameField.text!.isEmpty {
+                return true
+            }
+            if !self.purposeField.text!.isEmpty {
+                return true
+            }
+            if self.photoEditView.photoDirty {
+                return true
+            }
+        }
 
-        if !self.nameField.text!.isEmpty {
-            return true
-        }
-        if !self.purposeField.text!.isEmpty {
-            return true
-        }
-        if self.photoEditView.photoDirty {
-            return true
-        }
         return false
     }
 
-    func isValid() -> Bool {
+    func isValid(then: @escaping (Bool) -> Void) {
         
         if self.nameField.isEmpty {
             self.nameField.errorMessage = "Name your channel"
-            return false
+            then(false)
+            return
         }
         
         let channelName = nameField.text!
         let characterSet: NSCharacterSet = NSCharacterSet(charactersIn: "abcdefghijklmnopqrstuvwxyz0123456789_-")
         if channelName.rangeOfCharacter(from: characterSet.inverted) != nil {
             self.nameField.errorMessage = "Channel name must be lower case and cannot contain spaces or periods."
-            return false
+            then(false)
+            return
         }
         
         if (nameField.text!.utf16.count > 50) {
             self.nameField.errorMessage = "Channel name must be 50 characters or less."
-            return false
+            then(false)
+            return
         }
 
         if (nameField.text!.utf16.count < 3) {
             self.nameField.errorMessage = "Channel name must be at least 3 characters."
-            return false
+            then(false)
+            return
         }
-
-        return true
+        
+        if self.mode == .insert || !stringsAreEqual(string1: self.nameField.text, string2: self.channel.name) {
+            let groupId = self.inputGroupId!
+            FireController.instance.channelNameExistsTask(groupId: groupId, channelName: channelName) { error, result in
+                if error != nil {
+                    Log.w("Error checking if channel name is used")
+                    then(false)
+                    return
+                }
+                if let exists = result as? Bool, exists {
+                    self.nameField.errorMessage = "Choose another channel name"
+                    then(false)
+                    return
+                }
+                then(true)
+            }
+        }
+        else {
+            then(true)
+        }
     }
     
     enum Mode: Int {

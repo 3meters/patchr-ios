@@ -61,7 +61,9 @@ class StateController: NSObject {
                             Log.w("Last channel invalid: \(lastChannelId): trying first channel")
                             FireController.instance.findFirstChannel(groupId: groupId) { firstChannelId in
                                 if firstChannelId != nil {
-                                    self.setChannelId(channelId: firstChannelId!, groupId: groupId, next: next)
+                                    self.setChannelId(channelId: firstChannelId!, groupId: groupId) { error in
+                                        next(nil)
+                                    }
                                 }
                                 else {
                                     /* Start from scratch */
@@ -72,14 +74,18 @@ class StateController: NSObject {
                             }
                         }
                         else {
-                            self.setChannelId(channelId: lastChannelId, groupId: groupId, next: next)
+                            self.setChannelId(channelId: lastChannelId, groupId: groupId) { error in
+                                next(nil)
+                            }
                         }
                     })
                 }
                 else {
                     FireController.instance.findFirstChannel(groupId: groupId) { firstChannelId in
                         if firstChannelId != nil {
-                            self.setChannelId(channelId: firstChannelId!, groupId: groupId, next: next)
+                            self.setChannelId(channelId: firstChannelId!, groupId: groupId) { error in
+                                next(nil)
+                            }
                         }
                         else {
                             /* Start from scratch */
@@ -105,7 +111,7 @@ class StateController: NSObject {
         queue.run()
     }
     
-    func setChannelId(channelId: String?, groupId: String, bundle: [String: Any]? = nil, next: ((Any?) -> Void)? = nil) {
+    func setChannelId(channelId: String?, groupId: String, bundle: [String: Any]? = nil, next: ((Error?) -> Void)? = nil) {
         
         var userInfo: [String: Any] = [:]
         userInfo["fromGroupId"] = bundle?["fromGroupId"] ?? self.groupId
@@ -132,13 +138,13 @@ class StateController: NSObject {
             let userId = UserController.instance.userId!
             self.groupQuery?.remove()
             self.groupQuery = GroupQuery(groupId: groupId, userId: userId)
-            self.groupQuery!.observe(with: { group in
+            self.groupQuery!.observe(with: { error, group in
                 
-                guard group != nil else {
+                guard group != nil && error == nil else {
                     Log.w("Requested group invalid: \(groupId)")
                     self.clearGroup()
                     if next != nil {
-                        next?(nil)
+                        next?(error)
                     }
                     else {
                         /* Group has been deleted from under us. Try to switch to something reasonable. */

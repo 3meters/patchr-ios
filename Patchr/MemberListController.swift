@@ -159,7 +159,7 @@ class MemberListController: BaseTableController, UITableViewDelegate {
                 
                 cell.reset()
                 
-                userQuery.once(with: { user in
+                userQuery.once(with: { error, user in
                     if user != nil {
                         let target = (self?.target == .group) ? "group" : "channel"
                         cell.bind(user: user!, target: target)

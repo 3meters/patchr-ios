@@ -150,7 +150,7 @@ class InviteListController: BaseTableController, UITableViewDelegate {
                 if status == "accepted" {
                     let userId = invite["accepted_by"] as! String
                     let userQuery = UserQuery(userId: userId, groupId: groupId)
-                    userQuery.once(with: { user in
+                    userQuery.once(with: { error, user in
                         if user != nil {
                             cell.bind(user: user!, invite: invite)
                         }

@@ -16,33 +16,33 @@ class MessageQuery: NSObject {
         self.messagePath = "group-messages/\(groupId)/\(channelId)/\(messageId)"
     }
     
-    func observe(with block: @escaping (FireMessage?) -> Swift.Void) {
+    func observe(with block: @escaping (Error?, FireMessage?) -> Swift.Void) {
         self.messageHandle = FireController.db.child(self.messagePath).observe(.value, with: { snap in
             if !(snap.value is NSNull) {
                 self.message = FireMessage.from(dict: snap.value as? [String: Any], id: snap.key)
-                block(self.message)
+                block(nil, self.message)
             }
             else {
                 Log.w("Message snapshot is null")
             }
         }, withCancel: { error in
             Log.w("Permission denied trying to read message: \(self.messagePath!)")
-            block(nil)
+            block(error, nil)
         })
     }
     
-    func once(with block: @escaping (FireMessage?) -> Swift.Void) {
+    func once(with block: @escaping (Error?, FireMessage?) -> Swift.Void) {
         FireController.db.child(self.messagePath).observeSingleEvent(of: .value, with: { snap in
             if !(snap.value is NSNull) {
                 self.message = FireMessage.from(dict: snap.value as? [String: Any], id: snap.key)
-                block(self.message)
+                block(nil, self.message)
             }
             else {
                 Log.w("Message snapshot is null")
             }
         }, withCancel: { error in
             Log.w("Permission denied trying to read message: \(self.messagePath!)")
-            block(nil)
+            block(error, nil)
         })
     }
     

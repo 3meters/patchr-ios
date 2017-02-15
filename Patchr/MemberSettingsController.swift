@@ -128,34 +128,40 @@ class MemberSettingsController: UITableViewController {
             self.roleMemberCell.accessoryType = self.role == "member" ? .checkmark : .none
             self.roleGuestCell.accessoryType = self.role == "guest" ? .checkmark : .none
 
-            FireController.db.child("member-channels/\(userId)/\(groupId)")
-                    .observeSingleEvent(of: .value, with: { snap in
-                        if !(snap.value is NSNull) {
-                            let channels = snap.value as! [String: Any]
-                            for channelId in channels.keys {
-                                FireController.db.child("group-channels/\(groupId)/\(channelId)")
-                                        .observeSingleEvent(of: .value, with: { snap in
-                                            if let channel = snap.value as? [String: Any] {
-                                                self.channelsBefore[channelId] = channel["name"]
-                                                self.channelsAfter[channelId] = channel["name"]
-                                                self.tableView.reloadData()
-                                            }
-                                        })
+            let path = "member-channels/\(userId)/\(groupId)"
+            FireController.db.child(path).observeSingleEvent(of: .value, with: { snap in
+                if !(snap.value is NSNull) {
+                    let channels = snap.value as! [String: Any]
+                    for channelId in channels.keys {
+                        let path = "group-channels/\(groupId)/\(channelId)"
+                        FireController.db.child(path).observeSingleEvent(of: .value, with: { snap in
+                            if let channel = snap.value as? [String: Any] {
+                                self.channelsBefore[channelId] = channel["name"]
+                                self.channelsAfter[channelId] = channel["name"]
+                                self.tableView.reloadData()
                             }
-                        }
-                    })
+                        }, withCancel: { error in
+                            Log.w("Permission denied reading: \(path)")
+                        })
+                    }
+                }
+            }, withCancel: { error in
+                Log.w("Permission denied reading: \(path)")
+            })
         }
         else {
             let channelId = self.inputChannel.id!
-            FireController.db.child("group-channel-members/\(groupId)/\(channelId)/\(userId)/role")
-                .observeSingleEvent(of: .value, with: { snap in
-                    if let memberRole = snap.value as? String {
-                        self.role = memberRole
-                        self.roleNext = memberRole
-                        self.roleOwnerCell.accessoryType = self.role == "owner" ? .checkmark : .none
-                        self.roleMemberCell.accessoryType = self.role == "member" ? .checkmark : .none
-                    }
-                })
+            let path = "group-channel-members/\(groupId)/\(channelId)/\(userId)/role"
+            FireController.db.child(path).observeSingleEvent(of: .value, with: { snap in
+                if let memberRole = snap.value as? String {
+                    self.role = memberRole
+                    self.roleNext = memberRole
+                    self.roleOwnerCell.accessoryType = self.role == "owner" ? .checkmark : .none
+                    self.roleMemberCell.accessoryType = self.role == "member" ? .checkmark : .none
+                }
+            }, withCancel: { error in
+                Log.w("Permission denied reading: \(path)")
+            })
         }
     }
     
@@ -203,6 +209,8 @@ class MemberSettingsController: UITableViewController {
                                         }
                                     }
                                 }
+                            }, withCancel: { error in
+                                Log.w("Permission denied reading: groups/\(groupId)/default_channels")
                             })
                 }
             }

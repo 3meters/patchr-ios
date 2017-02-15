@@ -15,7 +15,6 @@ import Firebase
 class ProfileEditViewController: BaseEditViewController {
     
     var user: FireUser!
-    var userQuery: UserQuery!
 
     var message = AirLabelTitle()
     var photoEditView = PhotoEditView()
@@ -23,6 +22,7 @@ class ProfileEditViewController: BaseEditViewController {
     var lastNameField = AirTextField()
     var phoneField = AirPhoneField()
     var accountButton = AirButton()
+    var doneButton: UIBarButtonItem!
 
     var fullName: String? {
         
@@ -54,8 +54,8 @@ class ProfileEditViewController: BaseEditViewController {
         initialize()
         
         let userId = UserController.instance.userId!
-        self.userQuery = UserQuery(userId: userId, groupId: nil)
-        self.userQuery.observe(with: { [weak self] user in
+        let userQuery = UserQuery(userId: userId, groupId: nil)
+        userQuery.once(with: { [weak self] error, user in
             if (user != nil) {
                 self?.user = user
                 self?.bind()
@@ -63,15 +63,6 @@ class ProfileEditViewController: BaseEditViewController {
         })
     }
     
-    override func viewDidDisappear(_ animated: Bool) {
-        super.viewDidDisappear(animated)
-        self.userQuery.remove()
-    }
-    
-    deinit {
-        self.userQuery?.remove()
-    }
-
     override func viewWillLayoutSubviews() {
 
         let messageSize = self.message.sizeThatFits(CGSize(width: 288, height: CGFloat.greatestFiniteMagnitude))
@@ -85,7 +76,7 @@ class ProfileEditViewController: BaseEditViewController {
 
         super.viewWillLayoutSubviews()
     }
-
+    
     /*--------------------------------------------------------------------------------------------
      * Events
      *--------------------------------------------------------------------------------------------*/
@@ -98,50 +89,29 @@ class ProfileEditViewController: BaseEditViewController {
     }
     
     func closeAction(sender: AnyObject?) {
-        close()
+        if !isDirty() {
+            self.close(animated: true)
+            return
+        }
+        DeleteConfirmationAlert(
+            title: "Do you want to discard your editing changes?",
+            actionTitle: "Discard", cancelTitle: "Cancel", delegate: self) {
+                doIt in
+                if doIt {
+                    self.close(animated: true)
+                }
+        }
     }
     
-    override func textFieldDidEndEditing(_ textField: UITextField) {
-        super.textFieldDidEndEditing(textField)
-        
-        if textField == self.firstNameField {
-            if emptyToNil(self.firstNameField.text) != self.user.profile?.firstName {
-                let changeRequest = FIRAuth.auth()?.currentUser?.profileChangeRequest()
-                changeRequest?.displayName = self.fullName
-                changeRequest?.commitChanges()
-                
-                FireController.db.child(self.user.path).updateChildValues([
-                    "modified_at": FIRServerValue.timestamp(),
-                    "profile/first_name": emptyToNull(self.firstNameField.text),
-                    "profile/full_name": nilToNull(self.fullName)
-                    ])
-            }
-        }
-        else if textField == self.lastNameField {
-            if emptyToNil(self.lastNameField.text) != self.user.profile?.lastName {
-                let changeRequest = FIRAuth.auth()?.currentUser?.profileChangeRequest()
-                changeRequest?.displayName = self.fullName
-                changeRequest?.commitChanges()
-                
-                FireController.db.child(self.user.path).updateChildValues([
-                    "modified_at": FIRServerValue.timestamp(),
-                    "profile/last_name": emptyToNull(self.lastNameField.text),
-                    "profile/full_name": nilToNull(self.fullName)
-                    ])
-            }
-        }
-        else if textField == self.phoneField {
-            if emptyToNil(self.phoneField.text) != self.user.profile?.phone {
-                FireController.db.child(self.user.path).updateChildValues([
-                    "modified_at": FIRServerValue.timestamp(),
-                    "profile/phone": emptyToNull(self.phoneField.text)
-                    ])
-            }
-        }
+    func doneAction(sender: AnyObject?) {
+        update()
+    }
+    
+    func textFieldDidChange(_ textField: UITextField) {
+        self.doneButton.isEnabled = isDirty()
     }
     
     override func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        
         switch textField {
         case firstNameField:
             lastNameField.becomeFirstResponder()
@@ -159,40 +129,12 @@ class ProfileEditViewController: BaseEditViewController {
     
     override func photoDidChange(sender: NSNotification) {
         super.photoDidChange(sender: sender)
-        
-        let image = self.photoEditView.imageButton.image
-        let asset = self.photoEditView.imageButton.asset
-        let path = self.user.path
-        var photoMap: [String: Any]?
-        photoMap = postPhoto(image: image!, asset: asset, progress: self.photoEditView.progressBlock, next: { error in
-            if error == nil {
-                photoMap!["uploading"] = NSNull()
-                FireController.db.child(path).updateChildValues(["profile/photo": photoMap!])
-            }
-        })
-        
-        FireController.db.child(path).updateChildValues([
-            "modified_at": FIRServerValue.timestamp(),
-            "profile/photo": photoMap!
-        ])
-        
-        let photoUrl = ImageUtils.url(prefix: photoMap!["filename"] as! String?, source: photoMap!["source"] as! String?, category: SizeCategory.profile)
-        let changeRequest = FIRAuth.auth()?.currentUser?.profileChangeRequest()
-        changeRequest?.photoURL = photoUrl
-        changeRequest?.commitChanges()
+        self.doneButton.isEnabled = isDirty()
     }
     
     override func photoRemoved(sender: NSNotification) {
         super.photoRemoved(sender: sender)
-        
-        let changeRequest = FIRAuth.auth()?.currentUser?.profileChangeRequest()
-        changeRequest?.photoURL = nil
-        changeRequest?.commitChanges()
-        
-        FireController.db.child(self.user.path).updateChildValues([
-            "modified_at": FIRServerValue.timestamp(),
-            "profile/photo": NSNull()
-        ])
+        self.doneButton.isEnabled = isDirty()
     }
 
     /*--------------------------------------------------------------------------------------------
@@ -247,9 +189,16 @@ class ProfileEditViewController: BaseEditViewController {
         self.contentHolder.addSubview(self.accountButton)
         
         if self.presented {
-            let doneButton = UIBarButtonItem(title: "Done", style: UIBarButtonItemStyle.plain, target: self, action: #selector(closeAction(sender:)))
+            let cancelButton = UIBarButtonItem(barButtonSystemItem: .stop, target: self, action: #selector(closeAction(sender:)))
+            self.doneButton = UIBarButtonItem(title: "Save", style: UIBarButtonItemStyle.plain, target: self, action: #selector(doneAction(sender:)))
+            self.doneButton.isEnabled = false
+            self.navigationItem.leftBarButtonItems = [cancelButton]
             self.navigationItem.rightBarButtonItems = [doneButton]
-        }        
+        }
+        
+        self.firstNameField.addTarget(self, action: #selector(textFieldDidChange(_:)), for: .editingChanged)
+        self.lastNameField.addTarget(self, action: #selector(textFieldDidChange(_:)), for: .editingChanged)
+        self.phoneField.addTarget(self, action: #selector(textFieldDidChange(_:)), for: .editingChanged)
         
         NotificationCenter.default.addObserver(self, selector: #selector(photoDidChange(sender:)), name: NSNotification.Name(rawValue: Events.PhotoDidChange), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(photoRemoved(sender:)), name: NSNotification.Name(rawValue: Events.PhotoRemoved), object: nil)
@@ -271,5 +220,79 @@ class ProfileEditViewController: BaseEditViewController {
                 self.photoEditView.bind(url: photoUrl, fallbackUrl: ImageUtils.fallbackUrl(prefix: photo.filename!))
             }
         }
+    }
+    
+    func update() {
+        var updates = [String: Any]()
+        
+        if emptyToNil(self.firstNameField.text) != self.user.profile?.firstName {
+            let changeRequest = FIRAuth.auth()?.currentUser?.profileChangeRequest()
+            changeRequest?.displayName = self.fullName
+            changeRequest?.commitChanges()
+            updates["profile/first_name"] = emptyToNull(self.firstNameField.text)
+            updates["profile/full_name"] = nilToNull(self.fullName)
+        }
+        
+        if emptyToNil(self.lastNameField.text) != self.user.profile?.lastName {
+            let changeRequest = FIRAuth.auth()?.currentUser?.profileChangeRequest()
+            changeRequest?.displayName = self.fullName
+            changeRequest?.commitChanges()
+            updates["profile/last_name"] = emptyToNull(self.lastNameField.text)
+            updates["profile/full_name"] = nilToNull(self.fullName)
+        }
+        
+        if emptyToNil(self.phoneField.text) != self.user.profile?.phone {
+            updates["profile/phone"] = emptyToNull(self.phoneField.text)
+        }
+        
+        if self.photoEditView.photoDirty {
+            if self.photoEditView.photoActive {
+                let image = self.photoEditView.imageButton.image
+                let asset = self.photoEditView.imageButton.asset
+                let path = self.user.path
+                var photoMap: [String: Any]?
+                photoMap = postPhoto(image: image!, asset: asset, progress: self.photoEditView.progressBlock, next: { error in
+                    if error == nil {
+                        photoMap!["uploading"] = NSNull()
+                        FireController.db.child(path).updateChildValues(["profile/photo": photoMap!])
+                    }
+                })
+                
+                updates["profile/photo"] = photoMap!
+                let photoUrl = ImageUtils.url(prefix: photoMap!["filename"] as! String?, source: photoMap!["source"] as! String?, category: SizeCategory.profile)
+                let changeRequest = FIRAuth.auth()?.currentUser?.profileChangeRequest()
+                changeRequest?.photoURL = photoUrl
+                changeRequest?.commitChanges()
+            }
+            else {
+                let changeRequest = FIRAuth.auth()?.currentUser?.profileChangeRequest()
+                changeRequest?.photoURL = nil
+                changeRequest?.commitChanges()
+                updates["profile/photo"] = NSNull()
+            }
+        }
+
+        if updates.keys.count > 0 {
+            updates["modified_at"] = FIRServerValue.timestamp()
+            FireController.db.child(self.user.path).updateChildValues(updates)
+        }
+        self.close(animated: true)
+    }
+    
+    func isDirty() -> Bool {
+        
+        if !stringsAreEqual(string1: self.firstNameField.text, string2: self.user.profile?.firstName) {
+            return true
+        }
+        if !stringsAreEqual(string1: self.lastNameField.text, string2: self.user.profile?.lastName) {
+            return true
+        }
+        if !stringsAreEqual(string1: self.phoneField.text, string2: self.user.profile?.phone) {
+            return true
+        }
+        if self.photoEditView.photoDirty {
+            return true
+        }
+        return false
     }
 }

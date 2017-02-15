@@ -528,8 +528,9 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
                 self?.setTextInputbarHidden(false, animated: true)
                 self?.textView.placeholder = "Message #\((self?.channel.name!)!)"
                 self?.unreadQuery = UnreadQuery(level: .channel, userId: userId, groupId: groupId, channelId: channelId)
-                self?.unreadQuery!.observe(with: { [weak self] total in
-                    if self != nil {
+                self?.unreadQuery!.observe(with: { [weak self] error, total in
+                    if self != nil, error == nil {
+                        let total = total ?? 0
                         Log.d("ChannelViewController: observe callback for channel unreads: \(total): \(channel!.name!)")
                         if total == 0 && self!.channel?.priority == 0 {
                             self!.channel?.clearUnreadSorting()
@@ -602,14 +603,14 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
                 let groupId = ref["group_id"] as! String
                 let channelId = ref["channel_id"] as! String
                 let messageId = ref["message_id"] as! String
-                FireController.instance.clearMessageUnread(messageId: messageId, channelId: channelId, groupId: groupId)
+                FireController.instance.clearMessageUnread(messageId: messageId, channelId: channelId, groupId: groupId) // Does not directly update counter
             }
             self.unreadRefs.removeAll()
         }
-        /* Clean-up all unreads for the chanhnel in case of orphans */
+        /* Clean-up all unreads for the channel in case of orphans */
         let channelId = self.inputChannelId!
         let groupId = self.inputGroupId!
-        FireController.instance.clearChannelUnreads(channelId: channelId, groupId: groupId)
+        FireController.instance.clearChannelUnreads(channelId: channelId, groupId: groupId) // Does not directly update counter
     }
     
     func populateCell(_ tableView: UITableView, cellForRowAt indexPath: IndexPath, snap: FIRDataSnapshot) -> UITableViewCell {
@@ -633,7 +634,7 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
         }
         
         userQuery = UserQuery(userId: message.createdBy!, groupId: groupId)
-        userQuery.once(with: { user in
+        userQuery.once(with: { error, user in
             
             message.creator = user
             

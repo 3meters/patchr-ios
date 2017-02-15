@@ -120,7 +120,7 @@ class SideMenuViewController: BaseTableController, UITableViewDelegate, UITableV
         if userId != nil {
             self.userQuery?.remove()
             self.userQuery = UserQuery(userId: userId!, groupId: groupId)
-            self.userQuery!.once(with: { [weak self] user in
+            self.userQuery!.once(with: { [weak self] error, user in
                 if let user = user {
                     self?.user = user
                     self?.menuHeader.bind(user: self?.user)

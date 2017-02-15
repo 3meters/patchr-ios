@@ -252,7 +252,7 @@ class ChannelSwitcherController: BaseTableController {
             
             self.unreadsTotalQuery?.remove()
             self.unreadsTotalQuery = UnreadQuery(level: .user, userId: userId)
-            self.unreadsTotalQuery!.observe(with: { total in
+            self.unreadsTotalQuery!.observe(with: { error, total in
                 if total != self.unreadTotal {
                     self.unreadTotal = total ?? 0
                     self.unreadOther = self.unreadTotal - self.unreadGroup
@@ -261,7 +261,7 @@ class ChannelSwitcherController: BaseTableController {
             
             self.unreadsGroupQuery?.remove()
             self.unreadsGroupQuery = UnreadQuery(level: .group, userId: userId, groupId: groupId)
-            self.unreadsGroupQuery!.observe(with: { total in
+            self.unreadsGroupQuery!.observe(with: { error, total in
                 if total != self.unreadGroup {
                     self.unreadGroup = total ?? 0
                     self.unreadOther = self.unreadTotal - self.unreadGroup
@@ -337,9 +337,9 @@ class ChannelSwitcherController: BaseTableController {
                 cell.selected(on: (channelId == StateController.instance.channelId), style: .prominent)
                 cell.bind(channel: channel!)
                 cell.unreadQuery = UnreadQuery(level: .channel, userId: userId, groupId: groupId, channelId: channelId)
-                cell.unreadQuery!.observe(with: { total in
+                cell.unreadQuery!.observe(with: { error, total in
                     if total != nil && total! > 0 {
-                        cell.badge?.text = "\(total)"
+                        cell.badge?.text = "\(total!)"
                         cell.badge?.isHidden = false
                         cell.accessoryType = .none
                     }

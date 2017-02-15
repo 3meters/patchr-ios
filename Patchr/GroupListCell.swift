@@ -74,9 +74,9 @@ class GroupListCell: UITableViewCell {
 
         let groupId = group.id!
         let userId = UserController.instance.userId!
-        UnreadQuery(level: .group, userId: userId, groupId: groupId).observe(with: { total in
+        UnreadQuery(level: .group, userId: userId, groupId: groupId).observe(with: { error, total in
             if total != nil && total! > 0 {
-                self.badge?.text = "\(total)"
+                self.badge?.text = "\(total!)"
                 self.badge?.isHidden = false
                 self.accessoryType = .none
             }

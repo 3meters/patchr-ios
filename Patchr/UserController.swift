@@ -97,6 +97,7 @@ class UserController: NSObject {
         Log.i("User logged in: \(userId)")
         
         FireController.db.child("unreads/\(userId)").keepSynced(true)
+        
         if let token = FIRInstanceID.instanceID().token() {
             Log.i("UserController: setting firebase messaging token: \(token)")
             FireController.db.child("installs/\(userId)/\(token)").setValue(true)
@@ -108,7 +109,7 @@ class UserController: NSObject {
         self.userId = userId
         self.userQuery?.remove()
         self.userQuery = UserQuery(userId: userId, groupId: nil, trackPresence: true)
-        self.userQuery!.observe(with: { user in
+        self.userQuery!.observe(with: { error, user in
             
             guard user != nil else {
                 assertionFailure("user not found or no longer exists")
@@ -132,17 +133,27 @@ class UserController: NSObject {
             NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.UserDidSwitch), object: nil, userInfo: nil)
         })
         
+        /* Counter protection: we update the counter based on manual count of unread messages */
+
         self.unreadQuery?.remove()
         self.unreadQuery = UnreadQuery(level: .user, userId: userId)
-        self.unreadQuery!.observe(with: { [weak self] total in
-            Log.d("UserController: Observe query result for user unreads: \(total)")
-            self?.unreads = total ?? 0
-            UIApplication.shared.applicationIconBadgeNumber = total ?? 0
-            FireController.db.child("counters/\(userId)/unreads").runTransactionBlock { currentData -> FIRTransactionResult in
-                currentData.value = total
-                return FIRTransactionResult.success(withValue: currentData)
+        self.unreadQuery!.observe(with: { [weak self] error, total in
+            if error == nil {
+                let total = total ?? 0
+                Log.d("UserController: Observe query result for user unreads: \(total)")
+                self?.unreads = total
+                UIApplication.shared.applicationIconBadgeNumber = total
+                
+                FireController.instance.isConnected() { connected in
+                    if connected != nil || connected! {
+                        FireController.db.child("counters/\(userId)/unreads").runTransactionBlock { currentData -> FIRTransactionResult in
+                            currentData.value = total
+                            return FIRTransactionResult.success(withValue: currentData)
+                        }
+                    }
+                }
+                NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.UnreadChange), object: self, userInfo: nil)
             }
-            NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.UnreadChange), object: self, userInfo: nil)
         })
     }
 

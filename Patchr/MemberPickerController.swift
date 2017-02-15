@@ -65,7 +65,7 @@ class MemberPickerController: BaseTableController, UITableViewDelegate {
         if self.flow == .internalCreate {
             let groupId = StateController.instance.groupId!
             let channelId = self.inputChannelId ?? StateController.instance.channelId!
-            StateController.instance.setChannelId(channelId: channelId, groupId: groupId, next: nil) // We know it's good
+            StateController.instance.setChannelId(channelId: channelId, groupId: groupId) // We know it's good
             MainController.instance.showChannel(groupId: groupId, channelId: channelId)
         }
         self.close(animated: true)
@@ -116,7 +116,7 @@ class MemberPickerController: BaseTableController, UITableViewDelegate {
                 cell.roleLabel?.isHidden = true
                 cell.reset()
 
-                userQuery.once(with: { user in
+                userQuery.once(with: { error, user in
                     if user != nil {
                         FireController.instance.isChannelMember(userId: userId, channelId: channelId, groupId: groupId, next: { member in
                             cell.bind(user: user!)
@@ -163,7 +163,7 @@ class MemberPickerController: BaseTableController, UITableViewDelegate {
                     self.close(animated: true)
                 }
                 else if self.flow == .internalCreate {
-                    StateController.instance.setChannelId(channelId: channelId, groupId: groupId, next: nil) // We know it's good
+                    StateController.instance.setChannelId(channelId: channelId, groupId: groupId) // We know it's good
                     MainController.instance.showChannel(groupId: groupId, channelId: channelId)
                     self.close(animated: true)
                 }
