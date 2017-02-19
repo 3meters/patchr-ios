@@ -194,11 +194,9 @@ class MemberViewController: BaseViewController, UIScrollViewDelegate, UITextFiel
         }
         
         self.email.isHidden = true
-        if self.user!.hideEmail == nil || !self.user!.hideEmail! {
-            if self.user?.email != nil && !self.user!.email!.isEmpty {
-                self.email.isHidden = false
-                self.email.label.text = self.user!.email!
-            }
+        if self.user?.email != nil && !self.user!.email!.isEmpty {
+            self.email.isHidden = false
+            self.email.label.text = self.user!.email!
         }
         
         self.view?.setNeedsLayout()

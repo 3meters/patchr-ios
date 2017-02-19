@@ -298,13 +298,13 @@ extension GroupSwitcherController: UITableViewDelegate {
         let groupId = cell.group.id!
         let userId = UserController.instance.userId
         
-        if let settings = UserDefaults.standard.dictionary(forKey: groupId),
-            let lastChannelId = settings["currentChannelId"] as? String {
+        if let lastChannelIds = UserDefaults.standard.dictionary(forKey: PerUserKey(key: Prefs.lastChannelIds)),
+            let lastChannelId = lastChannelIds[groupId] as? String {
             let validateQuery = ChannelQuery(groupId: groupId, channelId: lastChannelId, userId: userId!)
             validateQuery.once(with: { error, channel in
                 if channel == nil {
-                    Log.w("Last channel invalid: \(lastChannelId): trying first channel")
-                    FireController.instance.findFirstChannel(groupId: groupId) { channelId in
+                    Log.w("Last channel invalid: \(lastChannelId): trying auto pick channel")
+                    FireController.instance.autoPickChannel(groupId: groupId) { channelId in
                         if channelId != nil {
                             self.showChannel(channelId: channelId!, groupId: groupId)
                         }
@@ -316,22 +316,15 @@ extension GroupSwitcherController: UITableViewDelegate {
             })
         }
         else {
-            FireController.instance.findFirstChannel(groupId: groupId) { channelId in
+            FireController.instance.autoPickChannel(groupId: groupId) { channelId in
                 if channelId != nil {
                     self.showChannel(channelId: channelId!, groupId: groupId)
                 }
                 else {
-                    FireController.instance.findGeneralChannel(groupId: groupId) { channelId in
-                        if channelId != nil {
-                            self.showChannel(channelId: channelId!, groupId: groupId)
-                        }
-                        else {
-                            StateController.instance.setChannelId(channelId: nil, groupId: groupId)
-                            MainController.instance.showEmpty() // Replaced if we ever get a real channel
-                            let _ = self.navigationController?.popViewController(animated: true)
-                            self.closeAction(sender: nil)
-                        }
-                    }
+                    StateController.instance.setChannelId(channelId: nil, groupId: groupId)
+                    MainController.instance.showEmpty() // Replaced if we ever get a real channel
+                    let _ = self.navigationController?.popViewController(animated: true)
+                    self.closeAction(sender: nil)
                 }
             }
         }

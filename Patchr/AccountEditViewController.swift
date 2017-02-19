@@ -166,30 +166,36 @@ class AccountEditViewController: BaseEditViewController {
         
         let email = self.emailField.textField.text!
         
-        FireController.instance.emailProviderExists(email: email, next: { exists in
-            if let exists = exists {
-                if exists {
-                    self.progress?.hide(true)
-                    self.processing = false
-                    self.showError(self.emailField, error: "Email is already being used")
-                }
-                else {
-                    self.updateEmail()
-                }
+        FireController.instance.emailProviderExists(email: email, next: { error, exists in
+            if error != nil {
+                self.progress?.hide(true)
+                self.processing = false
+                self.showError(self.emailField, error: error!.localizedDescription)
+            }
+            if exists {
+                self.progress?.hide(true)
+                self.processing = false
+                self.showError(self.emailField, error: "Email is already being used")
+            }
+            else {
+                self.updateEmail()
             }
         })
     }
     
     func updateEmail() {
         
-        if let authUser = FIRAuth.auth()?.currentUser, let user = UserController.instance.user {
+        if let authUser = FIRAuth.auth()?.currentUser,
+            let userId = UserController.instance.userId,
+            let email = self.emailField.textField.text {
             
-            let email = self.emailField.textField.text!
-            
+            /* Update in firebase auth account */
             authUser.updateEmail(email, completion: { error in
                 if error == nil {
-                    let updates = ["modified_at": FIRServerValue.timestamp(), "email": email] as [String : Any]
-                    FireController.db.child(user.path).updateChildValues(updates) { error, ref in
+                    authUser.sendEmailVerification()
+                    
+                    /* Update in memberships that share email */
+                    FireController.instance.updateEmail(userId: userId, email: email) { error in
                         if error == nil {
                             if self.userNameField.textField.text != UserController.instance.user?.username {
                                 self.verifyUsername()
@@ -219,22 +225,25 @@ class AccountEditViewController: BaseEditViewController {
         
         let username = self.userNameField.textField.text!
         
-        FireController.instance.usernameExists(username: username, next: { exists in
+        FireController.instance.usernameExists(username: username, next: { error, exists in
             self.progress?.hide(true)
             self.processing = false
-            if exists == nil { return }
-            if exists! {
+            if error != nil {
+                self.showError(self.userNameField, error: error!.localizedDescription)
+                return
+            }
+            if exists {
                 self.showError(self.userNameField, error: "Choose another username")
             }
             else {
-                let user = UserController.instance.user!
-                let updates = ["modified_at": FIRServerValue.timestamp(), "username": username] as [String: Any]
-                FireController.db.child(user.path).updateChildValues(updates) { error, ref in
+                let userId = UserController.instance.userId!
+                FireController.instance.updateUsername(userId: userId, username: username) { error, result in
                     if error == nil {
                         let _ = self.navigationController?.popToRootViewController(animated: true)
                     }
                     else {
-                        self.showError(self.userNameField, error: error!.localizedDescription)
+                        let message = error!["message"] as! String
+                        self.showError(self.userNameField, error: message)
                     }
                 }
             }

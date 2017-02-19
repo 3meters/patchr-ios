@@ -31,42 +31,22 @@ class FireController: NSObject {
     }
     
     /*--------------------------------------------------------------------------------------------
-     * MARK: - Methods
+     * MARK: - Create
      *--------------------------------------------------------------------------------------------*/
     
-    func sendAdminMessage(channelId: String, groupId: String, userId: String, text: String, then: ((Bool) -> Void)? = nil) {
-        
-        let ref = FireController.db.child("group-messages/\(groupId)/\(channelId)").childByAutoId()
+    func addUser(userId: String, username: String, then: @escaping (([String: Any]?, Any?) -> Void)) {
         let timestamp = getServerTimestamp()
-        let timestampReversed = -1 * timestamp
-        
-        var messageMap: [String: Any] = [:]
-        messageMap["created_at"] = Int(timestamp)
-        messageMap["created_at_desc"] = Int(timestampReversed)
-        messageMap["created_by"] = userId
-        messageMap["modified_at"] = Int(timestamp)
-        messageMap["modified_by"] = userId
-        messageMap["source"] = "system"
-        messageMap["group_id"] = groupId
-        messageMap["channel_id"] = channelId
-        messageMap["text"] = text
-        
-        ref.setValue(messageMap) { error, ref in
-            then?(error == nil)
-        }
-    }
-    
-    func addUser(userId: String, username: String, email: String, then: ((Bool) -> Void)? = nil) {
-        let userMap: [String: Any] = [
-            "created_at": FIRServerValue.timestamp(),
+        let ref = FireController.db.child("queue/create-user").childByAutoId()
+        let task: [String: Any] = [
+            "created_at": Int(timestamp),
             "created_by": userId,
-            "modified_at": FIRServerValue.timestamp(),
+            "id": ref.key,
+            "retain": true,
+            "state": "waiting",
+            "user_id": userId,
             "username": username,
-            "email": email
         ]
-        FireController.db.child("users/\(userId)").setValue(userMap) { error, ref in
-            then?(error == nil)
-        }
+        submitTask(task: task, ref: ref, then: then)
     }
     
     func addGroup(groupId: String, title: String, then: ((Bool) -> Void)? = nil) {
@@ -187,7 +167,7 @@ class FireController: NSObject {
             if error == nil {
                 /* Add creator as first member of channel (open or private) */
                 self.addUserToChannel(userId: userId, groupId: groupId, channelId: channelId, channelName: channelName, role: "owner") { success in
-                    if visibility == "open", let generalId = StateController.instance.groupGeneralId {
+                    if visibility == "open", let generalId = StateController.instance.groupGeneralId { // If guest then generalId is nil
                         let text = "created the #\(channelName) channel."
                         self.sendAdminMessage(channelId: generalId, groupId: groupId, userId: userId, text: text)
                     }
@@ -199,6 +179,55 @@ class FireController: NSObject {
         }
     }
     
+    /*--------------------------------------------------------------------------------------------
+     * MARK: - Update
+     *--------------------------------------------------------------------------------------------*/
+    
+    func updateUsername(userId: String, username: String, then: @escaping (([String: Any]?, Any?) -> Void)) {
+        let userId = UserController.instance.userId!
+        let timestamp = getServerTimestamp()
+        let ref = FireController.db.child("queue/update-username").childByAutoId()
+        let task: [String: Any] = [
+            "created_at": Int(timestamp),
+            "created_by": userId,
+            "id": ref.key,
+            "retain": true,
+            "state": "waiting",
+            "user_id": userId,
+            "username": username,
+            ]
+        submitTask(task: task, ref: ref, then: then)
+    }
+
+    func updateEmail(userId: String, email: String, then: ((Error?) -> Void)? = nil) {
+        var updates: [String: Any] = [:]
+        let path = "member-groups/\(userId)"
+        FireController.db.child(path).observeSingleEvent(of: .value, with: { snap in
+            if let groups = snap.value as? [String: Any] {
+                for groupId in groups.keys {
+                    if let group = groups[groupId] as? [String: Any],
+                        let _ = group["email"] as? String {
+                        updates["member-groups/\(userId)/\(groupId)/email"] = email
+                        updates["group-members/\(groupId)/\(userId)/email"] = email
+                    }
+                }
+                FireController.db.updateChildValues(updates) { error, ref in
+                    if error != nil {
+                        Log.w("Permission denied updating email in memberships")
+                    }
+                    then?(error)
+                }
+            }
+        }, withCancel: { error in
+            Log.w("Permission denied: \(path)")
+            then?(error)
+        })
+    }
+    
+    /*--------------------------------------------------------------------------------------------
+     * MARK: - Membership
+     *--------------------------------------------------------------------------------------------*/
+
     func addUserToChannel(userId: String, groupId: String, channelId: String, channelName: String?, role: String! = "member",
                           invite: [String: Any]? = nil, inviterName: String? = nil, adminId: String? = nil,
                           then: ((Bool) -> Void)? = nil) {
@@ -215,7 +244,7 @@ class FireController: NSObject {
             membership["invite_id"] = inviteId
             membership["invited_by"] = inviterId
         }
-
+        
         let queue = TaskQueue()
         
         /* Add creator as member of group with owner role */
@@ -254,7 +283,7 @@ class FireController: NSObject {
                 next(nil)
             }
         }
-
+        
         queue.run() {
             then?(true)
         }
@@ -270,7 +299,7 @@ class FireController: NSObject {
             let channelName = channels[channelId] as! String
             addUserToChannel(userId: userId, groupId: groupId, channelId: channelId, channelName: channelName,
                              invite: invite, inviterName: inviterName) { success in
-                dispGroup.leave()
+                                dispGroup.leave()
             }
         }
         dispGroup.notify(queue: DispatchQueue.main) {
@@ -278,20 +307,22 @@ class FireController: NSObject {
         }
     }
     
-    func addUserToGroupTask(groupId: String, channels: [String: Any]?, role: String,
-                            inviteId: String?, invitedBy: String?, then: @escaping ([String: Any]?, Any?) -> Void) {
+    func addUserToGroup(groupId: String, channels: [String: Any]?, role: String,
+                        inviteId: String?, invitedBy: String?, then: @escaping ([String: Any]?, Any?) -> Void) {
         let userId = UserController.instance.userId!
         let timestamp = getServerTimestamp()
         let ref = FireController.db.child("queue/join-group").childByAutoId()
+        let email = (FIRAuth.auth()?.currentUser?.email!)!
         var task: [String: Any] = [
             "created_at": Int(timestamp),
             "created_by": userId,
-            "user_id": userId,
+            "email": email,
             "group_id": groupId,
             "id": ref.key,
             "retain": true,
             "role": role,
-            "state": "waiting"
+            "state": "waiting",
+            "user_id": userId,
         ]
         if inviteId != nil {
             task["invite_id"] = inviteId
@@ -300,167 +331,13 @@ class FireController: NSObject {
         if channels != nil {
             task["channels"] = channels
         }
-        
-        var handle: UInt = 0
-        ref.setValue(task) { error, ref in
-            if error == nil {
-                handle = ref.observe(.value, with: { snap in
-                    if let task = snap.value as? [String: Any], let state = task["state"] as? String {
-                        Log.d("Task state: \(state)")
-                        let error = task["error"] as? [String: Any]
-                        let result = task["result"] as Any?
-                        if error != nil || result != nil {
-                            FireController.db.removeObserver(withHandle: handle)
-                            ref.removeValue()
-                            if error != nil {
-                                let code = error!["code"] as! Int
-                                let message = error!["message"] as! String
-                                Log.d("Error code: \(code): \(message)")
-                            }
-                            then(error, result)
-                        }
-                    }
-                })
-                return
-            }
-            then([:], nil)  // permission denied
-        }
+        submitTask(task: task, ref: ref, then: then)
     }
 
-    func addUserToGroup(groupId: String, channels: [String: Any]?, role: String,
-                        invite: [String: Any]? = nil, email: String, then: ((Bool) -> Void)? = nil) {
-        /*
-         * Standard member is added to group membership and all default channels.
-         * Guest member is added to group and to targeted channel.
-         */
-        let userId = UserController.instance.userId!
-        let timestamp = getServerTimestamp()
-        let groupPriority = (role == "guest") ? 5 : 4
-        var membership = groupMemberMap(userId: userId, timestamp: timestamp, priorityIndex: groupPriority, role: role)
-        
-        if invite != nil {
-            let inviteId = invite!["id"] as! String
-            let inviter = invite!["inviter"] as! [String: Any]
-            let inviterId = inviter["id"] as! String
-            membership["invite_id"] = inviteId
-            membership["invited_by"] = inviterId
-        }
-        
-        let queue = TaskQueue()
-        
-        /* Add user as member of group */
-        queue.tasks += { _, next in
-            FireController.db.child("group-members/\(groupId)/\(userId)").setValue(membership) { error, ref in
-                if error != nil {
-                    queue.cancel()
-                    then?(false)
-                }
-                next(nil)
-            }
-        }
-        
-        queue.tasks += { _, next in
-            FireController.db.child("member-groups/\(userId)/\(groupId)").setValue(membership) { error, ref in
-                if error != nil {
-                    queue.cancel()
-                    then?(false)
-                }
-                next(nil)
-            }
-        }
-        
-        /* Add to channels if provided */
-        queue.tasks += { _, next in
-            if channels != nil {
-                let dispGroup = DispatchGroup()
-                for channelId in channels!.keys {
-                    dispGroup.enter()
-                    let channelName = channels![channelId] as! String
-                    self.addUserToChannel(userId: userId, groupId: groupId, channelId: channelId, channelName: channelName, invite: invite) { success in
-                        dispGroup.leave()
-                    }
-                }
-                dispGroup.notify(queue: DispatchQueue.main) {
-                    next(nil)
-                }
-            }
-            else {
-                next(nil)
-            }
-        }
-        
-        /* Add to default channels if not guest */
-        queue.tasks += { _, next in
-            if role != "guest" {
-                let path = "groups/\(groupId)/default_channels"
-                FireController.db.child(path).observeSingleEvent(of: .value, with: { snap in
-                    if let channelIds = snap.value as? [String] {
-                        let dispGroup = DispatchGroup()
-                        for channelId in channelIds {
-                            dispGroup.enter()
-                            self.addUserToChannel(userId: userId, groupId: groupId, channelId: channelId, channelName: nil) { success in
-                                dispGroup.leave()
-                            }
-                        }
-                        dispGroup.notify(queue: DispatchQueue.main) {
-                            next(nil)
-                        }
-                    }
-                    else {
-                        next(nil)
-                    }
-                }, withCancel: { error in
-                    queue.cancel()
-                    then?(false)
-                    next(nil)
-                })
-            }
-            else {
-                next(nil)
-            }
-        }
-        
-        /* Process invite */
-        queue.tasks += { _, next in
-            if invite != nil {
-                let inviteId = invite!["id"] as! String
-                let inviter = invite!["inviter"] as! [String: Any]
-                let inviterId = inviter["id"] as! String
-                
-                FireController.db.child("invites/\(groupId)/\(inviterId)/\(inviteId)")
-                    .observeSingleEvent(of: .value, with: { snap in
-                        if let _ = snap.value as? [String: Any] {
-                            FireController.db.child("invites/\(groupId)/\(inviterId)/\(inviteId)/accepted_at").setValue(Int(timestamp))
-                            FireController.db.child("invites/\(groupId)/\(inviterId)/\(inviteId)/accepted_by").setValue(userId)
-                            FireController.db.child("invites/\(groupId)/\(inviterId)/\(inviteId)/status").setValue("accepted")
-                        }
-                        next(nil)
-                    }, withCancel: { error in
-                        queue.cancel()
-                        then?(false)
-                        next(nil)
-                    })
-            }
-            else {
-                next(nil)
-            }
-        }
-        
-        queue.run() {
-            then?(true)
-        }
-    }
-    
     func removeUserFromGroup(userId: String, groupId: String, then: ((Bool) -> Void)? = nil) {
-        /*
-         * - remove from member-groups and group-members
-         * - remove from all channel indexes
-         */
         var updates: [String: Any] = [:]
-        
-        updates["member-groups/\(userId)/\(groupId)"] = NSNull()
-        updates["group-members/\(groupId)/\(userId)"] = NSNull()
-        
+        updates["member-groups/\(userId)/\(groupId)"] = NSNull()    // delete requires group owner or creator
+        updates["group-members/\(groupId)/\(userId)"] = NSNull()    // delete requires group owner or creator
         FireController.db.updateChildValues(updates) { error, ref in
             if error == nil {
                 FireController.db.child("member-channels/\(userId)/\(groupId)")
@@ -490,6 +367,7 @@ class FireController: NSObject {
                 })
             }
             else {
+                Log.w("Permission denied removing group member")
                 then?(error == nil)
             }
         }
@@ -497,8 +375,8 @@ class FireController: NSObject {
 
     func removeUserFromChannel(userId: String, groupId: String, channelId: String, channelName: String?, then: ((Bool) -> Void)? = nil) {
         var updates: [String: Any] = [:]
-        updates["member-channels/\(userId)/\(groupId)/\(channelId)"] = NSNull()
-        updates["group-channel-members/\(groupId)/\(channelId)/\(userId)"] = NSNull()
+        updates["member-channels/\(userId)/\(groupId)/\(channelId)"] = NSNull()         // delete requires creator or owner (channel or group)
+        updates["group-channel-members/\(groupId)/\(channelId)/\(userId)"] = NSNull()   // delete requires creator or owner (channel or group)
         FireController.db.updateChildValues(updates) { error, ref in
             if error == nil {
                 let ref = FireController.db.child("queue/clear-unreads").childByAutoId()
@@ -517,8 +395,12 @@ class FireController: NSObject {
                 
                 let text = channelName != nil ? "left #\(channelName!)." : "left."
                 self.sendAdminMessage(channelId: channelId, groupId: groupId, userId: userId, text: text)
+                then?(error == nil)
             }
-            then?(error == nil)
+            else {
+                Log.w("Permission denied removing channel member")
+                then?(error == nil)
+            }
         }
     }
 
@@ -542,7 +424,7 @@ class FireController: NSObject {
             "priority": priority,
             "role": role,
             "starred": false,
-        ]
+            ]
         
         return link
     }
@@ -554,12 +436,13 @@ class FireController: NSObject {
         let joinedAt = Int(floorf(Float(timestamp / 1000)))// shorten to 10 digits
         let index = Int("\(priority)\(joinedAt)")
         let indexReversed = Int("-\(priorityReversed)\(joinedAt)")
+        let email = (FIRAuth.auth()?.currentUser?.email!)!
         
         let link: [String: Any] = [
             "created_at": Int(timestamp),
             "created_by": userId,
             "disabled": false,
-            "hide_email": false,
+            "email": email,
             "joined_at": joinedAt, // Not a real unix epoch timestamp, only 10 digits instead of 13
             "joined_at_desc": joinedAt * -1,
             "index_priority_joined_at": index!,
@@ -567,11 +450,15 @@ class FireController: NSObject {
             "notifications": "all",
             "priority": priority,
             "role": role,
-        ]
+            ]
         
         return link
     }
     
+    /*--------------------------------------------------------------------------------------------
+     * MARK: - Delete
+     *--------------------------------------------------------------------------------------------*/
+
     func deleteGroup(groupId: String, then: (([String: Any]?) -> Void)? = nil) {
         let userId = UserController.instance.userId!
         let ref = FireController.db.child("queue/deletes").childByAutoId()
@@ -639,6 +526,10 @@ class FireController: NSObject {
         FireController.db.child("invites/\(groupId)/\(inviterId)/\(inviteId)").removeValue()
     }
     
+    /*--------------------------------------------------------------------------------------------
+     * MARK: - Clear
+     *--------------------------------------------------------------------------------------------*/
+    
     func clearChannelUnreads(channelId: String, groupId: String) {
         let userId = UserController.instance.userId!
         let unreadPath = "unreads/\(userId)/\(groupId)/\(channelId)"
@@ -652,9 +543,27 @@ class FireController: NSObject {
     func clearMessageUnread(messageId: String, channelId: String, groupId: String) {
         let userId = UserController.instance.userId!
         let unreadPath = "unreads/\(userId)/\(groupId)/\(channelId)/\(messageId)"
-        FireController.db.child(unreadPath).setValue(NSNull()) { err, ref in
-            if err != nil {
-                Log.d("No unread to clear for message")
+        FireController.db.child(unreadPath).removeValue()
+    }
+    
+    /*--------------------------------------------------------------------------------------------
+     * MARK: - Lookups
+     *--------------------------------------------------------------------------------------------*/
+    
+    func autoPickChannel(groupId: String, next: @escaping (String?) -> Void) {
+        FireController.instance.findFirstChannel(groupId: groupId) { channelId in
+            if channelId != nil {
+                next(channelId)
+            }
+            else if let role = StateController.instance.group.role {
+                if role != "guest" {
+                    FireController.instance.findGeneralChannel(groupId: groupId) { channelId in
+                        next(channelId)
+                    }
+                }
+                else {
+                    next(nil)
+                }
             }
         }
     }
@@ -689,6 +598,7 @@ class FireController: NSObject {
             }
             next(nil)
         }, withCancel: { error in
+            Log.w("Permission denied trying to find general channel: \(path)")
             next(nil)
         })
     }
@@ -704,22 +614,23 @@ class FireController: NSObject {
                 return
             }
             next(nil)
+        }, withCancel: { error in
+            Log.w("Permission denied trying to find first group: member-groups/\(userId)")
+            next(nil)
         })
     }
     
     func autoPickGroupAndChannel(userId: String, next: @escaping (String?, String?) -> Void) {
         self.findFirstGroup(userId: userId) { groupId in
             if groupId == nil { next(nil, nil) }
-            if let settings = UserDefaults.standard.dictionary(forKey: groupId!),
-                let lastChannelId = settings["currentChannelId"] as? String {
+            if let lastChannelIds = UserDefaults.standard.dictionary(forKey: PerUserKey(key: Prefs.lastChannelIds)),
+                let lastChannelId = lastChannelIds[groupId!] as? String {
                 let validateQuery = ChannelQuery(groupId: groupId!, channelId: lastChannelId, userId: userId)
                 validateQuery.once(with: { error, channel in
                     if channel == nil {
-                        Log.w("Last channel invalid: \(lastChannelId): trying first channel")
-                        FireController.instance.findFirstChannel(groupId: groupId!) { channelId in
-                            if channelId != nil {
-                                next(groupId, channelId)
-                            }
+                        Log.w("Last channel invalid: \(lastChannelId): trying auto pick")
+                        FireController.instance.autoPickChannel(groupId: groupId!) { channelId in
+                            next(groupId, channelId)
                         }
                     }
                     else {
@@ -728,15 +639,8 @@ class FireController: NSObject {
                 })
             }
             else {
-                FireController.instance.findFirstChannel(groupId: groupId!) { channelId in
-                    if channelId != nil {
-                        next(groupId, channelId)
-                    }
-                    else {
-                        FireController.instance.findGeneralChannel(groupId: groupId!) { channelId in
-                            next(groupId, channelId)
-                        }
-                    }
+                FireController.instance.autoPickChannel(groupId: groupId!) { channelId in
+                    next(groupId, channelId)
                 }
             }
         }
@@ -762,7 +666,7 @@ class FireController: NSObject {
                     then(nil)
                 }
             }, withCancel: { error in
-                Log.w("Permission denied: \(path)")
+                Log.w("Permission denied getting channel role count: \(path)")
                 then(nil)
             })
     }
@@ -773,38 +677,48 @@ class FireController: NSObject {
             .observeSingleEvent(of: .value, with: { snap in
                 next(!(snap.value is NSNull))
             }, withCancel: { error in
-                Log.w("Permission denied: \(path)")
+                Log.w("Permission denied checking channel membership: \(path)")
                 next(nil)
             })
     }
     
-    func channelNameExists(groupId: String, channelName: String, next: @escaping ((Bool?) -> Void)) {
-        let path = "group-channels/\(groupId)"
-        FireController.db.child(path)
-            .queryOrdered(byChild: "name")
-            .queryEqual(toValue: channelName)
-            .observeSingleEvent(of: .value, with: { snap in
-                next(!(snap.value is NSNull))
-            }, withCancel: { error in
-                Log.w("Permission denied: \(path)")
-                next(nil)
-            })
+    func channelNameExists(groupId: String, channelName: String, next: @escaping ((Error?, Bool) -> Void)) {
+        let path = "channel-names/\(groupId)/\(channelName)"
+        FireController.db.child(path).observeSingleEvent(of: .value, with: { snap in
+            next(nil, !(snap.value is NSNull))
+        }, withCancel: { error in
+            Log.w("Permission denied: \(path)")
+            next(error, false)
+        })
     }
     
-    func channelNameExistsTask(groupId: String, channelName: String, then: @escaping (([String: Any]?, Any?) -> Void)) {
-        let userId = UserController.instance.userId!
-        let timestamp = getServerTimestamp()
-        let ref = FireController.db.child("queue/channel-name-exists").childByAutoId()
-        let task: [String: Any] = [
-            "channelName": channelName,
-            "created_at": Int(timestamp),
-            "created_by": userId,
-            "group_id": groupId,
-            "id": ref.key,
-            "retain": true,
-            "state": "waiting"
-        ]
-        
+    func usernameExists(username: String, next: @escaping ((Error?, Bool) -> Void)) {
+        let path = "usernames/\(username)"
+        FireController.db.child(path).observeSingleEvent(of: .value, with: { snap in
+            next(nil, !(snap.value is NSNull))
+        }, withCancel: { error in
+            Log.w("Permission denied: \(path)")
+            next(error, false)
+        })
+    }
+    
+    func emailProviderExists(email: String, next: @escaping ((Error?, Bool) -> Void)) {
+        /*
+         * Can be called when the user is not authenticated.
+         */
+        guard FIRAuth.auth() != nil else {
+            fatalError("Auth object should not be nil")
+        }
+        FIRAuth.auth()!.fetchProviders(forEmail: email, completion: { providers, error in
+            next(error, (error == nil && providers != nil && providers!.count > 0))
+        })
+    }
+    
+    /*--------------------------------------------------------------------------------------------
+     * MARK: - Utility
+     *--------------------------------------------------------------------------------------------*/
+    
+    func submitTask(task: [String: Any], ref: FIRDatabaseReference, then: @escaping (([String: Any]?, Any?) -> Void)) {
         var handle: UInt = 0
         ref.setValue(task) { error, ref in
             if error == nil {
@@ -827,49 +741,30 @@ class FireController: NSObject {
                 })
                 return
             }
+            Log.w("Permission denied submitting task: \(ref.url)")
             then([:], nil)  // permission denied
         }
     }
     
-    func usernameExists(username: String, next: @escaping ((Bool?) -> Void)) {
-        FireController.db.child("users")
-            .queryOrdered(byChild: "username")
-            .queryEqual(toValue: username)
-            .observeSingleEvent(of: .value, with: { snap in
-                next(!(snap.value is NSNull))
-            }, withCancel: { error in
-                Log.w("Permission denied: users")
-                next(nil)
-            })
-    }
-    
-    func emailExists(email: String, next: @escaping ((Bool?) -> Void)) {
-        /* 
-         * Currently unused
-         * Can't access users unless authenticated which we might not
-         * be if user is logging in.
-         */
-        FireController.db.child("users")
-            .queryOrdered(byChild: "email")
-            .queryEqual(toValue: email)
-            .observeSingleEvent(of: .value, with: { snap in
-                next(!(snap.value is NSNull))
-            }, withCancel: { error in
-                next(nil)
-            })
-    }
-    
-    func emailProviderExists(email: String, next: @escaping ((Bool?) -> Void)) {
-        /*
-         * Can be accessed even if user is not authenticated.
-         */
-        if FIRAuth.auth() != nil {
-            FIRAuth.auth()!.fetchProviders(forEmail: email, completion: { providers, error in
-                next(error == nil && providers != nil && providers!.count > 0)
-            })
-        }
-        else {
-            next(nil)
+    func sendAdminMessage(channelId: String, groupId: String, userId: String, text: String, then: ((Bool) -> Void)? = nil) {
+        
+        let ref = FireController.db.child("group-messages/\(groupId)/\(channelId)").childByAutoId()
+        let timestamp = getServerTimestamp()
+        let timestampReversed = -1 * timestamp
+        
+        var messageMap: [String: Any] = [:]
+        messageMap["created_at"] = Int(timestamp)
+        messageMap["created_at_desc"] = Int(timestampReversed)
+        messageMap["created_by"] = userId
+        messageMap["modified_at"] = Int(timestamp)
+        messageMap["modified_by"] = userId
+        messageMap["source"] = "system"
+        messageMap["group_id"] = groupId
+        messageMap["channel_id"] = channelId
+        messageMap["text"] = text
+        
+        ref.setValue(messageMap) { error, ref in
+            then?(error == nil)
         }
     }
     

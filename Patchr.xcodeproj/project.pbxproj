@@ -21,7 +21,6 @@
 		9FDCC2A7033CFB1B9AC95DDC /* PhotoControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FDCC1090EAA7D7799F16058 /* PhotoControl.swift */; };
 		9FDCC2C0E1041D54A7D10BD2 /* SlideBounceAnimationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FDCCE482E821C4491DB4117 /* SlideBounceAnimationController.swift */; };
 		9FDCC30FF30E86567AA6374F /* ChannelViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FDCC7D2BF8341DCBB416DC4 /* ChannelViewController.swift */; };
-		9FDCC33FB60912FCE81FBFF8 /* PermissionsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FDCC2D4F21787A5DB4DA09B /* PermissionsViewController.swift */; };
 		9FDCC36F029C0222AB24D09F /* FireController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FDCC68ACDC02C764EE70B02 /* FireController.swift */; };
 		9FDCC52A639B1102E1771A34 /* MemberSettingsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FDCC6D9E7C9AADE45675174 /* MemberSettingsController.swift */; };
 		9FDCC5F52570C58229C8D971 /* NotificationSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FDCCCCCF3108C93E4D09188 /* NotificationSettingsViewController.swift */; };
@@ -48,7 +47,6 @@
 		E2064BF51BC18A66009C7B6A /* AirProgress.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2064BF41BC18A66009C7B6A /* AirProgress.swift */; };
 		E207B5001E2936920019C2A1 /* ChannelPickerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E207B4FF1E2936920019C2A1 /* ChannelPickerController.swift */; };
 		E207B5021E2978140019C2A1 /* ChannelListCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E207B5011E2978140019C2A1 /* ChannelListCell.xib */; };
-		E208379C1E4A8D6A00A9A49C /* InviteGuestController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E208379B1E4A8D6A00A9A49C /* InviteGuestController.swift */; };
 		E20C3A7B1BD6A717008CCED1 /* BaseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20C3A7A1BD6A717008CCED1 /* BaseView.swift */; };
 		E20C3A7D1BD70DD2008CCED1 /* AirTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20C3A7C1BD70DD2008CCED1 /* AirTableView.swift */; };
 		E20C3A811BDC1D57008CCED1 /* BaseDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20C3A801BDC1D57008CCED1 /* BaseDetailView.swift */; };
@@ -160,7 +158,6 @@
 		E2BC533E1DE5E7EC00C97A2C /* Http.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2BC533D1DE5E7EC00C97A2C /* Http.swift */; };
 		E2C0D9311B6C415100E28CE9 /* Log.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2C0D9301B6C415100E28CE9 /* Log.swift */; };
 		E2C720C71B4EDAFE00714B53 /* AirLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2C720C61B4EDAFE00714B53 /* AirLabel.swift */; };
-		E2C7C5C41B2A19720045038A /* DefaultSettings.plist in Resources */ = {isa = PBXBuildFile; fileRef = E2C7C5C31B2A19720045038A /* DefaultSettings.plist */; };
 		E2C7C5CB1B2CF2F80045038A /* ImageResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2C7C5CA1B2CF2F80045038A /* ImageResult.swift */; };
 		E2CA0C351C4FFEAF00E2F380 /* build.sh in Resources */ = {isa = PBXBuildFile; fileRef = E2CA0C331C4FFEAF00E2F380 /* build.sh */; };
 		E2CA0C361C4FFEAF00E2F380 /* test.sh in Resources */ = {isa = PBXBuildFile; fileRef = E2CA0C341C4FFEAF00E2F380 /* test.sh */; };
@@ -221,7 +218,6 @@
 		9FDCC06A84126B197626CEB2 /* PhotoSearchController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = PhotoSearchController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		9FDCC1090EAA7D7799F16058 /* PhotoControl.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotoControl.swift; sourceTree = "<group>"; };
 		9FDCC2AE42A7C32316E95CE2 /* GroupQuery.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GroupQuery.swift; sourceTree = "<group>"; };
-		9FDCC2D4F21787A5DB4DA09B /* PermissionsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PermissionsViewController.swift; sourceTree = "<group>"; };
 		9FDCC3A31B4DE515C4C32CF9 /* AboutViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AboutViewController.swift; sourceTree = "<group>"; };
 		9FDCC5452372EFCC98BA01BF /* UserQuery.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserQuery.swift; sourceTree = "<group>"; };
 		9FDCC68ACDC02C764EE70B02 /* FireController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FireController.swift; path = Patchr/FireController.swift; sourceTree = "<group>"; };
@@ -251,7 +247,6 @@
 		E2064BF41BC18A66009C7B6A /* AirProgress.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirProgress.swift; sourceTree = "<group>"; };
 		E207B4FF1E2936920019C2A1 /* ChannelPickerController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChannelPickerController.swift; sourceTree = "<group>"; };
 		E207B5011E2978140019C2A1 /* ChannelListCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ChannelListCell.xib; sourceTree = "<group>"; };
-		E208379B1E4A8D6A00A9A49C /* InviteGuestController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InviteGuestController.swift; sourceTree = "<group>"; };
 		E20C1FB61AFE462500A471E9 /* UIShared.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIShared.swift; sourceTree = "<group>"; };
 		E20C3A7A1BD6A717008CCED1 /* BaseView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseView.swift; sourceTree = "<group>"; };
 		E20C3A7C1BD70DD2008CCED1 /* AirTableView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirTableView.swift; sourceTree = "<group>"; };
@@ -372,7 +367,6 @@
 		E2BC533D1DE5E7EC00C97A2C /* Http.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Http.swift; sourceTree = "<group>"; };
 		E2C0D9301B6C415100E28CE9 /* Log.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Log.swift; sourceTree = "<group>"; };
 		E2C720C61B4EDAFE00714B53 /* AirLabel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirLabel.swift; sourceTree = "<group>"; };
-		E2C7C5C31B2A19720045038A /* DefaultSettings.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = DefaultSettings.plist; sourceTree = "<group>"; };
 		E2C7C5CA1B2CF2F80045038A /* ImageResult.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageResult.swift; sourceTree = "<group>"; };
 		E2CA0C331C4FFEAF00E2F380 /* build.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = build.sh; sourceTree = SOURCE_ROOT; };
 		E2CA0C341C4FFEAF00E2F380 /* test.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = test.sh; sourceTree = SOURCE_ROOT; };
@@ -515,7 +509,6 @@
 				9FDCCD7DF56E13112F3E35C6 /* DevelopmentViewController.swift */,
 				9FDCC6D9E7C9AADE45675174 /* MemberSettingsController.swift */,
 				9FDCCCCCF3108C93E4D09188 /* NotificationSettingsViewController.swift */,
-				9FDCC2D4F21787A5DB4DA09B /* PermissionsViewController.swift */,
 				9FDCCA7AB0285558DFFDF2C1 /* SettingsTableViewController.swift */,
 				9FDCC77C9E60E2A873A1216E /* UsenameSettingViewController.swift */,
 			);
@@ -589,7 +582,6 @@
 				E2BC53301DE4D55100C97A2C /* invite_guest.html */,
 				7D3D39D51A6F086F00A44CB2 /* Images.xcassets */,
 				8468F8211A9D09D1007D6EE6 /* Localizable.strings */,
-				E2C7C5C31B2A19720045038A /* DefaultSettings.plist */,
 				E25A73771C1C87F500688EDC /* AdobeCreativeSDKImageResources.bundle */,
 				E25A73751C1C87E200688EDC /* AdobeCreativeSDKCoreResources.bundle */,
 				E25327CA1B13D34B00990A81 /* Sounds */,
@@ -768,7 +760,6 @@
 				E26A02FC1DF5BE0D00EE32D3 /* ContactPickerController.swift */,
 				E2999EE21DC25AAE005C69D8 /* EmptyViewController.swift */,
 				E2B756A41D84565F00C102EC /* GroupSwitcherController.swift */,
-				E208379B1E4A8D6A00A9A49C /* InviteGuestController.swift */,
 				E2539EA31E269E45000FFE40 /* InviteListController.swift */,
 				E29730651C16295300B9433B /* InviteViewController.swift */,
 				E2D12A801C0A52D700DE507E /* LobbyViewController.swift */,
@@ -941,7 +932,6 @@
 				E2539EA81E26A2E7000FFE40 /* InvitePendingListCell.xib in Resources */,
 				E2CCAAE21B67EE2C0071170C /* chirp.caf in Resources */,
 				8468F81F1A9D09D1007D6EE6 /* Localizable.strings in Resources */,
-				E2C7C5C41B2A19720045038A /* DefaultSettings.plist in Resources */,
 				E25327CE1B13DB3000990A81 /* notification_candi_discovered_soft.aac in Resources */,
 				E25327CF1B13DB3000990A81 /* notification_carme.aac in Resources */,
 				E2A5A8801B6FCE98006D6E81 /* GoogleService-Info.plist in Resources */,
@@ -1118,7 +1108,6 @@
 				E2B756A51D84566000C102EC /* GroupSwitcherController.swift in Sources */,
 				E227708D1C46C01800866733 /* MBProgressHUD+MBProgressHudAccessible.m in Sources */,
 				E2D12A791C08FA0E00DE507E /* AirLinkButton.swift in Sources */,
-				E208379C1E4A8D6A00A9A49C /* InviteGuestController.swift in Sources */,
 				E24773451DCA254F00EFB46F /* AirPhoneField.swift in Sources */,
 				E2C7C5CB1B2CF2F80045038A /* ImageResult.swift in Sources */,
 				E28A481F1DE72E0400A01B46 /* BaseTableController.swift in Sources */,
@@ -1199,7 +1188,6 @@
 				9FDCC14A3F9BFB4B39C54AA2 /* ChannelQuery.swift in Sources */,
 				9FDCC2A7033CFB1B9AC95DDC /* PhotoControl.swift in Sources */,
 				9FDCC63A0CB7D27F8D76B48E /* AboutViewController.swift in Sources */,
-				9FDCC33FB60912FCE81FBFF8 /* PermissionsViewController.swift in Sources */,
 				9FDCC6D6A597066D975595FA /* DevelopmentViewController.swift in Sources */,
 				9FDCC52A639B1102E1771A34 /* MemberSettingsController.swift in Sources */,
 				9FDCC5F52570C58229C8D971 /* NotificationSettingsViewController.swift in Sources */,

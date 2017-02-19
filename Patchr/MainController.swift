@@ -19,7 +19,9 @@ class MainController: NSObject, iRateDelegate {
     static let instance = MainController()
     var window: UIWindow?
     var upgradeRequired = false
+    var link: [AnyHashable: Any]?
     var introPlayed = false
+    var bootstrapping = true
     static let channelPicker = ChannelSwitcherController()
     static let groupPicker = GroupSwitcherController()
 
@@ -102,6 +104,7 @@ class MainController: NSObject, iRateDelegate {
         
         MainController.groupPicker.simplePicker = true
 
+        /* We always begin with the empty controller */
         self.window?.setRootViewController(rootViewController: EmptyViewController(), animated: true) // While we wait for state to initialize
         self.window?.makeKeyAndVisible()
         
@@ -111,7 +114,12 @@ class MainController: NSObject, iRateDelegate {
                 /* A hit could mean a deferred link match */
                 if let clickedBranchLink = params?["+clicked_branch_link"] as? Bool , clickedBranchLink {
                     Log.d("Deep link routing based on clicked branch link", breadcrumb: true)
-                    self?.routeDeepLink(link: params!, error: error)    /* Presents modally on top of main tab controller. */
+                    if !(self?.bootstrapping)! && self?.link == nil {
+                        self?.routeDeepLink(link: params!, error: error)
+                    }
+                    else {
+                        self?.link = params!
+                    }
                 }
             }
         })
@@ -134,13 +142,25 @@ class MainController: NSObject, iRateDelegate {
             showLobby()
         }
         else if !UserController.instance.authenticated {
-            showLobby()
+            showLobby() {
+                self.bootstrapping = false
+                if let link = MainController.instance.link {
+                    MainController.instance.routeDeepLink(link: link, error: nil)
+                }
+            }
         }
         else if groupId == nil || channelId == nil {
-            showLobby(controller: GroupSwitcherController())
+            showLobby(controller: GroupSwitcherController()) {
+                self.bootstrapping = false
+                if let link = MainController.instance.link {
+                    MainController.instance.routeDeepLink(link: link, error: nil)
+                }
+            }
         }
         else {
-            showChannel(groupId: groupId!, channelId: channelId!)
+            showChannel(groupId: groupId!, channelId: channelId!) {
+                self.bootstrapping = false
+            }
         }
     }
     
@@ -198,7 +218,7 @@ class MainController: NSObject, iRateDelegate {
         }
     }
 
-    func showChannel(groupId: String, channelId: String) {
+    func showChannel(groupId: String, channelId: String, then: (() -> Void)? = nil) {
         
         showMain {
             if let wrapper = self.window?.rootViewController?.slideMenuController()?.mainViewController as? AirNavigationController {
@@ -207,41 +227,42 @@ class MainController: NSObject, iRateDelegate {
                 controller.inputChannelId = channelId
                 wrapper.setViewControllers([controller], animated: true)
             }
+            then?()
         }
     }
 
-    func showEmpty() {
+    func showEmpty(then: (() -> Void)? = nil) {
         
         showMain {
             if let wrapper = self.window?.rootViewController?.slideMenuController()?.mainViewController as? AirNavigationController {
                 let controller = EmptyViewController()
                 wrapper.setViewControllers([controller], animated: true)
             }
+            then?()
         }
     }
     
-    func routeDeepLink(link: [AnyHashable: Any], error: Error?) {
+    func routeDeepLink(link: [AnyHashable: Any], flow: Flow = .none, error: Error?) {
         /*
          * Logged in: open in channel
          * Not logged in: email -> username|password -> open channel
          */
+        MainController.instance.link = nil
         if UserController.instance.authenticated {
             let groupId = (link["group_id"] as! String)
             let userId = UserController.instance.userId!
-            let role = link["role"] as! String
             
             /* Must be group member or we get permission denied */
             FireController.db.child("group-members/\(groupId)/\(userId)").observeSingleEvent(of: .value, with: { snap in
                 if let membership = snap.value as? [String: Any] {
                     let role = membership["role"] as? String
-                    self.processInvite(link: link, member: true, memberRole: role)
+                    self.processInvite(link: link, member: true, memberRole: role, flow: flow)
                 }
                 else {
-                    self.processInvite(link: link, member: false, memberRole: role)
+                    self.processInvite(link: link, member: false, memberRole: nil, flow: flow)
                 }
-                
             }, withCancel: { error in
-                self.processInvite(link: link, member: false, memberRole: role)  // permission denied means not group member
+                self.processInvite(link: link, member: false, memberRole: nil, flow: flow)  // permission denied means not group member
             })
         }
         else {
@@ -252,7 +273,7 @@ class MainController: NSObject, iRateDelegate {
         }
     }
     
-    func processInvite(link: [AnyHashable: Any], member: Bool = false, memberRole: String?) {
+    func processInvite(link: [AnyHashable: Any], member: Bool = false, memberRole: String?, flow: Flow) {
         
         if let topController = UIViewController.topMostViewController() {
             
@@ -269,7 +290,12 @@ class MainController: NSObject, iRateDelegate {
                 if let topController = UIViewController.topMostViewController() {
                     let groupTitle = link["groupTitle"] as! String
                     let popup = PopupDialog(title: "Already a Member", message: "You are currently a member of the \(groupTitle) Patchr group!")
-                    let button = DefaultButton(title: "OK") {}
+                    let button = DefaultButton(title: "OK") {
+                        if flow == .onboardInvite {
+                            let controller = GroupSwitcherController()
+                            topController.navigationController?.pushViewController(controller, animated: true)
+                        }
+                    }
                     button.buttonHeight = 48
                     popup.addButton(button)
                     topController.present(popup, animated: true)
@@ -294,13 +320,14 @@ class MainController: NSObject, iRateDelegate {
             let popup = PopupDialog(title: "Invitation", message: message)
             
             let cancelButton = CancelButton(title: "Cancel".uppercased(), height: 48) {
+                // If we don't have a currrent group|channel then we are in the lobby
                 if StateController.instance.groupId == nil || StateController.instance.channelId == nil {
-                    self.route() // If we don't have a currrent group|channel then we are in the lobby
+                    self.route()
                 }
             }
             
             let joinButton = DefaultButton(title: "Join".uppercased(), height: 48) {
-                FireController.instance.addUserToGroupTask(groupId: groupId, channels: channels, role: role, inviteId: inviteId, invitedBy: inviterId) { error, result in
+                FireController.instance.addUserToGroup(groupId: groupId, channels: channels, role: role, inviteId: inviteId, invitedBy: inviterId) { error, result in
                     if error == nil {
                         if channels != nil {
                             self.afterChannelInvite(groupId: groupId, groupTitle: groupTitle, channels: channels)
@@ -311,7 +338,14 @@ class MainController: NSObject, iRateDelegate {
                     else {
                         if let topController = UIViewController.topMostViewController() {
                             let popup = PopupDialog(title: "Expired Invitation", message: "Your invitation has expired or been revoked.")
-                            let button = DefaultButton(title: "OK") {}
+                            let button = DefaultButton(title: "OK") {
+                                if flow == .onboardInvite {
+                                    // If we don't have a currrent group|channel then we are in the lobby
+                                    if StateController.instance.groupId == nil || StateController.instance.channelId == nil {
+                                        self.route()
+                                    }
+                                }
+                            }
                             button.buttonHeight = 48
                             popup.addButton(button)
                             topController.present(popup, animated: true)
@@ -328,10 +362,10 @@ class MainController: NSObject, iRateDelegate {
     
     func afterGroupInvite(groupId: String, groupTitle: String) {
         
-        FireController.instance.findFirstChannel(groupId: groupId) { firstChannelId in
-            if firstChannelId != nil {
-                StateController.instance.setChannelId(channelId: firstChannelId!, groupId: groupId)
-                self.showChannel(groupId: groupId, channelId: firstChannelId!)
+        FireController.instance.autoPickChannel(groupId: groupId) { channelId in
+            if channelId != nil {
+                StateController.instance.setChannelId(channelId: channelId!, groupId: groupId)
+                self.showChannel(groupId: groupId, channelId: channelId!)
                 Utils.delay(1.0) {
                     if let topController = UIViewController.topMostViewController() {
                         let popup = PopupDialog(title: "Welcome!", message: "You are now a member of the \(groupTitle) Patchr group. Use the navigation drawer to discover and join channels.")
@@ -414,4 +448,13 @@ extension MainController {
     func iRateUserDidRequestReminderToRateApp() {
         Reporting.track("Requested Reminder to Rate")
     }
+}
+
+enum Flow: Int {
+    case onboardLogin
+    case onboardCreate
+    case onboardInvite
+    case internalCreate
+    case internalInvite
+    case none
 }

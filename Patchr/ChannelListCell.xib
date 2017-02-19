@@ -14,7 +14,7 @@
             <rect key="frame" x="0.0" y="0.0" width="389" height="36"/>
             <autoresizingMask key="autoresizingMask"/>
             <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="LTM-Mi-qV7" id="f05-yI-zfl">
-                <rect key="frame" x="0.0" y="0.0" width="389" height="35"/>
+                <rect key="frame" x="0.0" y="0.0" width="389" height="35.5"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="imgStarFilledLight" translatesAutoresizingMaskIntoConstraints="NO" id="MzM-rM-rpX">
@@ -40,7 +40,7 @@
                             <constraint firstAttribute="width" constant="16" id="rka-wR-vMS"/>
                         </constraints>
                     </imageView>
-                    <label hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="(not a member)" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="WMI-oF-Ce5" userLabel="Status">
+                    <label hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="member" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="WMI-oF-Ce5" userLabel="Status">
                         <rect key="frame" x="242" y="8" width="95" height="21"/>
                         <constraints>
                             <constraint firstAttribute="width" constant="95" id="bU1-dh-SPS"/>

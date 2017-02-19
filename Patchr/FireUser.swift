@@ -22,13 +22,12 @@ class FireUser: NSObject {
     var createdBy: String?
     var modifiedAt: Int?
     var presence: Any?
-    var email: String?
     var username: String?
     var profile: FireProfile?
     
     /* Group link properties for the current user */
     var disabled: Bool?
-    var hideEmail: Bool?
+    var email: String?
     var notifications: String?
     
     /* Group link properties for the user */
@@ -47,7 +46,6 @@ class FireUser: NSObject {
             user.createdBy = dict!["created_by"] as? String
             user.modifiedAt = dict!["modified_at"] as? Int
             user.presence = dict!["presence"]
-            user.email = dict!["email"] as? String
             user.username = dict!["username"] as? String
             user.profile = FireProfile.from(dict: dict!["profile"] as! [String : Any]?)
             return user
@@ -59,7 +57,7 @@ class FireUser: NSObject {
         self.disabled = nil
         self.role = nil
         self.notifications = nil
-        self.hideEmail = nil
+        self.email = nil
         self.joinedAt = nil
         self.starred = nil
         self.muted = nil
@@ -69,7 +67,7 @@ class FireUser: NSObject {
         self.disabled = dict["disabled"] as? Bool
         self.role = dict["role"] as? String
         self.notifications = dict["notifications"] as? String
-        self.hideEmail = dict["hide_email"] as? Bool
+        self.email = dict["email"] as? String
         self.joinedAt = dict["joined_at"] as? Int
         self.starred = dict["starred"] as? Bool
         self.muted = dict["muted"] as? Bool

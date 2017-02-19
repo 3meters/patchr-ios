@@ -20,7 +20,7 @@ class GroupQuery: NSObject {
         super.init()
         self.groupPath = "groups/\(groupId)"
         if userId != nil {
-            self.linkPath = "member-groups/\(userId!)/\(groupId)"
+            self.linkPath = "group-members/\(groupId)/\(userId!)"
         }
     }
 

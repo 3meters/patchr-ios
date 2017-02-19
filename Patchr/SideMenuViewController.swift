@@ -98,7 +98,7 @@ class SideMenuViewController: BaseTableController, UITableViewDelegate, UITableV
         self.tableView.tableHeaderView = self.menuHeader	// Triggers table binding
 
         self.membersCell = WrapperTableViewCell(view: MenuItemView(title: "Group members", image: UIImage(named: "imgUsersLight")!), padding: UIEdgeInsets.zero, reuseIdentifier: nil)
-        self.inviteCell = WrapperTableViewCell(view: MenuItemView(title: "Invite", image: UIImage(named: "imgInvite2Light")!), padding: UIEdgeInsets.zero, reuseIdentifier: nil)
+        self.inviteCell = WrapperTableViewCell(view: MenuItemView(title: "Invite to group", image: UIImage(named: "imgInvite2Light")!), padding: UIEdgeInsets.zero, reuseIdentifier: nil)
         self.profileCell = WrapperTableViewCell(view: MenuItemView(title: "Edit profile", image: UIImage(named: "imgEdit2Light")!), padding: UIEdgeInsets.zero, reuseIdentifier: nil)
         self.switchCell = WrapperTableViewCell(view: MenuItemView(title: "Switch groups", image: UIImage(named: "imgSwitchLight")!), padding: UIEdgeInsets.zero, reuseIdentifier: nil)
         self.manageCell = WrapperTableViewCell(view: MenuItemView(title: "Manage group", image: UIImage(named: "imgGroupLight")!), padding: UIEdgeInsets.zero, reuseIdentifier: nil)
@@ -152,7 +152,7 @@ extension SideMenuViewController {
         if selectedCell == self.inviteCell {
             let controller = InviteViewController()
             let wrapper = AirNavigationController(rootViewController: controller)
-            controller.flow = BaseEditViewController.Flow.internalInvite
+            controller.flow = .internalInvite
             UIViewController.topMostViewController()?.present(wrapper, animated: true, completion: nil)
         }
         if selectedCell == self.profileCell {

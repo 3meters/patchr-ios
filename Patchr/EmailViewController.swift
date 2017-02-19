@@ -91,6 +91,9 @@ class EmailViewController: BaseEditViewController {
         self.emailField.autocapitalizationType = .none
         self.emailField.autocorrectionType = .no
         self.emailField.returnKeyType = UIReturnKeyType.next
+        if let email = UserDefaults.standard.string(forKey: Prefs.lastUserEmail) {
+            self.emailField.text = email
+        }
         
         self.contentHolder.addSubview(self.message)
         self.contentHolder.addSubview(self.emailField)
@@ -102,8 +105,6 @@ class EmailViewController: BaseEditViewController {
         /* Navigation bar buttons */
         let nextButton = UIBarButtonItem(title: "Next", style: UIBarButtonItemStyle.plain, target: self, action: #selector(doneAction(sender:)))
         self.navigationItem.rightBarButtonItems = [nextButton]
-
-        self.emailField.text = UserDefaults.standard.object(forKey: PatchrUserDefaultKey(subKey: "userEmail")) as? String
     }
     
     func validateEmail() {
@@ -113,39 +114,42 @@ class EmailViewController: BaseEditViewController {
         
         let email = self.emailField.text!
         
-        FireController.instance.emailProviderExists(email: email, next: { exists in
+        FireController.instance.emailProviderExists(email: email, next: { error, exists in
             
             self.progress?.hide(true)
             self.processing = false
             
-            if let exists = exists {
-                if self.flow == .onboardLogin {
-                    if !exists {
-                        self.emailField.errorMessage = "No account found."
-                    }
-                    else {
-                        let controller = PasswordViewController()
-                        controller.flow = self.flow
-                        controller.branch = .login
-                        controller.inputEmail = email
-                        self.navigationController?.pushViewController(controller, animated: true)
-                    }
+            if error != nil {
+                self.emailField.errorMessage = error!.localizedDescription
+                return
+            }
+            
+            if self.flow == .onboardLogin {
+                if !exists {
+                    self.emailField.errorMessage = "No account found."
                 }
-                else if self.flow == .onboardInvite {
+                else {
                     let controller = PasswordViewController()
                     controller.flow = self.flow
-                    controller.branch = exists ? .login : .signup
-                    controller.inputEmail = email
-                    controller.inputInviteLink = self.inputInviteLink
-                    self.navigationController?.pushViewController(controller, animated: true)
-                }
-                else if self.flow == .onboardCreate {
-                    let controller = PasswordViewController()
-                    controller.flow = self.flow
-                    controller.branch = exists ? .login : .signup
+                    controller.branch = .login
                     controller.inputEmail = email
                     self.navigationController?.pushViewController(controller, animated: true)
                 }
+            }
+            else if self.flow == .onboardInvite {
+                let controller = PasswordViewController()
+                controller.flow = self.flow
+                controller.branch = exists ? .login : .signup
+                controller.inputEmail = email
+                controller.inputInviteLink = self.inputInviteLink
+                self.navigationController?.pushViewController(controller, animated: true)
+            }
+            else if self.flow == .onboardCreate {
+                let controller = PasswordViewController()
+                controller.flow = self.flow
+                controller.branch = exists ? .login : .signup
+                controller.inputEmail = email
+                self.navigationController?.pushViewController(controller, animated: true)
             }
         })
     }

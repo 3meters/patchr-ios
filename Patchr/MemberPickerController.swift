@@ -15,13 +15,16 @@ import Firebase
 import FirebaseDatabaseUI
 
 class MemberPickerController: BaseTableController, UITableViewDelegate {
-    
+    /* Routes
+     * - Channel create flow: channeledit->memberpicker (.internalCreate)
+     * - From member list: memberlist->memberpicker (.none)
+     */
     var inputChannelId: String?
     
-    var submitButton: UIBarButtonItem!
     var tableView = UITableView(frame: CGRect.zero, style: .plain)
     var tableViewDataSource: FUITableViewDataSource!
     let cellReuseIdentifier = "user-cell"
+    var doneButton: UIBarButtonItem!
     
     var invites: [String: Any] = [:]
     var flow: Flow = .none
@@ -57,10 +60,6 @@ class MemberPickerController: BaseTableController, UITableViewDelegate {
      * Events
      *--------------------------------------------------------------------------------------------*/
     
-    func sendInvitesAction(sender: AnyObject?) {
-        invite()
-    }
-    
     func closeAction(sender: AnyObject?) {
         if self.flow == .internalCreate {
             let groupId = StateController.instance.groupId!
@@ -69,6 +68,10 @@ class MemberPickerController: BaseTableController, UITableViewDelegate {
             MainController.instance.showChannel(groupId: groupId, channelId: channelId)
         }
         self.close(animated: true)
+    }
+    
+    func addMembersAction(sender: AnyObject?) {
+        addMembers()
     }
     
     /*--------------------------------------------------------------------------------------------
@@ -86,10 +89,11 @@ class MemberPickerController: BaseTableController, UITableViewDelegate {
         
         self.view.addSubview(self.tableView)
         
-        self.submitButton = UIBarButtonItem(title: "Add", style: .plain, target: self, action: #selector(sendInvitesAction(sender:)))
-        self.submitButton.isEnabled = false
-        self.navigationItem.rightBarButtonItems = [self.submitButton]
         let closeButton = UIBarButtonItem(barButtonSystemItem: .stop, target: self, action: #selector(self.closeAction(sender:)))
+        let doneTitle = self.flow == .internalCreate ? "Done" : "Add"
+        self.doneButton = UIBarButtonItem(title: doneTitle, style: .plain, target: self, action: #selector(addMembersAction(sender:)))
+        self.doneButton.isEnabled = self.flow == .internalCreate ? true : false
+        self.navigationItem.rightBarButtonItems = [self.doneButton]
         self.navigationItem.leftBarButtonItems = [closeButton]
     }
 
@@ -99,7 +103,7 @@ class MemberPickerController: BaseTableController, UITableViewDelegate {
         let channelName = self.channel.name!
         let query = FireController.db.child("group-members/\(groupId)").queryOrdered(byChild: "index_priority_joined_at_desc")
         
-        self.navigationItem.title = "Invite to # \(channelName)"
+        self.navigationItem.title = "Add members to #\(channelName)"
         
         self.tableViewDataSource = FUITableViewDataSource(
             query: query,
@@ -143,32 +147,38 @@ class MemberPickerController: BaseTableController, UITableViewDelegate {
         self.tableView.dataSource = self.tableViewDataSource
     }
     
-    func invite() {
-        let channelName = self.channel.name!
-        var message = "The following users will be added to the \(channelName) channel:\n\n"
-        for userId in self.invites.keys {
-            if let username = (self.invites[userId] as! FireUser).username {
-                message += "\(username)\n"
-            }
-        }
+    func addMembers() {
         
-        UpdateConfirmationAlert(title: "Add to channel", message: message, actionTitle: "Add", cancelTitle: "Cancel", delegate: nil, onDismiss: { doit in
-            if doit {
-                let groupId = self.channel.groupId!
-                let channelId = self.channel.id!
-                for userId in self.invites.keys {
-                    FireController.instance.addUserToChannel(userId: userId, groupId: groupId, channelId: channelId, channelName: channelName)
-                }
-                if self.flow == .none {
-                    self.close(animated: true)
-                }
-                else if self.flow == .internalCreate {
-                    StateController.instance.setChannelId(channelId: channelId, groupId: groupId) // We know it's good
-                    MainController.instance.showChannel(groupId: groupId, channelId: channelId)
-                    self.close(animated: true)
+        if self.flow == .internalCreate {
+            let groupId = self.channel.groupId!
+            let channelId = self.channel.id!
+            let channelName = self.channel.name!
+            for userId in self.invites.keys {
+                FireController.instance.addUserToChannel(userId: userId, groupId: groupId, channelId: channelId, channelName: channelName)
+            }
+            StateController.instance.setChannelId(channelId: channelId, groupId: groupId) // We know it's good
+            MainController.instance.showChannel(groupId: groupId, channelId: channelId)
+            self.close(animated: true)
+        }
+        else {
+            let channelName = self.channel.name!
+            var message = "The following group members will be added to the \(channelName) channel:\n\n"
+            for userId in self.invites.keys {
+                if let username = (self.invites[userId] as! FireUser).username {
+                    message += "\(username)\n"
                 }
             }
-        })
+            UpdateConfirmationAlert(title: "Add to channel", message: message, actionTitle: "Add", cancelTitle: "Cancel", delegate: nil, onDismiss: { doit in
+                if doit {
+                    let groupId = self.channel.groupId!
+                    let channelId = self.channel.id!
+                    for userId in self.invites.keys {
+                        FireController.instance.addUserToChannel(userId: userId, groupId: groupId, channelId: channelId, channelName: channelName)
+                    }
+                    self.close(animated: true)
+                }
+            })
+        }
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -177,7 +187,22 @@ class MemberPickerController: BaseTableController, UITableViewDelegate {
                 cell.checkBox?.setOn(true, animated: true)
                 let user = cell.user!
                 self.invites[user.id!] = user
-                self.submitButton.isEnabled = (self.invites.count > 0)
+                if self.invites.count == 0 {
+                    if self.flow == .internalCreate {
+                        self.doneButton.title = "Done"
+                    }
+                    else {
+                        self.doneButton.isEnabled = false
+                    }
+                }
+                else {
+                    if self.flow == .internalCreate {
+                        self.doneButton.title = "Add"
+                    }
+                    else {
+                        self.doneButton.isEnabled = true
+                    }
+                }
             }
         }
     }
@@ -187,16 +212,26 @@ class MemberPickerController: BaseTableController, UITableViewDelegate {
             cell.checkBox?.setOn(false, animated: true)
             let user = cell.user!
             self.invites.removeValue(forKey: user.id!)
-            self.submitButton.isEnabled = (self.invites.count > 0)
+            if self.invites.count == 0 {
+                if self.flow == .internalCreate {
+                    self.doneButton.title = "Done"
+                }
+                else {
+                    self.doneButton.isEnabled = false
+                }
+            }
+            else {
+                if self.flow == .internalCreate {
+                    self.doneButton.title = "Add"
+                }
+                else {
+                    self.doneButton.isEnabled = true
+                }
+            }
         }
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 64
-    }
-    
-    enum Flow: Int {
-        case internalCreate
-        case none
     }
 }

@@ -13,6 +13,10 @@ import Firebase
 import FirebaseAuth
 import CLTokenInputView
 
+protocol PickerDelegate {
+    func update(channels: [String: Any])
+}
+
 class InviteViewController: BaseEditViewController {
 	
 	var message	= AirLabelTitle()
@@ -77,10 +81,10 @@ class InviteViewController: BaseEditViewController {
     
     func doneAction(sender: AnyObject?) {
         let groupId = self.inputGroupId!
-        FireController.instance.findFirstChannel(groupId: groupId) { firstChannelId in
-            if firstChannelId != nil {
-                StateController.instance.setChannelId(channelId: firstChannelId!, groupId: groupId)
-                MainController.instance.showChannel(groupId: groupId, channelId: firstChannelId!)
+        FireController.instance.autoPickChannel(groupId: groupId) { channelId in
+            if channelId != nil {
+                StateController.instance.setChannelId(channelId: channelId!, groupId: groupId)
+                MainController.instance.showChannel(groupId: groupId, channelId: channelId!)
                 let _ = self.navigationController?.popToRootViewController(animated: false)
                 self.close()
             }

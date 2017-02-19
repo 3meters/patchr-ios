@@ -70,7 +70,7 @@ class BranchProvider: NSObject {
                 completion(nil, error as NSError?)
             }
             else {
-                Log.d("Branch member invite link created: \(url)", breadcrumb: true)
+                Log.d("Branch member invite link created: \(url!)", breadcrumb: true)
                 let invite: InviteItem = InviteItem(group: nil, url: url!)
                 completion(invite, nil)
             }

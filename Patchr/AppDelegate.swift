@@ -89,19 +89,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FIRMessagingDelegate {
         #endif        
 
         /* Flag first launch for special treatment */
-        if !UserDefaults.standard.bool(forKey: "firstLaunch") {
-            UserDefaults.standard.set(true, forKey: "firstLaunch")
+        if !UserDefaults.standard.bool(forKey: Prefs.firstLaunch) {
+            let appDomain = Bundle.main.bundleIdentifier!
+            UserDefaults.standard.removePersistentDomain(forName: appDomain)    // Clear old prefs
+            UserDefaults.standard.set(true, forKey: Prefs.firstLaunch)
             self.firstLaunch = true
             Reporting.track("Launched for First Time")
         }
         
         self.window = UIWindow(frame: UIScreen.main.bounds)
 
-        /* Load setting defaults */
-        let defaultSettingsFile: NSString = Bundle.main.path(forResource: "DefaultSettings", ofType: "plist")! as NSString
-        let settingsDictionary: NSDictionary = NSDictionary(contentsOfFile: defaultSettingsFile as String)!
-        UserDefaults.standard.register(defaults: settingsDictionary as! [String:AnyObject])
-        
         /* Instance the data controller */
         FireController.instance.prepare()
         
@@ -202,7 +199,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FIRMessagingDelegate {
             let messageId = userInfo["message_id"] as! String
             let userInfo = ["group_id": groupId, "channel_id": channelId, "message_id": messageId]
             NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.UnreadChange), object: self, userInfo: userInfo)
-            if UserDefaults.standard.bool(forKey: PatchrUserDefaultKey(subKey: "SoundEffects")) {
+            if UserDefaults.standard.bool(forKey: PerUserKey(key: Prefs.soundEffects)) {
                 AudioController.instance.play(sound: Sound.notification.rawValue)
             }
         }

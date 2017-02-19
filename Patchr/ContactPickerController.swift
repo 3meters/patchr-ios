@@ -13,10 +13,21 @@ import CLTokenInputView
 import Contacts
 
 class ContactPickerController: BaseTableController, UITableViewDelegate, UITableViewDataSource, CLTokenInputViewDelegate {
+    /* Routes
+     * - Group create flow: password->groupcreate->contactpicker (.onboardCreate)
+     * - Group create flow (authorized): groupswitcher->groupcreate->contactpicker (.internalCreate)
+     * - Group create flow (not authorized): groupswitcher->groupcreate->invite->contactpicker (.internalCreate)
+     *
+     * - Invite member flow: memberlist->invite->contactpicker (.internalInvite)
+     * - Invite member flow: sidemenu->invite->contactpicker (.internalInvite)
+     *
+     * - Invite guest flow: invite->channelpicker->contactpicker
+     *
+     * - From channel view: channelview->contactpicker (.none)
+     */
 
     var contactsView: AirContactView!
     var tableView: AirTableView!
-    var inviteButton: UIBarButtonItem!
     
     var sectionTitles: [String]?
     
@@ -36,7 +47,8 @@ class ContactPickerController: BaseTableController, UITableViewDelegate, UITable
     var filterText: String?
     var filterActive = false
     
-    var flow: BaseEditViewController.Flow = .none
+    var doneButton: UIBarButtonItem!
+    var flow: Flow = .none
     
     let keysToFetch = [
         CNContactFormatter.descriptorForRequiredKeys(for: .fullName),
@@ -74,37 +86,18 @@ class ContactPickerController: BaseTableController, UITableViewDelegate, UITable
     *--------------------------------------------------------------------------------------------*/
     
     func closeAction(sender: AnyObject?) {
-        if self.flow == .internalInvite {
-            self.close()
-            return
+        self.close()
+    }
+    
+    func doneAction(sender: AnyObject?) {
+        if self.invites.count > 0 {
+            invite()
         }
-
-        let groupId = self.inputGroupId!
-        FireController.instance.findFirstChannel(groupId: groupId) { firstChannelId in
-            if firstChannelId != nil {
-                StateController.instance.setChannelId(channelId: firstChannelId!, groupId: groupId)
-                MainController.instance.showChannel(groupId: groupId, channelId: firstChannelId!)
-                let _ = self.navigationController?.popToRootViewController(animated: false)
-                self.close()
-            }
+        else if self.flow == .onboardCreate || self.flow == .internalCreate {
+            self.navigateToGroup()
         }
     }
     
-    func inviteAction(sender: AnyObject?) {
-        invite()
-    }
-    
-    func onboardAction(sender: AnyObject?) {
-        let groupId = self.inputGroupId!
-        FireController.instance.findFirstChannel(groupId: groupId) { firstChannelId in
-            if firstChannelId != nil {
-                StateController.instance.setChannelId(channelId: firstChannelId!, groupId: groupId)
-                MainController.instance.showChannel(groupId: groupId, channelId: firstChannelId!)
-                self.navigationController?.close()
-            }
-        }
-    }
-
     /*--------------------------------------------------------------------------------------------
     * Notifications
     *--------------------------------------------------------------------------------------------*/
@@ -157,16 +150,14 @@ class ContactPickerController: BaseTableController, UITableViewDelegate, UITable
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(notification:)), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(notification:)), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
         
-        if self.flow == .internalCreate || self.flow == .internalInvite {
+        let doneTitle = (self.flow == .internalCreate || self.flow == .onboardCreate) ? "Done" : "Invite"
+        self.doneButton = UIBarButtonItem(title: doneTitle, style: .plain, target: self, action: #selector(doneAction(sender:)))
+        self.doneButton.isEnabled = (self.flow == .internalCreate || self.flow == .onboardCreate) ? true : false
+        self.navigationItem.rightBarButtonItems = [doneButton]
+        
+        if self.flow == .none {
             let closeButton = UIBarButtonItem(barButtonSystemItem: .stop, target: self, action: #selector(closeAction(sender:)))
             self.navigationItem.leftBarButtonItems = [closeButton]
-            self.inviteButton = UIBarButtonItem(title: "Invite", style: .plain, target: self, action: #selector(inviteAction(sender:)))
-            self.inviteButton.isEnabled = false
-            self.navigationItem.rightBarButtonItems = [inviteButton]
-        }
-        else {
-            self.inviteButton = UIBarButtonItem(title: "Done", style: .plain, target: self, action: #selector(inviteAction(sender:)))
-            self.navigationItem.rightBarButtonItems = [inviteButton]
         }
     }
     
@@ -211,6 +202,17 @@ class ContactPickerController: BaseTableController, UITableViewDelegate, UITable
                 self.alert(title: "Access to contacts has been denied. Check your privacy settings to allow access.")
             }
         })
+    }
+    
+    func navigateToGroup() {
+        let groupId = self.inputGroupId!
+        FireController.instance.autoPickChannel(groupId: groupId) { channelId in
+            if channelId != nil {
+                StateController.instance.setChannelId(channelId: channelId!, groupId: groupId)
+                MainController.instance.showChannel(groupId: groupId, channelId: channelId!)
+                self.navigationController?.close()
+            }
+        }
     }
     
     func loadContacts() {
@@ -324,18 +326,24 @@ class ContactPickerController: BaseTableController, UITableViewDelegate, UITable
                         task["inviter"] = ["id": userId, "title": userTitle, "username": username, "email": userEmail]
                         task["invite_id"] = inviteId
                         task["link"] = inviteUrl
-                        task["recipients"] = [email]
+                        task["recipient"] = email
                         task["state"] = "waiting"
                         task["type"] = "invite-members"
                         
-                        ref.setValue(task)
-                        if self.flow == .onboardCreate || self.flow == .internalCreate {
-                            self.onboardAction(sender: nil)
+                        ref.setValue(task) { error, ref in
+                            if error != nil {
+                                Log.w("Error queueing invite task: \(error!)")
+                            }
+                            else {
+                                UIShared.Toast(message: "Invites sent")
+                            }
+                            if self.flow == .onboardCreate || self.flow == .internalCreate {
+                                self.navigateToGroup()
+                            }
+                            else {
+                                self.close()
+                            }
                         }
-                        else {
-                            self.close()
-                        }
-                        UIShared.Toast(message: "Invites sent")
                     }
                 })
             }
@@ -378,13 +386,19 @@ class ContactPickerController: BaseTableController, UITableViewDelegate, UITable
                         task["inviter"] = ["id": userId, "title": userTitle, "username": username, "email": userEmail]
                         task["invite_id"] = inviteId
                         task["link"] = inviteUrl
-                        task["recipients"] = [email]
+                        task["recipient"] = email
                         task["state"] = "waiting"
                         task["type"] = type
                         
-                        ref.setValue(task)
-                        self.close(root: (self.flow != .internalInvite))
-                        UIShared.Toast(message: "Invites sent")
+                        ref.setValue(task) { error, ref in
+                            if error != nil {
+                                Log.w("Error queueing invite task: \(error!)")
+                            }
+                            else {
+                                UIShared.Toast(message: "Invites sent")
+                            }
+                            self.close(root: (self.flow != .internalInvite))
+                        }
                     }
                 })
             }
@@ -525,28 +539,46 @@ extension ContactPickerController {
     }
     
     func tokenInputView(_ view: CLTokenInputView, didAdd token: CLToken) {
-        if self.flow == .internalCreate || self.flow == .internalInvite {
-            self.inviteButton.isEnabled = (self.contactsView.allTokens.count > 0)
+        if self.contactsView.allTokens.count == 0 {
+            if self.flow == .internalCreate || self.flow == .onboardCreate {
+                self.doneButton.title = "Done"
+            }
+            else {
+                self.doneButton.isEnabled = false
+            }
         }
-        else if self.contactsView.allTokens.count > 0 {
-            self.inviteButton.title = "Invite"
+        else {
+            if self.flow == .internalCreate || self.flow == .onboardCreate {
+                self.doneButton.title = "Invite"
+            }
+            else {
+                self.doneButton.isEnabled = true
+            }
         }
         self.contactsView.searchImage.fadeOut(duration: 0.0)
         self.contactsView.placeholder.fadeOut(duration: 0.0)
     }
     
     func tokenInputView(_ view: CLTokenInputView, didRemove token: CLToken) {
-        self.inviteButton.isEnabled = (self.contactsView.allTokens.count > 0)
         if self.contactsView.allTokens.count == 0 {
             self.contactsView.searchImage.fadeIn(duration: 0.2)
             self.contactsView.placeholder.fadeIn(duration: 0.2)
-            if self.flow == .internalCreate || self.flow == .internalInvite {
-                self.inviteButton.isEnabled = false
+            if self.flow == .internalCreate || self.flow == .onboardCreate {
+                self.doneButton.title = "Done"
             }
-            else if self.contactsView.allTokens.count > 0 {
-                self.inviteButton.title = "Done"
+            else {
+                self.doneButton.isEnabled = false
             }
         }
+        else {
+            if self.flow == .internalCreate || self.flow == .onboardCreate {
+                self.doneButton.title = "Invite"
+            }
+            else {
+                self.doneButton.isEnabled = true
+            }
+        }
+        
         if let cell = token.context as? UserListCell, let contact = cell.contact {
             cell.setSelected(false, animated: true)
             cell.checkBox?.setOn(false, animated: true)

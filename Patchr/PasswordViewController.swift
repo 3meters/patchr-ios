@@ -174,24 +174,28 @@ class PasswordViewController: BaseEditViewController {
         
         if self.branch == .login {
             FIRAuth.auth()?.signIn(withEmail: email, password: password) { user, error in
+                if error == nil {
+                    UserDefaults.standard.set(email, forKey: Prefs.lastUserEmail)
+                }
                 self.authenticated(user: user, error: error)
             }
         }
         else {  // Only happens if creating group
             
-            FIRAuth.auth()?.createUser(withEmail: email, password: password, completion: { user, error in
+            FIRAuth.auth()?.createUser(withEmail: email, password: password, completion: { authUser, error in
                 
                 self.processing = false
                 self.progress?.hide(true)
 
-                if error == nil, let user = user {
+                if error == nil, let authUser = authUser {
                     let username = self.userNameField.text!
-                    let email = user.email!
-                    FireController.instance.addUser(userId: user.uid, username: username, email: email, then: { success in
-                        if success {
-                            user.sendEmailVerification()
+                    let email = authUser.email!
+                    UserDefaults.standard.set(email, forKey: Prefs.lastUserEmail)
+                    FireController.instance.addUser(userId: authUser.uid, username: username, then: { error, result in
+                        if error == nil {
+                            authUser.sendEmailVerification()
                             Reporting.track("Account Created")
-                            UserController.instance.setUserId(userId: user.uid) { result in
+                            UserController.instance.setUserId(userId: authUser.uid) { result in
                                 if self.flow == .onboardCreate {
                                     let controller = GroupCreateController()
                                     controller.flow = self.flow
@@ -200,7 +204,7 @@ class PasswordViewController: BaseEditViewController {
                                 else if self.flow == .onboardInvite {
                                     let controller = EmptyViewController()
                                     self.navigationController?.setViewControllers([controller], animated: true)
-                                    MainController.instance.routeDeepLink(link: self.inputInviteLink, error: nil)
+                                    MainController.instance.routeDeepLink(link: self.inputInviteLink, flow: self.flow, error: nil)
                                 }
                             }
                         }
@@ -233,7 +237,7 @@ class PasswordViewController: BaseEditViewController {
                     else if self!.flow == .onboardInvite {
                         let controller = EmptyViewController()
                         self!.navigationController?.setViewControllers([controller], animated: true)
-                        MainController.instance.routeDeepLink(link: self!.inputInviteLink, error: nil)
+                        MainController.instance.routeDeepLink(link: self!.inputInviteLink, flow: self!.flow, error: nil)
                     }
                 }
             }

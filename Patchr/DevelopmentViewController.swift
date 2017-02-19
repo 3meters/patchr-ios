@@ -12,8 +12,6 @@ import SDWebImage
 
 class DevelopmentViewController: BaseViewController {
     
-    let userDefaults = { UserDefaults.standard }()
-	
 	var enableDevModeLabel		= AirLabelDisplay()
 	var enableDevModeSwitch		= UISwitch()
 	var clearImageCacheButton	= AirButton()
@@ -52,14 +50,14 @@ class DevelopmentViewController: BaseViewController {
 	}
     
     func enableDevModeAction(sender: AnyObject) {
-        self.userDefaults.set(enableDevModeSwitch.isOn, forKey: PatchrUserDefaultKey(subKey: "enableDevModeAction"))
+        UserDefaults.standard.set(enableDevModeSwitch.isOn, forKey: Prefs.developerMode)
         if self.enableDevModeSwitch.isOn {
             AudioController.instance.play(sound: Sound.pop.rawValue)
         }
     }
 
 	func statusBarHiddenAction(sender: AnyObject) {
-		self.userDefaults.set(statusBarHiddenSwitch.isOn, forKey: PatchrUserDefaultKey(subKey: "statusBarHidden"))
+		UserDefaults.standard.set(statusBarHiddenSwitch.isOn, forKey: Prefs.statusBarHidden)
         self.statusBarHidden = statusBarHiddenSwitch.isOn
 		self.view.setNeedsLayout()
 	}
@@ -82,8 +80,8 @@ class DevelopmentViewController: BaseViewController {
 		Reporting.screen("DevelopmentSettings")
 		self.view.backgroundColor = Theme.colorBackgroundForm
 		
-		self.enableDevModeSwitch.isOn = userDefaults.bool(forKey: PatchrUserDefaultKey(subKey: "enableDevModeAction"))
-		self.statusBarHiddenSwitch.isOn = userDefaults.bool(forKey: PatchrUserDefaultKey(subKey: "statusBarHidden"))
+		self.enableDevModeSwitch.isOn = UserDefaults.standard.bool(forKey: Prefs.developerMode)
+		self.statusBarHiddenSwitch.isOn = UserDefaults.standard.bool(forKey: Prefs.statusBarHidden)
 		
 		self.enableDevModeLabel.text = "Enable development mode:"
 		self.statusBarHiddenLabel.text = "Status bar hidden:"

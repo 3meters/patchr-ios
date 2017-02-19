@@ -69,17 +69,22 @@ class ChannelListCell: UITableViewCell {
         self.unreadQuery = nil
     }
     
-    func bind(channel: FireChannel) {
+    func bind(channel: FireChannel, searching: Bool = false) {
         self.channel = channel
         
         self.title?.text = "# \(channel.name!)"
         self.lock?.isHidden = (channel.visibility != "private")
         self.star?.isHidden = !(channel.starred != nil && channel.starred!)
         
-        if channel.joinedAt == nil {
+        if searching && channel.joinedAt != nil {
+            self.status?.textColor = MaterialColor.lightGreen.darken1
             self.status?.isHidden = false
+            self.statusWidth?.constant = 70
         }
-        self.statusWidth?.constant = (self.status?.isHidden)! ? 0 : 95
+        else {
+            self.status?.isHidden = true
+            self.statusWidth?.constant = 0
+        }
         self.layoutIfNeeded()
     }
 }

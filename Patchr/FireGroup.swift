@@ -31,7 +31,7 @@ class FireGroup: NSObject {
     
     /* Link properties for the current user */
     var disabled: Bool?
-    var hideEmail: Bool?
+    var email: String?
     var joinedAt: Int?
     var notifications: String?
     var role: String?
@@ -55,17 +55,17 @@ class FireGroup: NSObject {
     
     func membershipClear() {
         self.disabled = nil
+        self.email = nil
         self.role = nil
         self.notifications = nil
-        self.hideEmail = nil
         self.joinedAt = nil
     }
     
     func membershipFrom(dict: [String: Any]) {
         self.disabled = dict["disabled"] as? Bool
+        self.email = dict["email"] as? String
         self.role = dict["role"] as? String
         self.notifications = dict["notifications"] as? String
-        self.hideEmail = dict["hide_email"] as? Bool
         self.joinedAt = dict["joined_at"] as? Int
     }
 }

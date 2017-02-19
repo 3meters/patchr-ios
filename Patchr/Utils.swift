@@ -166,55 +166,6 @@ struct Utils {
 		}
 	}
     
-    static func convertUInt32toUInt8Array(input: UInt32) -> [UInt8] {
-        var bigEndian = input.bigEndian
-        let count = MemoryLayout<UInt32>.size
-        let bytePtr = withUnsafePointer(to: &bigEndian) {
-            $0.withMemoryRebound(to: UInt8.self, capacity: count) {
-                UnsafeBufferPointer(start: $0, count: count)
-            }
-        }
-        let byteArray = Array(bytePtr)
-        return byteArray
-    }
-
-    static func TemporaryFileURLForImage(image: UIImage, name: String, shared: Bool = false) -> NSURL? {
-        
-        var imageDirectoryURL: NSURL!
-        
-        if shared {
-            if let containerURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: "group.com.3meters.patchr.ios") {
-                
-                do {
-                    let containerURLWithName = containerURL.appendingPathComponent(name)
-                    if !FileManager.default.fileExists(atPath: containerURLWithName.path) {
-                        let pathString = containerURL.path
-                        try FileManager.default.createDirectory(atPath: pathString, withIntermediateDirectories: false, attributes: nil)
-                    }
-                }
-                catch let error as NSError {
-                    Log.d("\(error.localizedDescription)")
-                }
-                
-                imageDirectoryURL = containerURL as NSURL!
-                imageDirectoryURL = imageDirectoryURL.appendingPathComponent(name) as NSURL!
-                imageDirectoryURL = imageDirectoryURL.appendingPathExtension("jpg") as NSURL!
-            }
-        }
-        else {
-            let temporaryFilePath = NSTemporaryDirectory() + "patchr_temp_file_\(name).jpg"
-            imageDirectoryURL = NSURL(fileURLWithPath: temporaryFilePath)
-        }
-        
-        if let imageData: NSData = UIImageJPEGRepresentation(image, /*compressionQuality*/0.70) as NSData? {
-            if imageData.write(toFile: imageDirectoryURL.path!, atomically: true) {
-                return imageDirectoryURL
-            }
-        }
-        
-        return nil
-    }
-    
     static func prepareImage(image inImage: UIImage) -> UIImage {
 		var image = inImage;
         let scalingNeeded: Bool = (image.size.width > IMAGE_DIMENSION_MAX || image.size.height > IMAGE_DIMENSION_MAX)
@@ -228,13 +179,8 @@ struct Utils {
         return image
     }
 	
-	static func clearHistory() {
-		let defaults = UserDefaults.standard
-		defaults.set(nil, forKey:PatchrUserDefaultKey(subKey: "recent.searches"))
-		if let groupDefaults = UserDefaults(suiteName: "group.com.3meters.patchr.ios") {
-			groupDefaults.set(nil, forKey:PatchrUserDefaultKey(subKey: "recent.patches"))
-			groupDefaults.set(nil, forKey:PatchrUserDefaultKey(subKey: "nearby.patches"))
-		}
+	static func clearSearchHistory() {
+		UserDefaults.standard.set(nil, forKey: PerUserKey(key: Prefs.searchHistory))
 	}
     
     static func appState() -> String {
@@ -244,53 +190,8 @@ struct Utils {
         return appState
     }
     
-    static func updateRecents(recent: [String:AnyObject]) {
-        
-        if let groupDefaults = UserDefaults(suiteName: "group.com.3meters.patchr.ios") {
-            if var recentPatches = groupDefaults.array(forKey: PatchrUserDefaultKey(subKey: "recent.patches")) as? [[String:AnyObject]] {
-        
-                /* Replace if found else append */
-                var index = 0
-                var found = false
-                for item in recentPatches {
-                    if (item["id_"] as! String) == (recent["id_"] as! String) {
-                        recentPatches[index] = recent
-                        found = true
-                        break
-                    }
-                    index += 1
-                }
-                
-                if !found {
-                    recentPatches.append(recent)
-                }
-                
-                /* Sort descending */
-                recentPatches.sort {
-                    item1, item2 in
-                    let date1: Int64 = (item1["recentDate"] as! NSNumber).int64Value
-                    let date2: Int64 = (item2["recentDate"] as! NSNumber).int64Value
-                    return date1 > date2 // > descending, < for ascending
-                }
-                
-                /* Trim to 10 most recent */
-                if recentPatches.count > 10 {
-                    recentPatches = Array(recentPatches[0..<10])
-                }
-                
-                groupDefaults.set(recentPatches, forKey:PatchrUserDefaultKey(subKey: "recent.patches"))
-            }
-            else {
-                groupDefaults.set([recent], forKey:PatchrUserDefaultKey(subKey: "recent.patches"))
-            }
-        }
-    }
-	
 	static func updateSearches(search: String) {
-		
-		let defaults = UserDefaults.standard
-		if var searches = defaults.array(forKey: PatchrUserDefaultKey(subKey: "recent.searches")) as? [String] {
-			
+		if var searches = UserDefaults.standard.array(forKey: PerUserKey(key: Prefs.searchHistory)) as? [String] {
 			/* Replace if found else append */
 			var index = 0
 			var found = false
@@ -302,47 +203,15 @@ struct Utils {
 				}
 				index += 1
 			}
-			
 			if !found {
 				searches.append(search)
 			}
-			
-			defaults.set(searches, forKey:PatchrUserDefaultKey(subKey: "recent.searches"))
+			UserDefaults.standard.set(searches, forKey: PerUserKey(key: Prefs.searchHistory))
 		}
 		else {
-			defaults.set([search], forKey:PatchrUserDefaultKey(subKey: "recent.searches"))
+			UserDefaults.standard.set([search], forKey: PerUserKey(key: Prefs.searchHistory))
 		}
 	}
-    static func updateNearbys(nearby: [NSObject: AnyObject]) -> [[NSObject:AnyObject]] {
-		
-        let nearbys: [[NSObject:AnyObject]] = [nearby]
-		
-        if let groupDefaults = UserDefaults(suiteName: "group.com.3meters.patchr.ios") {
-            if var storedNearbys = groupDefaults.array(forKey: PatchrUserDefaultKey(subKey: "nearby.patches")) as? [[NSObject:AnyObject]] {
-				
-                storedNearbys.append(nearby)
-				
-                /* Sort descending */
-                storedNearbys.sort {(item1:[NSObject:AnyObject], item2:[NSObject:AnyObject]) in
-                    let date1: Int64 = (item1["sentDate" as NSString] as! NSNumber).int64Value
-                    let date2: Int64 = (item2["sentDate" as NSString] as! NSNumber).int64Value
-                    return date1 > date2 // > descending, < for ascending
-                }
-                
-                /* Trim to 10 most recent */
-                if storedNearbys.count > 10 {
-                    storedNearbys = Array(storedNearbys[0..<10])
-                }
-                
-                groupDefaults.set(storedNearbys, forKey:PatchrUserDefaultKey(subKey: "nearby.patches"))
-                return storedNearbys
-            }
-            else {
-                groupDefaults.set(nearbys, forKey:PatchrUserDefaultKey(subKey: "nearby.patches"))
-            }
-        }
-        return nearbys
-    }
     
     @discardableResult static func delay(_ delay: Double, closure: @escaping () -> ()) -> DispatchWorkItem? {
         let task = DispatchWorkItem(block: closure)

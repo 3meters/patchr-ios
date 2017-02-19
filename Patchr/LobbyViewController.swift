@@ -53,20 +53,17 @@ class LobbyViewController: UIViewController {
 	override func viewDidAppear(_ animated: Bool) {
 		
 		if self.firstLaunch {
-			
-			Utils.delay(0.5){
-				let spring = POPSpringAnimation(propertyNamed: kPOPViewFrame)
-				spring?.toValue = NSValue(cgRect: self.imageLogo.frame.offsetBy(dx: 0, dy: -156))
-				spring?.springBounciness = 10
-				spring?.springSpeed = 8
-				self.imageLogo.pop_add(spring, forKey: "moveUp")
-				
-				self.appName.fadeIn(duration: 0.5)
-				self.buttonGroup.fadeIn(duration: 1.0)
-			}
-			
-			Animation.bounce(view: self.imageLogo)
-			
+            Animation.bounce(view: self.imageLogo) {
+                let spring = POPSpringAnimation(propertyNamed: kPOPViewFrame)!
+                spring.toValue = NSValue(cgRect: self.imageLogo.frame.offsetBy(dx: 0, dy: -156))
+                spring.springBounciness = 10
+                spring.springSpeed = 8
+                spring.completionBlock = { animation, finished in
+                    self.appName.fadeIn(duration: 0.5)
+                    self.buttonGroup.fadeIn(duration: 1.0)
+                }
+                self.imageLogo.pop_add(spring, forKey: "moveUp")
+            }
 			self.firstLaunch = false
 		}
 	}
@@ -151,4 +148,3 @@ class LobbyViewController: UIViewController {
         return UIStatusBarStyle.lightContent
     }
 }
-

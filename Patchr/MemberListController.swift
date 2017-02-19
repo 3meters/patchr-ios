@@ -64,13 +64,13 @@ class MemberListController: BaseTableController, UITableViewDelegate {
     
     func groupInviteAction(sender: AnyObject?) {
         let controller = InviteViewController()
+        controller.flow = .internalInvite
         self.navigationController?.pushViewController(controller, animated: true)
     }
     
     func channelInviteAction(sender: AnyObject?) {
         let controller = MemberPickerController()
-        let wrapper = AirNavigationController(rootViewController: controller)
-        UIViewController.topMostViewController()?.present(wrapper, animated: true, completion: nil)
+        self.navigationController?.pushViewController(controller, animated: true)
     }
     
     func closeAction(sender: AnyObject?) {

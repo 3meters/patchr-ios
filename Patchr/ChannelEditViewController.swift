@@ -315,7 +315,10 @@ class ChannelEditViewController: BaseEditViewController {
         
         if self.mode == .update {
             
+            let nameChange = (self.nameField.text != self.channel!.name)
+            let priorName = self.channel!.name!
             var updates = [String: Any]()
+            
             if self.nameField.text != self.channel!.name {
                 updates["name"] = self.nameField.text
             }
@@ -343,23 +346,48 @@ class ChannelEditViewController: BaseEditViewController {
             
             if updates.keys.count > 0 {
                 updates["modified_at"] = FIRServerValue.timestamp()
-                FireController.db.child(self.channel.path).updateChildValues(updates)
+                FireController.db.child(self.channel.path).updateChildValues(updates) { error, ref in
+                    if error != nil {
+                        Log.w("Error updating channel: \(error!.localizedDescription)")
+                        return
+                    }
+                    if nameChange {
+                        let name = self.nameField.text!
+                        let channelId = self.channel.id!
+                        var updates = [String: Any]()
+                        updates["channel-names/\(groupId)/\(name)"] = channelId
+                        updates["channel-names/\(groupId)/\(priorName)"] = NSNull()
+                        FireController.db.updateChildValues(updates) { error, ref in
+                            if error != nil {
+                                Log.w("Error updating channel: \(error!.localizedDescription)")
+                                return
+                            }
+                            self.close(animated: true)
+                        }
+                    }
+                    else {
+                        self.close(animated: true)
+                    }
+                }
             }
-            self.close(animated: true)
-            return
+            else {
+                self.close(animated: true)
+                return
+            }
         }
         
         if self.mode == .insert {
             
             let timestamp = FireController.instance.getServerTimestamp()
             let channelId = "ch-\(Utils.genRandomId())"
+            let name = self.nameField.text!
             let ref = FireController.db.child("group-channels/\(groupId)/\(channelId)")
             
             var photoMap: [String: Any]?
             if let image = self.photoEditView.imageButton.image {
                 let asset = self.photoEditView.imageButton.asset
                 photoMap = self.postPhoto(image: image, asset: asset, next: { error in
-                    if error != nil {
+                    if error == nil {
                         photoMap!["uploading"] = NSNull()
                         ref.child("photo").setValue(photoMap!)
                     }
@@ -371,8 +399,8 @@ class ChannelEditViewController: BaseEditViewController {
             channelMap["created_at"] = Int(timestamp)
             channelMap["created_by"] = userId
             channelMap["general"] = false
-            channelMap["group_id"] = self.inputGroupId!
-            channelMap["name"] = self.nameField.text!
+            channelMap["group_id"] = groupId
+            channelMap["name"] = name
             channelMap["owned_by"] = userId
             if photoMap != nil {
                 channelMap["photo"] = photoMap!
@@ -384,7 +412,15 @@ class ChannelEditViewController: BaseEditViewController {
             channelMap["visibility"] = self.visibilityValue
             
             FireController.instance.addChannelToGroup(channelId: channelId, channelMap: channelMap, groupId: groupId) { success in
-                if success {
+                if !success {
+                    Log.w("Error creating channel")
+                    return
+                }
+                FireController.db.child("channel-names/\(groupId)/\(name)").setValue(channelId) { error, ref in
+                    if error != nil {
+                        Log.w("Error creating channel: \(error!.localizedDescription)")
+                        return
+                    }
                     let controller = MemberPickerController()
                     controller.flow = .internalCreate
                     controller.inputChannelId = channelId
@@ -457,13 +493,13 @@ class ChannelEditViewController: BaseEditViewController {
         
         if self.mode == .insert || !stringsAreEqual(string1: self.nameField.text, string2: self.channel.name) {
             let groupId = self.inputGroupId!
-            FireController.instance.channelNameExistsTask(groupId: groupId, channelName: channelName) { error, result in
+            FireController.instance.channelNameExists(groupId: groupId, channelName: channelName) { error, exists in
                 if error != nil {
                     Log.w("Error checking if channel name is used")
                     then(false)
                     return
                 }
-                if let exists = result as? Bool, exists {
+                if exists {
                     self.nameField.errorMessage = "Choose another channel name"
                     then(false)
                     return

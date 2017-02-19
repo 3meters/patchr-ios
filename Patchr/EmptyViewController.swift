@@ -75,19 +75,19 @@ class EmptyViewController: UIViewController {
     
     func startScene(then: (() -> Void)? = nil) {
         
-        Utils.delay(0.5) {
-            let spring = POPSpringAnimation(propertyNamed: kPOPViewFrame)
-            spring?.toValue = NSValue(cgRect: self.imageLogo.frame.offsetBy(dx: 0, dy: -156))
-            spring?.springBounciness = 10
-            spring?.springSpeed = 8
-            self.imageLogo.pop_add(spring, forKey: "moveUp")
-            self.appName.fadeIn(duration: 0.5) { finished in
-                self.scenePlayed = true
-                then?()
+        Animation.bounce(view: self.imageLogo) {
+            let spring = POPSpringAnimation(propertyNamed: kPOPViewFrame)!
+            spring.toValue = NSValue(cgRect: self.imageLogo.frame.offsetBy(dx: 0, dy: -156))
+            spring.springBounciness = 10
+            spring.springSpeed = 8
+            spring.completionBlock = { animation, finished in
+                self.appName.fadeIn(duration: 0.5) { finished in
+                    self.scenePlayed = true
+                    then?()
+                }
             }
+            self.imageLogo.pop_add(spring, forKey: "moveUp")
         }
-        
-        Animation.bounce(view: self.imageLogo)
     }
     
     override var preferredStatusBarStyle: UIStatusBarStyle {

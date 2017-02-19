@@ -117,8 +117,8 @@ class SettingsTableViewController: UITableViewController {
         self.progress!.removeFromSuperViewOnHide = true
         self.progress!.show(true)
 
-        Utils.clearHistory()
-        Reporting.track("Cleared History")
+        Utils.clearSearchHistory()
+        Reporting.track("Cleared search history")
 
         self.progress!.hide(true)
     }
@@ -180,9 +180,7 @@ class SettingsTableViewController: UITableViewController {
     
     func bind() {
         if let group = StateController.instance.group {
-            if group.hideEmail != nil {
-                self.hideEmailCell.accessoryView = makeSwitch(notificationType: .hideEmail, state: group.hideEmail!)
-            }
+            self.hideEmailCell.accessoryView = makeSwitch(notificationType: .hideEmail, state: (group.email == nil))
         }
     }
 
@@ -199,15 +197,22 @@ class SettingsTableViewController: UITableViewController {
             if switcher.tag == Setting.hideEmail.rawValue {
                 let groupId = StateController.instance.groupId
                 let userId = UserController.instance.userId
-                let memberGroupsPath = "member-groups/\(userId!)/\(groupId!)/hide_email"
-                let groupMembersPath = "group-members/\(groupId!)/\(userId!)/hide_email"
-                
-                let updates: [String: Any] = [
-                    groupMembersPath: switcher.isOn,
-                    memberGroupsPath: switcher.isOn
-                ]
-                
-                FireController.db.updateChildValues(updates)
+                let memberGroupsPath = "member-groups/\(userId!)/\(groupId!)/email"
+                let groupMembersPath = "group-members/\(groupId!)/\(userId!)/email"
+                if switcher.isOn {
+                    let updates: [String: Any] = [
+                        groupMembersPath: NSNull(),
+                        memberGroupsPath: NSNull()
+                    ]
+                    FireController.db.updateChildValues(updates)
+                }
+                else if let email = FIRAuth.auth()?.currentUser?.email {
+                    let updates: [String: Any] = [
+                        groupMembersPath: email,
+                        memberGroupsPath: email
+                    ]
+                    FireController.db.updateChildValues(updates)
+                }
             }
         }
     }

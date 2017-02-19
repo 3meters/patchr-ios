@@ -210,7 +210,6 @@ class ChannelSwitcherController: BaseTableController {
         self.titleButton = UIBarButtonItem(customView: titleView)
         
         self.navigationItem.leftBarButtonItem = self.titleButton
-        self.navigationItem.rightBarButtonItems = [self.backButton, self.searchButton]
         self.navigationItem.hidesBackButton = true
         self.navigationController?.delegate = self
         
@@ -224,17 +223,28 @@ class ChannelSwitcherController: BaseTableController {
         
         if let userId = UserController.instance.userId,
             let groupId = StateController.instance.groupId {
-            FireController.db.child("member-groups/\(userId)/\(groupId)/role").observeSingleEvent(of: .value, with: { [weak self] snap in
-                if let role = snap.value as? String {
-                    self?.role = role
-                    self?.searchController.role = role
-                    self?.searchController.load()
+            
+            self.navigationItem.setRightBarButtonItems([self.backButton], animated: true)
+            self.searchController.channelsSource.removeAll()
+            self.searchController.channelsFiltered.removeAll()
+            
+            let path = "member-groups/\(userId)/\(groupId)/role"
+            FireController.db.child(path).observeSingleEvent(of: .value, with: { [weak self] snap in
+                if let role = snap.value as? String, self != nil {
+                    self!.role = role
+                    if role != "guest" {
+                        self!.navigationItem.setRightBarButtonItems([self!.backButton, self!.searchButton], animated: true)
+                        self!.searchController.role = role
+                        self!.searchController.load()
+                    }
                     
                     self?.navigationController?.setToolbarHidden(false, animated: true)
                     let addButton = UIBarButtonItem(title: "New Channel", style: .plain, target: self, action: #selector(self?.addAction(sender:)))
                     addButton.tintColor = Colors.brandColor
                     self?.toolbarItems = [spacerFlex, addButton, spacerFlex]
                 }
+            }, withCancel: { error in
+                Log.w("Permission denied: \(path)")
             })
             
             if self.titleButton != nil {
@@ -312,7 +322,6 @@ class ChannelSwitcherController: BaseTableController {
             else {
                 backButtonView.badge.fadeOut()
             }
-            Log.d("ChannelPicker: Setting other groups unread to \(unreadOther)")
         }
     }
     
@@ -326,34 +335,34 @@ class ChannelSwitcherController: BaseTableController {
         
         cell.reset()    // Releases previous data observers
         
-        let userId = UserController.instance.userId!
-        let groupId = StateController.instance.groupId!
-        let channelId = snap.key
-        
-        cell.query = ChannelQuery(groupId: groupId, channelId: channelId, userId: userId)    // Just channel lookup
-        cell.query!.observe(with: { error, channel in
+        if let userId = UserController.instance.userId,
+            let groupId = StateController.instance.groupId {
+            let channelId = snap.key
             
-            if channel != nil {
-                cell.selected(on: (channelId == StateController.instance.channelId), style: .prominent)
-                cell.bind(channel: channel!)
-                cell.unreadQuery = UnreadQuery(level: .channel, userId: userId, groupId: groupId, channelId: channelId)
-                cell.unreadQuery!.observe(with: { error, total in
-                    if total != nil && total! > 0 {
-                        cell.badge?.text = "\(total!)"
-                        cell.badge?.isHidden = false
-                        cell.accessoryType = .none
-                    }
-                    else {
-                        cell.badge?.isHidden = true
-                        cell.accessoryType = cell.selectedOn ? .checkmark : .none
-                    }
-                })
-            }
-            else {
-                Log.w("Ouch! User is member of channel that does not exist")
-            }
-        })
-        
+            cell.query = ChannelQuery(groupId: groupId, channelId: channelId, userId: userId)    // Just channel lookup
+            cell.query!.observe(with: { error, channel in
+                
+                if channel != nil {
+                    cell.selected(on: (channelId == StateController.instance.channelId), style: .prominent)
+                    cell.bind(channel: channel!)
+                    cell.unreadQuery = UnreadQuery(level: .channel, userId: userId, groupId: groupId, channelId: channelId)
+                    cell.unreadQuery!.observe(with: { error, total in
+                        if total != nil && total! > 0 {
+                            cell.badge?.text = "\(total!)"
+                            cell.badge?.isHidden = false
+                            cell.accessoryType = .none
+                        }
+                        else {
+                            cell.badge?.isHidden = true
+                            cell.accessoryType = cell.selectedOn ? .checkmark : .none
+                        }
+                    })
+                }
+                else {
+                    Log.w("Ouch! User is member of channel that does not exist")
+                }
+            })
+        }
         return cell
     }
 }
@@ -449,8 +458,8 @@ class SearchController: NSObject, UITableViewDataSource {
         let userId = UserController.instance.userId!
         let groupId = StateController.instance.groupId!
 
-        let query = FireController.db.child("group-channels/\(groupId)")
-            .queryOrdered(byChild: "name")
+        let path = "group-channels/\(groupId)"
+        let query = FireController.db.child(path).queryOrdered(byChild: "name")
         
         query.observe(.value, with: { [weak self] snap in
             self?.channelsSource.removeAll()
@@ -477,6 +486,8 @@ class SearchController: NSObject, UITableViewDataSource {
                     }
                 }
             }
+        }, withCancel: { error in
+            Log.w("Permission denied: \(path)")
         })
     }
     
@@ -488,7 +499,7 @@ class SearchController: NSObject, UITableViewDataSource {
         let cell = tableView.dequeueReusableCell(withIdentifier: "channel-search-cell", for: indexPath) as! ChannelListCell
         let channel = self.channelsFiltered[indexPath.row]
         cell.reset()
-        cell.bind(channel: channel)
+        cell.bind(channel: channel, searching: true)
         return cell
     }
 }

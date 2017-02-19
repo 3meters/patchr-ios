@@ -17,6 +17,8 @@ class UserController: NSObject {
     fileprivate(set) internal var userId: String?
     fileprivate(set) internal var user: FireUser?
     fileprivate(set) internal var unreads = 0
+    fileprivate var counterRef: FIRDatabaseReference?
+    fileprivate var counterHandle: UInt?
 
     var authenticated: Bool {
         return (self.userId != nil)
@@ -97,6 +99,8 @@ class UserController: NSObject {
         Log.i("User logged in: \(userId)")
         
         FireController.db.child("unreads/\(userId)").keepSynced(true)
+        FireController.db.child("member-groups/\(userId)").keepSynced(true)
+        FireController.db.child("member-channels/\(userId)").keepSynced(true)
         
         if let token = FIRInstanceID.instanceID().token() {
             Log.i("UserController: setting firebase messaging token: \(token)")
@@ -107,6 +111,12 @@ class UserController: NSObject {
         }
         
         self.userId = userId
+        
+        /* Per user defaults */
+        if UserDefaults.standard.string(forKey: PerUserKey(key: Prefs.soundEffects)) == nil {
+            UserDefaults.standard.setValue(true, forKey: PerUserKey(key: Prefs.soundEffects))
+        }
+        
         self.userQuery?.remove()
         self.userQuery = UserQuery(userId: userId, groupId: nil, trackPresence: true)
         self.userQuery!.observe(with: { error, user in
@@ -127,51 +137,38 @@ class UserController: NSObject {
                 calledBack = true
             }
             
-            /* So unread lookups will work right */
-            UserDefaults.standard.set(userId, forKey: "user_id")
             Reporting.updateUser(user: FIRAuth.auth()?.currentUser)
             NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.UserDidSwitch), object: nil, userInfo: nil)
         })
         
-        /* Counter protection: we update the counter based on manual count of unread messages */
-
-        self.unreadQuery?.remove()
-        self.unreadQuery = UnreadQuery(level: .user, userId: userId)
-        self.unreadQuery!.observe(with: { [weak self] error, total in
-            if error == nil {
-                let total = total ?? 0
-                Log.d("UserController: Observe query result for user unreads: \(total)")
-                self?.unreads = total
-                UIApplication.shared.applicationIconBadgeNumber = total
-                
-                FireController.instance.isConnected() { connected in
-                    if connected != nil || connected! {
-                        FireController.db.child("counters/\(userId)/unreads").runTransactionBlock { currentData -> FIRTransactionResult in
-                            currentData.value = total
-                            return FIRTransactionResult.success(withValue: currentData)
-                        }
-                    }
-                }
-                NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.UnreadChange), object: self, userInfo: nil)
+        self.counterRef = FireController.db.child("counters/\(userId)")
+        self.counterHandle = self.counterRef!.observe(.value, with: { [weak self] snap in
+            var count = 0
+            if let unreads = snap.value as? [String: Any] {
+                count = unreads["unreads"] as! Int
             }
+            self?.unreads = count
+            UIApplication.shared.applicationIconBadgeNumber = count
+            NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.UnreadChange), object: self, userInfo: nil)
         })
     }
 
     func logout() {
+        let userId = UserController.instance.userId!
+        if let token = FIRInstanceID.instanceID().token() {
+            Log.i("Removing messaging token for user: \(userId)")
+            FireController.db.child("installs/\(userId)/\(token)").removeValue()
+        }
+        self.counterRef?.removeObserver(withHandle: self.counterHandle!)
         try! FIRAuth.auth()!.signOut()
-        clearUser()
+        Reporting.updateUser(user: nil)
         StateController.instance.clearGroup() // Also clears channel
+        self.userQuery?.remove()
+        self.userQuery = nil
+        self.user = nil
+        self.userId = nil
         MainController.instance.route()
         Reporting.track("Logged Out")
         Log.i("User logged out")
-    }
-    
-    func clearUser() {
-        self.userQuery?.remove()
-        self.userQuery = nil
-        self.userId = nil
-        self.user = nil
-        UserDefaults.standard.removeObject(forKey: PatchrUserDefaultKey(subKey: "userEmail"))
-        Reporting.updateUser(user: nil)
     }
 }

@@ -32,7 +32,7 @@ class ChannelPickerController: BaseTableController, CLTokenInputViewDelegate {
     var allowMultiSelect = true
     var simplePicker = false
     
-    var flow: BaseEditViewController.Flow = .none
+    var flow: Flow = .none
     
     /*--------------------------------------------------------------------------------------------
     * MARK: - Lifecycle
@@ -184,6 +184,8 @@ class ChannelPickerController: BaseTableController, CLTokenInputViewDelegate {
             DispatchQueue.main.async {
                 self?.tableView.reloadData()
             }
+        }, withCancel: { error in
+            Log.w("Permission denied")
         })
     }
     

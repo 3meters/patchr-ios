@@ -20,14 +20,14 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
     
     var channelQuery: ChannelQuery?
     var messagesQuery: FIRDatabaseQuery!
-    var unreadQuery: UnreadQuery?
+    var unreadQuery: UnreadQuery?   // Used to know when channel unreads == 0 and should fix sort priority
     var typingRef: FIRDatabaseReference!
     var typingHandle: FIRDatabaseHandle!
     var typingTask: DispatchWorkItem?
     
     let cellReuseIdentifier = "message-cell"
     var headerView: ChannelDetailView!
-    var unreadRefs = [[String: Any]]()
+    var unreads = [String: Bool]()
 
     var originalRect: CGRect?
     var originalHeaderRect: CGRect?
@@ -99,8 +99,8 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
         self.viewIsVisible = (self.slideMenuController() != nil && !self.slideMenuController()!.isLeftOpen())
         iRate.sharedInstance().promptIfAllCriteriaMet()
         reachabilityChanged()
-        if self.viewIsVisible {
-            cleanupUnreads()
+        if let link = MainController.instance.link {
+            MainController.instance.routeDeepLink(link: link, error: nil)
         }
     }
     
@@ -216,7 +216,7 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
         FireController.instance.addUserToChannel(userId: userId, groupId: groupId, channelId: channelId, channelName: channelName, then: { success in
             if success {
                 UIShared.Toast(message: "You have joined this channel")
-                if UserDefaults.standard.bool(forKey: PatchrUserDefaultKey(subKey: "SoundEffects")) {
+                if UserDefaults.standard.bool(forKey: PerUserKey(key: Prefs.soundEffects)) {
                     AudioController.instance.play(sound: Sound.pop.rawValue)
                 }
             }
@@ -253,7 +253,7 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
                 FireController.instance.removeUserFromChannel(userId: userId, groupId: group.id!, channelId: self.channel.id!, channelName: channelName, then: { success in
                     if success {
                         UIShared.Toast(message: "You have left this channel.")
-                        if UserDefaults.standard.bool(forKey: PatchrUserDefaultKey(subKey: "SoundEffects")) {
+                        if UserDefaults.standard.bool(forKey: PerUserKey(key: Prefs.soundEffects)) {
                             AudioController.instance.play(sound: Sound.pop.rawValue)
                         }
                     }
@@ -282,9 +282,6 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
     func leftDidClose() {
         NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.LeftDidClose), object: self, userInfo: nil)
         self.viewIsVisible = (self.view.window != nil)
-        if self.viewIsVisible {
-            cleanupUnreads()
-        }
         if let wrapper = self.slideMenuController()?.leftViewController as? AirNavigationController {
             if wrapper.topViewController is GroupSwitcherController {
                 wrapper.popViewController(animated: false)
@@ -508,17 +505,15 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
                 if error == nil {
                     /* The channel has been deleted from under us. */
                     self?.channelQuery?.remove()
-                    FireController.instance.findFirstChannel(groupId: groupId) { firstChannelId in
-                        if firstChannelId != nil {
-                            StateController.instance.setChannelId(channelId: firstChannelId!, groupId: groupId)
+                    FireController.instance.autoPickChannel(groupId: groupId) { channelId in
+                        if channelId != nil {
+                            StateController.instance.setChannelId(channelId: channelId!, groupId: groupId)
                             MainController.instance.showChannel(groupId: groupId, channelId: StateController.instance.channelId!)
                         }
                     }                    
                 }
                 return
             }
-            
-            Log.d("ChannelViewController: observe callback for channel: \(channel!)")
             
             self?.channel = channel
             self?.titleView.subtitle?.text = "#\((self?.channel.name!)!)"
@@ -531,7 +526,6 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
                 self?.unreadQuery!.observe(with: { [weak self] error, total in
                     if self != nil, error == nil {
                         let total = total ?? 0
-                        Log.d("ChannelViewController: observe callback for channel unreads: \(total): \(channel!.name!)")
                         if total == 0 && self!.channel?.priority == 0 {
                             self!.channel?.clearUnreadSorting()
                         }
@@ -590,27 +584,11 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
         self.tableView.dataSource = self.tableViewDataSource
         
         if !MainController.instance.introPlayed {
-            if UserDefaults.standard.bool(forKey: PatchrUserDefaultKey(subKey: "SoundEffects")) {
+            if UserDefaults.standard.bool(forKey: PerUserKey(key: Prefs.soundEffects)) {
                 AudioController.instance.play(sound: Sound.greeting.rawValue)
             }
             MainController.instance.introPlayed = true
         }
-    }
-    
-    func cleanupUnreads() {
-        if self.unreadRefs.count > 0 {
-            for ref in self.unreadRefs {
-                let groupId = ref["group_id"] as! String
-                let channelId = ref["channel_id"] as! String
-                let messageId = ref["message_id"] as! String
-                FireController.instance.clearMessageUnread(messageId: messageId, channelId: channelId, groupId: groupId) // Does not directly update counter
-            }
-            self.unreadRefs.removeAll()
-        }
-        /* Clean-up all unreads for the channel in case of orphans */
-        let channelId = self.inputChannelId!
-        let groupId = self.inputGroupId!
-        FireController.instance.clearChannelUnreads(channelId: channelId, groupId: groupId) // Does not directly update counter
     }
     
     func populateCell(_ tableView: UITableView, cellForRowAt indexPath: IndexPath, snap: FIRDataSnapshot) -> UITableViewCell {
@@ -665,22 +643,22 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
                 }
                 
                 let messageId = message.id!
-                let unreadPath = "unreads/\(userId)/\(groupId)/\(channelId)/\(messageId)"
-                FireController.db.child(unreadPath).observeSingleEvent(of: .value, with: { snap in
-                    if !(snap.value is NSNull) {
-                        messageView.unread.isHidden = false
-                        if self.viewIsVisible {
+                if self.unreads[messageId] != nil {
+                    messageView.unread.isHidden = false
+                    self.unreads.removeValue(forKey: messageId)
+                }
+                else {
+                    let unreadPath = "unreads/\(userId)/\(groupId)/\(channelId)/\(messageId)"
+                    FireController.db.child(unreadPath).observeSingleEvent(of: .value, with: { snap in
+                        if !(snap.value is NSNull) {
+                            if !self.viewIsVisible {
+                                self.unreads[messageId] = true
+                            }
+                            messageView.unread.isHidden = false
                             FireController.instance.clearMessageUnread(messageId: messageId, channelId: channelId, groupId: groupId)
                         }
-                        else {
-                            var task: [String: Any] = [:]
-                            task["group_id"] = groupId
-                            task["channel_id"] = channelId
-                            task["message_id"] = messageId
-                            self.unreadRefs.append(task)
-                        }
-                    }
-                })
+                    })
+                }
             }
         })
         
@@ -808,10 +786,9 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
                 UIViewController.topMostViewController()?.present(wrapper, animated: true, completion: nil)
             }
 
-            let inviteAction = UIAlertAction(title: "Invite", style: .default) { action in
+            let inviteAction = UIAlertAction(title: "Invite to channel", style: .default) { action in
                 let controller = ContactPickerController()
                 controller.role = "guests"
-                controller.flow = BaseEditViewController.Flow.internalInvite
                 controller.channels = [self.channel.id!: self.channel.name!]
                 controller.inputGroupId = StateController.instance.groupId
                 controller.inputGroupTitle = StateController.instance.group.title

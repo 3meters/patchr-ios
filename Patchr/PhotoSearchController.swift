@@ -11,22 +11,22 @@ import IDMPhotoBrowser
 
 class PhotoSearchController: UICollectionViewController, UITableViewDelegate, UITableViewDataSource {
     
-    var imageResults: [ImageResult] = [ImageResult]()
-    var searchBarActive: Bool = false
+    var imageResults = [ImageResult]()
+    var searchBarActive = false
     var searchBarBoundsY: CGFloat?
 	var threshold = 0
 	var processing = false
     var offset = 0
     var more = false
     
-    var searchBar				: UISearchBar!
-    var pickerDelegate			: PhotoBrowseControllerDelegate?
-	var activity				: UIActivityIndicatorView?
-	var footerView				: UIView!
-	var loadMoreMessage			: String = "LOAD MORE"
-	var autocompleteList		= AirTableView()
-	var autocompleteData		: [String] = [String]()
-	var searches				: [String] = [String]()
+    var searchBar : UISearchBar!
+    var pickerDelegate : PhotoBrowseControllerDelegate?
+	var activity : UIActivityIndicatorView?
+	var footerView : UIView!
+	var loadMoreMessage = "LOAD MORE"
+	var autocompleteList = AirTableView()
+	var autocompleteData = [String]()
+	var searches = [String]()
 	
 	var queue = OperationQueue()
 	
@@ -61,8 +61,8 @@ class PhotoSearchController: UICollectionViewController, UITableViewDelegate, UI
     fileprivate let pageSize = 150      // Maximum allowed by Bing. We pull max to keep request count down.
     fileprivate var maxSize = 100
 	fileprivate var virtualSize = 30
-    fileprivate let maxImageSize: Int = 500000
-    fileprivate let maxDimen: Int = Int(IMAGE_DIMENSION_MAX)
+    fileprivate let maxImageSize = 500000
+    fileprivate let maxDimen = Int(IMAGE_DIMENSION_MAX)
     
 	/*--------------------------------------------------------------------------------------------
 	 * Lifecycle
@@ -263,7 +263,7 @@ class PhotoSearchController: UICollectionViewController, UITableViewDelegate, UI
 	
 	func loadSearches() {
 		self.searches.removeAll()
-		if let searches = UserDefaults.standard.array(forKey: PatchrUserDefaultKey(subKey: "recent.searches")) as? [String] {
+		if let searches = UserDefaults.standard.array(forKey: PerUserKey(key: Prefs.searchHistory)) as? [String] {
 			for search in searches {
 				self.searches.append(search)
 			}
@@ -278,13 +278,9 @@ class PhotoSearchController: UICollectionViewController, UITableViewDelegate, UI
     }
 	
 	func filterSearchesWithSubstring(substring: String) {
-		self.autocompleteData.removeAll()
-		for search in self.searches {
-            if search.contains(substring) {
-                self.autocompleteData.append(search)
-            }
-		}
-
+        self.autocompleteData = self.searches.filter { search in
+            return search.lowercased().contains(substring.lowercased())
+        }
 		self.autocompleteList.isHidden = (self.autocompleteData.count == 0)
 		self.autocompleteList.alignUnder(self.searchBar, centeredFillingWidthWithLeftAndRightPadding: 0, topPadding: 0, height: CGFloat(self.autocompleteData.count * 40))
 		self.autocompleteList.reloadData()

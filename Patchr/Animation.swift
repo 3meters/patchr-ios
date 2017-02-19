@@ -10,13 +10,18 @@ import pop
 
 struct Animation {
 	
-	static func bounce(view: UIView?) {
+    static func bounce(view: UIView?, then: (()->())? = nil) {
 		if view != nil {
 			view!.pop_removeAllAnimations()
-			let animation = POPSpringAnimation(propertyNamed: kPOPViewScaleXY)
-            animation?.velocity = NSValue(cgPoint: CGPoint(x:5, y:5))
-			animation?.springBounciness = 20.0
-            animation?.toValue = NSValue(cgPoint: CGPoint(x:1, y:1))
+			let animation = POPSpringAnimation(propertyNamed: kPOPViewScaleXY)!
+            animation.velocity = NSValue(cgPoint: CGPoint(x:5, y:5))
+			animation.springBounciness = 20.0
+            animation.toValue = NSValue(cgPoint: CGPoint(x:1, y:1))
+            animation.completionBlock = { animation, finished in
+                if finished {
+                    then?()
+                }                
+            }
 			view!.pop_add(animation, forKey: "bounce")
 		}
 	}

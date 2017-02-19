@@ -10,10 +10,6 @@ import UIKit
 
 class NotificationSettingsViewController: UITableViewController {
 
-    let userDefaults = {
-        UserDefaults.standard
-    }()
-
     /* Notifications */
 
     var typeAllCell = AirTableViewCell()
@@ -78,13 +74,14 @@ class NotificationSettingsViewController: UITableViewController {
             }
         }
         
-        self.soundEffectsCell.accessoryView = makeSwitch(notificationType: .playSoundEffects, state: userDefaults.bool(forKey: PatchrUserDefaultKey(subKey: "SoundEffects")))
+        self.soundEffectsCell.accessoryView = makeSwitch(notificationType: .playSoundEffects
+            , state: UserDefaults.standard.bool(forKey: PerUserKey(key: Prefs.soundEffects)))
     }
 
     func toggleAction(sender: AnyObject?) {
         if let switcher = sender as? UISwitch {
             if switcher.tag == Setting.playSoundEffects.rawValue {
-                userDefaults.set(switcher.isOn, forKey: PatchrUserDefaultKey(subKey: "SoundEffects"))
+                UserDefaults.standard.set(switcher.isOn, forKey: PerUserKey(key: Prefs.soundEffects))
             }
         }
     }
@@ -131,7 +128,6 @@ extension NotificationSettingsViewController {
             ]
             
             FireController.db.updateChildValues(updates)
-            userDefaults.set(notificationsValue, forKey: PatchrUserDefaultKey(subKey: "NotificationType"))
         }
     }
 

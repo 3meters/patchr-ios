@@ -195,6 +195,11 @@ class ProfileEditViewController: BaseEditViewController {
             self.navigationItem.leftBarButtonItems = [cancelButton]
             self.navigationItem.rightBarButtonItems = [doneButton]
         }
+        else {
+            self.doneButton = UIBarButtonItem(title: "Save", style: UIBarButtonItemStyle.plain, target: self, action: #selector(doneAction(sender:)))
+            self.doneButton.isEnabled = false
+            self.navigationItem.rightBarButtonItems = [doneButton]
+        }
         
         self.firstNameField.addTarget(self, action: #selector(textFieldDidChange(_:)), for: .editingChanged)
         self.lastNameField.addTarget(self, action: #selector(textFieldDidChange(_:)), for: .editingChanged)

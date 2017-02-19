@@ -52,6 +52,13 @@ func PatchrUserDefaultKey(subKey: String) -> String {
     return NAMESPACE + subKey
 }
 
+func PerUserKey(key: String) -> String {
+    guard let userId = UserController.instance.userId else {
+        fatalError("PerUserKey requires an authenticated user")
+    }
+    return "\(userId).\(key)"
+}
+
 enum AppConfiguration {
     case debug
     case testFlight
@@ -84,6 +91,39 @@ struct Config {
     }
 }
 
+/*
+ * Old preferences - sigh
+ * - com.3meters.patchr.ios.SoundEffects
+ * - com.3meters.patchr.ios.SoundForNotifications
+ * - com.3meters.patchr.ios.VibrateForNotifications
+ * - com.3meters.patchr.ios.NotificationType
+ * - com.3meters.patchr.ios.enableDevModeAction
+ * - com.3meters.patchr.ios.statusBarHidden
+ * - firstLaunch = true/false
+ * - user_email = string
+ * - $groupId = $channelId
+ * - group_id = $groupId
+ * - user_id = $userId
+ * - com.3meters.patchr.ios.recent.searches = [String]
+ */
+
+public struct Prefs {
+    
+    /* Per device */
+    static let firstLaunch = "first_launch"
+    static let lastUserEmail = "last_user_email"
+    
+    /* Per user */
+    static let soundEffects = "sound_effects"
+    static let lastGroupId = "last_group_id"
+    static let lastChannelIds = "last_channel_ids"
+    static let searchHistory = "search_history"
+    
+    /* Developer */
+    static let developerMode = "developer_mode"
+    static let statusBarHidden = "status_bar_hidden"
+}
+
 public struct Events {
     static let ChannelDidSwitch = "ChannelDidSwitch"
     static let ChannelDidUpdate = "ChannelDidUpdate"
@@ -105,7 +145,6 @@ public struct Events {
 }
 
 public struct Schema {
-    static let ENTITY_BEACON = "beacon"
     static let ENTITY_MESSAGE = "message"
     static let ENTITY_PATCH = "patch"
     static let ENTITY_USER = "user"

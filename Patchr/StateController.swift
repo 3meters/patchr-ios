@@ -50,18 +50,18 @@ class StateController: NSObject {
                 return
             }
             
-            if let groupId = UserDefaults.standard.string(forKey: "group_id"),
+            if let groupId = UserDefaults.standard.string(forKey: PerUserKey(key: Prefs.lastGroupId)),
                 let userId = UserController.instance.userId {
                 
-                if let settings = UserDefaults.standard.dictionary(forKey: groupId),
-                    let lastChannelId = settings["currentChannelId"] as? String {
+                if let lastChannelIds = UserDefaults.standard.dictionary(forKey: PerUserKey(key: Prefs.lastChannelIds)),
+                    let lastChannelId = lastChannelIds[groupId] as? String {
                     let channelQuery = ChannelQuery(groupId: groupId, channelId: lastChannelId, userId: userId)
                     channelQuery.once(with: { error, channel in
                         if channel == nil {
-                            Log.w("Last channel invalid: \(lastChannelId): trying first channel")
-                            FireController.instance.findFirstChannel(groupId: groupId) { firstChannelId in
-                                if firstChannelId != nil {
-                                    self.setChannelId(channelId: firstChannelId!, groupId: groupId) { error in
+                            Log.w("Last channel invalid: \(lastChannelId): trying auto pick channel")
+                            FireController.instance.autoPickChannel(groupId: groupId) { channelId in
+                                if channelId != nil {
+                                    self.setChannelId(channelId: channelId!, groupId: groupId) { error in
                                         next(nil)
                                     }
                                 }
@@ -81,9 +81,9 @@ class StateController: NSObject {
                     })
                 }
                 else {
-                    FireController.instance.findFirstChannel(groupId: groupId) { firstChannelId in
-                        if firstChannelId != nil {
-                            self.setChannelId(channelId: firstChannelId!, groupId: groupId) { error in
+                    FireController.instance.autoPickChannel(groupId: groupId) { channelId in
+                        if channelId != nil {
+                            self.setChannelId(channelId: channelId!, groupId: groupId) { error in
                                 next(nil)
                             }
                         }
@@ -123,13 +123,8 @@ class StateController: NSObject {
             
             self.groupId = groupId
             NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.GroupDidSwitch), object: self, userInfo: userInfo)
-            UserDefaults.standard.set(groupId, forKey: "group_id")
+            UserDefaults.standard.set(groupId, forKey: PerUserKey(key: Prefs.lastGroupId))
 
-            /* Stash channelId for general channel */
-            FireController.instance.findGeneralChannel(groupId: groupId) { channelId in
-                self.groupGeneralId = channelId
-            }
-            
             if channelId != nil {
                 setChannelId(channelId: channelId, groupId: groupId, bundle: userInfo, next: next)
             }
@@ -161,6 +156,12 @@ class StateController: NSObject {
                 if self.group != nil {
                     Log.d("Group updated: \(group!.id!)")
                 }
+                else if let role = group?.role, role != "guest" {
+                    /* Stash channelId for general channel if not guest */
+                    FireController.instance.findGeneralChannel(groupId: groupId) { channelId in
+                        self.groupGeneralId = channelId
+                    }
+                }
                 
                 self.group = group
                 NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.GroupDidUpdate), object: self, userInfo: ["group_id": groupId])
@@ -184,9 +185,9 @@ class StateController: NSObject {
             userInfo["toChannelId"] = channelId!
             self.channelId = channelId!
             
-            var groupSettings: [String: Any] = (UserDefaults.standard.dictionary(forKey: groupId) ?? [:])!
-            groupSettings["currentChannelId"] = channelId!
-            UserDefaults.standard.set(groupSettings, forKey: groupId)
+            var lastChannelIds: [String: Any] = (UserDefaults.standard.dictionary(forKey: PerUserKey(key: Prefs.lastChannelIds)) ?? [:])!
+            lastChannelIds[groupId] = channelId!
+            UserDefaults.standard.set(lastChannelIds, forKey: PerUserKey(key: Prefs.lastChannelIds))
             NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.ChannelDidSwitch), object: self, userInfo: userInfo)
             
             next?(nil)
@@ -200,14 +201,16 @@ class StateController: NSObject {
         self.groupId = nil
         self.group = nil
         self.groupQuery = nil
-        UserDefaults.standard.removeObject(forKey: "group_id")
+        //UserDefaults.standard.removeObject(forKey: PerUserKey(key: Prefs.lastGroupId))
     }
     
     func clearChannel() {
         Log.d("Current channel: nothing")
         self.channelId = nil
-        if self.groupId != nil {
-            UserDefaults.standard.removeObject(forKey: self.groupId!)   // channelId keyed on groupId
+        if self.groupId != nil,
+            var lastChannelIds = UserDefaults.standard.dictionary(forKey: PerUserKey(key: Prefs.lastChannelIds)) {
+            lastChannelIds.removeValue(forKey: self.groupId!)
+            UserDefaults.standard.set(lastChannelIds, forKey: PerUserKey(key: Prefs.lastChannelIds))
         }
     }    
 }

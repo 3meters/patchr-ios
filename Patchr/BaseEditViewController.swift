@@ -174,15 +174,6 @@ class BaseEditViewController: BaseViewController, UITextFieldDelegate, UITextVie
 		self.scrollView.scrollIndicatorInsets = scrollView.contentInset
 	}
     
-    enum Flow: Int {
-        case onboardLogin
-        case onboardCreate
-        case onboardInvite
-        case internalCreate
-        case internalInvite
-        case none
-    }
-
     enum Branch: Int {
         case login
         case signup
