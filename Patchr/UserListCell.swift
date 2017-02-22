@@ -89,8 +89,8 @@ class UserListCell: UITableViewCell {
         
         self.user = user
         self.presenceView?.bind(online: user.presence)
-        if let offlineSince = user.presence as? Int {
-            let offlineAgo = UIShared.timeAgoShort(date: NSDate(timeIntervalSince1970: Double(offlineSince) / 1000))
+        if let offlineSince = user.presence as? Int64 {
+            let offlineAgo = DateUtils.timeAgoShort(date: DateUtils.from(timestamp: offlineSince))
             self.agoLabel.text = offlineAgo
             self.agoLabel.isHidden = false
         }

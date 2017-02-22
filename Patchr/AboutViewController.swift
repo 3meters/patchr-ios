@@ -46,7 +46,7 @@ class AboutViewController: UITableViewController {
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
 
-        let viewWidth = min(CONTENT_WIDTH_MAX, self.tableView.bounds.size.width)
+        let viewWidth = min(Config.contentWidthMax, self.tableView.bounds.size.width)
         self.tableView.bounds.size.width = viewWidth
         self.buildInfoLabel.fillSuperview()
     }

@@ -43,15 +43,13 @@ class PasswordViewController: BaseEditViewController {
     override func viewWillLayoutSubviews() {
 
         let messageSize = self.message.sizeThatFits(CGSize(width:288, height:CGFloat.greatestFiniteMagnitude))
-        
         self.message.anchorTopCenter(withTopPadding: 0, width: 288, height: messageSize.height)
-        
         if self.branch == .signup {
-            self.userNameField.alignUnder(self.message, matchingCenterWithTopPadding: 8, width: 288, height: 48)
+            self.userNameField.alignUnder(self.message, matchingCenterWithTopPadding: 16, width: 288, height: 48)
             self.passwordField.alignUnder(self.userNameField, matchingCenterWithTopPadding: 8, width: 288, height: 48)
         }
         else {
-            self.passwordField.alignUnder(self.message, matchingCenterWithTopPadding: 8, width: 288, height: 48)
+            self.passwordField.alignUnder(self.message, matchingCenterWithTopPadding: 16, width: 288, height: 48)
             self.forgotPasswordButton.alignUnder(self.passwordField, matchingCenterWithTopPadding: 36, width: 288, height: 48)
         }
 
@@ -134,8 +132,8 @@ class PasswordViewController: BaseEditViewController {
         self.passwordField.setDelegate(delegate: self)
         self.passwordField.isSecureTextEntry = true
         self.passwordField.autocapitalizationType = .none
-        self.passwordField.keyboardType = UIKeyboardType.default
-        self.passwordField.returnKeyType = UIReturnKeyType.next
+        self.passwordField.keyboardType = .default
+        self.passwordField.returnKeyType = .next
         self.passwordField.rightView = self.hideShowButton
         self.passwordField.rightViewMode = .always
 

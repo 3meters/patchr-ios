@@ -34,7 +34,8 @@ class UserQuery: NSObject {
         if trackPresence {
             self.onlineHandle = FireController.db.child(".info/connected").observe(.value, with: { snap in
                 if !(snap.value is NSNull) {
-                    FireController.db.child(self.userPath).onDisconnectUpdateChildValues(["presence": FIRServerValue.timestamp()])
+                    let timestamp = FireController.instance.getServerTimestamp()
+                    FireController.db.child(self.userPath).onDisconnectUpdateChildValues(["presence": timestamp])
                     FireController.db.child(self.userPath).updateChildValues(["presence": true])
                 }
             })

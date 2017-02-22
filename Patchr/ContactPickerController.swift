@@ -319,7 +319,7 @@ class ContactPickerController: BaseTableController, UITableViewDelegate, UITable
                         let timestamp = FireController.instance.getServerTimestamp()
                         
                         var task: [String: Any] = [:]
-                        task["created_at"] = Int(timestamp)
+                        task["created_at"] = timestamp
                         task["created_by"] = userId
                         task["group"] = ["id": groupId, "title": groupTitle]
                         task["id"] = ref.key
@@ -335,7 +335,7 @@ class ContactPickerController: BaseTableController, UITableViewDelegate, UITable
                                 Log.w("Error queueing invite task: \(error!)")
                             }
                             else {
-                                UIShared.Toast(message: "Invites sent")
+                                UIShared.toast(message: "Invites sent")
                             }
                             if self.flow == .onboardCreate || self.flow == .internalCreate {
                                 self.navigateToGroup()
@@ -379,7 +379,7 @@ class ContactPickerController: BaseTableController, UITableViewDelegate, UITable
                         }
                         let type = (self.channels.count > 1) ? "invite-guests-multi-channel" : "invite-guests"
                         task["channels"] = channels
-                        task["created_at"] = Int(timestamp)
+                        task["created_at"] = timestamp
                         task["created_by"] = userId
                         task["group"] = ["id": groupId, "title": groupTitle]
                         task["id"] = ref.key
@@ -395,7 +395,7 @@ class ContactPickerController: BaseTableController, UITableViewDelegate, UITable
                                 Log.w("Error queueing invite task: \(error!)")
                             }
                             else {
-                                UIShared.Toast(message: "Invites sent")
+                                UIShared.toast(message: "Invites sent")
                             }
                             self.close(root: (self.flow != .internalInvite))
                         }

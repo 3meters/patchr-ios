@@ -11,10 +11,10 @@ import Foundation
 class Stopwatch: NSObject {
 	
 	private var lastThreshold: TimeInterval	= 0
-	private var log: NSMutableArray				= []
+	private var log: NSMutableArray = []
 	
 	var name: String?
-	var totalTime: TimeInterval				= 0
+	var totalTime: TimeInterval = 0
 	
 	func totalTimeMills() -> Int {
 		return Int(self.totalTime / 1000)
@@ -36,7 +36,7 @@ class Stopwatch: NSObject {
 			return 0
 		}
 		
-		let now = NSDate().timeIntervalSince1970
+		let now = DateUtils.nowTimeInterval()
 		let lapTime = now - self.lastThreshold
 		self.totalTime += lapTime
 		self.lastThreshold = now
@@ -60,7 +60,7 @@ class Stopwatch: NSObject {
 	func start(name: String, message: String) {
 		self.name = name
 		self.totalTime = 0
-		self.lastThreshold = NSDate().timeIntervalSince1970
+		self.lastThreshold = DateUtils.nowTimeInterval()
 		log.add("\(name): *** Started ***: \(message)")
 	}
 	

@@ -54,7 +54,7 @@ class GalleryGridViewController: UICollectionViewController {
 	fileprivate var virtualSize		= 49
 	fileprivate var maxSize			= 500
     fileprivate let maxImageSize	: Int = 500000
-    fileprivate let maxDimen		: Int = Int(IMAGE_DIMENSION_MAX)
+    fileprivate let maxDimen		: Int = Int(Config.imageDimensionMax)
     
 	/*--------------------------------------------------------------------------------------------
 	 * Lifecycle

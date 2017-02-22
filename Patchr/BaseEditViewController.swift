@@ -91,7 +91,7 @@ class BaseEditViewController: BaseViewController, UITextFieldDelegate, UITextVie
         
         if let asset = asset as? PHAsset {
             if let takenDate = asset.creationDate {
-                photoMap["taken_at"] = Int64(takenDate.timeIntervalSince1970 * 1000)
+                photoMap["taken_at"] = takenDate.milliseconds
                 Log.d("Photo taken: \(takenDate)")
             }
             if let coordinate = asset.location?.coordinate {
@@ -100,7 +100,7 @@ class BaseEditViewController: BaseViewController, UITextFieldDelegate, UITextVie
             }
         }
         else if let asset = asset as? [String: Any] {
-            if let takenDate = asset["taken_at"] as? Int64 {
+            if let takenDate = asset["taken_at"] as? Int {
                 photoMap["taken_at"] = takenDate
                 Log.d("Photo taken: \(takenDate)")
             }
@@ -125,20 +125,6 @@ class BaseEditViewController: BaseViewController, UITextFieldDelegate, UITextVie
         return photoMap
     }
     
-    func showError(_ textField: TextFieldView, error: String) {
-        textField.setErrorText(text: error)
-        self.view.setNeedsLayout()
-        self.view.layoutIfNeeded(animated: true)
-    }
-    
-    func clearErrorIfNeeded(_ textField: TextFieldView) {
-        if textField.errorLabel.text != nil {
-            textField.setErrorText(text: nil)
-            self.view.setNeedsLayout()
-            self.view.layoutIfNeeded(animated: true)
-        }
-    }
-
 	func keyboardWillBeShown(sender: NSNotification) {
 		/*
 		* Called when the UIKeyboardDidShowNotification is sent.

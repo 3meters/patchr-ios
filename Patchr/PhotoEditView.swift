@@ -167,14 +167,14 @@ class PhotoEditView: UIView {
 			 * known image sources that we setup like our buckets on s3.
 			 */
 			let dimension = imageResult!.width! >= imageResult!.height! ? ResizeDimension.width : ResizeDimension.height
-			let url = URL(string: GooglePlusProxy.convert(uri: imageResult!.contentUrl!, size: Int(IMAGE_DIMENSION_MAX), dimension: dimension))
+			let url = URL(string: GooglePlusProxy.convert(uri: imageResult!.contentUrl!, size: Int(Config.imageDimensionMax), dimension: dimension))
             self.imageButton.setImageWithUrl(url: url!, fallbackUrl: nil) { [weak self] success in
                 if self != nil {
                     if success {
                         NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.PhotoDidChange), object: self)
                     }
                     else {
-                        UIShared.Toast(message: "Unable to download image")
+                        UIShared.toast(message: "Unable to download image")
                     }
                 }
             }  // Downloads and pushes into photoImage

@@ -8,7 +8,6 @@
 
 import UIKit
 import MBProgressHUD
-import JVFloatLabeledTextField
 import FirebaseRemoteConfig
 import Firebase
 
@@ -18,9 +17,9 @@ class ProfileEditViewController: BaseEditViewController {
 
     var message = AirLabelTitle()
     var photoEditView = PhotoEditView()
-    var firstNameField = AirTextField()
-    var lastNameField = AirTextField()
-    var phoneField = AirPhoneField()
+    var firstNameField = FloatTextField()
+    var lastNameField = FloatTextField()
+    var phoneField = FloatPhoneField()
     var accountButton = AirButton()
     var doneButton: UIBarButtonItem!
 
@@ -104,6 +103,8 @@ class ProfileEditViewController: BaseEditViewController {
     }
     
     func doneAction(sender: AnyObject?) {
+        guard !self.processing else { return }
+        self.activeTextField?.resignFirstResponder()
         update()
     }
     
@@ -114,9 +115,9 @@ class ProfileEditViewController: BaseEditViewController {
     override func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         switch textField {
         case firstNameField:
-            lastNameField.becomeFirstResponder()
+            let _ = lastNameField.becomeFirstResponder()
         case lastNameField:
-            phoneField.becomeFirstResponder()
+            let _ = phoneField.becomeFirstResponder()
         default:
             textField.resignFirstResponder()
         }
@@ -156,7 +157,7 @@ class ProfileEditViewController: BaseEditViewController {
 
         self.firstNameField.placeholder = "First name"
         self.firstNameField.font = Theme.fontTextDisplay
-        self.firstNameField.delegate = self
+        self.firstNameField.setDelegate(delegate: self)
         self.firstNameField.autocapitalizationType = .words
         self.firstNameField.autocorrectionType = .no
         self.firstNameField.keyboardType = .default
@@ -164,7 +165,7 @@ class ProfileEditViewController: BaseEditViewController {
 
         self.lastNameField.placeholder = "Last name"
         self.lastNameField.font = Theme.fontTextDisplay
-        self.lastNameField.delegate = self
+        self.lastNameField.setDelegate(delegate: self)
         self.lastNameField.autocapitalizationType = .words
         self.lastNameField.autocorrectionType = .no
         self.lastNameField.keyboardType = .default
@@ -172,7 +173,7 @@ class ProfileEditViewController: BaseEditViewController {
 
         self.phoneField.placeholder = "Phone number"
         self.phoneField.font = Theme.fontTextDisplay
-        self.phoneField.delegate = self
+        self.phoneField.setDelegate(delegate: self)
         self.phoneField.autocapitalizationType = .none
         self.phoneField.autocorrectionType = .no
         self.phoneField.keyboardType = .phonePad
@@ -228,26 +229,30 @@ class ProfileEditViewController: BaseEditViewController {
     }
     
     func update() {
+        
+        self.processing = true
+        
         var updates = [String: Any]()
+        let userId = self.user.id!
         
         if emptyToNil(self.firstNameField.text) != self.user.profile?.firstName {
             let changeRequest = FIRAuth.auth()?.currentUser?.profileChangeRequest()
             changeRequest?.displayName = self.fullName
             changeRequest?.commitChanges()
-            updates["profile/first_name"] = emptyToNull(self.firstNameField.text)
-            updates["profile/full_name"] = nilToNull(self.fullName)
+            updates["first_name"] = emptyToNull(self.firstNameField.text)
+            updates["full_name"] = nilToNull(self.fullName)
         }
         
         if emptyToNil(self.lastNameField.text) != self.user.profile?.lastName {
             let changeRequest = FIRAuth.auth()?.currentUser?.profileChangeRequest()
             changeRequest?.displayName = self.fullName
             changeRequest?.commitChanges()
-            updates["profile/last_name"] = emptyToNull(self.lastNameField.text)
-            updates["profile/full_name"] = nilToNull(self.fullName)
+            updates["last_name"] = emptyToNull(self.lastNameField.text)
+            updates["full_name"] = nilToNull(self.fullName)
         }
         
         if emptyToNil(self.phoneField.text) != self.user.profile?.phone {
-            updates["profile/phone"] = emptyToNull(self.phoneField.text)
+            updates["phone"] = emptyToNull(self.phoneField.text)
         }
         
         if self.photoEditView.photoDirty {
@@ -263,7 +268,7 @@ class ProfileEditViewController: BaseEditViewController {
                     }
                 })
                 
-                updates["profile/photo"] = photoMap!
+                updates["photo"] = photoMap!
                 let photoUrl = ImageUtils.url(prefix: photoMap!["filename"] as! String?, source: photoMap!["source"] as! String?, category: SizeCategory.profile)
                 let changeRequest = FIRAuth.auth()?.currentUser?.profileChangeRequest()
                 changeRequest?.photoURL = photoUrl
@@ -273,13 +278,12 @@ class ProfileEditViewController: BaseEditViewController {
                 let changeRequest = FIRAuth.auth()?.currentUser?.profileChangeRequest()
                 changeRequest?.photoURL = nil
                 changeRequest?.commitChanges()
-                updates["profile/photo"] = NSNull()
+                updates["photo"] = NSNull()
             }
         }
 
         if updates.keys.count > 0 {
-            updates["modified_at"] = FIRServerValue.timestamp()
-            FireController.db.child(self.user.path).updateChildValues(updates)
+            FireController.db.child("users/\(userId)/profile").updateChildValues(updates)
         }
         self.close(animated: true)
     }

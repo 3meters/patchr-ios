@@ -178,7 +178,7 @@ extension PhotoChooserUI: UIImagePickerControllerDelegate {
                 asset = fetchResult.firstObject! as PHAsset
             }
             else {
-                asset = ["taken_at": Utils.now()] 
+                asset = ["taken_at": DateUtils.now()] 
             }
             
 			/* If the user took a photo then add it to the patchr photo album */

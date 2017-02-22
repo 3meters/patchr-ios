@@ -38,7 +38,7 @@ class FireController: NSObject {
         let timestamp = getServerTimestamp()
         let ref = FireController.db.child("queue/create-user").childByAutoId()
         let task: [String: Any] = [
-            "created_at": Int(timestamp),
+            "created_at": timestamp,
             "created_by": userId,
             "id": ref.key,
             "retain": true,
@@ -67,9 +67,9 @@ class FireController: NSObject {
         queue.tasks += { _, next in
             var groupMap = [String: Any]()
             groupMap["title"] = title
-            groupMap["created_at"] = Int(timestamp)
+            groupMap["created_at"] = timestamp
             groupMap["created_by"] = userId
-            groupMap["modified_at"] = Int(timestamp)
+            groupMap["modified_at"] = timestamp
             groupMap["modified_by"] = userId
             groupMap["owned_by"] = userId
             groupMap["default_channels"] = [generalId, chatterId]
@@ -109,7 +109,7 @@ class FireController: NSObject {
             
             let generalMap: [String: Any] = [
                 "archived": false,
-                "created_at": Int(timestamp),
+                "created_at": timestamp,
                 "created_by": userId,
                 "general": true,
                 "group_id": groupId,
@@ -133,7 +133,7 @@ class FireController: NSObject {
             
             let chatterMap: [String: Any] = [
                 "archived": false,
-                "created_at": Int(timestamp),
+                "created_at": timestamp,
                 "created_by": userId,
                 "general": false,
                 "group_id": groupId,
@@ -163,8 +163,20 @@ class FireController: NSObject {
         let channelName = channelMap["name"] as! String
         let visibility = channelMap["visibility"] as! String
         
-        FireController.db.child("group-channels/\(groupId)/\(channelId)").setValue(channelMap) { error, ref in
-            if error == nil {
+        /* Claim the channel name first */
+        let path = "channel-names/\(groupId)/\(channelName)"
+        FireController.db.child(path).setValue(channelId) { error, ref in
+            if error != nil {
+                Log.w("Error claiming channel name: \(error!.localizedDescription)")
+                then?(false)
+                return
+            }
+            FireController.db.child("group-channels/\(groupId)/\(channelId)").setValue(channelMap) { error, ref in
+                if error != nil {
+                    Log.w("Error creating channel: \(error!.localizedDescription)")
+                    then?(false)
+                    return
+                }
                 /* Add creator as first member of channel (open or private) */
                 self.addUserToChannel(userId: userId, groupId: groupId, channelId: channelId, channelName: channelName, role: "owner") { success in
                     if visibility == "open", let generalId = StateController.instance.groupGeneralId { // If guest then generalId is nil
@@ -173,9 +185,7 @@ class FireController: NSObject {
                     }
                     then?(success)
                 }
-                return
             }
-            then?(false)
         }
     }
     
@@ -188,7 +198,7 @@ class FireController: NSObject {
         let timestamp = getServerTimestamp()
         let ref = FireController.db.child("queue/update-username").childByAutoId()
         let task: [String: Any] = [
-            "created_at": Int(timestamp),
+            "created_at": timestamp,
             "created_by": userId,
             "id": ref.key,
             "retain": true,
@@ -314,7 +324,7 @@ class FireController: NSObject {
         let ref = FireController.db.child("queue/join-group").childByAutoId()
         let email = (FIRAuth.auth()?.currentUser?.email!)!
         var task: [String: Any] = [
-            "created_at": Int(timestamp),
+            "created_at": timestamp,
             "created_by": userId,
             "email": email,
             "group_id": groupId,
@@ -355,7 +365,7 @@ class FireController: NSObject {
                         let timestamp = FireController.instance.getServerTimestamp()
                         
                         var task: [String: Any] = [:]
-                        task["created_at"] = Int(timestamp)
+                        task["created_at"] = timestamp
                         task["created_by"] = userId
                         task["group_id"] = groupId
                         task["id"] = ref.key
@@ -384,7 +394,7 @@ class FireController: NSObject {
                 
                 var task: [String: Any] = [:]
                 task["channel_id"] = channelId
-                task["created_at"] = Int(timestamp)
+                task["created_at"] = timestamp
                 task["created_by"] = userId
                 task["group_id"] = groupId
                 task["id"] = ref.key
@@ -409,12 +419,12 @@ class FireController: NSObject {
         let priority = self.priorities[priorityIndex]
         let priorityReversed = self.priorities.reversed()[priorityIndex]
         let joinedAt = Int(floorf(Float(timestamp / 1000))) // shorten to 10 digits
-        let index = Int("\(priority)\(joinedAt)")
-        let indexReversed = Int("-\(priorityReversed)\(joinedAt)")
+        let index = Int64("\(priority)\(joinedAt)")
+        let indexReversed = Int64("-\(priorityReversed)\(joinedAt)")
         
         let link: [String: Any] = [
             "archived": false,
-            "created_at": Int(timestamp),
+            "created_at": timestamp,
             "created_by": userId,
             "joined_at": joinedAt,  // Not a real unix epoch timestamp, only 10 digits instead of 13
             "joined_at_desc": joinedAt * -1,
@@ -434,12 +444,12 @@ class FireController: NSObject {
         let priority = self.priorities[priorityIndex]
         let priorityReversed = self.priorities.reversed()[priorityIndex]
         let joinedAt = Int(floorf(Float(timestamp / 1000)))// shorten to 10 digits
-        let index = Int("\(priority)\(joinedAt)")
-        let indexReversed = Int("-\(priorityReversed)\(joinedAt)")
+        let index = Int64("\(priority)\(joinedAt)")
+        let indexReversed = Int64("-\(priorityReversed)\(joinedAt)")
         let email = (FIRAuth.auth()?.currentUser?.email!)!
         
         let link: [String: Any] = [
-            "created_at": Int(timestamp),
+            "created_at": timestamp,
             "created_by": userId,
             "disabled": false,
             "email": email,
@@ -464,7 +474,7 @@ class FireController: NSObject {
         let ref = FireController.db.child("queue/deletes").childByAutoId()
         let timestamp = getServerTimestamp()
         let task: [String: Any] = [
-            "created_at": Int(timestamp),
+            "created_at": timestamp,
             "created_by": userId,
             "target": "group",
             "group_id": groupId,
@@ -482,7 +492,7 @@ class FireController: NSObject {
         let timestamp = getServerTimestamp()
         let task: [String: Any] = [
             "channel_id": channelId,
-            "created_at": Int(timestamp),
+            "created_at": timestamp,
             "created_by": userId,
             "target": "channel",
             "group_id": groupId,
@@ -506,7 +516,7 @@ class FireController: NSObject {
                 
                 var task: [String: Any] = [:]
                 task["channel_id"] = channelId
-                task["created_at"] = Int(timestamp)
+                task["created_at"] = timestamp
                 task["created_by"] = userId
                 task["group_id"] = groupId
                 task["id"] = ref.key
@@ -555,15 +565,13 @@ class FireController: NSObject {
             if channelId != nil {
                 next(channelId)
             }
-            else if let role = StateController.instance.group.role {
-                if role != "guest" {
-                    FireController.instance.findGeneralChannel(groupId: groupId) { channelId in
-                        next(channelId)
-                    }
+            else if let group = StateController.instance.group, let role = group.role, role != "guest" {
+                FireController.instance.findGeneralChannel(groupId: groupId) { channelId in
+                    next(channelId)
                 }
-                else {
-                    next(nil)
-                }
+            }
+            else {
+                next(nil)
             }
         }
     }
@@ -753,10 +761,10 @@ class FireController: NSObject {
         let timestampReversed = -1 * timestamp
         
         var messageMap: [String: Any] = [:]
-        messageMap["created_at"] = Int(timestamp)
-        messageMap["created_at_desc"] = Int(timestampReversed)
+        messageMap["created_at"] = timestamp
+        messageMap["created_at_desc"] = timestampReversed
         messageMap["created_by"] = userId
-        messageMap["modified_at"] = Int(timestamp)
+        messageMap["modified_at"] = timestamp
         messageMap["modified_by"] = userId
         messageMap["source"] = "system"
         messageMap["group_id"] = groupId
@@ -781,7 +789,7 @@ class FireController: NSObject {
     }
     
     func getServerTimestamp() -> Int64 {
-        return (Utils.now() + (FireController.instance.serverOffset ?? 0))
+        return (DateUtils.now() + (FireController.instance.serverOffset ?? 0))
     }
 }
 

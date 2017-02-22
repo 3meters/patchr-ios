@@ -80,7 +80,7 @@ class InviteListController: BaseTableController, UITableViewDelegate {
                         let inviterId = inviter["id"] as? String,
                         let groupId = StateController.instance.groupId {
                         FireController.instance.deleteInvite(groupId: groupId, inviterId: inviterId, inviteId: inviteId)
-                        UIShared.Toast(message: "Invite revoked")
+                        UIShared.toast(message: "Invite revoked")
                     }
                 }
         }
@@ -184,7 +184,7 @@ class InviteListController: BaseTableController, UITableViewDelegate {
         if invite["channels"] != nil {
             task["channels"] = invite["channels"]
         }
-        task["created_at"] = Int(timestamp)
+        task["created_at"] = timestamp
         task["created_by"] = userId
         task["group"] = invite["group"]
         task["inviter"] = invite["inviter"]
@@ -196,7 +196,7 @@ class InviteListController: BaseTableController, UITableViewDelegate {
         task["type"] = type
         
         ref.setValue(task)
-        UIShared.Toast(message: "Invite re-sent")
+        UIShared.toast(message: "Invite re-sent")
     }
 }
 

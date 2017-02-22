@@ -7,11 +7,35 @@
 //
 
 import UIKit
-import JVFloatLabeledTextField
 
-class AirTextView: JVFloatLabeledTextView {
+class AirTextView: UITextView {
 	
 	var rule = UIView()
+    var placeholderLabel: UILabel?
+    override var text: String? {
+        didSet{
+            self.placeholderLabel!.isHidden = (self.text != nil && self.text!.utf16.count > 0)
+        }
+    }
+    var placeholder: String? {
+        get {
+            // Get the placeholder text from the label
+            var placeholderText: String?
+            if let placeHolderLabel = self.viewWithTag(100) as? UILabel {
+                placeholderText = placeHolderLabel.text
+            }
+            return placeholderText
+        }
+        set {
+            // Store the placeholder text in the label
+            if let placeHolderLabel = self.viewWithTag(100) as? UILabel {
+                placeHolderLabel.text = newValue
+            }
+            else  {
+                self.addPlaceholderLabel(placeholderText: newValue!)
+            }
+        }
+    }
     
     required init(coder aDecoder: NSCoder) {
         /* Called when instantiated from XIB or Storyboard */
@@ -29,13 +53,9 @@ class AirTextView: JVFloatLabeledTextView {
 		
         NotificationCenter.default.addObserver(self, selector: #selector(editingBegin(notification:)), name: NSNotification.Name.UITextFieldTextDidBeginEditing, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(editingBegin(notification:)), name: NSNotification.Name.UITextViewTextDidBeginEditing, object: nil)
-		
+        
         self.font = Theme.fontText
 		self.textColor = Theme.colorText
-        self.floatingLabelActiveTextColor = Colors.accentColorTextLight
-        self.floatingLabelFont = Theme.fontComment
-        self.floatingLabelTextColor = Theme.colorTextPlaceholder
-		
 		self.isScrollEnabled = false
 		self.textContainer.lineFragmentPadding = 0
 		self.textContainerInset = UIEdgeInsetsMake(12, 0, 12, 0)
@@ -47,12 +67,27 @@ class AirTextView: JVFloatLabeledTextView {
 		self.rule.backgroundColor = Theme.colorRule
 		self.addSubview(self.rule)
 	}
+    
+    func addPlaceholderLabel(placeholderText: String) {
+        
+        // Create the label and set its properties
+        self.placeholderLabel = UILabel()
+        self.placeholderLabel!.text = placeholderText
+        self.placeholderLabel!.font = Theme.fontTextDisplay
+        self.placeholderLabel!.textColor = Theme.colorTextPlaceholder
+        self.placeholderLabel!.tag = 100
+        
+        // Hide the label if there is text in the text view
+        self.placeholderLabel!.isHidden = (self.text!.utf16.count > 0)
+        self.addSubview(self.placeholderLabel!)
+    }
 		
 	override func layoutSubviews() {
 		super.layoutSubviews()
+        self.placeholderLabel?.anchorBottomCenterFillingWidth(withLeftAndRightPadding: 0, bottomPadding: 12, height: 24)
 		self.rule.anchorBottomCenterFillingWidth(withLeftAndRightPadding: 0, bottomPadding: 0, height: Theme.dimenRuleThickness)
 	}
-	
+    
 	func editingBegin(notification: NSNotification) {
 		if let textView = notification.object as? UITextView {
 			if textView == self {

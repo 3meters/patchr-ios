@@ -33,36 +33,34 @@
                             <constraint firstAttribute="width" constant="16" id="rka-wR-vMS"/>
                         </constraints>
                     </imageView>
-                    <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="e0p-e1-jWB" customClass="AirCheckBox" customModule="Patchr" customModuleProvider="target">
-                        <rect key="frame" x="343" y="7" width="22" height="22"/>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    <label hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="in" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="WdR-YG-xBw" userLabel="Status">
+                        <rect key="frame" x="337" y="7" width="36" height="22"/>
                         <constraints>
-                            <constraint firstAttribute="height" constant="22" id="8nI-Zj-bdZ"/>
-                            <constraint firstAttribute="width" constant="22" id="ty8-Sm-aDn"/>
+                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="36" id="bQc-wn-XBa"/>
+                            <constraint firstAttribute="height" constant="22" id="r1J-J4-44L"/>
                         </constraints>
-                        <userDefinedRuntimeAttributes>
-                            <userDefinedRuntimeAttribute type="boolean" keyPath="hideBox" value="NO"/>
-                            <userDefinedRuntimeAttribute type="color" keyPath="tintColor">
-                                <color key="value" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
-                            </userDefinedRuntimeAttribute>
-                        </userDefinedRuntimeAttributes>
-                    </view>
+                        <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="16"/>
+                        <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
+                        <nil key="highlightedColor"/>
+                    </label>
                 </subviews>
                 <constraints>
-                    <constraint firstItem="e0p-e1-jWB" firstAttribute="trailing" secondItem="f05-yI-zfl" secondAttribute="trailing" constant="-24" id="8Jg-ky-lpc"/>
                     <constraint firstItem="Tdc-C9-Sed" firstAttribute="trailing" relation="lessThanOrEqual" secondItem="f05-yI-zfl" secondAttribute="trailing" constant="-24" id="AIb-MZ-RnA"/>
                     <constraint firstItem="Tdc-C9-Sed" firstAttribute="leading" secondItem="meX-Hb-lPU" secondAttribute="trailing" constant="8" id="RSM-fw-lkP"/>
+                    <constraint firstItem="WdR-YG-xBw" firstAttribute="centerY" secondItem="f05-yI-zfl" secondAttribute="centerY" id="SnE-Nf-fGa"/>
+                    <constraint firstItem="WdR-YG-xBw" firstAttribute="trailing" secondItem="f05-yI-zfl" secondAttribute="trailing" constant="-16" id="ZM2-Eg-8b7"/>
                     <constraint firstItem="meX-Hb-lPU" firstAttribute="centerY" secondItem="f05-yI-zfl" secondAttribute="centerY" id="cQP-vA-dnP"/>
                     <constraint firstItem="Tdc-C9-Sed" firstAttribute="centerY" secondItem="meX-Hb-lPU" secondAttribute="centerY" id="kwP-eA-xPg"/>
                     <constraint firstItem="meX-Hb-lPU" firstAttribute="leading" secondItem="f05-yI-zfl" secondAttribute="leading" constant="24" id="tSq-yH-5Ib"/>
-                    <constraint firstItem="e0p-e1-jWB" firstAttribute="centerY" secondItem="f05-yI-zfl" secondAttribute="centerY" id="yY0-GF-Zvh"/>
+                    <constraint firstItem="WdR-YG-xBw" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="Tdc-C9-Sed" secondAttribute="trailing" constant="16" id="yqA-E6-iBl"/>
                 </constraints>
             </tableViewCellContentView>
             <inset key="separatorInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
             <connections>
-                <outlet property="checkBox" destination="e0p-e1-jWB" id="WOj-06-oIB"/>
                 <outlet property="lock" destination="Tdc-C9-Sed" id="bmZ-ar-ttY"/>
                 <outlet property="lockWidth" destination="rka-wR-vMS" id="gcf-7d-taL"/>
+                <outlet property="status" destination="WdR-YG-xBw" id="Srg-rg-hay"/>
+                <outlet property="statusWidth" destination="bQc-wn-XBa" id="p87-Zy-imJ"/>
                 <outlet property="title" destination="meX-Hb-lPU" id="KkB-OH-HdK"/>
             </connections>
             <point key="canvasLocation" x="-188.5" y="-215"/>

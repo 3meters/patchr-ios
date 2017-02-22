@@ -34,74 +34,14 @@ struct Utils {
 	static var imageLock: UIImage = { return UIImage(named: "imgLockLight") }()!
 	static var imageMuted: UIImage = { return UIImage(named: "imgSoundOff3Light") }()!
 	
-	static var spacer: UIBarButtonItem = {
-		let spacer = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.fixedSpace, target: nil, action: nil)
-		spacer.width = 12
-		return spacer
-	}()
-
-    static var messageDateFormatter: DateFormatter = {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateStyle = DateFormatter.Style.short
-        dateFormatter.timeStyle = DateFormatter.Style.short
-        dateFormatter.doesRelativeDateFormatting = true
-        return dateFormatter
-    }()
-	
-	static func convertText(inputText: String, font: UIFont?) -> NSAttributedString {
-		let baseFont = font ?? Theme.fontText
-		let boldFont = UIFont(name: "HelveticaNeue", size: baseFont!.pointSize)!
-		let style = NSMutableParagraphStyle()
-		style.maximumLineHeight = CGFloat(baseFont!.pointSize + 3)
-		let attributes = [NSFontAttributeName: baseFont!, NSParagraphStyleAttributeName: style]
-		
-		let attrString = NSMutableAttributedString(string: inputText, attributes: attributes )
-		
-		var r1 = (attrString.string as NSString).range(of: "<b>")
-		
-		while r1.location != NSNotFound {
-			let r2 = (attrString.string as NSString).range(of: "</b>")
-			if r2.location != NSNotFound  && r2.location > r1.location {
-				let r3 = NSMakeRange(r1.location + r1.length, r2.location - r1.location - r1.length)
-				attrString.addAttribute(NSFontAttributeName, value: boldFont, range: r3)
-				attrString.replaceCharacters(in: r2, with: "")
-				attrString.replaceCharacters(in: r1, with: "")
-			}
-			else {
-				break
-			}
-			r1 = (attrString.string as NSString).range(of: "<b>")
-		}
-		
-		return attrString
-	}
-	
-	static func encodeForUrlQuery(target: String) -> String {
-		return target.addingPercentEncoding(withAllowedCharacters: NSCharacterSet.urlQueryAllowed)!
-	}
-	
-	static func synced(lock: AnyObject, closure: () -> ()) {
-		objc_sync_enter(lock)
-		closure()
-		objc_sync_exit(lock)
-	}
-	
-	static func LocalizedString(str: String) -> String {
-		return LocalizedString(str: str, comment: str)
-	}
-	
-    static func LocalizedString(str: String, comment: String) -> String {
-        return NSLocalizedString(str, comment: comment)
-    }
-    
-    static func DateTimeTag() -> String {
+    static func genDateKey() -> String {
         let date = Date()     			// Initialized to current date
 		let calendar = Calendar.current // System caches currentCalendar as of iOS 7
         let calComponents: Set<Calendar.Component> = Set([.year, .month, .day, .hour, .minute, .second, .nanosecond])
         let components = calendar.dateComponents(calComponents, from: date)
         let milliSeconds = components.nanosecond! / 1_000_000
-        let dateTimeTag = String(format: "%04d%02d%02d_%02d%02d%02d_%04d", components.year!, components.month!, components.day!, components.hour!, components.minute!, components.second!, milliSeconds)
-        return dateTimeTag
+        let dateKey = String(format: "%04d%02d%02d_%02d%02d%02d_%04d", components.year!, components.month!, components.day!, components.hour!, components.minute!, components.second!, milliSeconds)
+        return dateKey
     }
 
 	static func genSalt() -> Int {
@@ -111,7 +51,7 @@ struct Utils {
 
 	static func genImageKey() -> String {
         /* 20150126_095004_670196.jpg */
-        let imageKey = "\(Utils.DateTimeTag())_\(Utils.genSalt())"
+        let imageKey = "\(Utils.genDateKey())_\(Utils.genSalt())"
         return imageKey
     }
     
@@ -168,9 +108,10 @@ struct Utils {
     
     static func prepareImage(image inImage: UIImage) -> UIImage {
 		var image = inImage;
-        let scalingNeeded: Bool = (image.size.width > IMAGE_DIMENSION_MAX || image.size.height > IMAGE_DIMENSION_MAX)
+        let scalingNeeded: Bool = (image.size.width > Config.imageDimensionMax || image.size.height > Config.imageDimensionMax)
         if (scalingNeeded) {
-            let rect: CGRect = AVMakeRect(aspectRatio: image.size, insideRect: CGRect(x:0, y:0, width: IMAGE_DIMENSION_MAX, height: IMAGE_DIMENSION_MAX))
+            let rect: CGRect = AVMakeRect(aspectRatio: image.size
+                , insideRect: CGRect(x:0, y:0, width: Config.imageDimensionMax, height: Config.imageDimensionMax))
             image = image.resizeTo(size: rect.size)
         }
         else {
@@ -183,14 +124,7 @@ struct Utils {
 		UserDefaults.standard.set(nil, forKey: PerUserKey(key: Prefs.searchHistory))
 	}
     
-    static func appState() -> String {
-        let appState = (UIApplication.shared.applicationState == .background)
-            ? "background" : (UIApplication.shared.applicationState == .active)
-            ? "active" : "inactive"
-        return appState
-    }
-    
-	static func updateSearches(search: String) {
+	static func updateSearchHistory(search: String) {
 		if var searches = UserDefaults.standard.array(forKey: PerUserKey(key: Prefs.searchHistory)) as? [String] {
 			/* Replace if found else append */
 			var index = 0
@@ -218,37 +152,4 @@ struct Utils {
         DispatchQueue.main.asyncAfter(deadline: .now() + delay, execute: task)
         return task
     }
-
-	static func now() -> Int64 {
-		return Int64(NSDate().timeIntervalSince1970 * 1000)
-	}
 }
-
-/* In here because this is shared with extension */
-extension String {
-    
-    var length: Int {
-        return characters.count
-    }
-    
-    subscript (i: Int) -> Character {
-        return self[self.characters.index(self.startIndex, offsetBy: i)]
-    }
-    
-    subscript (i: Int) -> String {
-        return String(self[i] as Character)
-    }
-    
-    subscript (r: Range<Int>) -> String {
-        let start = characters.index(startIndex, offsetBy: r.lowerBound)
-        let end = characters.index(start, offsetBy: r.upperBound - r.lowerBound)
-        return self[(start ..< end)]
-    }
-    
-    subscript (r: CountableClosedRange<Int>) -> String {
-        let start = characters.index(startIndex, offsetBy: r.lowerBound)
-        let end = characters.index(start, offsetBy: r.upperBound - r.lowerBound)
-        return self[(start ... end)]
-    }
-}
-

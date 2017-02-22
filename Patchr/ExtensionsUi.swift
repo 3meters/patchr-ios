@@ -476,16 +476,6 @@ extension UIColor {
 	}
 }
 
-public func ==(lhs: NSDate, rhs: NSDate) -> Bool {
-	return lhs === rhs || lhs.compare(rhs as Date) == .orderedSame
-}
-
-public func <(lhs: NSDate, rhs: NSDate) -> Bool {
-	return lhs.compare(rhs as Date) == .orderedAscending
-}
-
-extension NSDate: Comparable { }
-
 extension Array {
     
     func at(_ index: Int?) -> Element? {
@@ -565,6 +555,30 @@ extension String {
         let str = self.replacingOccurrences(of: "[^0-9]", with: "", options: String.CompareOptions.regularExpression, range: nil)
         return str.trimmingCharacters(in: NSCharacterSet.whitespaces)
     }
+    
+    var length: Int {
+        return characters.count
+    }
+    
+    subscript (i: Int) -> Character {
+        return self[self.characters.index(self.startIndex, offsetBy: i)]
+    }
+    
+    subscript (i: Int) -> String {
+        return String(self[i] as Character)
+    }
+    
+    subscript (r: Range<Int>) -> String {
+        let start = characters.index(startIndex, offsetBy: r.lowerBound)
+        let end = characters.index(start, offsetBy: r.upperBound - r.lowerBound)
+        return self[(start ..< end)]
+    }
+    
+    subscript (r: CountableClosedRange<Int>) -> String {
+        let start = characters.index(startIndex, offsetBy: r.lowerBound)
+        let end = characters.index(start, offsetBy: r.upperBound - r.lowerBound)
+        return self[(start ... end)]
+    }
 }
 
 extension Dictionary {
@@ -572,18 +586,6 @@ extension Dictionary {
         for (key,value) in other {
             self.updateValue(value, forKey:key)
         }
-    }
-}
-
-extension NSDate {
-    var milliseconds: Int64 {
-        return Int64(self.timeIntervalSince1970 * 1000)
-    }
-}
-
-extension Date {
-    var milliseconds: Int64 {
-        return Int64(self.timeIntervalSince1970 * 1000)
     }
 }
 

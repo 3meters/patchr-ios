@@ -63,7 +63,7 @@ class MemberViewController: BaseViewController, UIScrollViewDelegate, UITextFiel
 	
 	override func viewWillLayoutSubviews() {
         
-        let viewWidth = min(CONTENT_WIDTH_MAX, self.view.bounds.size.width)
+        let viewWidth = min(Config.contentWidthMax, self.view.bounds.size.width)
         let buttonWidth = (viewWidth - 48) / 2
         self.view.bounds.size.width = viewWidth
         self.contentHolder.bounds.size.width = viewWidth
@@ -177,7 +177,7 @@ class MemberViewController: BaseViewController, UIScrollViewDelegate, UITextFiel
         
         /* Push data into form and header */
 
-        let viewWidth = min(CONTENT_WIDTH_MAX, self.view.bounds.size.width)
+        let viewWidth = min(Config.contentWidthMax, self.view.bounds.size.width)
         let viewHeight = viewWidth * 0.625
         self.originalRect = CGRect(x: -24, y: -36, width: viewWidth + 48, height: viewHeight + 72)
         
@@ -237,14 +237,14 @@ extension MemberViewController: MFMailComposeViewControllerDelegate {
     func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Error?) {
 		switch result {
 			case MFMailComposeResult.cancelled:	// 0
-				UIShared.Toast(message: "Report cancelled", controller: self, addToWindow: false)
+				UIShared.toast(message: "Report cancelled", controller: self, addToWindow: false)
 			case MFMailComposeResult.saved:		// 1
-				UIShared.Toast(message: "Report saved", controller: self, addToWindow: false)
+				UIShared.toast(message: "Report saved", controller: self, addToWindow: false)
 			case MFMailComposeResult.sent:		// 2
 				Reporting.track("Sent Report", properties: ["target":"Message" as AnyObject])
-				UIShared.Toast(message: "Report sent", controller: self, addToWindow: false)
+				UIShared.toast(message: "Report sent", controller: self, addToWindow: false)
 			case MFMailComposeResult.failed:	// 3
-				UIShared.Toast(message: "Report send failure: \(error!.localizedDescription)", controller: self, addToWindow: false)
+				UIShared.toast(message: "Report send failure: \(error!.localizedDescription)", controller: self, addToWindow: false)
 				break
 		}
 		

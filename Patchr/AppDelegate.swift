@@ -182,7 +182,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FIRMessagingDelegate {
          * We have thirty seconds to process and call the completion handler before being
          * terminated if the app was started to process the notification.
          */
-        Log.d("Notification received - app state: \(Utils.appState())")
+        Log.d("Notification received - app state: \(Config.appState())")
         
         if application.applicationState == .inactive {
             if !StateController.instance.stateIntialized {

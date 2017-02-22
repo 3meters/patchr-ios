@@ -34,10 +34,9 @@ class DisplayPhoto: IDMPhoto {
                 displayPhoto.size = CGSize(width: CGFloat(photo.width!), height: CGFloat(photo.height!))
             }
         }
-        
-        let createdDate = NSDate(timeIntervalSince1970: Double(message.createdAt!) / 1000)
-        displayPhoto.createdDateValue = createdDate as Date
-        displayPhoto.createdDateLabel = UIShared.timeAgoShort(date: createdDate)
+        let createdDate = DateUtils.from(timestamp: message.createdAt!)
+        displayPhoto.createdDateValue = createdDate
+        displayPhoto.createdDateLabel = DateUtils.timeAgoShort(date: createdDate)
         
         if let creator = message.creator {
             displayPhoto.creatorName = creator.username

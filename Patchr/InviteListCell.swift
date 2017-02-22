@@ -46,7 +46,7 @@ class InviteListCell: UITableViewCell {
     
     func bind(user: FireUser, invite: [String: Any]) {
         
-        if let acceptedAt = invite["accepted_at"] as? Int,
+        if let acceptedAt = invite["accepted_at"] as? Int64,
             let inviter = invite["inviter"] as? [String: Any],
             let username = inviter["username"] as? String,
             let group = invite["group"] as? [String: Any] {
@@ -74,7 +74,7 @@ class InviteListCell: UITableViewCell {
             }
             
             self.invitedBy?.text = "Invited by \(username)"
-            self.actionAt?.text = "Accepted \(UIShared.dateMediumString(timestamp: acceptedAt))"
+            self.actionAt?.text = "Accepted \(DateUtils.dateMediumString(timestamp: acceptedAt))"
             self.actionAt?.textColor = MaterialColor.lightGreen.darken1
             
             let fullName = user.profile?.fullName ?? user.username
@@ -98,7 +98,7 @@ class InviteListCell: UITableViewCell {
     
     func bind(invite: [String: Any]) {
         /* Pending */
-        if let invitedAt = invite["invited_at"] as? Int,
+        if let invitedAt = invite["invited_at"] as? Int64,
             let inviter = invite["inviter"] as? [String: Any],
             let username = inviter["username"] as? String,
             let email = invite["email"] as? String,
@@ -123,7 +123,7 @@ class InviteListCell: UITableViewCell {
             }
             
             self.invitedBy?.text = "Invited by \(username)"
-            self.actionAt?.text = "Invited on \(UIShared.dateMediumString(timestamp: invitedAt))"
+            self.actionAt?.text = "Invited on \(DateUtils.dateMediumString(timestamp: invitedAt))"
             self.actionAt?.textColor = Colors.accentColorTextLight
         }
     }

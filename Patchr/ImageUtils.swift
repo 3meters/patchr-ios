@@ -26,10 +26,10 @@ class ImageUtils {
 		
         var path: String = ""
         var quality: Int = 75
-        if PIXEL_SCALE >= 3 {
+        if Config.pixelScale >= 3 {
             quality = 25
         }
-        else if PIXEL_SCALE >= 2 {
+        else if Config.pixelScale >= 2 {
             quality = 50
         }
         
@@ -42,15 +42,15 @@ class ImageUtils {
             }
             else {
                 if category == SizeCategory.profile {
-                    path = "https://3meters-images.imgix.net/\(prefix!)?w=\(width)&dpr=\(PIXEL_SCALE)&q=\(quality)&h=\(width)&fit=min&trim=auto"
+                    path = "https://3meters-images.imgix.net/\(prefix!)?w=\(width)&dpr=\(Config.pixelScale)&q=\(quality)&h=\(width)&fit=min&trim=auto"
                 }
                 else {
-                    path = "https://3meters-images.imgix.net/\(prefix!)?w=\(width)&dpr=\(PIXEL_SCALE)&q=\(quality)"
+                    path = "https://3meters-images.imgix.net/\(prefix!)?w=\(width)&dpr=\(Config.pixelScale)&q=\(quality)"
                 }
             }
         }
         else if source == PhotoSource.google {
-            let width: CGFloat = CGFloat(IMAGE_DIMENSION_MAX) * PIXEL_SCALE
+            let width: CGFloat = CGFloat(Config.imageDimensionMax) * Config.pixelScale
             if (prefix!.range(of: "?") != nil) {
                 path = "\(prefix)&maxwidth=\(width)"
             }
@@ -59,7 +59,7 @@ class ImageUtils {
             }
         }
         else if source == PhotoSource.gravatar {
-            let width: CGFloat = CGFloat(100) * PIXEL_SCALE
+            let width: CGFloat = CGFloat(100) * Config.pixelScale
             path = "\(prefix)&s=\(width)"
         }
 		

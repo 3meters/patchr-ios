@@ -62,7 +62,7 @@ class SettingsTableViewController: UITableViewController {
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
 
-        let viewWidth = min(CONTENT_WIDTH_MAX, self.tableView.bounds.size.width)
+        let viewWidth = min(Config.contentWidthMax, self.tableView.bounds.size.width)
         self.tableView.bounds.size.width = viewWidth
 
         self.logoutButton.fillSuperview()
@@ -377,14 +377,14 @@ extension SettingsTableViewController: MFMailComposeViewControllerDelegate {
 
         switch result {
             case MFMailComposeResult.cancelled:    // 0
-                UIShared.Toast(message: "Feedback cancelled", controller: self, addToWindow: false)
+                UIShared.toast(message: "Feedback cancelled", controller: self, addToWindow: false)
             case MFMailComposeResult.saved:        // 1
-                UIShared.Toast(message: "Feedback saved", controller: self, addToWindow: false)
+                UIShared.toast(message: "Feedback saved", controller: self, addToWindow: false)
             case MFMailComposeResult.sent:        // 2
                 Reporting.track("Sent Feedback")
-                UIShared.Toast(message: "Feedback sent", controller: self, addToWindow: false)
+                UIShared.toast(message: "Feedback sent", controller: self, addToWindow: false)
             case MFMailComposeResult.failed:    // 3
-                UIShared.Toast(message: "Feedback send failure: \(error!.localizedDescription)", controller: self, addToWindow: false)
+                UIShared.toast(message: "Feedback send failure: \(error!.localizedDescription)", controller: self, addToWindow: false)
                 break
         }
 

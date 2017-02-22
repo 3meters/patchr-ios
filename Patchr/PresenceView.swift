@@ -67,7 +67,7 @@ class PresenceView: UIView {
 	func bind(online: Any?) {
         
         showOffline()
-        if let _ = online as? Int {
+        if let _ = online as? Int64 {
             /* Timestamp for when user went offline */
         }
         else if let online = online as? Bool {

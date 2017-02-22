@@ -242,7 +242,8 @@ class GroupEditViewController: BaseEditViewController {
         }
         
         if updates.keys.count > 0 {
-            updates["modified_at"] = FIRServerValue.timestamp()
+            let timestamp = FireController.instance.getServerTimestamp()
+            updates["modified_at"] = timestamp
             FireController.db.child(self.group.path).updateChildValues(updates)
         }
         self.close(animated: true)

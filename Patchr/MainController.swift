@@ -33,7 +33,7 @@ class MainController: NSObject, iRateDelegate {
 
     func stateInitialized(notification: NSNotification) {
         NotificationCenter.default.removeObserver(self, name: NSNotification.Name(rawValue: Events.StateInitialized), object: nil)
-        Log.d("State initialized - app state: \(Utils.appState())")
+        Log.d("State initialized - app state: \(Config.appState())")
         checkCompatibility() { compatible in
             if compatible {
                 self.route()
@@ -97,8 +97,8 @@ class MainController: NSObject, iRateDelegate {
         CancelButton.appearance().titleFont = Theme.fontButtonTitle
 
         /* Get the primary ui components ready */
-        SlideMenuOptions.leftViewWidth = NAVIGATION_DRAWER_WIDTH
-        SlideMenuOptions.rightViewWidth = SIDE_MENU_WIDTH
+        SlideMenuOptions.leftViewWidth = Config.navigationDrawerWidth
+        SlideMenuOptions.rightViewWidth = Config.sideMenuWidth
         SlideMenuOptions.animationDuration = CGFloat(0.2)
         SlideMenuOptions.simultaneousGestureRecognizers = false
         

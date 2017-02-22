@@ -18,7 +18,7 @@ class FireChannel: NSObject {
     }
     
     var archived: Bool?
-    var createdAt: Int?
+    var createdAt: Int64?
     var createdBy: String?
     var general: Bool?
     var groupId: String?
@@ -43,7 +43,7 @@ class FireChannel: NSObject {
         if dict != nil {
             let channel = FireChannel()
             channel.archived = dict!["archived"] as? Bool
-            channel.createdAt = dict!["created_at"] as? Int
+            channel.createdAt = dict!["created_at"] as? Int64
             channel.createdBy = dict!["created_by"] as? String
             channel.general = dict!["general"] as? Bool
             channel.groupId = dict!["group_id"] as? String
@@ -82,8 +82,8 @@ class FireChannel: NSObject {
         let pathByMember = "member-channels/\(userId)/\(self.groupId!)/\(self.id!)"
         let pathByGroup = "group-channel-members/\(self.groupId!)/\(self.id!)/\(userId)"
         let priority = on ? 1 : 4
-        let index = Int("\(FireController.instance.priorities[priority])\(self.joinedAt!)")
-        let indexReversed = Int("-\(FireController.instance.priorities.reversed()[priority])\(self.joinedAt!)")
+        let index = Int64("\(FireController.instance.priorities[priority])\(self.joinedAt!)")
+        let indexReversed = Int64("-\(FireController.instance.priorities.reversed()[priority])\(self.joinedAt!)")
         let updates: [String: Any] = [
             "starred": on,
             "priority": priority,
@@ -102,8 +102,8 @@ class FireChannel: NSObject {
         let pathByMember = "member-channels/\(userId)/\(self.groupId!)/\(self.id!)"
         let pathByGroup = "group-channel-members/\(self.groupId!)/\(self.id!)/\(userId)"
         let priority = self.starred! ? 1 : 4
-        let index = Int("\(FireController.instance.priorities[priority])\(self.joinedAt!)")
-        let indexReversed = Int("-\(FireController.instance.priorities.reversed()[priority])\(self.joinedAt!)")
+        let index = Int64("\(FireController.instance.priorities[priority])\(self.joinedAt!)")
+        let indexReversed = Int64("-\(FireController.instance.priorities.reversed()[priority])\(self.joinedAt!)")
         let updates: [String: Any] = [
             "priority": priority,
             "index_priority_joined_at": index!,

@@ -16,7 +16,6 @@ class ChannelListCell: UITableViewCell {
     @IBOutlet weak var badge: UILabel?
     @IBOutlet weak var statusWidth: NSLayoutConstraint?
     @IBOutlet weak var lockWidth: NSLayoutConstraint?
-    @IBOutlet weak var checkBox: AirCheckBox?
     
     var channel: FireChannel!
     var unreadQuery: UnreadQuery?   // Passed in by table data source
@@ -73,17 +72,22 @@ class ChannelListCell: UITableViewCell {
         self.channel = channel
         
         self.title?.text = "# \(channel.name!)"
+        self.title?.sizeToFit()
         self.lock?.isHidden = (channel.visibility != "private")
         self.star?.isHidden = !(channel.starred != nil && channel.starred!)
-        
-        if searching && channel.joinedAt != nil {
-            self.status?.textColor = MaterialColor.lightGreen.darken1
-            self.status?.isHidden = false
-            self.statusWidth?.constant = 70
-        }
-        else {
-            self.status?.isHidden = true
-            self.statusWidth?.constant = 0
+        self.lockWidth?.constant = (self.lock?.isHidden)! ? 0 : 16
+
+        if searching {
+            if channel.joinedAt != nil {
+                self.status?.isHidden = false
+                self.status?.text = "in"
+                self.status?.textColor = Colors.accentColorTextLight
+                self.statusWidth?.constant = 24
+            }
+            else {
+                self.status?.isHidden = true
+                self.statusWidth?.constant = 0
+            }
         }
         self.layoutIfNeeded()
     }

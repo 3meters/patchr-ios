@@ -17,10 +17,10 @@ class FireGroup: NSObject {
         return "groups/\(self.id!)"
     }
     
-    var createdAt: Int?
+    var createdAt: Int64?
     var createdBy: String?
     var defaultChannels: [String]?
-    var modifiedAt: Int?
+    var modifiedAt: Int64?
     var modifiedBy: String?
     var ownedBy: String?
     var photo: FirePhoto?
@@ -39,11 +39,11 @@ class FireGroup: NSObject {
     static func from(dict: [String: Any]?, id: String?) -> FireGroup? {
         if dict != nil {
             let group = FireGroup()
-            group.createdAt = dict!["created_at"] as? Int
+            group.createdAt = dict!["created_at"] as? Int64
             group.createdBy = dict!["created_by"] as? String
             group.defaultChannels = dict!["default_channels"] as? [String]
             group.id = id
-            group.modifiedAt = dict!["modified_at"] as? Int
+            group.modifiedAt = dict!["modified_at"] as? Int64
             group.modifiedBy = dict!["modified_by"] as? String
             group.ownedBy = dict!["owned_by"] as? String
             group.photo = FirePhoto.from(dict: dict!["photo"] as! [String : Any]?)

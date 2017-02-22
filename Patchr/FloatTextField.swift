@@ -1,7 +1,4 @@
 //
-//  AirTextField.swift
-//  Patchr
-//
 //  Created by Jay Massena on 11/27/15.
 //  Copyright © 2015 3meters. All rights reserved.
 //
@@ -39,7 +36,7 @@ class FloatTextField: SkyFloatingLabelTextField, UITextFieldDelegate {
 		self.textColor = Theme.colorText
         self.lineColor = Theme.colorRule
         self.selectedTitleColor = Colors.accentColorTextLight
-        self.selectedLineColor = Colors.accentColorTextLight
+        self.selectedLineColor = Colors.accentColor
         self.errorColor = Theme.colorTextValidationError
         
         self.titleFormatter = { (text: String) -> String in
@@ -51,6 +48,16 @@ class FloatTextField: SkyFloatingLabelTextField, UITextFieldDelegate {
     
     func setDelegate(delegate: UITextFieldDelegate) {
         self.fieldDelegate = delegate
+    }
+    
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        if self.errorMessage != nil {
+            self.errorMessage = nil
+        }
+        if let delegate = self.fieldDelegate {
+            return delegate.textField?(textField, shouldChangeCharactersIn: range, replacementString: string) ?? true
+        }
+        return true
     }
     
     func textFieldShouldClear(_ textField: UITextField) -> Bool {

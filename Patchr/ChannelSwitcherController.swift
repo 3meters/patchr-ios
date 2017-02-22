@@ -67,9 +67,12 @@ class ChannelSwitcherController: BaseTableController {
     
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
-        self.view.anchorTopCenter(withTopPadding: 74, width: NAVIGATION_DRAWER_WIDTH, height: self.view.height())
-        self.searchTableView.fillSuperview()
-        self.tableView.fillSuperview()
+        self.view.anchorTopCenter(withTopPadding: 74, width: Config.navigationDrawerWidth, height: self.view.height())
+        if self.searchOn {
+            self.searchTableView.fillSuperview()
+        } else {
+            self.tableView.fillSuperview()
+        }
     }
 
     /*--------------------------------------------------------------------------------------------
@@ -79,7 +82,7 @@ class ChannelSwitcherController: BaseTableController {
     func addAction(sender: AnyObject?) {
         
         if self.role == "guest" {
-            UIShared.Toast(message: "Guests can\'t create new channels.")
+            UIShared.toast(message: "Guests can\'t create new channels.")
             return
         }
         
@@ -174,15 +177,13 @@ class ChannelSwitcherController: BaseTableController {
         self.searchController = SearchController(tableView: self.searchTableView)
         self.searchButton = UIBarButtonItem(barButtonSystemItem: .search, target: self, action: #selector(searchAction(sender:)))
         
-        self.searchTableView.alpha = 0.0
         self.searchTableView.backgroundColor = Theme.colorBackgroundTable
         self.searchTableView.tableFooterView = UIView()
         self.searchTableView.delegate = self
         self.searchTableView.dataSource = self.searchController
         self.searchTableView.separatorInset = UIEdgeInsets.zero
-        self.searchTableView.register(UINib(nibName: "ChannelListCell", bundle: nil), forCellReuseIdentifier: "channel-search-cell")
+        self.searchTableView.register(UINib(nibName: "ChannelSearchCell", bundle: nil), forCellReuseIdentifier: "channel-search-cell")
         
-        self.view.addSubview(self.searchTableView)
         self.view.addSubview(self.tableView)
         
         /* Navigation button */
@@ -192,9 +193,11 @@ class ChannelSwitcherController: BaseTableController {
         unreadBackView.badge.alpha = CGFloat(0)
         
         self.backButton = UIBarButtonItem(customView: unreadBackView)
+        self.backButton.target = self
+        self.backButton.action = #selector(backAction(sender:))
         
         let gradient = CAGradientLayer()
-        gradient.frame = CGRect(x: 0, y: 0, width: NAVIGATION_DRAWER_WIDTH, height: 64)
+        gradient.frame = CGRect(x: 0, y: 0, width: Config.navigationDrawerWidth, height: 64)
         gradient.colors = [Colors.accentColor.cgColor, Colors.brandColor.cgColor]
         gradient.startPoint = CGPoint(x: 0.0, y: 0.5)
         gradient.endPoint = CGPoint(x: 1.0, y: 0.5)
@@ -204,7 +207,7 @@ class ChannelSwitcherController: BaseTableController {
         
         self.gradientImage = ImageUtils.imageFromLayer(layer: gradient)
         
-        let titleWidth = (NAVIGATION_DRAWER_WIDTH - 112)
+        let titleWidth = (Config.navigationDrawerWidth - 112)
         let titleView = AirLabelDisplay(frame: CGRect(x: 0, y: 0, width: titleWidth, height: 24))
         titleView.font = Theme.fontBarText
         self.titleButton = UIBarButtonItem(customView: titleView)
@@ -302,11 +305,17 @@ class ChannelSwitcherController: BaseTableController {
             self.searchBarHolder.frame = CGRect(x: 0, y: 0, width: (self.navigationController?.navigationBar.width())! - 32, height: 44)
             self.searchBar.fillSuperview()
             self.searchBar.becomeFirstResponder()
+            self.tableView.removeFromSuperview()
+            self.searchTableView.frame = self.view.bounds
+            self.view.addSubview(self.searchTableView)
         }
         else {
             self.navigationItem.setLeftBarButton(self.titleButton, animated: true)
             self.navigationItem.setRightBarButtonItems([self.backButton, self.searchButton], animated: true)
             self.searchBar.resignFirstResponder()
+            self.searchTableView.removeFromSuperview()
+            self.tableView.frame = self.view.bounds
+            self.view.addSubview(self.tableView)
         }
     }
     
@@ -402,8 +411,6 @@ extension ChannelSwitcherController: UISearchBarDelegate {
     
     func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
         self.searchBar?.setShowsCancelButton(true, animated: true)
-        self.tableView.fadeOut()
-        self.searchTableView.fadeIn()
     }
     
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
@@ -412,8 +419,6 @@ extension ChannelSwitcherController: UISearchBarDelegate {
     
     func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
         self.searchBar?.text = nil
-        self.tableView.fadeIn()
-        self.searchTableView.fadeOut()
     }
     
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
@@ -444,7 +449,7 @@ class SearchController: NSObject, UITableViewDataSource {
     }
     
     func filter(searchText: String, scope: String = "All") {
-        self.channelsFiltered = channelsSource.filter { channel in
+        self.channelsFiltered = self.channelsSource.filter { channel in
             return channel.name!.lowercased().contains(searchText.lowercased())
         }
         self.tableView?.reloadData()

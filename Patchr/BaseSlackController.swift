@@ -293,7 +293,7 @@ class BaseSlackController: SLKTextViewController {
         var task: [String: Any] = [:]
         task["channel_id"] = channelId
         task["channelName"] = channelName
-        task["created_at"] = Int(timestamp)
+        task["created_at"] = timestamp
         task["created_by"] = userId
         task["group_id"] = groupId
         task["id"] = ref.key
@@ -302,11 +302,11 @@ class BaseSlackController: SLKTextViewController {
         
         var message: [String: Any] = [:]
         message["channel_id"] = channelId
-        message["created_at"] = Int(timestamp)
-        message["created_at_desc"] = Int(timestampReversed)
+        message["created_at"] = timestamp
+        message["created_at_desc"] = timestampReversed
         message["created_by"] = userId
         message["group_id"] = groupId
-        message["modified_at"] = Int(timestamp)
+        message["modified_at"] = timestamp
         message["modified_by"] = userId
         message["source"] = "user"
         
@@ -334,7 +334,8 @@ class BaseSlackController: SLKTextViewController {
     
     func updateMessage() {
         
-        var updateMap: [String: Any] = ["modified_at": FIRServerValue.timestamp()]
+        let timestamp = FireController.instance.getServerTimestamp()
+        var updateMap: [String: Any] = ["modified_at": timestamp]
         let path = self.editingMessage.path
         
         if self.photoEditView.photoDirty {
@@ -385,7 +386,7 @@ class BaseSlackController: SLKTextViewController {
         
         if let asset = asset as? PHAsset {
             if let takenDate = asset.creationDate {
-                photoMap["taken_at"] = Int64(takenDate.timeIntervalSince1970 * 1000)
+                photoMap["taken_at"] = takenDate.milliseconds
                 Log.d("Photo taken: \(takenDate)")
             }
             if let coordinate = asset.location?.coordinate {
@@ -394,7 +395,7 @@ class BaseSlackController: SLKTextViewController {
             }
         }
         else if let asset = asset as? [String: Any] {
-            if let takenDate = asset["taken_at"] as? Int64 {
+            if let takenDate = asset["taken_at"] as? Int {
                 photoMap["taken_at"] = takenDate
                 Log.d("Photo taken: \(takenDate)")
             }

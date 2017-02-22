@@ -227,7 +227,6 @@ extension ChannelPickerController: UITableViewDataSource {
         cell.selected(on: (self.channels[channelId] != nil), style: .normal)
         cell.bind(channel: channel)
         cell.status?.isHidden = true
-        cell.checkBox?.isHidden = true
 
         return cell
     }
@@ -306,7 +305,6 @@ extension ChannelPickerController {
         Log.d("tokenForText")
         if let cell = self.tableView.cellForRow(at: IndexPath(row: 0, section: 0)) as? ChannelListCell {
             let channel = cell.channel!
-            cell.checkBox?.setOn(true, animated: true)
             self.channels[channel.id!] = channel
             return CLToken(displayText: channel.name!, context: cell)
         }

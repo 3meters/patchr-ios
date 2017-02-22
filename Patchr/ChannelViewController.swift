@@ -111,7 +111,7 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
     }
     
     override func viewWillLayoutSubviews() {
-        let viewWidth = min(CONTENT_WIDTH_MAX, self.view.width())
+        let viewWidth = min(Config.contentWidthMax, self.view.width())
         self.view.anchorTopCenter(withTopPadding: 0, width: viewWidth, height: self.view.height())
         
         super.viewWillLayoutSubviews()
@@ -130,6 +130,8 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
             self.joinBarButton.anchorBottomCenterFillingWidth(withLeftAndRightPadding: 8, bottomPadding: 8, height: 48)
             self.joinBarLabel.anchorTopCenterFillingWidth(withLeftAndRightPadding: 8, topPadding: 0, height: 32)
         }
+        
+        self.titleView.bounds.size.width = Config.widthNarrow ? 160 : 200
     }
 
     override func didReceiveMemoryWarning() {
@@ -215,7 +217,7 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
         let userId = UserController.instance.userId!
         FireController.instance.addUserToChannel(userId: userId, groupId: groupId, channelId: channelId, channelName: channelName, then: { success in
             if success {
-                UIShared.Toast(message: "You have joined this channel")
+                UIShared.toast(message: "You have joined this channel")
                 if UserDefaults.standard.bool(forKey: PerUserKey(key: Prefs.soundEffects)) {
                     AudioController.instance.play(sound: Sound.pop.rawValue)
                 }
@@ -238,7 +240,7 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
                                 if success {
                                     /* Close and switch to accessible channel */
                                     self.dismiss(animated: true, completion: nil)
-                                    UIShared.Toast(message: "You have left this channel.")
+                                    UIShared.toast(message: "You have left this channel.")
                                     StateController.instance.clearChannel()
                                 }
                             })
@@ -252,7 +254,7 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
                 let channelName = self.channel.name!
                 FireController.instance.removeUserFromChannel(userId: userId, groupId: group.id!, channelId: self.channel.id!, channelName: channelName, then: { success in
                     if success {
-                        UIShared.Toast(message: "You have left this channel.")
+                        UIShared.toast(message: "You have left this channel.")
                         if UserDefaults.standard.bool(forKey: PerUserKey(key: Prefs.soundEffects)) {
                             AudioController.instance.play(sound: Sound.pop.rawValue)
                         }
@@ -543,7 +545,7 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
 
             if self?.tableView.tableHeaderView == nil {
                 let screenSize = UIScreen.main.bounds.size
-                let viewWidth = min(CONTENT_WIDTH_MAX, screenSize.width)
+                let viewWidth = min(Config.contentWidthMax, screenSize.width)
                 
                 self?.headerView.frame = CGRect(x:0, y:0, width: viewWidth, height: 100)
                 self?.headerView.bind(channel: self?.channel)
@@ -674,7 +676,7 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
         let likeTitle = likes ? "Remove like" : "Add like"
         let like = UIAlertAction(title: likeTitle, style: .default) { action in
             if self.channel?.joinedAt == nil {
-                UIShared.Toast(message: "Join this channel to like messages.")
+                UIShared.toast(message: "Join this channel to like messages.")
                 return
             }
 
@@ -867,6 +869,10 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
                     }
                     
                     if remaining <= 0 {
+                        if displayPhotos.count == 0 {
+                            UIShared.toast(message: "This channel needs some photos!")
+                            return
+                        }
                         let navController = AirNavigationController()
                         let layout = NHBalancedFlowLayout()
                         layout.preferredRowSize = 200
@@ -957,7 +963,7 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
          * Note: Called once only for each row in fetchResultController when FRC is making a data pass in
          * response to managedContext.save.
          */
-        let viewWidth = min(CONTENT_WIDTH_MAX, self.tableView.width())
+        let viewWidth = min(Config.contentWidthMax, self.tableView.width())
         var viewHeight = CGFloat(100)
         let snap = self.tableViewDataSource.object(at: UInt(indexPath.row)) as! FIRDataSnapshot
         

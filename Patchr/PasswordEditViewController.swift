@@ -14,8 +14,7 @@ import FirebaseAuth
 class PasswordEditViewController: BaseEditViewController {
 
     var message	= AirLabelTitle()
-    var passwordField = AirTextField()
-    var errorLabel = AirLabelDisplay()
+    var passwordField = FloatTextField()
 	var hideShowButton = AirHideShowButton()
 	
 	/*--------------------------------------------------------------------------------------------
@@ -26,31 +25,26 @@ class PasswordEditViewController: BaseEditViewController {
 		super.loadView()
 		initialize()
 	}
-	
+
+	override func viewDidAppear(_ animated: Bool) {
+		super.viewDidAppear(animated)
+		let _ = self.passwordField.becomeFirstResponder()
+	}
+
 	override func viewWillLayoutSubviews() {
-		
         let messageSize = self.message.sizeThatFits(CGSize(width:288, height:CGFloat.greatestFiniteMagnitude))
-        let errorSize = self.errorLabel.sizeThatFits(CGSize(width:288, height:CGFloat.greatestFiniteMagnitude))
-        
 		self.message.anchorTopCenter(withTopPadding: 0, width: 288, height: messageSize.height)
 		self.passwordField.alignUnder(self.message, matchingCenterWithTopPadding: 8, width: 288, height: 48)
-        self.errorLabel.alignUnder(self.passwordField, matchingCenterWithTopPadding: 0, width: 288, height: errorSize.height)
-		
         super.viewWillLayoutSubviews()
 	}
-	
-    override func viewDidAppear(_ animated: Bool) {
-		super.viewDidAppear(animated)
-        self.passwordField.becomeFirstResponder()
-    }
-	
+
 	/*--------------------------------------------------------------------------------------------
 	* Events
 	*--------------------------------------------------------------------------------------------*/
 	
 	func doneAction(sender: AnyObject) {
 		if isValid() {
-            self.passwordField.resignFirstResponder()
+            let _ = self.passwordField.resignFirstResponder()
             
             self.progress = AirProgress.addedTo(view: self.view.window!)
             self.progress?.mode = MBProgressHUDMode.indeterminate
@@ -94,7 +88,7 @@ class PasswordEditViewController: BaseEditViewController {
 		self.message.textAlignment = .center
 		
 		self.passwordField.placeholder = "New password"
-		self.passwordField.delegate = self
+		self.passwordField.setDelegate(delegate: self)
 		self.passwordField.isSecureTextEntry = true
         self.passwordField.autocapitalizationType = .none
 		self.passwordField.keyboardType = .default
@@ -108,7 +102,6 @@ class PasswordEditViewController: BaseEditViewController {
 
         self.contentHolder.addSubview(self.message)
         self.contentHolder.addSubview(self.passwordField)
-        self.contentHolder.addSubview(self.errorLabel)
 
 		/* Navigation bar buttons */
 		let doneButton   = UIBarButtonItem(title: "Done", style: UIBarButtonItemStyle.plain, target: self, action: #selector(doneAction(sender:)))
@@ -128,9 +121,7 @@ class PasswordEditViewController: BaseEditViewController {
                     let _ = self.navigationController?.popToRootViewController(animated: true)
                 }
                 else {
-                    self.errorLabel.text = error?.localizedDescription
-                    self.view.setNeedsLayout()
-                    self.errorLabel.fadeIn()
+					self.passwordField.errorMessage = error?.localizedDescription
                 }
             })
         }
@@ -139,7 +130,7 @@ class PasswordEditViewController: BaseEditViewController {
     func isValid() -> Bool {
 		
         if (passwordField.text!.utf16.count < 6) {
-            alert(title: "Enter a new password with six characters or more.")
+			self.passwordField.errorMessage = "Enter a password with six characters or more."
             return false
         }
         return true

@@ -18,9 +18,9 @@ class FireUser: NSObject {
     }
 
     var id: String?
-    var createdAt: Int?
+    var createdAt: Int64?
     var createdBy: String?
-    var modifiedAt: Int?
+    var modifiedAt: Int64?
     var presence: Any?
     var username: String?
     var profile: FireProfile?
@@ -42,9 +42,9 @@ class FireUser: NSObject {
         if dict != nil {
             let user = FireUser()
             user.id = id
-            user.createdAt = dict!["created_at"] as? Int
+            user.createdAt = dict!["created_at"] as? Int64
             user.createdBy = dict!["created_by"] as? String
-            user.modifiedAt = dict!["modified_at"] as? Int
+            user.modifiedAt = dict!["modified_at"] as? Int64
             user.presence = dict!["presence"]
             user.username = dict!["username"] as? String
             user.profile = FireProfile.from(dict: dict!["profile"] as! [String : Any]?)

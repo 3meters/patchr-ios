@@ -36,7 +36,7 @@ class BranchProvider: NSObject {
         let path = "group/\(groupId)"
         let applink = BranchUniversalObject(canonicalIdentifier: path)
         
-        applink.metadata?["created_at"] = Utils.now()
+        applink.metadata?["created_at"] = DateUtils.now()
         applink.metadata?["email"] = email
         applink.metadata?["group_id"] = groupId
         applink.metadata?["groupTitle"] = groupTitle
@@ -87,7 +87,7 @@ class BranchProvider: NSObject {
         let applink = BranchUniversalObject(canonicalIdentifier: path)
         
         applink.metadata?["channels"] = channels
-        applink.metadata?["created_at"] = Utils.now()
+        applink.metadata?["created_at"] = DateUtils.now()
         applink.metadata?["email"] = email
         applink.metadata?["group_id"] = group.id!
         applink.metadata?["groupTitle"] = group.title!

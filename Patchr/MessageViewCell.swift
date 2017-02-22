@@ -132,7 +132,7 @@ class MessageViewCell: AirUIView {
 
         /* Photo: give initial size in case the image displays before call to layoutSubviews		 */
         let columnLeft = CGFloat(48 + 8)
-        let columnWidth = min(CONTENT_WIDTH_MAX, UIScreen.main.bounds.size.width) - columnLeft
+        let columnWidth = min(Config.contentWidthMax, UIScreen.main.bounds.size.width) - columnLeft
         let photoHeight = columnWidth * 0.5625        // 16:9 aspect ratio
 
         self.photoView = AirImageView(frame: CGRect(x: 0, y: 0, width: columnWidth, height: photoHeight))
@@ -218,9 +218,14 @@ class MessageViewCell: AirUIView {
         
         if let description = message.text {
             self.description_?.isHidden = false
+            let label = self.description_ as! TTTAttributedLabel
             if message.source == "system" {
+                label.textInsets = UIEdgeInsets(top: 0, left: 2, bottom: 0, right: 2)
                 self.description_.textColor = Colors.accentColorTextLight
                 self.description_!.font = Theme.fontTextListItalic
+            }
+            else {
+                label.textInsets = UIEdgeInsets.zero
             }
             self.description_?.text = description
         }
@@ -266,7 +271,8 @@ class MessageViewCell: AirUIView {
             self.photoView?.image = nil
         }
 
-        self.createdDate.text = UIShared.timeAgoShort(date: NSDate(timeIntervalSince1970: Double(message.createdAt!) / 1000))
+        let createdAt = DateUtils.from(timestamp: message.createdAt!)
+        self.createdDate.text = DateUtils.timeAgoShort(date: createdAt)
 
         self.edited.isHidden = (message.createdAt == message.modifiedAt)
 

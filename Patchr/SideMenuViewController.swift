@@ -85,7 +85,7 @@ class SideMenuViewController: BaseTableController, UITableViewDelegate, UITableV
         self.tableView = UITableView(frame: self.tableView.frame, style: .plain)
         self.tableView.delegate = self
         self.tableView.dataSource = self
-        self.tableView.rowHeight = 64
+        self.tableView.rowHeight = 60
         self.tableView.tableFooterView = UIView()
         self.tableView.backgroundColor = Colors.gray95pcntColor
         self.tableView.sectionFooterHeight = 0
@@ -170,7 +170,7 @@ extension SideMenuViewController {
         }
         if selectedCell == self.manageCell {
             if StateController.instance.group?.role != "owner" {
-                UIShared.Toast(message: "Only group owners can manage groups")
+                UIShared.toast(message: "Only group owners can manage groups")
             }
             else {
                 let controller = GroupEditViewController()
@@ -192,7 +192,7 @@ extension SideMenuViewController {
     }
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return CGFloat(64)
+        return CGFloat(60)
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {

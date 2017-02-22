@@ -49,6 +49,12 @@ class ChannelEditViewController: BaseEditViewController {
             })
         }
     }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        if self.mode == .insert {
+            let _ = self.nameField.becomeFirstResponder()
+        }
+    }
 
     override func viewWillLayoutSubviews() {
         /*
@@ -59,19 +65,31 @@ class ChannelEditViewController: BaseEditViewController {
          */
         let bannerSize = self.banner.sizeThatFits(CGSize(width:288, height:CGFloat.greatestFiniteMagnitude))
         let purposeSize = self.purposeField.sizeThatFits(CGSize(width:288, height:CGFloat.greatestFiniteMagnitude))
-        
-        self.visibilityLabel.sizeToFit()
 
         self.banner.anchorTopCenter(withTopPadding: 0, width: 288, height: bannerSize.height)
-        self.usersButton.alignUnder(self.banner, matchingCenterWithTopPadding: 24, width: 288, height: self.usersButton.isHidden ? 0 : 48)
-        self.nameField.alignUnder(self.usersButton, matchingCenterWithTopPadding: 16, width: 288, height: 48)
-        self.purposeField.alignUnder(self.nameField, matchingCenterWithTopPadding: 16, width: 288, height: max(48, purposeSize.height))
-        self.photoEditView.alignUnder(self.purposeField, matchingCenterWithTopPadding: 16, width: 288, height: 288 * 0.56)
         
-        self.visibilityGroup.alignUnder(self.photoEditView, matchingCenterWithTopPadding: 8, width: 288, height: 48)
-        self.visibilityLabel.anchorCenterLeft(withLeftPadding: 0, width: 144, height: self.visibilityLabel.height())
-        self.visibilitySwitch.anchorCenterRight(withRightPadding: 0, width: self.visibilitySwitch.width(), height: self.visibilitySwitch.height())
-
+        if self.usersButton.isHidden {
+            self.usersButton.alignUnder(self.banner, matchingCenterWithTopPadding: 0, width: 288, height: 0)
+        }
+        else {
+            self.usersButton.alignUnder(self.banner, matchingCenterWithTopPadding: 24, width: 288, height: 48)
+        }
+        
+        self.nameField.alignUnder(self.usersButton, matchingCenterWithTopPadding: 8, width: 288, height: 48)
+        
+        if self.visibilityGroup.isHidden {
+            self.visibilityGroup.alignUnder(self.nameField, matchingCenterWithTopPadding: 0, width: 288, height: 0)
+        }
+        else {
+            self.visibilityLabel.sizeToFit()
+            self.visibilityGroup.alignUnder(self.nameField, matchingCenterWithTopPadding: 8, width: 288, height: 48)
+            self.visibilityLabel.anchorCenterLeft(withLeftPadding: 0, width: 144, height: self.visibilityLabel.height())
+            self.visibilitySwitch.anchorCenterRight(withRightPadding: 0, width: self.visibilitySwitch.width(), height: self.visibilitySwitch.height())
+        }
+        
+        self.photoEditView.alignUnder(self.visibilityGroup, matchingCenterWithTopPadding: 16, width: 288, height: 288 * 0.56)
+        self.purposeField.alignUnder(self.photoEditView, matchingCenterWithTopPadding: 16, width: 288, height: max(48, purposeSize.height))
+        
         super.viewWillLayoutSubviews()
     }
 
@@ -163,6 +181,9 @@ class ChannelEditViewController: BaseEditViewController {
     func textViewDidChange(_ textView: UITextView) {
         self.view.setNeedsLayout()
         self.doneButton.isEnabled = isDirty()
+        if let placeHolderLabel = textView.viewWithTag(100) as? UILabel {
+            placeHolderLabel.isHidden = textView.hasText
+        }
     }
     
     override func textViewDidEndEditing(_ textView: UITextView) {
@@ -213,20 +234,19 @@ class ChannelEditViewController: BaseEditViewController {
         self.nameField.setDelegate(delegate: self)
         self.nameField.autocapitalizationType = .none
         self.nameField.autocorrectionType = .no
-        self.nameField.keyboardType = UIKeyboardType.default
-        self.nameField.returnKeyType = UIReturnKeyType.next
+        self.nameField.keyboardType = .default
+        self.nameField.returnKeyType = .next
         
         self.purposeField.placeholder = "Channel purpose (optional)"
-        self.purposeField.placeholderLabel.numberOfLines = 0
         self.purposeField.autocapitalizationType = .sentences
         self.purposeField.autocorrectionType = .yes
         self.purposeField.initialize()
         self.purposeField.delegate = self
 
-        self.visibilityLabel.text = "Private Channel"
+        self.visibilityLabel.text = "Private"
         self.visibilitySwitch.isOn = false
         
-        self.usersButton.setTitle("Manage Channel Members".uppercased(), for: .normal)
+        self.usersButton.setTitle("Manage Members".uppercased(), for: .normal)
         self.usersButton.imageRight = UIImageView(image: UIImage(named: "imgArrowRightLight"))
         self.usersButton.imageRight?.bounds.size = CGSize(width: 10, height: 14)
         self.usersButton.titleEdgeInsets = UIEdgeInsets(top: 0, left: 12, bottom: 0, right: 36)
@@ -345,7 +365,8 @@ class ChannelEditViewController: BaseEditViewController {
             }
             
             if updates.keys.count > 0 {
-                updates["modified_at"] = FIRServerValue.timestamp()
+                let timestamp = FireController.instance.getServerTimestamp()
+                updates["modified_at"] = timestamp
                 FireController.db.child(self.channel.path).updateChildValues(updates) { error, ref in
                     if error != nil {
                         Log.w("Error updating channel: \(error!.localizedDescription)")
@@ -378,10 +399,10 @@ class ChannelEditViewController: BaseEditViewController {
         
         if self.mode == .insert {
             
-            let timestamp = FireController.instance.getServerTimestamp()
             let channelId = "ch-\(Utils.genRandomId())"
             let name = self.nameField.text!
             let ref = FireController.db.child("group-channels/\(groupId)/\(channelId)")
+            let timestamp = FireController.instance.getServerTimestamp()
             
             var photoMap: [String: Any]?
             if let image = self.photoEditView.imageButton.image {
@@ -396,7 +417,7 @@ class ChannelEditViewController: BaseEditViewController {
             
             var channelMap: [String: Any] = [:]
             channelMap["archived"] = false
-            channelMap["created_at"] = Int(timestamp)
+            channelMap["created_at"] = timestamp
             channelMap["created_by"] = userId
             channelMap["general"] = false
             channelMap["group_id"] = groupId
@@ -405,7 +426,7 @@ class ChannelEditViewController: BaseEditViewController {
             if photoMap != nil {
                 channelMap["photo"] = photoMap!
             }
-            if !self.purposeField.text.isEmpty {
+            if !(self.purposeField.text?.isEmpty)! {
                 channelMap["purpose"] = self.purposeField.text
             }
             channelMap["type"] = "channel"
@@ -416,16 +437,10 @@ class ChannelEditViewController: BaseEditViewController {
                     Log.w("Error creating channel")
                     return
                 }
-                FireController.db.child("channel-names/\(groupId)/\(name)").setValue(channelId) { error, ref in
-                    if error != nil {
-                        Log.w("Error creating channel: \(error!.localizedDescription)")
-                        return
-                    }
-                    let controller = MemberPickerController()
-                    controller.flow = .internalCreate
-                    controller.inputChannelId = channelId
-                    self.navigationController?.setViewControllers([controller], animated: true)
-                }
+                let controller = MemberPickerController()
+                controller.flow = .internalCreate
+                controller.inputChannelId = channelId
+                self.navigationController?.setViewControllers([controller], animated: true)
             }
         }
     }
@@ -474,7 +489,7 @@ class ChannelEditViewController: BaseEditViewController {
         let channelName = nameField.text!
         let characterSet: NSCharacterSet = NSCharacterSet(charactersIn: "abcdefghijklmnopqrstuvwxyz0123456789_-")
         if channelName.rangeOfCharacter(from: characterSet.inverted) != nil {
-            self.nameField.errorMessage = "Channel name must be lower case and cannot contain spaces or periods."
+            self.nameField.errorMessage = "Lower case and no spaces or periods."
             then(false)
             return
         }

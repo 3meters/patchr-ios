@@ -14,9 +14,10 @@ import FirebaseAuth
 class AccountEditViewController: BaseEditViewController {
 
     var message = AirLabelTitle()
-    var emailField = TextFieldView()
-    var userNameField = TextFieldView()
+    var emailField = FloatTextField()
+    var userNameField = FloatTextField()
     var passwordButton = AirButton()
+    var doneButton: UIBarButtonItem!
     
     /*--------------------------------------------------------------------------------------------
      * Lifecycle
@@ -33,8 +34,8 @@ class AccountEditViewController: BaseEditViewController {
         let messageSize = self.message.sizeThatFits(CGSize(width:288, height:CGFloat.greatestFiniteMagnitude))
         
         self.message.anchorTopCenter(withTopPadding: 0, width: 288, height: messageSize.height)
-        self.emailField.alignUnder(self.message, matchingCenterWithTopPadding: 16, width: 288, height: 48 + emailField.errorLabel.height())
-        self.userNameField.alignUnder(self.emailField, matchingCenterWithTopPadding: 8, width: 288, height: 48 + userNameField.errorLabel.height())
+        self.emailField.alignUnder(self.message, matchingCenterWithTopPadding: 16, width: 288, height: 48)
+        self.userNameField.alignUnder(self.emailField, matchingCenterWithTopPadding: 8, width: 288, height: 48)
         self.passwordButton.alignUnder(self.userNameField, matchingCenterWithTopPadding: 16, width: 288, height: 48)
         
         super.viewWillLayoutSubviews()
@@ -47,7 +48,7 @@ class AccountEditViewController: BaseEditViewController {
     func doneAction(sender: AnyObject) {
         if isValid() {
             if isDirty() {
-                self.emailField.resignFirstResponder()
+                let _ = self.emailField.resignFirstResponder()
                 
                 self.progress = AirProgress.showAdded(to: self.view.window!, animated: true)
                 self.progress?.mode = MBProgressHUDMode.indeterminate
@@ -59,11 +60,11 @@ class AccountEditViewController: BaseEditViewController {
                 
                 guard !self.processing else { return }
                 
-                if self.emailField.textField.text != FIRAuth.auth()?.currentUser?.email {
+                if self.emailField.text != FIRAuth.auth()?.currentUser?.email {
                     self.processing = true
                     verifyEmail()
                 }
-                else if self.userNameField.textField.text != UserController.instance.user?.username {
+                else if self.userNameField.text != UserController.instance.user?.username {
                     self.processing = true
                     verifyUsername()
                 }
@@ -83,34 +84,18 @@ class AccountEditViewController: BaseEditViewController {
         self.navigationController?.pushViewController(controller, animated: true)
     }
     
-    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
-        if textField == self.emailField.textField {
-            clearErrorIfNeeded(self.emailField)
-        }
-        else if textField == self.userNameField.textField {
-            clearErrorIfNeeded(self.userNameField)
-        }
-        return true
+    func textFieldDidChange(_ textField: UITextField) {
+        self.doneButton.isEnabled = isDirty()
     }
     
-    func textFieldShouldClear(_ textField: UITextField) -> Bool {
-        if textField == self.emailField.textField {
-            clearErrorIfNeeded(self.emailField)
-        }
-        else if textField == self.userNameField.textField {
-            clearErrorIfNeeded(self.userNameField)
-        }
-        return true
+    func textViewDidChange(_ textView: UITextView) {
+        self.view.setNeedsLayout()
+        self.doneButton.isEnabled = isDirty()
     }
     
-    override func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        if textField == self.emailField.textField {
-            self.userNameField.becomeFirstResponder()
-        }
-        else if textField == self.userNameField {
-            self.doneAction(sender: textField)
-        }
-        return true
+    override func textViewDidEndEditing(_ textView: UITextView) {
+        super.textViewDidEndEditing(textView)
+        self.doneButton.isEnabled = isDirty()
     }
     
     /*--------------------------------------------------------------------------------------------
@@ -126,19 +111,20 @@ class AccountEditViewController: BaseEditViewController {
         self.message.numberOfLines = 0
         self.message.textAlignment = .center
         
-        self.emailField.textField.placeholder = "Email"
-        self.emailField.textField.delegate = self
-        self.emailField.textField.keyboardType = .emailAddress
-        self.emailField.textField.autocapitalizationType = .none
-        self.emailField.textField.autocorrectionType = .no
-        self.emailField.textField.returnKeyType = .next
+        self.emailField.placeholder = "Email"
+        self.emailField.setDelegate(delegate: self)
+        self.emailField.autocapitalizationType = .none
+        self.emailField.autocorrectionType = .no
+        self.emailField.keyboardType = .emailAddress
+        self.emailField.returnKeyType = .next
         
-        self.userNameField.textField.placeholder = "Username (lower case)"
-        self.userNameField.textField.delegate = self
-        self.userNameField.textField.keyboardType = .default
-        self.userNameField.textField.autocapitalizationType = .none
-        self.userNameField.textField.autocorrectionType = .no
-        self.userNameField.textField.returnKeyType = .next
+        self.userNameField.placeholder = "Username"
+        self.userNameField.title = "Username (lower case)"
+        self.userNameField.setDelegate(delegate: self)
+        self.userNameField.autocapitalizationType = .none
+        self.userNameField.autocorrectionType = .no
+        self.userNameField.keyboardType = .default
+        self.userNameField.returnKeyType = .next
         
         self.passwordButton.setTitle("Change password".uppercased(), for: .normal)
         self.passwordButton.addTarget(self, action: #selector(changePasswordAction(sender:)), for: .touchUpInside)
@@ -149,33 +135,37 @@ class AccountEditViewController: BaseEditViewController {
         self.contentHolder.addSubview(self.passwordButton)
         
         /* Navigation bar buttons */
-        let doneButton = UIBarButtonItem(title: "Update", style: UIBarButtonItemStyle.plain, target: self, action: #selector(doneAction(sender:)))
-        self.navigationItem.rightBarButtonItems = [doneButton]
+        self.doneButton = UIBarButtonItem(title: "Update", style: UIBarButtonItemStyle.plain, target: self, action: #selector(doneAction(sender:)))
+        self.doneButton.isEnabled = false
+        self.navigationItem.rightBarButtonItems = [self.doneButton]
+        
+        self.emailField.addTarget(self, action: #selector(textFieldDidChange(_:)), for: .editingChanged)
+        self.userNameField.addTarget(self, action: #selector(textFieldDidChange(_:)), for: .editingChanged)
     }
     
     func bind() {
         if let email = FIRAuth.auth()?.currentUser?.email {
-            self.emailField.textField.text = email
+            self.emailField.text = email
         }
         if let username = UserController.instance.user?.username {
-            self.userNameField.textField.text = username
+            self.userNameField.text = username
         }
     }
     
     func verifyEmail() {
         
-        let email = self.emailField.textField.text!
+        let email = self.emailField.text!
         
         FireController.instance.emailProviderExists(email: email, next: { error, exists in
             if error != nil {
                 self.progress?.hide(true)
                 self.processing = false
-                self.showError(self.emailField, error: error!.localizedDescription)
+                self.emailField.errorMessage = error!.localizedDescription
             }
             if exists {
                 self.progress?.hide(true)
                 self.processing = false
-                self.showError(self.emailField, error: "Email is already being used")
+                self.emailField.errorMessage = "Email is already being used"
             }
             else {
                 self.updateEmail()
@@ -187,7 +177,7 @@ class AccountEditViewController: BaseEditViewController {
         
         if let authUser = FIRAuth.auth()?.currentUser,
             let userId = UserController.instance.userId,
-            let email = self.emailField.textField.text {
+            let email = self.emailField.text {
             
             /* Update in firebase auth account */
             authUser.updateEmail(email, completion: { error in
@@ -197,7 +187,7 @@ class AccountEditViewController: BaseEditViewController {
                     /* Update in memberships that share email */
                     FireController.instance.updateEmail(userId: userId, email: email) { error in
                         if error == nil {
-                            if self.userNameField.textField.text != UserController.instance.user?.username {
+                            if self.userNameField.text != UserController.instance.user?.username {
                                 self.verifyUsername()
                                 return
                             }
@@ -208,14 +198,14 @@ class AccountEditViewController: BaseEditViewController {
                         else {
                             self.progress?.hide(true)
                             self.processing = false
-                            self.showError(self.emailField, error: error!.localizedDescription)
+                            self.emailField.errorMessage = error!.localizedDescription
                         }
                     }
                 }
                 else {
                     self.progress?.hide(true)
                     self.processing = false
-                    self.showError(self.emailField, error: error!.localizedDescription)
+                    self.emailField.errorMessage = error!.localizedDescription
                 }
             })
         }
@@ -223,17 +213,17 @@ class AccountEditViewController: BaseEditViewController {
     
     func verifyUsername() {
         
-        let username = self.userNameField.textField.text!
+        let username = self.userNameField.text!
         
         FireController.instance.usernameExists(username: username, next: { error, exists in
             self.progress?.hide(true)
             self.processing = false
             if error != nil {
-                self.showError(self.userNameField, error: error!.localizedDescription)
+                self.userNameField.errorMessage = error!.localizedDescription
                 return
             }
             if exists {
-                self.showError(self.userNameField, error: "Choose another username")
+                self.userNameField.errorMessage = "Choose another username"
             }
             else {
                 let userId = UserController.instance.userId!
@@ -243,7 +233,7 @@ class AccountEditViewController: BaseEditViewController {
                     }
                     else {
                         let message = error!["message"] as! String
-                        self.showError(self.userNameField, error: message)
+                        self.userNameField.errorMessage = message
                     }
                 }
             }
@@ -260,30 +250,35 @@ class AccountEditViewController: BaseEditViewController {
     
     func isValid() -> Bool {
         
-        if self.emailField.textField.isEmpty {
-            showError(self.emailField, error: "Enter an email address.")
+        if self.emailField.isEmpty {
+            self.emailField.errorMessage = "Enter an email address."
             return false
         }
         
-        if !emailField.textField.text!.isEmail() {
-            showError(self.emailField, error: "Enter a valid email address.")
+        if !emailField.text!.isEmail() {
+            self.emailField.errorMessage = "Enter a valid email address."
             return false
         }
         
-        if self.userNameField.textField.isEmpty {
-            showError(self.userNameField, error: "Choose your username")
+        if self.userNameField.isEmpty {
+            self.userNameField.errorMessage = "Choose your username"
             return false
         }
         
-        let username = self.userNameField.textField.text!
+        let username = self.userNameField.text!
         let characterSet: NSCharacterSet = NSCharacterSet(charactersIn: "abcdefghijklmnopqrstuvwxyz0123456789_-")
         if username.rangeOfCharacter(from: characterSet.inverted) != nil {
-            showError(self.userNameField, error: "Username must be lower case and cannot contain spaces or periods.")
+            self.userNameField.errorMessage = "Lower case and no spaces or periods."
             return false
         }
         
         if (username.utf16.count > 21) {
-            showError(self.userNameField, error: "Username must be 21 characters or less.")
+            self.userNameField.errorMessage = "Username must be 21 characters or less."
+            return false
+        }
+        
+        if (username.utf16.count < 2) {
+            self.userNameField.errorMessage = "Username must be at least 2 characters."
             return false
         }
         
@@ -292,7 +287,7 @@ class AccountEditViewController: BaseEditViewController {
     
     func isDirty() -> Bool {
         if let email = FIRAuth.auth()?.currentUser?.email, let username = UserController.instance.user?.username {
-            return (self.emailField.textField.text! != email || self.userNameField.textField.text! != username)
+            return (self.emailField.text! != email || self.userNameField.text! != username)
         }
         return false
     }

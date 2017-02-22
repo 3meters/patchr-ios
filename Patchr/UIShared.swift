@@ -99,7 +99,7 @@ struct UIShared {
         return browser!
     }
 		
-	@discardableResult static func Toast(message: String?, duration: TimeInterval = 3.0, controller: UIViewController? = nil, addToWindow: Bool = true, identifier: String? = nil) -> AirProgress {
+	@discardableResult static func toast(message: String?, duration: TimeInterval = 3.0, controller: UIViewController? = nil, addToWindow: Bool = true, identifier: String? = nil) -> AirProgress {
 		
         var targetView: UIView = UIApplication.shared.windows.last!
         
@@ -131,38 +131,4 @@ struct UIShared {
         let networkStatus: Reachability.NetworkStatus = (reachability?.currentReachabilityStatus)!
         return (networkStatus != .notReachable)
     }
-    
-    static func secondsSince(timestamp: Int) -> Int {
-        let date = NSDate(timeIntervalSince1970: Double(timestamp) / 1000)
-        return Int(date.secondsAgo())
-    }
-    
-    static func dateMediumString(timestamp: Int) -> String {
-        let dateFormatter = DateFormatter()
-        let date = NSDate(timeIntervalSince1970: Double(timestamp) / 1000)
-        dateFormatter.dateStyle = .medium
-        return dateFormatter.string(from: date as Date)
-    }
-	
-	static func timeAgoMedium(date: NSDate) -> String {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateStyle = .short
-		if date.monthsAgo() >= 1 {
-			return dateFormatter.string(from: date as Date)
-		}
-		else {
-			return date.timeAgoSinceNow()
-		}
-	}
-	
-	static func timeAgoShort(date: NSDate) -> String {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateStyle = .short
-		if date.monthsAgo() >= 1 {
-            return dateFormatter.string(from: date as Date)
-		}
-		else {
-			return date.shortTimeAgoSinceNow()
-		}
-	}
 }

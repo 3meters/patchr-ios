@@ -11,31 +11,16 @@ import MessageUI
 
 typealias CompletionBlock = (_ response: Any?, _ error: NSError?) -> Void
 
-let Device = UIDevice.current
-let iosVersion = NSString(string: Device.systemVersion).doubleValue
-let IOS9 = iosVersion >= 9
-let IOS8 = iosVersion >= 8
-let IOS7 = iosVersion >= 7 && iosVersion < 8
 let APPLE_APP_ID = "983436323"
 let GOOGLE_ANALYTICS_ID = "UA-33660954-6"
 let BUNDLE_ID = "com.3meters.patchr.ios"
 let KEYCHAIN_GROUP = "7542324V6B.\(BUNDLE_ID)"// Team id + bundle id
 let BUGSNAG_KEY = "d1313b8d5fc14d937419406f33fd4c01"
 
-let SCREEN_NARROW = (UIScreen.main.bounds.size.width == 320)
-let SCREEN_320 = (UIScreen.main.bounds.size.width == 320)// iphone 4s
-let SCREEN_375 = (UIScreen.main.bounds.size.width == 375)// iphone 6
-let PIXEL_SCALE = CGFloat(UIScreen.main.scale)
 let THIRD_PARTY_AUTH_ENABLED = false
-
 let TIMEOUT_REQUEST: Int = 10    // Seconds
 let BLOCKING = false
 let debugAuth = true
-
-let IMAGE_DIMENSION_MAX = CGFloat(1600)
-let CONTENT_WIDTH_MAX = CGFloat(462)
-let SIDE_MENU_WIDTH = CGFloat(260)
-let NAVIGATION_DRAWER_WIDTH = min(CGFloat(UIScreen.main.bounds.size.width - 96), 384)
 
 let URI_PROXIBASE_SEARCH_IMAGES = "https://api.cognitive.microsoft.com/bing/v5.0"
 let NAMESPACE = "com.3meters.patchr.ios."
@@ -47,10 +32,6 @@ var MailComposer: MFMailComposeViewController? = MFMailComposeViewController()
 
 let spacerFlex = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
 let spacerFixed = UIBarButtonItem(barButtonSystemItem: .fixedSpace, target: nil, action: nil)
-
-func PatchrUserDefaultKey(subKey: String) -> String {
-    return NAMESPACE + subKey
-}
 
 func PerUserKey(key: String) -> String {
     guard let userId = UserController.instance.userId else {
@@ -66,10 +47,40 @@ enum AppConfiguration {
 }
 
 struct Config {
+
+    static let device = UIDevice.current
+    static let iosVersion = NSString(string: device.systemVersion).doubleValue
+    static let iOS9 = iosVersion >= 9
+    static let iOS8 = iosVersion >= 8
+    static let iOS7 = iosVersion >= 7 && iosVersion < 8
+
+    static let widthNarrow = (UIScreen.main.bounds.size.width == 320)
+    static let width320 = (UIScreen.main.bounds.size.width == 320)// iphone 4s
+    static let width375 = (UIScreen.main.bounds.size.width == 375)// iphone 6
+    static let pixelScale = CGFloat(UIScreen.main.scale)
+    
+    static let imageDimensionMax = CGFloat(1600)
+    static let contentWidthMax = CGFloat(462)
+    static let sideMenuWidth = CGFloat(260)
+    
+    static var navigationDrawerWidth: CGFloat {
+        if widthNarrow {
+            return CGFloat(300)
+        }
+        return min(CGFloat(UIScreen.main.bounds.size.width - 96), CGFloat(384))
+    }
+
     /* This is private because the use of 'appConfiguration' is preferred. */
     private static let isTestFlight = Bundle.main.appStoreReceiptURL?.lastPathComponent == "sandboxReceipt"
     
-    // This can be used to add debug statements.
+    static func appState() -> String {
+        let appState = (UIApplication.shared.applicationState == .background)
+            ? "background" : (UIApplication.shared.applicationState == .active)
+            ? "active" : "inactive"
+        return appState
+    }
+    
+    /* This can be used to add debug statements. */
     static var isDebug: Bool {
         #if DEBUG
             return true

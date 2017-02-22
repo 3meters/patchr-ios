@@ -62,7 +62,7 @@ class PhotoSearchController: UICollectionViewController, UITableViewDelegate, UI
     fileprivate var maxSize = 100
 	fileprivate var virtualSize = 30
     fileprivate let maxImageSize = 500000
-    fileprivate let maxDimen = Int(IMAGE_DIMENSION_MAX)
+    fileprivate let maxDimen = Int(Config.imageDimensionMax)
     
 	/*--------------------------------------------------------------------------------------------
 	 * Lifecycle
@@ -196,7 +196,7 @@ class PhotoSearchController: UICollectionViewController, UITableViewDelegate, UI
                         
                         if let data = json["value"].arrayObject {
                             
-                            Utils.updateSearches(search: self.searchBar!.text!)
+                            Utils.updateSearchHistory(search: self.searchBar!.text!)
                             self.loadSearches()
                             
                             let beginCount = self.imageResults.count

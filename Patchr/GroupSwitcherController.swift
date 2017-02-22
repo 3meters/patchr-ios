@@ -56,7 +56,7 @@ class GroupSwitcherController: BaseTableController {
         super.viewWillLayoutSubviews()
         
         if self.simplePicker {
-            self.view.anchorTopCenter(withTopPadding: 74, width: NAVIGATION_DRAWER_WIDTH, height: self.view.height())
+            self.view.anchorTopCenter(withTopPadding: 74, width: Config.navigationDrawerWidth, height: self.view.height())
             self.tableView.fillSuperview()
             return
         }
@@ -139,7 +139,7 @@ class GroupSwitcherController: BaseTableController {
         if self.simplePicker {
             
             let gradient = CAGradientLayer()
-            gradient.frame = CGRect(x: 0, y: 0, width: NAVIGATION_DRAWER_WIDTH, height: 64)
+            gradient.frame = CGRect(x: 0, y: 0, width: Config.navigationDrawerWidth, height: 64)
             gradient.colors = [Colors.accentColor.cgColor, Colors.brandColor.cgColor]
             gradient.startPoint = CGPoint(x: 0.0, y: 0.5)
             gradient.endPoint = CGPoint(x: 1.0, y: 0.5)
@@ -158,7 +158,7 @@ class GroupSwitcherController: BaseTableController {
             
             self.view.addSubview(self.tableView)
             
-            let titleWidth = (NAVIGATION_DRAWER_WIDTH - 112)
+            let titleWidth = (Config.navigationDrawerWidth - 112)
             let titleView = AirLabelDisplay(text: " Patchr Groups")
             titleView.frame = CGRect(x: 0, y: 0, width: titleWidth, height: 24)
             titleView.font = Theme.fontBarText

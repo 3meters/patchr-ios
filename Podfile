@@ -33,12 +33,12 @@ target 'Patchr' do
     pod 'UIDevice-Hardware',        '~> 0.1.7'		# Convenience for determining system version and model identifier
     pod 'pop',                      '~> 1.0'		# Animation library
     pod 'Facade',                   '~> 1.1.1'	    # Convenience methods for frame based layout
-    pod 'DateTools',                '~> 1.7.0'
     pod 'iRate',                    '~> 1.11.6'
     pod 'Branch',                   '~> 0.12.5'     # Url routing and deep linking
     pod 'ReachabilitySwift',        '~> 3'
     pod 'PhoneNumberKit',           '~> 1.0'
     pod 'SkyFloatingLabelTextField','~> 2.0.0'
+    pod 'DateTools',                :git => 'https://github.com/MatthewYork/DateTools', :branch => 'swift'
     pod 'TwicketSegmentedControl'
     pod 'PopupDialog'
     pod 'TTTAttributedLabel'
@@ -46,7 +46,6 @@ target 'Patchr' do
     pod 'Bugsnag'                                   # Crash reporting
     pod 'CocoaLumberjack/Swift'
     pod 'CLTokenInputView'
-    pod 'JVFloatLabeledTextField'
     pod 'BEMCheckBox'
     pod 'Firebase/RemoteConfig'
     pod 'Firebase/Core'

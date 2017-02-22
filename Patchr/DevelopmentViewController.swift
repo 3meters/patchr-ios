@@ -66,7 +66,7 @@ class DevelopmentViewController: BaseViewController {
         let imageCache = SDImageCache.shared()
         imageCache?.clearDisk()
         imageCache?.clearMemory()
-        UIShared.Toast(message: "Image cache cleared")
+        UIShared.toast(message: "Image cache cleared")
         AudioController.instance.play(sound: Sound.pop.rawValue)        
     }
     

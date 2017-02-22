@@ -1,7 +1,4 @@
 //
-//  AirTextField.swift
-//  Patchr
-//
 //  Created by Jay Massena on 11/27/15.
 //  Copyright © 2015 3meters. All rights reserved.
 //
