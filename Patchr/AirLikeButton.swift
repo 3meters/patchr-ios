@@ -12,7 +12,7 @@ import FirebaseDatabase
 
 class AirLikeButton: AirToggleButton {
     
-    var message         : FireMessage!
+    var message         : FireMessage?
 	var entityId		: String?
     var messageId       : String?
 	var userLikes		= false
@@ -33,7 +33,6 @@ class AirLikeButton: AirToggleButton {
     override func initialize(){
         self.imageOff = Utils.imageHeartOff.withRenderingMode(.alwaysTemplate)
         self.imageOn = Utils.imageHeartOn.withRenderingMode(.alwaysTemplate)
-        
         super.initialize()
     }
 
@@ -45,22 +44,25 @@ class AirLikeButton: AirToggleButton {
     }
 
     func bind(displayPhoto: DisplayPhoto) {
+        self.message = displayPhoto.message
 		toggle(on: displayPhoto.userLikes, animate: false)
 	}
 
     override func onClick(sender: AnyObject) {
-        self.isEnabled = false
-        if self.toggledOn {
-            message.removeReaction(emoji: .thumbsup)
-            self.toggle(on: false, animate: true)
-            Reporting.track("Reaction Off")
-            self.isEnabled = true
-        }
-        else {
-            message.addReaction(emoji: .thumbsup)
-            self.toggle(on: true, animate: true)
-            Reporting.track("Reaction On")
-            self.isEnabled = true
+        if let message = self.message {
+            self.isEnabled = false
+            if self.toggledOn {
+                message.removeReaction(emoji: .thumbsup)
+                self.toggle(on: false, animate: true)
+                Reporting.track("Reaction Off")
+                self.isEnabled = true
+            }
+            else {
+                message.addReaction(emoji: .thumbsup)
+                self.toggle(on: true, animate: true)
+                Reporting.track("Reaction On")
+                self.isEnabled = true
+            }
         }
     }
 }

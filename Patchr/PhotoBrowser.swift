@@ -124,10 +124,10 @@ class PhotoBrowser: IDMPhotoBrowser {
         self.likeButton.bind(message: message)
 		self.likeButton.isHidden = (message == nil)
 	}
-    
-    enum PhotoBrowserMode: Int {
-        case gallery
-        case preview
-        case browse
-    }
+}
+
+public enum PhotoBrowserMode: Int {
+    case gallery
+    case preview
+    case browse
 }

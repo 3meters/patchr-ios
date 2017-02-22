@@ -13,6 +13,7 @@ class DisplayPhoto: IDMPhoto {
 	var size: CGSize?
     var fallbackUrl: URL?
     var uploading: String?
+    var message: FireMessage?
     
     static func fromMessage(message: FireMessage) -> DisplayPhoto {
         
@@ -20,6 +21,7 @@ class DisplayPhoto: IDMPhoto {
         
         displayPhoto.caption = message.text
         displayPhoto.entityId = message.id
+        displayPhoto.message = message
         
         if let photo = message.attachments?.values.first?.photo {
             displayPhoto.uploading = photo.uploading

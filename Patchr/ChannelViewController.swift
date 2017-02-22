@@ -28,6 +28,8 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
     let cellReuseIdentifier = "message-cell"
     var headerView: ChannelDetailView!
     var unreads = [String: Bool]()
+    var displayPhotos = [String: DisplayPhoto]()
+    var displayPhotosArray : [DisplayPhoto]!
 
     var originalRect: CGRect?
     var originalHeaderRect: CGRect?
@@ -154,7 +156,7 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
      *--------------------------------------------------------------------------------------------*/
 
     func openGalleryAction(sender: AnyObject) {
-        showPhotos()
+        showPhotos(mode: .gallery)
     }
     
     func openNavigationAction(sender: AnyObject) {
@@ -176,12 +178,11 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
     }
     
     func browsePhotoAction(sender: AnyObject?) {
+
         if let recognizer = sender as? UITapGestureRecognizer,
             let control = recognizer.view as? AirImageView,
-            let container = control.superview as? MessageViewCell {
-            if control.image != nil {
-                UIShared.showPhoto(image: control.image, animateFromView: control, viewController: self, message: container.message)
-            }
+            let url = control.fromUrl {
+            showPhotos(mode: .browse, fromView: control, initialUrl: url)
         }
     }
     
@@ -849,11 +850,11 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
         }
     }
 
-    func showPhotos() {
+    func showPhotos(mode: PhotoBrowserMode, fromView: UIView? = nil, initialUrl: URL? = nil) {
 
         /* Cherry pick display photos */
-        var displayPhotos = [String: DisplayPhoto]()
         var remaining = self.tableViewDataSource.items.count
+        self.displayPhotos.removeAll()
         
         for data in self.tableViewDataSource.items {
             let snap = data as! FIRDataSnapshot            
@@ -865,21 +866,50 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
                     if (message.attachments?.values.first?.photo) != nil {
                         message.creator = user
                         let displayPhoto = DisplayPhoto.fromMessage(message: message)
-                        displayPhotos[displayPhoto.entityId!] = displayPhoto
+                        self.displayPhotos[displayPhoto.entityId!] = displayPhoto
                     }
                     
                     if remaining <= 0 {
-                        if displayPhotos.count == 0 {
-                            UIShared.toast(message: "This channel needs some photos!")
-                            return
+                        if mode == .gallery {
+                            
+                            if self.displayPhotos.count == 0 {
+                                UIShared.toast(message: "This channel needs some photos!")
+                                return
+                            }
+                            let layout = NHBalancedFlowLayout()
+                            layout.preferredRowSize = 200
+                            let controller = GalleryGridViewController(collectionViewLayout: layout)
+                            controller.displayPhotos = self.displayPhotos
+                            let wrapper = AirNavigationController(rootViewController: controller)
+                            self.navigationController!.present(wrapper, animated: true, completion: nil)
                         }
-                        let navController = AirNavigationController()
-                        let layout = NHBalancedFlowLayout()
-                        layout.preferredRowSize = 200
-                        let controller = GalleryGridViewController(collectionViewLayout: layout)
-                        controller.displayPhotos = displayPhotos
-                        navController.viewControllers = [controller]
-                        self.navigationController!.present(navController, animated: true, completion: nil)
+                        else if mode == .browse {
+                            
+                            self.displayPhotosArray = Array(self.displayPhotos.values).sorted(by: { $0.createdDateValue! > $1.createdDateValue! })
+                            var initialIndex = 0
+                            if initialUrl != nil {
+                                var index = 0
+                                for displayPhoto in self.displayPhotosArray {
+                                    if initialUrl?.path == displayPhoto.photoURL.path {
+                                        initialIndex = index
+                                        break
+                                    }
+                                    index += 1
+                                }
+                            }
+                            let browser = (PhotoBrowser(photos: self.displayPhotosArray as [Any], animatedFrom: fromView))!
+                            
+                            browser.mode = .gallery
+                            browser.setInitialPageIndex(UInt(initialIndex))
+                            browser.useWhiteBackgroundColor = true
+                            browser.usePopAnimation = true
+                            browser.scaleImage = (fromView as! UIImageView).image  // Used because final image might have different aspect ratio than initially
+                            browser.disableVerticalSwipe = false
+                            browser.autoHideInterface = false
+                            browser.delegate = self
+                            
+                            self.navigationController!.present(browser, animated:true, completion:nil)
+                        }
                     }
                 })
             }
@@ -999,6 +1029,23 @@ class MessagesDataSource: FUITableViewDataSource {
             self.rowHeights?.removeObject(forKey: snap.key)
         }
         super.array(array, didChange: object, at: index)
+    }
+}
+
+extension ChannelViewController: IDMPhotoBrowserDelegate {
+    
+    func photoBrowser(_ photoBrowser: IDMPhotoBrowser!, captionViewForPhotoAt index: UInt) -> IDMCaptionView! {
+        let captionView = CaptionView(displayPhoto: self.displayPhotosArray![Int(index)])
+        captionView?.alpha = 0
+        return captionView
+    }
+    
+    func photoBrowser(_ photoBrowser: IDMPhotoBrowser!, didShowPhotoAt index: UInt) {
+        let index = Int(index)
+        if let browser = photoBrowser as? PhotoBrowser {
+            let displayPhoto = self.displayPhotosArray![index]
+            browser.likeButton.bind(displayPhoto: displayPhoto)
+        }
     }
 }
 

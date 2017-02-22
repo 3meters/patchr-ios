@@ -98,6 +98,28 @@ struct UIShared {
         
         return browser!
     }
+    
+    @discardableResult static func showPhotos(photos: [String: DisplayPhoto]
+        , animateFromView: UIView!
+        , viewController: UIViewController!
+        , initialIndex: UInt?) -> PhotoBrowser {
+        
+        let photosArray: [DisplayPhoto] = Array(photos.values).sorted(by: { $0.createdDateValue! > $1.createdDateValue! })
+        let browser = (PhotoBrowser(photos: photosArray as [Any], animatedFrom: animateFromView))!
+            
+        browser.mode = .gallery
+        browser.setInitialPageIndex(initialIndex ?? 0)
+        browser.useWhiteBackgroundColor = true
+        browser.usePopAnimation = true
+        browser.scaleImage = (animateFromView as! UIImageView).image  // Used because final image might have different aspect ratio than initially
+        browser.disableVerticalSwipe = false
+        browser.autoHideInterface = false
+        browser.delegate = viewController as! IDMPhotoBrowserDelegate!
+        
+        viewController.navigationController!.present(browser, animated:true, completion:nil)
+        
+        return browser
+    }
 		
 	@discardableResult static func toast(message: String?, duration: TimeInterval = 3.0, controller: UIViewController? = nil, addToWindow: Bool = true, identifier: String? = nil) -> AirProgress {
 		

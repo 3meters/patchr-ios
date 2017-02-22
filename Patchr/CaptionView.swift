@@ -11,12 +11,12 @@ import IDMPhotoBrowser
 
 class CaptionView: IDMCaptionView {
 	
-	var userName		= AirLabelDisplay()
-	var userPhoto		= PhotoControl()
-	var createdDate		= AirLabelDisplay()
-	var caption			= AirLabelDisplay()
-	var likeButton		= AirLikeButton(frame: CGRect.zero)
-	var displayPhoto	: DisplayPhoto
+	var userName = AirLabelDisplay()
+	var userPhoto = PhotoControl()
+	var createdDate	= AirLabelDisplay()
+	var caption	= AirLabelDisplay()
+	var likeButton = AirLikeButton(frame: CGRect.zero)
+	var displayPhoto: DisplayPhoto
 	
 	init!(displayPhoto: DisplayPhoto) {
 		self.displayPhoto = displayPhoto
@@ -78,7 +78,7 @@ class CaptionView: IDMCaptionView {
         self.likeButton.bounds.size = CGSize(width:48, height:48)
 		self.likeButton.imageEdgeInsets = UIEdgeInsetsMake(14, 12, 14, 12)
 		
-		self.backgroundColor = Colors.gray95pcntColor
+		self.backgroundColor = Theme.colorScrimCaption
 		
 		self.addSubview(self.userPhoto)
 		self.addSubview(self.userName)

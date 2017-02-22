@@ -159,6 +159,7 @@ extension GalleryGridViewController { /* UICollectionViewDelegate, UICollectionV
 		* browser objects cannot be re-used)
 		*/
 		let cell = collectionView.cellForItem(at: indexPath) as! GalleryViewCell
+        
         let browser = PhotoBrowser(photos: self.displayPhotosArray! as [Any], animatedFrom: cell)
         browser?.mode = .gallery
 		
