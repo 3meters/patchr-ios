@@ -7,19 +7,17 @@ import UIKit
 
 class ChannelDetailView: UIView {
     
-    var photoRect: CGRect!
-
     var contentGroup = UIView()
     var titleGroup = UIView()
+    var infoGroup = AirRuleView()
+    
     var photoView = AirImageView(frame: CGRect.zero)
     var name = AirLabelDisplay()
     var lockImage = UIImageView(frame: CGRect.zero)
     var mutedImage = AirMuteView(frame: CGRect.zero)
     var starButton = AirStarButton(frame: CGRect.zero)
     var optionsButton = UIButton(frame: CGRect.zero)
-    var infoGroup = AirRuleView()
     var purpose = AirLabelDisplay(frame: CGRect.zero)
-    var gradient = CAGradientLayer()
 
     /*--------------------------------------------------------------------------------------------
     * Lifecycle
@@ -51,9 +49,18 @@ class ChannelDetailView: UIView {
         super.layoutSubviews()
 
         let viewWidth = self.bounds.size.width
-        let viewHeight = viewWidth * 0.625
+        
+        if !self.purpose.isHidden {
+            self.infoGroup.isHidden = false
+            self.purpose.bounds.size.width = viewWidth - 32
+            self.purpose.sizeToFit()
+            self.contentGroup.fillSuperview(withLeftPadding: 0, rightPadding: 0, topPadding: 0, bottomPadding: self.purpose.height() + 24)
+        }
+        else {
+            self.contentGroup.fillSuperview()
+        }
 
-        self.contentGroup.anchorTopCenterFillingWidth(withLeftAndRightPadding: 0, topPadding: 0, height: viewHeight) // 16:10
+        self.photoView.fillSuperview(withLeftPadding: -24, rightPadding: -24, topPadding: -36, bottomPadding: -36)
         self.titleGroup.anchorBottomLeft(withLeftPadding: 12, bottomPadding: 16, width: viewWidth - 72, height: 72)
         
         let indicatorsWidth = (!self.lockImage.isHidden ? 20 : 0) + (!self.mutedImage.isHidden ? 24 : 0)
@@ -67,14 +74,8 @@ class ChannelDetailView: UIView {
         
         self.optionsButton.anchorBottomRight(withRightPadding: 12, bottomPadding: 20, width: 24, height: 24)
 
-        let gradientHeight = self.contentGroup.width() * 0.35
-        self.gradient.frame = CGRect(x:0, y:self.contentGroup.height() - gradientHeight, width:self.contentGroup.width(), height:gradientHeight)
-
         /* Purpose */
         if !self.purpose.isHidden {
-            self.infoGroup.isHidden = false
-            self.purpose.bounds.size.width = viewWidth - 32
-            self.purpose.sizeToFit()
             self.purpose.anchorTopLeft(withLeftPadding: 12, topPadding: 12, width: self.purpose.width(), height: self.purpose.height())
             self.infoGroup.alignUnder(self.contentGroup, matchingLeftAndRightWithTopPadding: 0, height: self.purpose.height() + 24)
         }
@@ -108,21 +109,9 @@ class ChannelDetailView: UIView {
         self.photoView.parallaxIntensity = -40
         self.photoView.sizeCategory = SizeCategory.standard
         self.photoView.clipsToBounds = true
-        self.photoView.contentMode = UIViewContentMode.scaleAspectFill
+        self.photoView.contentMode = .scaleAspectFill
         self.photoView.backgroundColor = Theme.colorBackgroundImage
-        
-        /* Apply gradient to banner */
-        let topColor: UIColor = UIColor(red: CGFloat(0), green: CGFloat(0), blue: CGFloat(0), alpha: CGFloat(0.0))        // Top
-        let stop2Color: UIColor = UIColor(red: CGFloat(0), green: CGFloat(0), blue: CGFloat(0), alpha: CGFloat(0.33))    // Middle
-        let bottomColor: UIColor = UIColor(red: CGFloat(0), green: CGFloat(0), blue: CGFloat(0), alpha: CGFloat(0.66))        // Bottom
-        self.gradient.colors = [topColor.cgColor, stop2Color.cgColor, bottomColor.cgColor]
-        self.gradient.locations = [0.0, 0.5, 1.0]
-        
-        /* Travels from top to bottom */
-        self.gradient.startPoint = CGPoint(x: 0.5, y: 0.0)    // (0,0) upper left corner, (1,1) lower right corner
-        self.gradient.endPoint = CGPoint(x: 0.5, y: 1.0)
-        self.gradient.isHidden = true
-        self.contentGroup.layer.insertSublayer(self.gradient, at: 1)
+        self.photoView.showGradient = true
         
         self.name.font = UIFont(name: "HelveticaNeue-Light", size: 28)!
         self.name.textColor = Colors.white
@@ -175,16 +164,17 @@ class ChannelDetailView: UIView {
             }
             else if let url = ImageUtils.url(prefix: photo.filename, source: photo.source, category: SizeCategory.standard) {
                 if !self.photoView.associated(withUrl: url) {
+                    self.photoView.gradientLayer.isHidden = true
                     let fallbackUrl = ImageUtils.fallbackUrl(prefix: photo.filename!)
                     self.photoView.setImageWithUrl(url: url, fallbackUrl: fallbackUrl) { success in
-                        self.gradient.isHidden = false
+                        self.photoView.gradientLayer.isHidden = false
                     }
                 }
             }
         }
         else {
             self.photoView.image = nil
-            self.gradient.isHidden = true
+            self.photoView.gradientLayer.isHidden = true
             self.starButton.tintColor = Colors.white
             self.optionsButton.tintColor = Colors.white
             if channel.name == "general" || channel.general! {

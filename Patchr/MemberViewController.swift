@@ -28,16 +28,12 @@ class MemberViewController: BaseViewController, UIScrollViewDelegate, UITextFiel
     var buttonGroup = UIView()
     var profileGroup = UIView()
     
-    var originalRect: CGRect?
-    var originalScrollTop = CGFloat(-64.0)
-    var lastContentOffset = CGFloat(0)
-    
+    var headerHeight: CGFloat!
     /*
      * Buttons
      * Logged in user: Message, Edit Profile
      * Other users: Message, Call, Options:
      */
-
 	/*--------------------------------------------------------------------------------------------
 	 * Lifecycle
 	 *--------------------------------------------------------------------------------------------*/
@@ -53,25 +49,17 @@ class MemberViewController: BaseViewController, UIScrollViewDelegate, UITextFiel
         })
     }
     
-    override func viewDidDisappear(_ animated: Bool) {
-        super.viewDidDisappear(animated)
-    }
-    
-    deinit {
-        self.userQuery?.remove()
-    }
-	
 	override func viewWillLayoutSubviews() {
         
         let viewWidth = min(Config.contentWidthMax, self.view.bounds.size.width)
         let buttonWidth = (viewWidth - 48) / 2
+        
         self.view.bounds.size.width = viewWidth
         self.contentHolder.bounds.size.width = viewWidth
         
         self.scrollView.anchorTopCenter(withTopPadding: 0, width: viewWidth, height: self.view.bounds.height)
-        self.headerView.anchorTopCenterFillingWidth(withLeftAndRightPadding: 0, topPadding: 0, height: viewWidth * 0.625)
-        
-        self.buttonGroup.alignUnder(self.headerView, centeredFillingWidthWithLeftAndRightPadding: 16, topPadding: 8, height: self.buttonGroup.isHidden ? 0 : 56)
+
+        self.buttonGroup.anchorTopCenterFillingWidth(withLeftAndRightPadding: 16, topPadding: 8, height: self.buttonGroup.isHidden ? 0 : 56)
         self.callButton.anchorCenterLeft(withLeftPadding: 0, width: self.callButton.isHidden ? 0 : buttonWidth, height: 40)
         self.editButton.align(toTheRightOf: self.callButton, matchingCenterWithLeftPadding: 16, width: self.editButton.isHidden ? 0 : buttonWidth, height: 40)
 
@@ -86,6 +74,10 @@ class MemberViewController: BaseViewController, UIScrollViewDelegate, UITextFiel
         self.scrollView.contentSize = CGSize(width:self.contentHolder.frame.size.width, height:contentHeight)
         self.contentHolder.anchorTopCenterFillingWidth(withLeftAndRightPadding: 0, topPadding: 0, height: contentHeight)
 	}
+    
+    deinit {
+        self.userQuery?.remove()
+    }
 	
 	/*--------------------------------------------------------------------------------------------
 	 * Events
@@ -141,6 +133,13 @@ class MemberViewController: BaseViewController, UIScrollViewDelegate, UITextFiel
 	override func initialize() {
 		super.initialize()
         
+        self.automaticallyAdjustsScrollViewInsets = false
+        let viewWidth = min(Config.contentWidthMax, self.view.bounds.size.width)
+        self.headerHeight = viewWidth * 0.625
+        self.scrollView.contentInset = UIEdgeInsets(top: self.headerHeight + 64, left: 0, bottom: 0, right: 0)
+        self.scrollView.contentOffset = CGPoint(x: 0, y: -(self.headerHeight + 64))
+        updateHeaderView()
+        
         self.phone.caption.text = "Phone"
         self.phone.label.textColor = Colors.brandColorTextLight
         self.phone.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(phoneAction(sender:))))
@@ -161,7 +160,7 @@ class MemberViewController: BaseViewController, UIScrollViewDelegate, UITextFiel
         self.profileGroup.addSubview(self.phone)
         self.profileGroup.addSubview(self.email)
         
-        self.contentHolder.addSubview(self.headerView)
+        self.scrollView.addSubview(self.headerView)
         self.contentHolder.addSubview(self.buttonGroup)
         self.contentHolder.addSubview(self.profileGroup)
         
@@ -176,12 +175,7 @@ class MemberViewController: BaseViewController, UIScrollViewDelegate, UITextFiel
 	func bind() {
         
         /* Push data into form and header */
-
-        let viewWidth = min(Config.contentWidthMax, self.view.bounds.size.width)
-        let viewHeight = viewWidth * 0.625
-        self.originalRect = CGRect(x: -24, y: -36, width: viewWidth + 48, height: viewHeight + 72)
-        
-        self.headerView.bind(user: self.user)
+        self.headerView.bind(user: self.user)   // Triggers layoutSubviews for header view
         
         self.editButton.isHidden = (self.user?.id != UserController.instance.userId)
         self.callButton.isHidden = (self.user?.profile?.phone?.isEmpty ?? true)
@@ -199,7 +193,16 @@ class MemberViewController: BaseViewController, UIScrollViewDelegate, UITextFiel
             self.email.label.text = self.user!.email!
         }
         
-        self.view?.setNeedsLayout()
+        self.view?.setNeedsLayout() // Does NOT trigger layoutSubviews for header view
+    }
+    
+    func updateHeaderView() {
+        var headerRect = CGRect(x: 0, y: -self.headerHeight, width: self.view.width(), height: self.headerHeight)
+        if self.scrollView.contentOffset.y < -(self.headerHeight + 64) {
+            headerRect.origin.y = (self.scrollView.contentOffset.y + 64)
+            headerRect.size.height = -(self.scrollView.contentOffset.y + 64)
+        }
+        self.headerView.frame = headerRect
     }
 }
 
@@ -208,27 +211,7 @@ extension MemberViewController {
      * UITableViewDelegate
      */
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        
-        self.lastContentOffset = scrollView.contentOffset.y
-        
-        /* Parallax effect when user scrolls down */
-        let offset = scrollView.contentOffset.y
-        if self.originalRect != nil {
-            if offset >= self.originalScrollTop && offset <= 300 {
-                let movement = self.originalScrollTop - scrollView.contentOffset.y
-                let ratio: CGFloat = (movement <= 0) ? 0.50 : 1.0
-                self.headerView.photoView.frame.origin.y = self.originalRect!.origin.y + (-(movement) * ratio)
-            }
-            else {
-                let movement = (originalScrollTop - scrollView.contentOffset.y) * 0.35
-                if movement > 0 {
-                    self.headerView.photoView.frame.origin.y = self.originalRect!.origin.y - (movement * 0.5)
-                    self.headerView.photoView.frame.origin.x = self.originalRect!.origin.x - (movement * 0.5)
-                    self.headerView.photoView.frame.size.width = self.originalRect!.size.width + movement
-                    self.headerView.photoView.frame.size.height = self.originalRect!.size.height + movement
-                }
-            }
-        }
+        updateHeaderView()
     }
 }
 

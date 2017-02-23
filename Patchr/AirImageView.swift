@@ -18,7 +18,35 @@ class AirImageView: UIImageView {
     var activity = UIActivityIndicatorView(activityIndicatorStyle: .gray)
     var sizeCategory = SizeCategory.thumbnail
     var enableLogging = false
+    var gradientHeightPcnt = CGFloat(0.35)
+    var gradientLayer: CAGradientLayer!
     var asset: Any?
+    
+    var showGradient: Bool = false {
+        didSet {
+            if showGradient {
+                if self.gradientLayer == nil {
+                    self.gradientLayer = CAGradientLayer()
+                    let topColor: UIColor = UIColor(red: CGFloat(0), green: CGFloat(0), blue: CGFloat(0), alpha: CGFloat(0.0))        // Top
+                    let stop2Color: UIColor = UIColor(red: CGFloat(0), green: CGFloat(0), blue: CGFloat(0), alpha: CGFloat(0.33))    // Middle
+                    let bottomColor: UIColor = UIColor(red: CGFloat(0), green: CGFloat(0), blue: CGFloat(0), alpha: CGFloat(0.66))        // Bottom
+                    self.gradientLayer.colors = [topColor.cgColor, stop2Color.cgColor, bottomColor.cgColor]
+                    self.gradientLayer.locations = [0.0, 0.5, 1.0]
+                    
+                    /* Travels from top to bottom */
+                    self.gradientLayer.startPoint = CGPoint(x: 0.5, y: 0.0)    // (0,0) upper left corner, (1,1) lower right corner
+                    self.gradientLayer.endPoint = CGPoint(x: 0.5, y: 1.0)
+                    self.layer.insertSublayer(self.gradientLayer, at: 1)
+                }
+            }
+            else {
+                if self.gradientLayer != nil {
+                    self.gradientLayer.removeFromSuperlayer()
+                    self.gradientLayer = nil
+                }
+            }
+        }
+    }
     
     override var image: UIImage? {
         didSet {
@@ -53,9 +81,25 @@ class AirImageView: UIImageView {
     
     func initialize(){
 		self.activity.hidesWhenStopped = true
+        self.layer.delegate = self
         addSubview(self.activity)
     }
 	
+    override func layoutSublayers(of layer: CALayer) {
+        if layer == self.layer {
+            if self.gradientLayer != nil {
+                let gradientHeight = self.height() * 0.35
+                var rect = layer.bounds
+                rect.origin.y = rect.size.height - gradientHeight
+                rect.size.height = gradientHeight
+                CATransaction.begin()
+                CATransaction.setDisableActions(true)
+                self.gradientLayer.frame = rect
+                CATransaction.commit()
+            }
+        }
+    }
+    
 	override func layoutSubviews() {
 		super.layoutSubviews()
 		self.activity.anchorInCenter(withWidth: 20, height: 20)

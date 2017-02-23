@@ -26,15 +26,12 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
     var typingTask: DispatchWorkItem?
     
     let cellReuseIdentifier = "message-cell"
-    var headerView: ChannelDetailView!
+    var headerView = ChannelDetailView()
     var unreads = [String: Bool]()
     var displayPhotos = [String: DisplayPhoto]()
     var displayPhotosArray : [DisplayPhoto]!
 
-    var originalRect: CGRect?
-    var originalHeaderRect: CGRect?
-    var originalScrollTop = CGFloat(-64.0)
-    var originalScrollInset: UIEdgeInsets?
+    var headerHeight: CGFloat!
 
     var messageBar = UILabel()
     var messageBarTop = CGFloat(0)
@@ -113,15 +110,13 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
     }
     
     override func viewWillLayoutSubviews() {
+        
         let viewWidth = min(Config.contentWidthMax, self.view.width())
         self.view.anchorTopCenter(withTopPadding: 0, width: viewWidth, height: self.view.height())
         
         super.viewWillLayoutSubviews()
         
-        let headerHeight = (viewWidth * 0.625) + self.headerView.infoGroup.height()
-        
         self.tableView.fillSuperview()
-        self.tableView.tableHeaderView?.bounds.size = CGSize(width: viewWidth, height: headerHeight)    // Triggers layoutSubviews on header
         
         if self.messageBar.alpha > 0.0 {
             self.messageBar.alignUnder(self.navigationController?.navigationBar, centeredFillingWidthWithLeftAndRightPadding: 0, topPadding: 0, height: 40)
@@ -385,8 +380,16 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
 
         Reporting.screen("PatchDetail")
         
-        self.headerView = ChannelDetailView()
+        self.automaticallyAdjustsScrollViewInsets = false
+        let viewWidth = min(Config.contentWidthMax, self.view.width())
+        self.headerHeight = viewWidth * 0.625
+        self.tableView.contentInset = UIEdgeInsets(top: self.headerHeight + 74, left: 0, bottom: 0, right: 0)
+        self.tableView.contentOffset = CGPoint(x: 0, y: -(self.headerHeight + 74))
+        
+        updateHeaderView()
+        
         self.headerView.optionsButton.addTarget(self, action: #selector(showChannelActions(sender:)), for: .touchUpInside)
+        self.tableView.addSubview(self.headerView)
         
         self.tableView.estimatedRowHeight = 100						// Zero turns off estimates
         self.tableView.rowHeight = UITableViewAutomaticDimension	// Actual height is handled in heightForRowAtIndexPath
@@ -544,31 +547,20 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
             /* We do this here so we have tableView sizing */
             Log.d("Bind channel header")
 
-            if self?.tableView.tableHeaderView == nil {
-                let screenSize = UIScreen.main.bounds.size
-                let viewWidth = min(Config.contentWidthMax, screenSize.width)
-                
-                self?.headerView.frame = CGRect(x:0, y:0, width: viewWidth, height: 100)
-                self?.headerView.bind(channel: self?.channel)
-                self?.headerView.frame = CGRect(x:0, y:0, width: viewWidth, height: (self?.headerView.height())!)
-                
-                self?.headerView.photoView.frame = CGRect(x: -24, y: -36
-                    , width: (self?.headerView.contentGroup.width())! + 48
-                    , height: (self?.headerView.contentGroup.height())! + 72)
-                
-                let tap = UITapGestureRecognizer(target: self, action: #selector(self?.showChannelActions(sender:)))
-                self?.headerView.addGestureRecognizer(tap)
-                
-                self?.originalRect = self?.headerView.photoView.frame
-                self?.originalHeaderRect = self?.headerView.frame
-                self?.originalScrollInset = self?.tableView.contentInset
-                
-                self?.tableView.tableHeaderView = self?.headerView
-                self?.tableView.reloadData()
-            }
-            else {
-                self?.headerView.bind(channel: self?.channel)
-                self?.tableView.tableHeaderView = self?.headerView
+            self?.headerView.bind(channel: self?.channel)
+            self?.headerView.gestureRecognizers?.removeAll()
+            let tap = UITapGestureRecognizer(target: self, action: #selector(self?.showChannelActions(sender:)))
+            self?.headerView.addGestureRecognizer(tap)
+            
+            if self != nil && self!.channel.purpose != nil {
+                let viewWidth = min(Config.contentWidthMax, self!.view.width())
+                self!.headerView.purpose.bounds.size.width = viewWidth - 32
+                self!.headerView.purpose.sizeToFit()
+                let infoHeight = self!.headerView.purpose.height() + 24
+                self!.headerHeight = (viewWidth * 0.625) + infoHeight
+                self!.tableView.contentInset = UIEdgeInsets(top: self!.headerHeight + 74, left: 0, bottom: 0, right: 0)
+                self!.tableView.contentOffset = CGPoint(x: 0, y: -(self!.headerHeight + 74))
+                self!.updateHeaderView()
             }
         })
         
@@ -592,6 +584,15 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
             }
             MainController.instance.introPlayed = true
         }
+    }
+    
+    func updateHeaderView() {
+        var headerRect = CGRect(x: 0, y: -self.headerHeight, width: self.view.width(), height: self.headerHeight)
+        if self.tableView.contentOffset.y < -(self.headerHeight + 74) {
+            headerRect.origin.y = (self.tableView.contentOffset.y + 74)
+            headerRect.size.height = -(self.tableView.contentOffset.y + 74)
+        }
+        self.headerView.frame = headerRect
     }
     
     func populateCell(_ tableView: UITableView, cellForRowAt indexPath: IndexPath, snap: FIRDataSnapshot) -> UITableViewCell {
@@ -1060,27 +1061,7 @@ extension ChannelViewController {
     
     override func scrollViewDidScroll(_ scrollView: UIScrollView) {
         super.scrollViewDidScroll(scrollView)
-        
-        /* Parallax effect when user scrolls down */
-        let offset = scrollView.contentOffset.y
-        if self.originalRect != nil {
-            if offset >= self.originalScrollTop && offset <= 300 {
-                let movement = self.originalScrollTop - scrollView.contentOffset.y
-                let ratio: CGFloat = (movement <= 0) ? 0.50 : 1.0
-                if self.originalRect != nil {
-                    self.headerView.photoView.frame.origin.y = self.originalRect!.origin.y + (-(movement) * ratio)
-                }
-            }
-            else {
-                let movement = (originalScrollTop - scrollView.contentOffset.y) * 0.35
-                if movement > 0 {
-                    headerView.photoView.frame.origin.y = self.originalRect!.origin.y // - (movement * 0.8)
-                    headerView.photoView.frame.origin.x = self.originalRect!.origin.x - (movement * 0.5)
-                    headerView.photoView.frame.size.width = self.originalRect!.size.width + movement
-                    headerView.photoView.frame.size.height = self.originalRect!.size.height + movement
-                }
-            }
-        }
+        updateHeaderView()
     }
 }
 
