@@ -27,11 +27,13 @@ class ChannelSwitcherController: BaseTableController {
     var rule = UIView()
     var transitionManager = PushDownAnimationController()
     
-    var gradientImage:    UIImage!
+    var gradientImage: UIImage!
     var showGroupsButton: UIBarButtonItem!
-    var searchBarButton:  UIBarButtonItem!
-    var searchButton:     UIBarButtonItem!
-    var titleButton:      UIBarButtonItem!
+    var searchBarButton: UIBarButtonItem!
+    var searchButton: UIBarButtonItem!
+    var titleButton: UIBarButtonItem!
+    var titleView: UILabel!
+    var subtitleView: UILabel!
     
     var role = "guest"
     
@@ -205,9 +207,18 @@ class ChannelSwitcherController: BaseTableController {
         self.gradientImage = ImageUtils.imageFromLayer(layer: gradient)
         
         let titleWidth = (Config.navigationDrawerWidth - 112)
-        let titleView = AirLabelDisplay(frame: CGRect(x: 0, y: 0, width: titleWidth, height: 24))
-        titleView.font = Theme.fontBarText
-        self.titleButton = UIBarButtonItem(customView: titleView)
+        self.titleView = AirLabelDisplay(frame: CGRect(x: 0, y: 0, width: titleWidth, height: 24))
+        self.subtitleView = AirLabelDisplay(frame: CGRect(x: 0, y: 0, width: titleWidth, height: 24))
+        self.titleView.font = Theme.fontTextList
+        self.subtitleView.font = Theme.fontBarText
+        self.subtitleView.text = "Channels"
+        self.subtitleView.textColor = Colors.white
+        let titleHolder = UIView(frame: CGRect(x: 0, y: 0, width: titleWidth, height: 56))
+        titleHolder.addSubview(titleView)
+        titleHolder.addSubview(subtitleView)
+        self.titleView.anchorTopLeft(withLeftPadding: 0, topPadding: 0, width: titleWidth, height: 24)
+        self.subtitleView.alignUnder(self.titleView, matchingLeftWithTopPadding: -2, width: titleWidth, height: 24)
+        self.titleButton = UIBarButtonItem(customView: titleHolder)
         
         self.navigationItem.leftBarButtonItem = self.titleButton
         self.navigationItem.hidesBackButton = true
@@ -250,7 +261,7 @@ class ChannelSwitcherController: BaseTableController {
             if self.titleButton != nil {
                 FireController.db.child("groups/\(groupId)/title").observe(.value, with: { [weak self] snap in
                     if let title = snap.value as? String {
-                        (self?.titleButton.customView as? UILabel)?.text = title
+                        self?.titleView.text = title
                     }
                 })
             }

@@ -103,8 +103,8 @@ class SideMenuV2ViewController: BaseTableController, UITableViewDelegate, UITabl
 
         self.userCell = WrapperTableViewCell(view: self.userHeader, padding: UIEdgeInsets.zero, reuseIdentifier: nil)
         self.groupCell = WrapperTableViewCell(view: self.groupHeader, padding: UIEdgeInsets.zero, reuseIdentifier: nil)
-        self.userCell?.separator.backgroundColor = Colors.brandColor
-        self.groupCell?.separator.backgroundColor = Colors.brandColor
+        self.userCell?.separator.backgroundColor = Colors.brandColorLighter
+        self.groupCell?.separator.backgroundColor = Colors.brandColorLighter
         
         self.membersCell = WrapperTableViewCell(view: MenuItemView(title: "Group members", image: UIImage(named: "imgUsersLight")!), padding: UIEdgeInsets.zero, reuseIdentifier: nil)
         self.inviteCell = WrapperTableViewCell(view: MenuItemView(title: "Invite to group", image: UIImage(named: "imgInvite2Light")!), padding: UIEdgeInsets.zero, reuseIdentifier: nil)

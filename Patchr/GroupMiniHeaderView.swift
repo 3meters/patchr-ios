@@ -47,6 +47,7 @@ class GroupMiniHeaderView: BaseDetailView {
 
         self.photoControl.rounded = false
         self.photoControl.radius = 6
+        self.photoControl.initialsCount = 1
         
         /* User friendly name */
         self.title.lineBreakMode = .byTruncatingMiddle
@@ -96,12 +97,10 @@ class GroupMiniHeaderView: BaseDetailView {
         self.subtitle.text?.removeAll(keepingCapacity: false)
 
         if group != nil {
-
             self.title.text = group!.title
             if group!.role != nil {
                 self.subtitle.text = "as \(group!.role!)"
             }
-
             if let photo = group!.photo {
                 if photo.uploading != nil {
                     self.photoControl.bind(url: URL(string: photo.cacheKey)!, fallbackUrl: nil, name: nil, colorSeed: nil, uploading: true)

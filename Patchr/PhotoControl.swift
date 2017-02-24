@@ -99,6 +99,7 @@ class PhotoControl: UIControl {
             }
 		}
 		else {
+            self.photoView.fromUrl = nil
             if name != nil {
                 self.nameLabel.text = Utils.initialsFromName(fullname: name!, count: self.initialsCount).uppercased()
             }
