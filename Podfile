@@ -20,33 +20,29 @@ inhibit_all_warnings!
 use_frameworks!
 
 target 'Patchr' do
-    pod 'IDMPhotoBrowser',          :path => '~/code/IDMPhotoBrowser'
-    pod 'SlackTextViewController',  :path => '~/code/SlackTextViewController'
-    pod 'SDWebImage',               '~> 3.8.1'
-    pod 'AWSS3',                    '2.4.9'
     pod 'AFNetworking',             '~> 2.6'
     pod 'AFNetworkActivityLogger',  '~> 2.0'
-    pod 'PBWebViewController',      '~> 0.5'		# Used to show show web content for terms/policy/licensing
-    pod 'MBProgressHUD',            '~> 0.9.1'
+    pod 'AWSS3',                    '2.4.9'
+    pod 'Branch',                   '~> 0.12.5'     # Url routing and deep linking
+    pod 'DateTools',                :git => 'https://github.com/MatthewYork/DateTools', :branch => 'swift'
     pod 'DLRadioButton',            '~> 1.4.9'
-    pod 'NHBalancedFlowLayout',     '~> 0.2'
-    pod 'UIDevice-Hardware',        '~> 0.1.7'		# Convenience for determining system version and model identifier
-    pod 'pop',                      '~> 1.0'		# Animation library
     pod 'Facade',                   '~> 1.1.1'	    # Convenience methods for frame based layout
     pod 'iRate',                    '~> 1.11.6'
-    pod 'Branch',                   '~> 0.12.5'     # Url routing and deep linking
-    pod 'ReachabilitySwift',        '~> 3'
+    pod 'IDMPhotoBrowser',          :path => '~/code/IDMPhotoBrowser'
+    pod 'MBProgressHUD',            '~> 0.9.1'
+    pod 'NHBalancedFlowLayout',     '~> 0.2'
+    pod 'pop',                      '~> 1.0'		# Animation library
     pod 'PhoneNumberKit',           '~> 1.0'
+    pod 'PBWebViewController',      '~> 0.5'		# Used to show show web content for terms/policy/licensing
+    pod 'ReachabilitySwift',        '~> 3'
     pod 'SkyFloatingLabelTextField','~> 2.0.0'
-    pod 'DateTools',                :git => 'https://github.com/MatthewYork/DateTools', :branch => 'swift'
-    pod 'TwicketSegmentedControl'
-    pod 'PopupDialog'
-    pod 'TTTAttributedLabel'
-    pod 'SlideMenuControllerSwift'
+    pod 'SlackTextViewController',  :path => '~/code/SlackTextViewController'
+    pod 'SDWebImage',               '~> 3.8.1'
+    pod 'UIDevice-Hardware',        '~> 0.1.7'		# Convenience for determining system version and model identifier
     pod 'Bugsnag'                                   # Crash reporting
+    pod 'BEMCheckBox'
     pod 'CocoaLumberjack/Swift'
     pod 'CLTokenInputView'
-    pod 'BEMCheckBox'
     pod 'Firebase/RemoteConfig'
     pod 'Firebase/Core'
     pod 'Firebase/Crash'
@@ -54,6 +50,10 @@ target 'Patchr' do
     pod 'Firebase/Database'
     pod 'Firebase/Messaging'
     pod 'FirebaseUI/Database'
+    pod 'PopupDialog'
+    pod 'SlideMenuControllerSwift'
+    pod 'TwicketSegmentedControl'
+    pod 'TTTAttributedLabel'
 end
 
 plugin 'cocoapods-no-dev-schemes'
