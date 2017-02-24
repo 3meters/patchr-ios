@@ -131,6 +131,7 @@ class ContactPickerController: BaseTableController, UITableViewDelegate, UITable
         self.contactsView.placeholder.textColor = Theme.colorTextPlaceholder
         self.contactsView.placeholder.font = Theme.fontComment
         self.contactsView.backgroundColor = Colors.white
+        self.contactsView.tokenizationCharacters = [",", " ", ";"]
         self.contactsView.delegate = self
         self.contactsView.autoresizingMask = [UIViewAutoresizing.flexibleBottomMargin, UIViewAutoresizing.flexibleWidth]
         
@@ -301,8 +302,12 @@ class ContactPickerController: BaseTableController, UITableViewDelegate, UITable
             let username = UserController.instance.user!.username!
             
             for key in self.invites.keys {
-                let contact = self.invites[key] as! CNContact
-                let email = contact.emailAddresses.first?.value as? String
+                var email: String!
+                if let contact = self.invites[key] as? CNContact {
+                    email = contact.emailAddresses.first?.value as? String
+                } else if let contact = self.invites[key] as? String {
+                    email = contact
+                }
                 let inviteId = "in-\(Utils.genRandomId())"
                 
                 BranchProvider.inviteMember(groupId: groupId, groupTitle: groupTitle, username: username, email: email!, inviteId: inviteId, completion: { response, error in
@@ -351,8 +356,12 @@ class ContactPickerController: BaseTableController, UITableViewDelegate, UITable
         else if self.role == "guests" {
             
             for key in self.invites.keys {
-                let contact = self.invites[key] as! CNContact
-                let email = contact.emailAddresses.first?.value as? String
+                var email: String!
+                if let contact = self.invites[key] as? CNContact {
+                    email = contact.emailAddresses.first?.value as? String
+                } else if let contact = self.invites[key] as? String {
+                    email = contact
+                }
                 let inviteId = "in-\(Utils.genRandomId())"
                 
                 BranchProvider.inviteGuest(group: StateController.instance.group, channels: self.channels, email: email!, inviteId: inviteId, completion: { response, error in
@@ -601,7 +610,16 @@ extension ContactPickerController {
             self.invites[contact.identifier] = contact
             return CLToken(displayText: title, context: cell)
         }
-
+        else {
+            if !text.isEmail() {
+                UIShared.toast(message: "\(text) is not a valid email address")
+                return nil
+            }
+            else {
+                self.invites[text] = text
+                return CLToken(displayText: text, context: nil)
+            }
+        }
         return nil
     }
     
