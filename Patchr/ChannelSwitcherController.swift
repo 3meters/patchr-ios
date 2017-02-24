@@ -27,11 +27,11 @@ class ChannelSwitcherController: BaseTableController {
     var rule = UIView()
     var transitionManager = PushDownAnimationController()
     
-    var gradientImage: UIImage!
-    var backButton: UIBarButtonItem!
-    var searchBarButton: UIBarButtonItem!
-    var searchButton: UIBarButtonItem!
-    var titleButton: UIBarButtonItem!
+    var gradientImage:    UIImage!
+    var showGroupsButton: UIBarButtonItem!
+    var searchBarButton:  UIBarButtonItem!
+    var searchButton:     UIBarButtonItem!
+    var titleButton:      UIBarButtonItem!
     
     var role = "guest"
     
@@ -103,7 +103,7 @@ class ChannelSwitcherController: BaseTableController {
         }
     }
 
-    func backAction(sender: AnyObject?) {
+    func showGroupsAction(sender: AnyObject?) {
         let controller = MainController.groupPicker
         controller.view.setNeedsLayout()
         let _ = self.navigationController?.pushViewController(controller, animated: true)
@@ -188,13 +188,12 @@ class ChannelSwitcherController: BaseTableController {
         
         /* Navigation button */
         let unreadBackView = UnreadBackView()
-        unreadBackView.buttonScrim.addTarget(self, action: #selector(backAction(sender:)), for: .touchUpInside)
         unreadBackView.frame = CGRect(x: 0, y: 0, width: 24, height: 36)
         unreadBackView.badge.alpha = CGFloat(0)
         
-        self.backButton = UIBarButtonItem(customView: unreadBackView)
-        self.backButton.target = self
-        self.backButton.action = #selector(backAction(sender:))
+        self.showGroupsButton = UIBarButtonItem(customView: unreadBackView)
+        self.showGroupsButton.target = self
+        self.showGroupsButton.action = #selector(showGroupsAction(sender:))
         
         let gradient = CAGradientLayer()
         gradient.frame = CGRect(x: 0, y: 0, width: Config.navigationDrawerWidth, height: 64)
@@ -227,7 +226,7 @@ class ChannelSwitcherController: BaseTableController {
         if let userId = UserController.instance.userId,
             let groupId = StateController.instance.groupId {
             
-            self.navigationItem.setRightBarButtonItems([self.backButton], animated: true)
+            self.navigationItem.setRightBarButtonItems([self.showGroupsButton], animated: true)
             self.searchController.channelsSource.removeAll()
             self.searchController.channelsFiltered.removeAll()
             
@@ -236,7 +235,7 @@ class ChannelSwitcherController: BaseTableController {
                 if let role = snap.value as? String, self != nil {
                     self!.role = role
                     if role != "guest" {
-                        self!.navigationItem.setRightBarButtonItems([self!.backButton, self!.searchButton], animated: true)
+                        self!.navigationItem.setRightBarButtonItems([self!.showGroupsButton, self!.searchButton], animated: true)
                         self!.searchController.role = role
                         self!.searchController.load()
                     }
@@ -311,7 +310,7 @@ class ChannelSwitcherController: BaseTableController {
         }
         else {
             self.navigationItem.setLeftBarButton(self.titleButton, animated: true)
-            self.navigationItem.setRightBarButtonItems([self.backButton, self.searchButton], animated: true)
+            self.navigationItem.setRightBarButtonItems([self.showGroupsButton, self.searchButton], animated: true)
             self.searchBar.resignFirstResponder()
             self.searchTableView.removeFromSuperview()
             self.tableView.frame = self.view.bounds
@@ -321,7 +320,7 @@ class ChannelSwitcherController: BaseTableController {
     
     func updateBackButton() {
         let unreadOther = (self.unreadTotal - self.unreadGroup)
-        if let backButtonView = self.backButton.customView as? UnreadBackView {
+        if let backButtonView = self.showGroupsButton.customView as? UnreadBackView {
             backButtonView.badge.text = unreadOther > 0 ? "\(unreadOther)" : nil
             backButtonView.setNeedsLayout()
             backButtonView.layoutIfNeeded()
