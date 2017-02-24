@@ -193,7 +193,7 @@ class MainController: NSObject, iRateDelegate {
         }
         
         let mainWrapper = AirNavigationController(navigationBarClass: AirNavigationBar.self, toolbarClass: nil)
-        let menuController = SideMenuViewController()
+        let menuController = SideMenuV2ViewController()
         let drawerWrapper = AirNavigationController(navigationBarClass: AirNavigationBar.self, toolbarClass: nil)
         let slideController = SlideMenuController(mainViewController: mainWrapper
             , leftMenuViewController: drawerWrapper

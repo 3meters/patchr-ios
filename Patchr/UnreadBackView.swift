@@ -36,7 +36,7 @@ class UnreadBackView: UIView {
         self.buttonScrim.setBackgroundImage(ImageUtils.imageFromColor(color: Colors.clear), for: .highlighted)
         self.addSubview(self.backImage)
         self.addSubview(self.badge)
-        self.addSubview(self.buttonScrim)
+        self.insertSubview(self.buttonScrim, at: 2)
     }
     
     override func layoutSubviews() {

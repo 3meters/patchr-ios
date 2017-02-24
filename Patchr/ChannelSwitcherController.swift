@@ -189,11 +189,9 @@ class ChannelSwitcherController: BaseTableController {
         /* Navigation button */
         let unreadBackView = UnreadBackView()
         unreadBackView.frame = CGRect(x: 0, y: 0, width: 24, height: 36)
+        unreadBackView.buttonScrim.addTarget(self, action: #selector(showGroupsAction(sender:)), for: .touchUpInside)
         unreadBackView.badge.alpha = CGFloat(0)
-        
         self.showGroupsButton = UIBarButtonItem(customView: unreadBackView)
-        self.showGroupsButton.target = self
-        self.showGroupsButton.action = #selector(showGroupsAction(sender:))
         
         let gradient = CAGradientLayer()
         gradient.frame = CGRect(x: 0, y: 0, width: Config.navigationDrawerWidth, height: 64)
