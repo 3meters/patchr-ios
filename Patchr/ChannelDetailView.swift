@@ -18,6 +18,9 @@ class ChannelDetailView: UIView {
     var starButton = AirStarButton(frame: CGRect.zero)
     var optionsButton = UIButton(frame: CGRect.zero)
     var purpose = AirLabelDisplay(frame: CGRect.zero)
+    
+    var photo: FirePhoto!
+    var needsPhoto = false
 
     /*--------------------------------------------------------------------------------------------
     * Lifecycle
@@ -112,6 +115,7 @@ class ChannelDetailView: UIView {
         self.photoView.contentMode = .scaleAspectFill
         self.photoView.backgroundColor = Theme.colorBackgroundImage
         self.photoView.showGradient = true
+        self.photoView.gradientLayer.isHidden = true
         
         self.name.font = UIFont(name: "HelveticaNeue-Light", size: 28)!
         self.name.textColor = Colors.white
@@ -154,23 +158,12 @@ class ChannelDetailView: UIView {
         }
         
         if let photo = channel.photo {
-            
+            self.photo = photo
+            self.needsPhoto = true
             self.starButton.tintColor = Colors.brandColor
             self.optionsButton.tintColor = Colors.brandColor
             self.photoView.backgroundColor = Theme.colorBackgroundImage
-            
-            if (photo.uploading != nil) {
-                self.photoView.setImageFromCache(url: URL(string: photo.cacheKey)!, animate: true)
-            }
-            else if let url = ImageUtils.url(prefix: photo.filename, source: photo.source, category: SizeCategory.standard) {
-                if !self.photoView.associated(withUrl: url) {
-                    self.photoView.gradientLayer.isHidden = true
-                    let fallbackUrl = ImageUtils.fallbackUrl(prefix: photo.filename!)
-                    self.photoView.setImageWithUrl(url: url, fallbackUrl: fallbackUrl) { success in
-                        self.photoView.gradientLayer.isHidden = false
-                    }
-                }
-            }
+            displayPhoto()
         }
         else {
             self.photoView.image = nil
@@ -201,6 +194,29 @@ class ChannelDetailView: UIView {
         self.setNeedsLayout()    // Needed because binding can change element layout
         self.layoutIfNeeded()
         self.sizeToFit()
+    }
+    
+    func displayPhoto() {
+        let photo = self.photo!
+        if (photo.uploading != nil) {
+            self.photoView.setImageFromCache(url: URL(string: photo.cacheKey)!, animate: true) { success in
+                if success {
+                    self.photoView.gradientLayer.isHidden = false
+                    self.needsPhoto = false
+                }
+            }
+        }
+        else if let url = ImageUtils.url(prefix: photo.filename, source: photo.source, category: SizeCategory.standard) {
+            if !self.photoView.associated(withUrl: url) {
+                let fallbackUrl = ImageUtils.fallbackUrl(prefix: photo.filename!)
+                self.photoView.setImageWithUrl(url: url, fallbackUrl: fallbackUrl) { success in
+                    if success {
+                        self.photoView.gradientLayer.isHidden = false
+                        self.needsPhoto = false
+                    }
+                }
+            }
+        }
     }
     
     override func sizeThatFits(_ size: CGSize) -> CGSize {

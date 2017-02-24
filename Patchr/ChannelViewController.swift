@@ -365,6 +365,9 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
     func reachabilityChanged() {
         if ReachabilityManager.instance.isReachable() {
             hideMessageBar()
+            if self.headerView.needsPhoto {
+                self.headerView.displayPhoto()
+            }
         }
         else {
             showMessageBar()
