@@ -21,9 +21,6 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
     var channelQuery: ChannelQuery?
     var messagesQuery: FIRDatabaseQuery!
     var unreadQuery: UnreadQuery?   // Used to know when channel unreads == 0 and should fix sort priority
-    var typingRef: FIRDatabaseReference!
-    var typingHandle: FIRDatabaseHandle!
-    var typingTask: DispatchWorkItem?
     
     let cellReuseIdentifier = "message-cell"
     var headerView = ChannelDetailView()
@@ -50,8 +47,14 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
     var itemTemplate		= MessageViewCell()
     var itemPadding	= UIEdgeInsetsMake(12, 12, 12, 12)
     
-    var localTyping = false
-    
+    /* Observes typers for channel. If we see typers (but not this user), we 
+       pass them to the typing indicator. Each user passed to the typing
+       indicator has an attached timer that removes it after 8 seconds. */
+    var typingRef: FIRDatabaseReference!
+    var typingAddHandle: FIRDatabaseHandle!
+    var typingRemoveHandle: FIRDatabaseHandle!
+    var typingTask: DispatchWorkItem?
+    var localTyping = false // Setting add/removes this user from channel typers
     var isTyping: Bool {
         get {
             return self.localTyping
@@ -128,7 +131,7 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
             self.joinBarLabel.anchorTopCenterFillingWidth(withLeftAndRightPadding: 8, topPadding: 0, height: 32)
         }
         
-        self.titleView.bounds.size.width = Config.widthNarrow ? 160 : 200
+        self.titleView.bounds.size.width = self.view.width() - 160
     }
 
     override func didReceiveMemoryWarning() {
@@ -139,8 +142,11 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
     
     deinit {
         Log.d("ChannelViewController released")
-        if self.typingHandle != nil {
-            self.typingRef.removeObserver(withHandle: self.typingHandle)
+        if self.typingAddHandle != nil {
+            self.typingRef.removeObserver(withHandle: self.typingAddHandle)
+        }
+        if self.typingRemoveHandle != nil {
+            self.typingRef.removeObserver(withHandle: self.typingRemoveHandle)
         }
         self.channelQuery?.remove()
         self.unreadQuery?.remove()
@@ -273,6 +279,10 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
         }
     }
     
+    func leftWillOpen() {
+        NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.LeftWillOpen), object: self, userInfo: nil)
+    }
+    
     func leftDidOpen() {
         self.viewIsVisible = false
     }
@@ -311,7 +321,7 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
         self.isTyping = typing
         
         if typing {
-            self.typingTask = Utils.delay(2.0) {
+            self.typingTask = Utils.delay(8.0) {    // Safety net
                 self.isTyping = false
             }
         }
@@ -487,18 +497,25 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
         let username = UserController.instance.user!.username!
         
         self.typingRef = FireController.db.child("typing/\(groupId)/\(channelId)")
-        self.typingRef.child(userId).onDisconnectRemoveValue()
-        self.typingHandle = self.typingRef.observe(.value, with: { [weak self] snap in
+        self.typingAddHandle = self.typingRef.observe(.childAdded, with: { [weak self] snap in
             if self != nil {
-                if let typers = snap.value as? [String: String] {
-                    for typerName in typers.values {
-                        if typerName != username {
-                            self!.typingIndicatorView?.insertUsername(typerName)
-                        }
+                if let typerName = snap.value as? String {
+                    if typerName != username {
+                        self!.typingIndicatorView?.insertUsername(typerName)    // Auto removed in 8 secs
                     }
                 }
             }
         })
+        self.typingRemoveHandle = self.typingRef.observe(.childRemoved, with: { [weak self] snap in
+            if self != nil {
+                if let typerName = snap.value as? String {
+                    if typerName != username {
+                        self!.typingIndicatorView?.removeUsername(typerName)
+                    }
+                }
+            }
+        })
+        self.typingRef.child(userId).onDisconnectRemoveValue()
         
         FireController.db.child("groups/\(groupId)/title").observe(.value, with: { [weak self] snap in
             if let title = snap.value as? String {

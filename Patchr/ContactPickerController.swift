@@ -620,7 +620,6 @@ extension ContactPickerController {
                 return CLToken(displayText: text, context: nil)
             }
         }
-        return nil
     }
     
     func tokenInputViewDidEndEditing(_ view: CLTokenInputView) {

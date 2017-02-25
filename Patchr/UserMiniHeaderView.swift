@@ -61,12 +61,12 @@ class UserMiniHeaderView: BaseDetailView {
         if !self.fullName.isHidden {
             self.fullName.bounds.size.width = columnWidth
             self.fullName.sizeToFit()
-            self.fullName.align(toTheRightOf: self.photoControl, matchingTopWithLeftPadding: 8, width: columnWidth, height: self.fullName.height())
-            self.username.alignUnder(self.fullName, matchingLeftWithTopPadding: 0, width: columnWidth, height: self.username.height())
+            self.username.align(toTheRightOf: self.photoControl, matchingBottomWithLeftPadding: 8, width: columnWidth, height: self.username.height())
+            self.fullName.align(above: self.username, matchingLeftWithBottomPadding: 0, width: columnWidth, height: self.fullName.height())
         }
         else {
-            self.fullName.align(toTheRightOf: self.photoControl, matchingTopWithLeftPadding: 8, width: columnWidth, height: 0)
-            self.username.alignUnder(self.fullName, matchingLeftWithTopPadding: 0, width: columnWidth, height: self.username.height())
+            self.username.align(toTheRightOf: self.photoControl, matchingBottomWithLeftPadding: 8, width: columnWidth, height: self.username.height())
+            self.fullName.align(above: self.username, matchingLeftWithBottomPadding: 0, width: columnWidth, height: 0)
             self.anchorTopCenterFillingWidth(withLeftAndRightPadding: 0, topPadding: 0, height: (16 + 96 + 32 + 16))
         }
 	}

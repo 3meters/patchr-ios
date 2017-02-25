@@ -19,37 +19,28 @@
                     <constraints>
                         <constraint firstAttribute="height" constant="26" id="yK8-Xa-9DJ"/>
                     </constraints>
-                    <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="18"/>
+                    <fontDescription key="fontDescription" name="HelveticaNeue-Light" family="Helvetica Neue" pointSize="16"/>
                     <nil key="textColor"/>
                     <nil key="highlightedColor"/>
                 </label>
                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="PNf-Qo-2dd">
-                    <rect key="frame" x="0.0" y="20" width="0.0" height="21"/>
+                    <rect key="frame" x="0.0" y="20" width="200" height="21"/>
                     <constraints>
                         <constraint firstAttribute="height" constant="21" id="y78-hb-aWh"/>
                     </constraints>
-                    <fontDescription key="fontDescription" name="HelveticaNeue-Medium" family="Helvetica Neue" pointSize="16"/>
+                    <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="18"/>
                     <color key="textColor" red="1" green="0.50196078430000002" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     <nil key="highlightedColor"/>
                 </label>
-                <imageView hidden="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="imgArrowDownLight" translatesAutoresizingMaskIntoConstraints="NO" id="bOh-pM-djn" userLabel="Dropdown">
-                    <rect key="frame" x="4" y="28" width="12" height="9"/>
-                    <constraints>
-                        <constraint firstAttribute="height" constant="9" id="akT-3D-suk"/>
-                        <constraint firstAttribute="width" constant="12" id="h8f-rl-6NT"/>
-                    </constraints>
-                </imageView>
             </subviews>
             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
             <constraints>
                 <constraint firstItem="3Yu-Ib-y3H" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="5P7-mJ-LXD"/>
-                <constraint firstItem="bOh-pM-djn" firstAttribute="leading" secondItem="PNf-Qo-2dd" secondAttribute="trailing" constant="4" id="65j-OE-xj8"/>
                 <constraint firstItem="PNf-Qo-2dd" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="ITo-qQ-G8d"/>
                 <constraint firstItem="PNf-Qo-2dd" firstAttribute="top" secondItem="3Yu-Ib-y3H" secondAttribute="bottom" constant="-6" id="Iev-xY-2ye"/>
-                <constraint firstItem="PNf-Qo-2dd" firstAttribute="trailing" relation="lessThanOrEqual" secondItem="iN0-l3-epB" secondAttribute="trailing" constant="-16" id="LoI-he-odj"/>
+                <constraint firstItem="PNf-Qo-2dd" firstAttribute="trailing" secondItem="iN0-l3-epB" secondAttribute="trailing" id="LoI-he-odj"/>
                 <constraint firstItem="3Yu-Ib-y3H" firstAttribute="trailing" secondItem="iN0-l3-epB" secondAttribute="trailing" id="NE3-Ul-pvW"/>
                 <constraint firstItem="3Yu-Ib-y3H" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="ZE8-oX-Nsx"/>
-                <constraint firstItem="bOh-pM-djn" firstAttribute="baseline" secondItem="PNf-Qo-2dd" secondAttribute="baseline" id="nU5-jn-OXB"/>
             </constraints>
             <nil key="simulatedStatusBarMetrics"/>
             <nil key="simulatedTopBarMetrics"/>
@@ -62,7 +53,4 @@
             <point key="canvasLocation" x="-259" y="-181"/>
         </view>
     </objects>
-    <resources>
-        <image name="imgArrowDownLight" width="40" height="40"/>
-    </resources>
 </document>

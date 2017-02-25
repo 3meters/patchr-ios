@@ -74,6 +74,12 @@ class ImageUtils {
         SDImageCache.shared().store(image, forKey: url.absoluteString, toDisk: true)
     }
     
+    static func imageFromCache(url: URL, then: @escaping (UIImage?) -> ()) {
+        SDImageCache.shared().queryDiskCache(forKey: url.absoluteString) { image, cacheType in
+            then(image)
+        }
+    }
+    
     static func imageFromColor(color: UIColor) -> UIImage {
         let rect = CGRect(x: 0, y: 0, width: 1, height: 1)
         UIGraphicsBeginImageContext(rect.size)

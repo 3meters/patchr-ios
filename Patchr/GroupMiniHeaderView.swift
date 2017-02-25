@@ -81,12 +81,12 @@ class GroupMiniHeaderView: BaseDetailView {
         if !self.title.isHidden {
             self.title.bounds.size.width = columnWidth
             self.title.sizeToFit()
-            self.title.align(toTheRightOf: self.photoControl, matchingTopWithLeftPadding: 8, width: columnWidth, height: self.title.height())
-            self.subtitle.alignUnder(self.title, matchingLeftWithTopPadding: 0, width: columnWidth, height: self.subtitle.height())
+            self.subtitle.align(toTheRightOf: self.photoControl, matchingBottomWithLeftPadding: 8, width: columnWidth, height: self.subtitle.height())
+            self.title.align(above: self.subtitle, matchingLeftWithBottomPadding: 0, width: columnWidth, height: self.title.height())
         }
         else {
-            self.title.align(toTheRightOf: self.photoControl, matchingTopWithLeftPadding: 8, width: columnWidth, height: 0)
-            self.subtitle.alignUnder(self.title, matchingLeftWithTopPadding: 0, width: columnWidth, height: self.subtitle.height())
+            self.subtitle.align(toTheRightOf: self.photoControl, matchingBottomWithLeftPadding: 8, width: columnWidth, height: self.subtitle.height())
+            self.title.align(above: self.subtitle, matchingLeftWithBottomPadding: 0, width: columnWidth, height: 0)
             self.anchorTopCenterFillingWidth(withLeftAndRightPadding: 0, topPadding: 0, height: (16 + 96 + 32 + 16))
         }
     }

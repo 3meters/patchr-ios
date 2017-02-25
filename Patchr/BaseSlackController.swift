@@ -282,7 +282,7 @@ class BaseSlackController: SLKTextViewController {
                 if error == nil {
                     photoMap!["uploading"] = NSNull()
                     ref.child("attachments/\(attachmentId)").setValue(["photo": photoMap!])
-                    Log.d("*** Cleared uploading timestamp: \(photoMap!["filename"]!)")
+                    Log.d("*** Cleared uploading: \(photoMap!["filename"]!)")
                 }
             })
         }

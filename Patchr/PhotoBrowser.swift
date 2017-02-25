@@ -15,7 +15,7 @@ class PhotoBrowser: IDMPhotoBrowser {
     
     var likes : Bool = false
     var likeButton = AirLikeButton()
-    var message	: FireMessage?
+    var message	: FireMessage?  // Needed to make the like button work
     var mode: PhotoBrowserMode = .browse
     
     /* UI specialized for previewing photos from the photo picker. */

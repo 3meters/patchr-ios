@@ -259,12 +259,11 @@ class ProfileEditViewController: BaseEditViewController {
             if self.photoEditView.photoActive {
                 let image = self.photoEditView.imageButton.image
                 let asset = self.photoEditView.imageButton.asset
-                let path = self.user.path
                 var photoMap: [String: Any]?
                 photoMap = postPhoto(image: image!, asset: asset, progress: self.photoEditView.progressBlock, next: { error in
                     if error == nil {
                         photoMap!["uploading"] = NSNull()
-                        FireController.db.child(path).updateChildValues(["profile/photo": photoMap!])
+                        FireController.db.child("users/\(userId)/profile").updateChildValues(["photo": photoMap!])
                     }
                 })
                 

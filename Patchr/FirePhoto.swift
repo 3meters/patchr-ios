@@ -14,7 +14,7 @@ class FirePhoto: NSObject {
     var height: Int?
     var source: String?
     var takenAt: Int64?
-    var uploading: String?
+    var uploading: Bool?
     var width: Int?
     
     /* Local */
@@ -30,7 +30,7 @@ class FirePhoto: NSObject {
             photo.width = dict!["width"] as? Int
             photo.height = dict!["height"] as? Int
             photo.takenAt = dict!["taken_at"] as? Int64
-            photo.uploading = dict!["uploading"] as? String
+            photo.uploading = dict!["uploading"] as? Bool
             return photo
         }
         return nil

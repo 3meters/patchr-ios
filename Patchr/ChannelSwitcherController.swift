@@ -28,9 +28,11 @@ class ChannelSwitcherController: BaseTableController {
     var transitionManager = PushDownAnimationController()
     
     var gradientImage: UIImage!
+    var switcherView: UnreadBackView!
     var showGroupsButton: UIBarButtonItem!
     var searchBarButton: UIBarButtonItem!
     var searchButton: UIBarButtonItem!
+    
     var titleButton: UIBarButtonItem!
     var titleView: UILabel!
     var subtitleView: UILabel!
@@ -61,6 +63,8 @@ class ChannelSwitcherController: BaseTableController {
         super.viewWillAppear(animated)
         self.navigationController?.navigationBar.setBackgroundImage(self.gradientImage, for: .default)
         self.navigationController?.navigationBar.tintColor = Colors.white
+        self.switcherView.buttonScrim.removeTarget(self, action: #selector(showGroupsAction(sender:)), for: .touchUpInside)
+        self.switcherView.buttonScrim.addTarget(self, action: #selector(showGroupsAction(sender:)), for: .touchUpInside)
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -131,6 +135,11 @@ class ChannelSwitcherController: BaseTableController {
         self.tableView.reloadData()
     }
     
+    func leftWillOpen(notification: NSNotification?) {
+        self.switcherView.buttonScrim.removeTarget(self, action: #selector(showGroupsAction(sender:)), for: .touchUpInside)
+        self.switcherView.buttonScrim.addTarget(self, action: #selector(showGroupsAction(sender:)), for: .touchUpInside)
+    }
+    
     func leftDidClose(notification: NSNotification?) {
         if self.searchOn {
             self.search(on: false)
@@ -189,11 +198,10 @@ class ChannelSwitcherController: BaseTableController {
         self.view.addSubview(self.tableView)
         
         /* Navigation button */
-        let unreadBackView = UnreadBackView()
-        unreadBackView.frame = CGRect(x: 0, y: 0, width: 24, height: 36)
-        unreadBackView.buttonScrim.addTarget(self, action: #selector(showGroupsAction(sender:)), for: .touchUpInside)
-        unreadBackView.badge.alpha = CGFloat(0)
-        self.showGroupsButton = UIBarButtonItem(customView: unreadBackView)
+        self.switcherView = UnreadBackView()
+        self.switcherView.frame = CGRect(x: 0, y: 0, width: 24, height: 36)
+        self.switcherView.badge.alpha = CGFloat(0)
+        self.showGroupsButton = UIBarButtonItem(customView: switcherView)
         
         let gradient = CAGradientLayer()
         gradient.frame = CGRect(x: 0, y: 0, width: Config.navigationDrawerWidth, height: 64)
@@ -228,6 +236,7 @@ class ChannelSwitcherController: BaseTableController {
         NotificationCenter.default.addObserver(self, selector: #selector(groupDidSwitch(notification:)), name: NSNotification.Name(rawValue: Events.GroupDidSwitch), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(channelDidSwitch(notification:)), name: NSNotification.Name(rawValue: Events.ChannelDidSwitch), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(leftDidClose(notification:)), name: NSNotification.Name(rawValue: Events.LeftDidClose), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(leftWillOpen(notification:)), name: NSNotification.Name(rawValue: Events.LeftWillOpen), object: nil)
     }
     
     func bind() {

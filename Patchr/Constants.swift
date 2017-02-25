@@ -147,6 +147,7 @@ public struct Events {
     static let StateInitialized = "StateInitialized"
     static let UnreadChange = "UnreadChange"
     static let LeftDidClose = "LeftDidClose"
+    static let LeftWillOpen = "LeftWillOpen"
 
     static let DidFetchQuery = "DidFetchQuery"
     static let ImageNotFound = "ImageNotFound"
