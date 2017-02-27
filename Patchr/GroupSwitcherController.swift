@@ -16,7 +16,7 @@ class GroupSwitcherController: BaseTableController {
     let cellReuseIdentifier = "group-cell"
     
     var gradientImage: UIImage!
-    var messageLabel = AirLabelTitle()
+    var headingLabel = AirLabelTitle()
     var tableView = UITableView(frame: CGRect.zero, style: .plain)
     var rule = UIView()
     var buttonLogin	= AirButton()
@@ -55,24 +55,25 @@ class GroupSwitcherController: BaseTableController {
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
         
+        self.view.fillSuperview()
+        
         if self.simplePicker {
-            self.view.anchorTopCenter(withTopPadding: 74, width: Config.navigationDrawerWidth, height: self.view.height())
             self.tableView.fillSuperview()
-            return
-        }
-        
-        let messageSize = self.messageLabel.sizeThatFits(CGSize(width:288, height:CGFloat.greatestFiniteMagnitude))
-        
-        self.messageLabel.anchorTopCenter(withTopPadding: 64, width: 288, height:  messageSize.height + 24)
-        self.rule.alignUnder(self.messageLabel, centeredFillingWidthWithLeftAndRightPadding: 0, topPadding: 0, height: 1)
-        
-        if self.groupAvailable {
-            self.tableView.alignUnder(self.rule, matchingLeftAndRightFillingHeightWithTopPadding: 0, bottomPadding: 0)
         }
         else {
-            self.buttonGroup.anchorInCenter(withWidth: 240, height: 96)
-            self.buttonSignup.anchorTopCenterFillingWidth(withLeftAndRightPadding: 0, topPadding: 0, height: 44)
-            self.buttonLogin.anchorBottomCenterFillingWidth(withLeftAndRightPadding: 0, bottomPadding: 0, height: 44)
+            let headingSize = self.headingLabel.sizeThatFits(CGSize(width:288, height:CGFloat.greatestFiniteMagnitude))
+            
+            self.headingLabel.anchorTopCenter(withTopPadding: 74, width: 288, height:  headingSize.height + 24)
+            self.rule.alignUnder(self.headingLabel, centeredFillingWidthWithLeftAndRightPadding: 0, topPadding: 0, height: 1)
+            
+            if self.groupAvailable {
+                self.tableView.alignUnder(self.rule, matchingLeftAndRightFillingHeightWithTopPadding: 0, bottomPadding: 0)
+            }
+            else {
+                self.buttonGroup.anchorInCenter(withWidth: 240, height: 96)
+                self.buttonSignup.anchorTopCenterFillingWidth(withLeftAndRightPadding: 0, topPadding: 0, height: 44)
+                self.buttonLogin.anchorBottomCenterFillingWidth(withLeftAndRightPadding: 0, bottomPadding: 0, height: 44)
+            }
         }
     }
     
@@ -131,12 +132,23 @@ class GroupSwitcherController: BaseTableController {
     override func initialize() {
         super.initialize()
         
+        self.automaticallyAdjustsScrollViewInsets = false
+        self.navigationController?.setToolbarHidden(false, animated: true)
+        
         self.rule.backgroundColor = Theme.colorSeparator
         
-        NotificationCenter.default.addObserver(self, selector: #selector(userDidSwitch(notification:)), name: NSNotification.Name(rawValue: Events.UserDidSwitch), object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(groupDidSwitch(notification:)), name: NSNotification.Name(rawValue: Events.GroupDidSwitch), object: nil)
-        
         if self.simplePicker {
+            
+            self.tableView.backgroundColor = Theme.colorBackgroundTable
+            self.tableView.delegate = self
+            self.tableView.tableFooterView = UIView()
+            self.tableView.rowHeight = 64
+            self.tableView.separatorInset = UIEdgeInsets.zero
+            self.tableView.contentInset = UIEdgeInsets(top: 74, left: 0, bottom: 44, right: 0)
+            self.tableView.contentOffset = CGPoint(x: 0, y: -74)
+            self.tableView.register(UINib(nibName: "GroupListCell", bundle: nil), forCellReuseIdentifier: self.cellReuseIdentifier)
+            
+            self.view.addSubview(self.tableView)
             
             let gradient = CAGradientLayer()
             gradient.frame = CGRect(x: 0, y: 0, width: Config.navigationDrawerWidth, height: 64)
@@ -146,29 +158,24 @@ class GroupSwitcherController: BaseTableController {
             gradient.zPosition = 1
             gradient.shouldRasterize = true
             gradient.rasterizationScale = UIScreen.main.scale
-
-            self.gradientImage = ImageUtils.imageFromLayer(layer: gradient)
-
-            self.tableView.backgroundColor = Theme.colorBackgroundTable
-            self.tableView.delegate = self
-            self.tableView.tableFooterView = UIView()
-            self.tableView.rowHeight = 64
-            self.tableView.separatorInset = UIEdgeInsets.zero
-            self.tableView.register(UINib(nibName: "GroupListCell", bundle: nil), forCellReuseIdentifier: self.cellReuseIdentifier)
             
-            self.view.addSubview(self.tableView)
+            self.gradientImage = ImageUtils.imageFromLayer(layer: gradient)
             
             let titleWidth = (Config.navigationDrawerWidth - 112)
-            let titleView = AirLabelDisplay(text: " Patchr Groups")
+            let titleView = AirLabelDisplay(text: "Patchr Groups")
             titleView.frame = CGRect(x: 0, y: 0, width: titleWidth, height: 24)
             titleView.font = Theme.fontBarText
+            titleView.insets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
             self.titleView = UIBarButtonItem(customView: titleView)
             
-            let closeButton = UIBarButtonItem(barButtonSystemItem: .stop, target: self, action: #selector(closeAction(sender:)))
+            let button = UIButton(frame: CGRect(x: 0, y: 0, width: 40, height: 30))
+            button.setImage(#imageLiteral(resourceName: "imgCancelLight"), for: .normal)
+            button.addTarget(self, action: #selector(closeAction(sender:)), for: .touchUpInside)
+            let closeButton = UIBarButtonItem(customView: button)
+            
             self.navigationItem.rightBarButtonItems = [closeButton]
             self.navigationItem.leftBarButtonItems = [self.titleView]
             
-            self.navigationController?.setToolbarHidden(false, animated: true)
             let addButton = UIBarButtonItem(title: "New Group", style: .plain, target: self, action: #selector(addAction(sender:)))
             self.toolbarItems = [spacerFlex, addButton, spacerFlex]
             
@@ -186,22 +193,22 @@ class GroupSwitcherController: BaseTableController {
                 
                 self.groupAvailable = true
                 
-                self.messageLabel.textAlignment = NSTextAlignment.center
-                self.messageLabel.numberOfLines = 0
-                self.messageLabel.text = "Select from groups you are a member of. You can switch groups at anytime."
-                self.view.addSubview(self.messageLabel)
-                self.view.addSubview(self.rule)
+                self.headingLabel.textAlignment = NSTextAlignment.center
+                self.headingLabel.numberOfLines = 0
+                self.headingLabel.text = "Select from groups you are a member of. You can switch groups at anytime."
                 
                 self.tableView.backgroundColor = Theme.colorBackgroundTable
                 self.tableView.delegate = self
                 self.tableView.tableFooterView = UIView()
                 self.tableView.rowHeight = 64
                 self.tableView.separatorInset = UIEdgeInsets.zero
+                self.tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 44, right: 0)
                 self.tableView.register(UINib(nibName: "GroupListCell", bundle: nil), forCellReuseIdentifier: self.cellReuseIdentifier)
                 
+                self.view.addSubview(self.headingLabel)
+                self.view.addSubview(self.rule)
                 self.view.addSubview(self.tableView)
                 
-                self.navigationController?.setToolbarHidden(false, animated: true)
                 let addButton = UIBarButtonItem(title: "New Group", style: .plain, target: self, action: #selector(self.addAction(sender:)))
                 self.toolbarItems = [spacerFlex, addButton, spacerFlex]
                 
@@ -214,28 +221,33 @@ class GroupSwitcherController: BaseTableController {
             /* User is not a member of any group */
             else {
                 
-                self.messageLabel.textAlignment = NSTextAlignment.center
-                self.messageLabel.numberOfLines = 0
-                self.messageLabel.text = "Oops, you are not a member of any Patchr group."
-                self.view.addSubview(self.messageLabel)
-                self.view.addSubview(self.rule)
+                self.headingLabel.textAlignment = NSTextAlignment.center
+                self.headingLabel.numberOfLines = 0
+                self.headingLabel.text = "Oops, you are not a member of any Patchr group."
                 
                 self.buttonLogin.setTitle("Log in with another email", for: .normal)
+                self.buttonLogin.addTarget(self, action: #selector(self.switchLoginAction(sender:)), for: .touchUpInside)
                 self.buttonSignup.setTitle("Create a new Patchr group", for: .normal)
+                self.buttonSignup.addTarget(self, action: #selector(self.addAction(sender:)), for: .touchUpInside)
                 
                 self.buttonGroup.addSubview(self.buttonLogin)
                 self.buttonGroup.addSubview(self.buttonSignup)
-                self.view.addSubview(self.buttonGroup)
                 
-                self.buttonLogin.addTarget(self, action: #selector(self.switchLoginAction(sender:)), for: .touchUpInside)
-                self.buttonSignup.addTarget(self, action: #selector(self.addAction(sender:)), for: .touchUpInside)
+                self.view.addSubview(self.headingLabel)
+                self.view.addSubview(self.rule)
+                self.view.addSubview(self.buttonGroup)
                 
                 /* Navigation bar buttons */
                 self.navigationController?.setToolbarHidden(true, animated: true)
+                self.tableView.contentInset = UIEdgeInsets(top: 74, left: 0, bottom: 44, right: 0)
+
                 let logoutButton = UIBarButtonItem(title: "Log out", style: UIBarButtonItemStyle.plain, target: self, action: #selector(self.logoutAction(sender:)))
                 self.navigationItem.rightBarButtonItems = [logoutButton]
             }
         })
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(userDidSwitch(notification:)), name: NSNotification.Name(rawValue: Events.UserDidSwitch), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(groupDidSwitch(notification:)), name: NSNotification.Name(rawValue: Events.GroupDidSwitch), object: nil)
     }
     
     func bind() {
@@ -257,6 +269,7 @@ class GroupSwitcherController: BaseTableController {
             })
             
             self.tableView.dataSource = self.tableViewDataSource
+            self.view.setNeedsLayout()
         }
     }
     

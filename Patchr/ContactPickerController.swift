@@ -1,6 +1,4 @@
 //
-//  NavigationController.swift
-//
 //  Copyright (c) 2015 3meters. All rights reserved.
 //
 
@@ -12,44 +10,41 @@ import pop
 import CLTokenInputView
 import Contacts
 
-class ContactPickerController: BaseTableController, UITableViewDelegate, UITableViewDataSource, CLTokenInputViewDelegate {
-    /* Routes
-     * - Group create flow: password->groupcreate->contactpicker (.onboardCreate)
-     * - Group create flow (authorized): groupswitcher->groupcreate->contactpicker (.internalCreate)
-     * - Group create flow (not authorized): groupswitcher->groupcreate->invite->contactpicker (.internalCreate)
-     *
-     * - Invite member flow: memberlist->invite->contactpicker (.internalInvite)
-     * - Invite member flow: sidemenu->invite->contactpicker (.internalInvite)
-     *
-     * - Invite guest flow: invite->channelpicker->contactpicker
-     *
-     * - From channel view: channelview->contactpicker (.none)
-     */
+/* Routes
+ * - Group create flow: password->groupcreate->contactpicker (.onboardCreate)
+ * - Group create flow (authorized): groupswitcher->groupcreate->contactpicker (.internalCreate)
+ * - Group create flow (not authorized): groupswitcher->groupcreate->invite->contactpicker (.internalCreate)
+ * - Invite member flow: memberlist->invite->contactpicker (.internalInvite)
+ * - Invite member flow: sidemenu->invite->contactpicker (.internalInvite)
+ * - Invite guest flow: invite->channelpicker->contactpicker
+ * - From channel view: channelview->contactpicker (.none)
+ */
 
-    var contactsView: AirContactView!
-    var tableView: AirTableView!
-    
-    var sectionTitles: [String]?
-    
-    var contactsAll = [CNContact]()
-    var contactsMapped = [String: [CNContact]]()
-    var contactsFiltered = [CNContact]()
-    
-    var invites = [AnyHashable: Any]()
-    var emails = [AnyHashable: Any]()
-    var invitedEmails = [AnyHashable: [[String: Any]]]()
-    
-    var role = "members"
-    var channels: [String: Any] = [:]
+class ContactPickerController: BaseTableController, UITableViewDelegate, UITableViewDataSource, CLTokenInputViewDelegate {
+
     var inputGroupId: String?
     var inputGroupTitle: String?
-    
+
+    var heading = AirLabelTitle()
+    var tokenView: AirTokenView!
+    var tableView = UITableView(frame: CGRect.zero, style: .plain)
+    var doneButton: UIBarButtonItem!
+
+    var itemsBySection = [String: [CNContact]]()
+    var itemsFiltered = [CNContact]()
+    var itemsSource = [CNContact]()
+
     var filterText: String?
     var filterActive = false
-    
-    var doneButton: UIBarButtonItem!
     var flow: Flow = .none
-    
+
+    var channels: [String: Any] = [:]
+    var emails = [AnyHashable: Any]()
+    var invites = [AnyHashable: Any]()
+    var invitedEmails = [AnyHashable: [[String: Any]]]()
+    var role = "members"
+    var sectionTitles: [String]?
+
     let keysToFetch = [
         CNContactFormatter.descriptorForRequiredKeys(for: .fullName),
         CNContactEmailAddressesKey,
@@ -69,7 +64,7 @@ class ContactPickerController: BaseTableController, UITableViewDelegate, UITable
     }
     
     override func viewDidAppear(_ animated: Bool) {
-        let _ = self.contactsView.beginEditing()
+        let _ = self.tokenView.beginEditing()
     }
 
     override func viewWillLayoutSubviews() {
@@ -77,8 +72,8 @@ class ContactPickerController: BaseTableController, UITableViewDelegate, UITable
         
         let navHeight = self.navigationController?.navigationBar.height() ?? 0
         let statusHeight = UIApplication.shared.statusBarFrame.size.height
-        self.contactsView.anchorTopCenterFillingWidth(withLeftAndRightPadding: 0, topPadding: (navHeight + statusHeight), height: contactsView.height())
-        self.tableView.alignUnder(self.contactsView, matchingLeftAndRightFillingHeightWithTopPadding: 0, bottomPadding: 0)
+        self.tokenView.anchorTopCenterFillingWidth(withLeftAndRightPadding: 0, topPadding: (navHeight + statusHeight), height: tokenView.height())
+        self.tableView.alignUnder(self.tokenView, matchingLeftAndRightFillingHeightWithTopPadding: 0, bottomPadding: 0)
     }
 
     /*--------------------------------------------------------------------------------------------
@@ -124,25 +119,24 @@ class ContactPickerController: BaseTableController, UITableViewDelegate, UITable
     override func initialize() {
         super.initialize()
         
-        self.view.backgroundColor = Colors.gray95pcntColor
+        self.automaticallyAdjustsScrollViewInsets = false
         
-        self.contactsView = AirContactView(frame: CGRect(x: 0, y: 0, width: self.view.width(), height: 44))
-        self.contactsView.placeholder.text = "Search"
-        self.contactsView.placeholder.textColor = Theme.colorTextPlaceholder
-        self.contactsView.placeholder.font = Theme.fontComment
-        self.contactsView.backgroundColor = Colors.white
-        self.contactsView.tokenizationCharacters = [",", " ", ";"]
-        self.contactsView.delegate = self
-        self.contactsView.autoresizingMask = [UIViewAutoresizing.flexibleBottomMargin, UIViewAutoresizing.flexibleWidth]
+        self.tokenView = AirTokenView(frame: CGRect(x: 0, y: 0, width: self.view.width(), height: 44))
+        self.tokenView.placeholder.text = "Search"
+        self.tokenView.placeholder.textColor = Theme.colorTextPlaceholder
+        self.tokenView.placeholder.font = Theme.fontComment
+        self.tokenView.backgroundColor = Colors.white
+        self.tokenView.tokenizationCharacters = [",", " ", ";"]
+        self.tokenView.delegate = self
+        self.tokenView.autoresizingMask = [UIViewAutoresizing.flexibleBottomMargin, UIViewAutoresizing.flexibleWidth]
         
-        self.tableView = AirTableView(frame: CGRect.zero, style: .plain)
         self.tableView.register(UINib(nibName: "UserListCell", bundle: nil), forCellReuseIdentifier: "contact-cell")
         self.tableView.backgroundColor = Colors.white
         self.tableView.delegate = self
         self.tableView.dataSource = self
         self.tableView.tableFooterView = UIView()
         
-        self.view.addSubview(self.contactsView)
+        self.view.addSubview(self.tokenView)
         self.view.addSubview(self.tableView)
         self.view.addSubview(self.activity)
         
@@ -228,7 +222,7 @@ class ContactPickerController: BaseTableController, UITableViewDelegate, UITable
                 if !contact.emailAddresses.isEmpty
                     , let email = contact.emailAddresses.first?.value as? String
                     , email != "[No email address found]" {
-                    self.contactsAll.append(contact)
+                    self.itemsSource.append(contact)
                 }
             }
             filterContacts()
@@ -243,14 +237,14 @@ class ContactPickerController: BaseTableController, UITableViewDelegate, UITable
     
     func filterContacts() {
         
-        self.contactsMapped.removeAll()
-        self.contactsFiltered.removeAll()
+        self.itemsBySection.removeAll()
+        self.itemsFiltered.removeAll()
         self.sectionTitles = nil
         self.emails.removeAll()
         
         if !self.filterActive {
             
-            for contact in self.contactsAll {
+            for contact in self.itemsSource {
                 let email = contact.emailAddresses.first?.value as? String
                 
                 if self.emails[email!] == nil {
@@ -258,20 +252,20 @@ class ContactPickerController: BaseTableController, UITableViewDelegate, UITable
                     let title = fullName ?? email
                     let sectionTitle = String(title!.characters.prefix(1)).uppercased()
                     
-                    if self.contactsMapped[sectionTitle] == nil {
-                        self.contactsMapped[sectionTitle] = [contact]
+                    if self.itemsBySection[sectionTitle] == nil {
+                        self.itemsBySection[sectionTitle] = [contact]
                     }
                     else {
-                        self.contactsMapped[sectionTitle]!.append(contact)
+                        self.itemsBySection[sectionTitle]!.append(contact)
                     }
                     self.emails[email!] = true
                 }
             }
-            self.sectionTitles = self.contactsMapped.keys.sorted()
+            self.sectionTitles = self.itemsBySection.keys.sorted()
         }
         else {
             
-            for contact in self.contactsAll {
+            for contact in self.itemsSource {
                 let email = contact.emailAddresses.first?.value as? String
                 if self.emails[email!] == nil {
                     let fullName = CNContactFormatter.string(from: contact, style: .fullName)
@@ -281,7 +275,7 @@ class ContactPickerController: BaseTableController, UITableViewDelegate, UITable
                         || (email?.lowercased().contains(self.filterText!.lowercased()))!
                     
                     if match {
-                        self.contactsFiltered.append(contact)
+                        self.itemsFiltered.append(contact)
                         self.emails[email!] = true
                     }
                 }
@@ -429,12 +423,12 @@ extension ContactPickerController {
                 
                 if hasInvite {
                     self.invites.removeValue(forKey: contact.identifier)
-                    self.contactsView.remove(CLToken(displayText: title, context: cell))
+                    self.tokenView.remove(CLToken(displayText: title, context: cell))
                     cell.checkBox?.setOn(false, animated: true)
                 }
                 else {
                     cell.checkBox?.setOn(hasInvite, animated: true)
-                    self.contactsView.add(CLToken(displayText: title, context: cell))
+                    self.tokenView.add(CLToken(displayText: title, context: cell))
                     self.invites[contact.identifier] = contact
                 }
             }
@@ -450,7 +444,7 @@ extension ContactPickerController {
     }
     
     func sectionIndexTitles(for tableView: UITableView) -> [String]? {
-        return self.contactsView.isEditing ? nil : self.sectionTitles
+        return self.tokenView.isEditing ? nil : self.sectionTitles
     }
     
     func numberOfSections(in: UITableView) -> Int {
@@ -463,10 +457,10 @@ extension ContactPickerController {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if self.sectionTitles != nil {
             let sectionTitle = self.sectionTitles?[section]
-            return self.contactsMapped[sectionTitle!]!.count
+            return self.itemsBySection[sectionTitle!]!.count
         }
         else {
-            return self.contactsFiltered.count
+            return self.itemsFiltered.count
         }
     }
     
@@ -518,10 +512,10 @@ extension ContactPickerController {
         
         if self.sectionTitles != nil {
             let sectionTitle = self.sectionTitles?[indexPath.section]
-            contact = self.contactsMapped[sectionTitle!]?[indexPath.row]
+            contact = self.itemsBySection[sectionTitle!]?[indexPath.row]
         }
         else {
-            contact = self.contactsFiltered[indexPath.row]
+            contact = self.itemsFiltered[indexPath.row]
         }
         
         let email = contact.emailAddresses.first?.value as String!
@@ -548,7 +542,7 @@ extension ContactPickerController {
     }
     
     func tokenInputView(_ view: CLTokenInputView, didAdd token: CLToken) {
-        if self.contactsView.allTokens.count == 0 {
+        if self.tokenView.allTokens.count == 0 {
             if self.flow == .internalCreate || self.flow == .onboardCreate {
                 self.doneButton.title = "Done"
             }
@@ -564,14 +558,14 @@ extension ContactPickerController {
                 self.doneButton.isEnabled = true
             }
         }
-        self.contactsView.searchImage.fadeOut(duration: 0.0)
-        self.contactsView.placeholder.fadeOut(duration: 0.0)
+        self.tokenView.searchImage.fadeOut(duration: 0.0)
+        self.tokenView.placeholder.fadeOut(duration: 0.0)
     }
     
     func tokenInputView(_ view: CLTokenInputView, didRemove token: CLToken) {
-        if self.contactsView.allTokens.count == 0 {
-            self.contactsView.searchImage.fadeIn(duration: 0.2)
-            self.contactsView.placeholder.fadeIn(duration: 0.2)
+        if self.tokenView.allTokens.count == 0 {
+            self.tokenView.searchImage.fadeIn(duration: 0.2)
+            self.tokenView.placeholder.fadeIn(duration: 0.2)
             if self.flow == .internalCreate || self.flow == .onboardCreate {
                 self.doneButton.title = "Done"
             }
@@ -596,7 +590,7 @@ extension ContactPickerController {
     }
     
     func tokenInputView(_ view: CLTokenInputView, didChangeHeightTo height: CGFloat) {
-        self.contactsView.frame.size.height = height
+        self.tokenView.frame.size.height = height
         self.view.setNeedsLayout()
     }
     
@@ -623,16 +617,16 @@ extension ContactPickerController {
     }
     
     func tokenInputViewDidEndEditing(_ view: CLTokenInputView) {
-        if self.contactsView.allTokens.count == 0 {
-            self.contactsView.searchImage.fadeIn(duration: 0.2)
-            self.contactsView.placeholder.fadeIn(duration: 0.2)
+        if self.tokenView.allTokens.count == 0 {
+            self.tokenView.searchImage.fadeIn(duration: 0.2)
+            self.tokenView.placeholder.fadeIn(duration: 0.2)
         }
         self.tableView.reloadData()
     }
     
     func tokenInputViewDidBeginEditing(_ view: CLTokenInputView) {
-        self.contactsView.searchImage.fadeOut(duration: 0.2)
-        self.contactsView.placeholder.fadeOut(duration: 0.2)
+        self.tokenView.searchImage.fadeOut(duration: 0.2)
+        self.tokenView.placeholder.fadeOut(duration: 0.2)
         self.tableView.reloadData()
     }
     

@@ -19,7 +19,7 @@ protocol PickerDelegate {
 
 class InviteViewController: BaseEditViewController {
 	
-	var message	= AirLabelTitle()
+	var heading = AirLabelTitle()
 	var inviteMembersButton = AirButton()
     var inviteMembersComment = AirLabelDisplay()
 	var inviteGuestsButton = AirButton()
@@ -43,12 +43,12 @@ class InviteViewController: BaseEditViewController {
     
 	override func viewWillLayoutSubviews() {
 		
-        let messageSize = self.message.sizeThatFits(CGSize(width:288, height:CGFloat.greatestFiniteMagnitude))
+        let headingSize = self.heading.sizeThatFits(CGSize(width:288, height:CGFloat.greatestFiniteMagnitude))
         let inviteMembersCommentSize = self.inviteMembersComment.sizeThatFits(CGSize(width:288, height:CGFloat.greatestFiniteMagnitude))
         let inviteGuestsCommentSize = self.inviteGuestsComment.sizeThatFits(CGSize(width:288, height:CGFloat.greatestFiniteMagnitude))
         
-		self.message.anchorTopCenter(withTopPadding: 0, width: 288, height: messageSize.height)
-		self.inviteMembersButton.alignUnder(self.message, matchingCenterWithTopPadding: 24, width: 288, height: 48)
+		self.heading.anchorTopCenter(withTopPadding: 0, width: 288, height: headingSize.height)
+		self.inviteMembersButton.alignUnder(self.heading, matchingCenterWithTopPadding: 24, width: 288, height: 48)
         self.inviteMembersComment.alignUnder(self.inviteMembersButton, matchingCenterWithTopPadding: 12, width: 288, height: inviteMembersCommentSize.height)
 		self.inviteGuestsButton.alignUnder(self.inviteMembersComment, matchingCenterWithTopPadding: 20, width: 288, height: 48)
         self.inviteGuestsComment.alignUnder(self.inviteGuestsButton, matchingCenterWithTopPadding: 12, width: 280, height: inviteGuestsCommentSize.height)
@@ -101,9 +101,9 @@ class InviteViewController: BaseEditViewController {
 		Reporting.screen("PatchInvite")
         
         let groupTitle = self.flow != .onboardCreate ? StateController.instance.group.title! : self.inputGroupTitle!
-        self.message.text = "Invite people to \(groupTitle)."
-		self.message.textAlignment = NSTextAlignment.center
-		self.message.numberOfLines = 0
+        self.heading.text = "Invite people to \(groupTitle)."
+		self.heading.textAlignment = NSTextAlignment.center
+		self.heading.numberOfLines = 0
         
         if self.flow == .onboardCreate || self.flow == .internalCreate {
             /*
@@ -122,7 +122,7 @@ class InviteViewController: BaseEditViewController {
             let doneButton = UIBarButtonItem(title: "Done", style: UIBarButtonItemStyle.plain, target: self, action: #selector(doneAction(sender:)))
             self.navigationItem.rightBarButtonItems = [doneButton]
             
-            self.contentHolder.addSubview(self.message)
+            self.contentHolder.addSubview(self.heading)
             self.contentHolder.addSubview(self.inviteMembersButton)
             self.contentHolder.addSubview(self.inviteMembersComment)
         }
@@ -165,7 +165,7 @@ class InviteViewController: BaseEditViewController {
                 })
             }
             
-            self.contentHolder.addSubview(self.message)
+            self.contentHolder.addSubview(self.heading)
             self.contentHolder.addSubview(self.inviteMembersButton)
             self.contentHolder.addSubview(self.inviteMembersComment)
             self.contentHolder.addSubview(self.inviteGuestsButton)

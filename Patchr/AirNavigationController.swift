@@ -16,8 +16,8 @@ class AirNavigationController: UINavigationController {
 
 class AirNavigationBar: UINavigationBar {
     
-    static let navigationBarHeight: CGFloat = 54
-    static let heightIncrease: CGFloat = navigationBarHeight - 44
+    static let navigationBarHeight = CGFloat(54)
+    static let heightIncrease = CGFloat(navigationBarHeight - 44)
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -45,8 +45,8 @@ class AirNavigationBar: UINavigationBar {
         
         for view: UIView in self.subviews {
             if classNamesToReposition.contains(NSStringFromClass(view.classForCoder)) {
-                let bounds: CGRect = self.bounds
-                var frame: CGRect = view.frame
+                let bounds = self.bounds
+                var frame = view.frame
                 frame.origin.y = bounds.origin.y + shift - 20.0
                 frame.size.height = bounds.size.height + 20.0
                 view.frame = frame
@@ -55,8 +55,8 @@ class AirNavigationBar: UINavigationBar {
     }
     
     override func sizeThatFits(_ size: CGSize) -> CGSize {
-        let amendedSize: CGSize = super.sizeThatFits(size)
-        let newSize: CGSize = CGSize(width: amendedSize.width, height: AirNavigationBar.navigationBarHeight);
+        let amendedSize = super.sizeThatFits(size)
+        let newSize = CGSize(width: amendedSize.width, height: AirNavigationBar.navigationBarHeight);
         return newSize
     }
 }

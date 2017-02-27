@@ -107,13 +107,14 @@
 		E25B4ABB1E00BA6B00D17613 /* FireArray.swift in Sources */ = {isa = PBXBuildFile; fileRef = E25B4ABA1E00BA6B00D17613 /* FireArray.swift */; };
 		E266A1C01DEB4E8900C71C28 /* MemberPickerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E266A1BF1DEB4E8900C71C28 /* MemberPickerController.swift */; };
 		E26A02FD1DF5BE0D00EE32D3 /* ContactPickerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E26A02FC1DF5BE0D00EE32D3 /* ContactPickerController.swift */; };
-		E26A02FF1DF5DC5800EE32D3 /* AirContactView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E26A02FE1DF5DC5800EE32D3 /* AirContactView.swift */; };
+		E26A02FF1DF5DC5800EE32D3 /* AirTokenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E26A02FE1DF5DC5800EE32D3 /* AirTokenView.swift */; };
 		E26B0B311DEF7C130086FDAD /* BaseSlackController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E26B0B301DEF7C130086FDAD /* BaseSlackController.swift */; };
 		E26B0C891B456F8A00706F4A /* ExtensionsUi.swift in Sources */ = {isa = PBXBuildFile; fileRef = E26B0C881B456F8A00706F4A /* ExtensionsUi.swift */; };
 		E26B0C921B46D01E00706F4A /* ThumbnailCollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E26B0C911B46D01E00706F4A /* ThumbnailCollectionViewCell.xib */; };
 		E26BBF981DB5734F00038754 /* PHAsset+identifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = E26BBF961DB5734F00038754 /* PHAsset+identifier.swift */; };
 		E26BBF991DB5734F00038754 /* PHPhotoLibrary+PhotoAsset.swift in Sources */ = {isa = PBXBuildFile; fileRef = E26BBF971DB5734F00038754 /* PHPhotoLibrary+PhotoAsset.swift */; };
 		E26C80921C3AE246001514B3 /* Animation.swift in Sources */ = {isa = PBXBuildFile; fileRef = E26C80911C3AE246001514B3 /* Animation.swift */; };
+		E27CE2801E632E4800149305 /* DropdownButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E27CE27F1E632E4800149305 /* DropdownButton.swift */; };
 		E27F80AF1C56C84700D436E3 /* run-tests.sh in Resources */ = {isa = PBXBuildFile; fileRef = E27F80AE1C56C84700D436E3 /* run-tests.sh */; };
 		E27F8A7E1DFB3A180020E852 /* FloatTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = E27F8A7D1DFB3A180020E852 /* FloatTextField.swift */; };
 		E2810BA61DC8E6930013AEA0 /* PresenceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2810BA51DC8E6930013AEA0 /* PresenceView.swift */; };
@@ -314,7 +315,7 @@
 		E25B4ABA1E00BA6B00D17613 /* FireArray.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FireArray.swift; sourceTree = "<group>"; };
 		E266A1BF1DEB4E8900C71C28 /* MemberPickerController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MemberPickerController.swift; sourceTree = "<group>"; };
 		E26A02FC1DF5BE0D00EE32D3 /* ContactPickerController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContactPickerController.swift; sourceTree = "<group>"; };
-		E26A02FE1DF5DC5800EE32D3 /* AirContactView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirContactView.swift; sourceTree = "<group>"; };
+		E26A02FE1DF5DC5800EE32D3 /* AirTokenView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirTokenView.swift; sourceTree = "<group>"; };
 		E26B0B301DEF7C130086FDAD /* BaseSlackController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = BaseSlackController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		E26B0C881B456F8A00706F4A /* ExtensionsUi.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = ExtensionsUi.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		E26B0C911B46D01E00706F4A /* ThumbnailCollectionViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ThumbnailCollectionViewCell.xib; sourceTree = "<group>"; };
@@ -324,6 +325,7 @@
 		E2737DC61B8F7E3B00C176B1 /* UIImage+Resize.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIImage+Resize.swift"; sourceTree = "<group>"; };
 		E2737DC81B8F7EA100C176B1 /* UIImage+Alpha.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIImage+Alpha.swift"; sourceTree = "<group>"; };
 		E2737DC91B8F7EA100C176B1 /* UIImage+RoundedCorner.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIImage+RoundedCorner.swift"; sourceTree = "<group>"; };
+		E27CE27F1E632E4800149305 /* DropdownButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DropdownButton.swift; sourceTree = "<group>"; };
 		E27F80AE1C56C84700D436E3 /* run-tests.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = "run-tests.sh"; sourceTree = "<group>"; };
 		E27F8A7D1DFB3A180020E852 /* FloatTextField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FloatTextField.swift; sourceTree = "<group>"; };
 		E2810BA51DC8E6930013AEA0 /* PresenceView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PresenceView.swift; sourceTree = "<group>"; };
@@ -708,7 +710,7 @@
 				E2D12A741C08F85E00DE507E /* AirButton.swift */,
 				E23682841E1BFE3700F9FDFB /* AirButtonBase.swift */,
 				E2FFD38E1DF4817700FD75C7 /* AirCheckBox.swift */,
-				E26A02FE1DF5DC5800EE32D3 /* AirContactView.swift */,
+				E26A02FE1DF5DC5800EE32D3 /* AirTokenView.swift */,
 				E2D12A761C08F9CE00DE507E /* AirFeaturedButton.swift */,
 				E25327B51B1000C000990A81 /* AirImageView.swift */,
 				E25327B71B103ECA00990A81 /* AirImageButton.swift */,
@@ -738,6 +740,7 @@
 				E2DA16DC1DD11B7A0096D86F /* AirToggleImage.swift */,
 				E2DA16D81DD0F7280096D86F /* AirUIView.swift */,
 				E2D10E5B1C87AA760099EA6E /* AirHideShowButton.swift */,
+				E27CE27F1E632E4800149305 /* DropdownButton.swift */,
 				E24773441DCA254F00EFB46F /* FloatPhoneField.swift */,
 				E27F8A7D1DFB3A180020E852 /* FloatTextField.swift */,
 				E2B8A4B31CE7818B00A28D3A /* CKRadialMenu.h */,
@@ -1150,8 +1153,9 @@
 				E2CA16FF1DB95DDB00F99E1D /* FireAttachment.swift in Sources */,
 				E23C01111CE4F771009C56B2 /* CaptionView.swift in Sources */,
 				E2AC5FAC1E37DC6400C95A60 /* DropdownTransitionManager.swift in Sources */,
+				E27CE2801E632E4800149305 /* DropdownButton.swift in Sources */,
 				E25327B81B103ECA00990A81 /* AirImageButton.swift in Sources */,
-				E26A02FF1DF5DC5800EE32D3 /* AirContactView.swift in Sources */,
+				E26A02FF1DF5DC5800EE32D3 /* AirTokenView.swift in Sources */,
 				E26BBF991DB5734F00038754 /* PHPhotoLibrary+PhotoAsset.swift in Sources */,
 				E2E271291C5D1ED600E36804 /* BranchProvider.swift in Sources */,
 				844D6E371AA6550400EE71ED /* PhotoChooserUI.swift in Sources */,

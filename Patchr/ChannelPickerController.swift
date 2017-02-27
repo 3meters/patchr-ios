@@ -13,27 +13,28 @@ import pop
 import CLTokenInputView
 
 class ChannelPickerController: BaseTableController, CLTokenInputViewDelegate {
-    
-    var channelsSource = [FireChannel]()
-    var channelsFiltered = [FireChannel]()
-    var delegate: PickerDelegate?
-    
-    var channelsView: AirContactView!
-    var tableView = AirTableView(frame: CGRect.zero, style: .plain)
-    var doneButton: UIBarButtonItem!
-    var selectedStyle: SelectedStyle = .prominent
-    
-    var channels: [String: Any] = [:]
+
     var inputGroupId: String?
     var inputGroupTitle: String?
 
+    var heading	= AirLabelTitle()
+    var tokenView: AirTokenView!
+    var tableView = AirTableView(frame: CGRect.zero, style: .plain)
+    var doneButton: UIBarButtonItem!
+
+    var items: [String: Any] = [:]
+    var itemsFiltered = [FireChannel]()
+    var itemsSource = [FireChannel]()
+
     var filterText: String?
     var filterActive = false
+    var flow: Flow = .none
+
+    var delegate: PickerDelegate?
+    var selectedStyle: SelectedStyle = .prominent
     var allowMultiSelect = true
     var simplePicker = false
-    
-    var flow: Flow = .none
-    
+
     /*--------------------------------------------------------------------------------------------
     * MARK: - Lifecycle
     *--------------------------------------------------------------------------------------------*/
@@ -46,17 +47,20 @@ class ChannelPickerController: BaseTableController, CLTokenInputViewDelegate {
     
     override func viewDidAppear(_ animated: Bool) {
         if !self.simplePicker {
-            let _ = self.channelsView.beginEditing()
+            let _ = self.tokenView.beginEditing()
         }
     }
 
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
         
+        let headingSize = self.heading.sizeThatFits(CGSize(width:288, height:CGFloat.greatestFiniteMagnitude))
         let navHeight = self.navigationController?.navigationBar.height() ?? 0
         let statusHeight = UIApplication.shared.statusBarFrame.size.height
-        self.channelsView.anchorTopCenterFillingWidth(withLeftAndRightPadding: 0, topPadding: (navHeight + statusHeight), height: channelsView.height())
-        self.tableView.alignUnder(self.channelsView, centeredFillingWidthAndHeightWithLeftAndRightPadding: 0, topAndBottomPadding: 0)
+        
+        self.heading.anchorTopCenter(withTopPadding: (navHeight + statusHeight), width: 288, height: headingSize.height)
+        self.tokenView.alignUnder(self.heading, centeredFillingWidthWithLeftAndRightPadding: 0, topPadding: 16, height: tokenView.height())
+        self.tableView.alignUnder(self.tokenView, centeredFillingWidthAndHeightWithLeftAndRightPadding: 0, topAndBottomPadding: 0)
     }
 
     /*--------------------------------------------------------------------------------------------
@@ -66,7 +70,7 @@ class ChannelPickerController: BaseTableController, CLTokenInputViewDelegate {
     func doneAction(sender: AnyObject?) {
         if isValid() {
             if self.simplePicker {
-                self.delegate?.update(channels: self.channels)
+                self.delegate?.update(channels: self.items)
                 close()
                 return
             }
@@ -74,7 +78,7 @@ class ChannelPickerController: BaseTableController, CLTokenInputViewDelegate {
             let controller = ContactPickerController()
             controller.role = "guests"
             controller.flow = self.flow
-            controller.channels = self.channels
+            controller.channels = self.items
             controller.inputGroupId = self.inputGroupId
             controller.inputGroupTitle = self.inputGroupTitle
             self.navigationController?.pushViewController(controller, animated: true)
@@ -114,14 +118,18 @@ class ChannelPickerController: BaseTableController, CLTokenInputViewDelegate {
         self.automaticallyAdjustsScrollViewInsets = false
         self.view.backgroundColor = Colors.white
         
-        self.channelsView = AirContactView(frame: CGRect(x: 0, y: 0, width: self.view.width(), height: 44))
-        self.channelsView.placeholder.text = "Search"
-        self.channelsView.placeholder.textColor = Theme.colorTextPlaceholder
-        self.channelsView.placeholder.font = Theme.fontComment
-        self.channelsView.backgroundColor = Colors.white
-        self.channelsView.drawBottomBorder = true
-        self.channelsView.delegate = self
-        self.channelsView.autoresizingMask = [UIViewAutoresizing.flexibleBottomMargin, UIViewAutoresizing.flexibleWidth]
+        self.heading.text = "Select channels"
+        self.heading.textAlignment = NSTextAlignment.center
+        self.heading.numberOfLines = 0
+
+        self.tokenView = AirTokenView(frame: CGRect(x: 0, y: 0, width: self.view.width(), height: 44))
+        self.tokenView.placeholder.text = "Search"
+        self.tokenView.placeholder.textColor = Theme.colorTextPlaceholder
+        self.tokenView.placeholder.font = Theme.fontComment
+        self.tokenView.backgroundColor = Colors.white
+        self.tokenView.drawBottomBorder = true
+        self.tokenView.delegate = self
+        self.tokenView.autoresizingMask = [UIViewAutoresizing.flexibleBottomMargin, UIViewAutoresizing.flexibleWidth]
 
         self.tableView.register(UINib(nibName: "ChannelSearchCell", bundle: nil), forCellReuseIdentifier: "channel-search-cell")
         self.tableView.backgroundColor = Theme.colorBackgroundTable
@@ -131,7 +139,8 @@ class ChannelPickerController: BaseTableController, CLTokenInputViewDelegate {
         self.tableView.estimatedRowHeight = 36
         self.tableView.separatorInset = UIEdgeInsets.zero
         
-        self.view.addSubview(self.channelsView)
+        self.view.addSubview(self.heading)
+        self.view.addSubview(self.tokenView)
         self.view.addSubview(self.tableView)
         
         self.selectedStyle = .normal
@@ -153,18 +162,18 @@ class ChannelPickerController: BaseTableController, CLTokenInputViewDelegate {
             self.navigationItem.rightBarButtonItems = [doneButton]
         }
         
-        if self.channels.count > 0 {
-            for (channelId, channelName) in self.channels {
+        if self.items.count > 0 {
+            for (channelId, channelName) in self.items {
                 let token = CLToken(displayText: channelName as! String, context: channelId as NSObject)
-                self.channelsView.add(token)
+                self.tokenView.add(token)
             }
         }
     }
     
     func bind() {
         
-        self.channelsSource.removeAll()
-        self.channelsFiltered.removeAll()
+        self.itemsSource.removeAll()
+        self.itemsFiltered.removeAll()
         
         let groupId = StateController.instance.groupId!
         
@@ -172,12 +181,12 @@ class ChannelPickerController: BaseTableController, CLTokenInputViewDelegate {
             .queryOrdered(byChild: "name")
         
         query.observe(.value, with: { [weak self] snap in
-            self?.channelsSource.removeAll()
+            self?.itemsSource.removeAll()
             if !(snap.value is NSNull) && snap.hasChildren() {
                 for item in snap.children {
                     let snapChannel = item as! FIRDataSnapshot
                     if let channel = FireChannel.from(dict: snapChannel.value as? [String: Any], id: snapChannel.key) {
-                        self?.channelsSource.append(channel)
+                        self?.itemsSource.append(channel)
                     }
                 }
             }
@@ -191,11 +200,11 @@ class ChannelPickerController: BaseTableController, CLTokenInputViewDelegate {
     
     func filter() {
         
-        self.channelsFiltered.removeAll()
-        for channel in self.channelsSource {
+        self.itemsFiltered.removeAll()
+        for channel in self.itemsSource {
             let match = channel.name!.lowercased().contains(self.filterText!.lowercased())
             if match {
-                self.channelsFiltered.append(channel)
+                self.itemsFiltered.append(channel)
             }
         }
         
@@ -206,7 +215,7 @@ class ChannelPickerController: BaseTableController, CLTokenInputViewDelegate {
     
     func isValid() -> Bool {
         
-        if self.channels.count == 0 {
+        if self.items.count == 0 {
             alert(title: "Select a channel")
             return false
         }
@@ -219,12 +228,12 @@ extension ChannelPickerController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "channel-search-cell", for: indexPath) as! ChannelListCell
-        let channel = self.filterActive ? self.channelsFiltered[indexPath.row] : self.channelsSource[indexPath.row]
+        let channel = self.filterActive ? self.itemsFiltered[indexPath.row] : self.itemsSource[indexPath.row]
         let channelId = channel.id!
         
         cell.selectionStyle = .none
         cell.reset()
-        cell.selected(on: (self.channels[channelId] != nil), style: .normal)
+        cell.selected(on: (self.items[channelId] != nil), style: .normal)
         cell.bind(channel: channel)
         cell.status?.isHidden = true
 
@@ -232,7 +241,7 @@ extension ChannelPickerController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.filterActive ? self.channelsFiltered.count : self.channelsSource.count
+        return self.filterActive ? self.itemsFiltered.count : self.itemsSource.count
     }
     
     func numberOfSections(in: UITableView) -> Int {
@@ -248,14 +257,14 @@ extension ChannelPickerController: UITableViewDelegate {
             let channel = cell.channel!
             let channelId = channel.id!
             let channelName = channel.name!
-            let included = (self.channels[channelId] != nil)
+            let included = (self.items[channelId] != nil)
             let token = CLToken(displayText: channelName, context: channelId as NSObject?)
             if included {
-                self.channelsView.remove(token)
+                self.tokenView.remove(token)
                 cell.selected(on: false, style: .normal)
             }
             else {
-                self.channelsView.add(token)
+                self.tokenView.add(token)
                 cell.selected(on: true, style: .normal)
             }
         }
@@ -278,26 +287,26 @@ extension ChannelPickerController {
     }
     
     func tokenInputView(_ view: CLTokenInputView, didAdd token: CLToken) {
-        self.doneButton.isEnabled = (self.channelsView.allTokens.count > 0)
+        self.doneButton.isEnabled = (self.tokenView.allTokens.count > 0)
         if let channelId = token.context as? String {
-            self.channels[channelId] = token.displayText
+            self.items[channelId] = token.displayText
         }
     }
     
     func tokenInputView(_ view: CLTokenInputView, didRemove token: CLToken) {
-        self.doneButton.isEnabled = (self.channelsView.allTokens.count > 0)
+        self.doneButton.isEnabled = (self.tokenView.allTokens.count > 0)
         if let channelId = token.context as? String {
-            self.channels.removeValue(forKey: channelId)
+            self.items.removeValue(forKey: channelId)
         }
     }
     
     func tokenInputView(_ view: CLTokenInputView, didChangeHeightTo height: CGFloat) {
         UIView.animate(withDuration: 0.3, animations: {
-            self.channelsView.frame.size.height = height
+            self.tokenView.frame.size.height = height
             let navHeight = self.navigationController?.navigationBar.height() ?? 0
             let statusHeight = UIApplication.shared.statusBarFrame.size.height
-            self.channelsView.anchorTopCenterFillingWidth(withLeftAndRightPadding: 0, topPadding: (navHeight + statusHeight), height: self.channelsView.height())
-            self.tableView.alignUnder(self.channelsView, matchingLeftAndRightFillingHeightWithTopPadding: 0, bottomPadding: 0)
+            self.tokenView.anchorTopCenterFillingWidth(withLeftAndRightPadding: 0, topPadding: (navHeight + statusHeight), height: self.tokenView.height())
+            self.tableView.alignUnder(self.tokenView, matchingLeftAndRightFillingHeightWithTopPadding: 0, bottomPadding: 0)
         })
     }
     
@@ -305,7 +314,7 @@ extension ChannelPickerController {
         Log.d("tokenForText")
         if let cell = self.tableView.cellForRow(at: IndexPath(row: 0, section: 0)) as? ChannelListCell {
             let channel = cell.channel!
-            self.channels[channel.id!] = channel
+            self.items[channel.id!] = channel
             return CLToken(displayText: channel.name!, context: cell)
         }
         
@@ -313,12 +322,12 @@ extension ChannelPickerController {
     }
     
     func tokenInputViewDidEndEditing(_ view: CLTokenInputView) {
-        self.channelsView.editingEnd()
+        self.tokenView.editingEnd()
         self.tableView.reloadData()
     }
     
     func tokenInputViewDidBeginEditing(_ view: CLTokenInputView) {
-        self.channelsView.editingBegin()
+        self.tokenView.editingBegin()
         self.tableView.reloadData()
     }
     

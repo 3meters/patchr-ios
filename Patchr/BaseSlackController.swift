@@ -217,7 +217,7 @@ class BaseSlackController: SLKTextViewController {
         self.shouldScrollToBottomAfterKeyboardShows = false
         self.isInverted = false
         
-        self.leftButton.setImage(UIImage(named: "UIButtonCamera"), for: UIControlState())
+        self.leftButton.setImage(#imageLiteral(resourceName: "UIButtonCamera"), for: UIControlState())
         self.leftButton.imageEdgeInsets = UIEdgeInsetsMake(0, 0, 0, 0)
         
         self.rightButton.setTitle(NSLocalizedString("Send", comment: ""), for: UIControlState())

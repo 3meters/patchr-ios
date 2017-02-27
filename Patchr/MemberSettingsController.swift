@@ -328,7 +328,7 @@ extension MemberSettingsController {
                 if self.channelsAfter.count > 0 {
                     for channelId in self.channelsAfter.keys {
                         let channel = self.channelsAfter[channelId]
-                        controller.channels[channelId] = channel
+                        controller.items[channelId] = channel
                     }
                 }
                 controller.delegate = self

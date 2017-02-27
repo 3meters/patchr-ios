@@ -1,7 +1,7 @@
 import UIKit
 
 class UnreadBackView: UIView {
-
+    
     var backImage = UIImageView()
     var badge = UILabel()
     var buttonScrim = AirScrimButton(frame: .zero, hitInsets: UIEdgeInsets(top: -8, left: -8, bottom: -8, right: -8))
