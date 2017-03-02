@@ -40,20 +40,8 @@ extern "C" {
 #include "KSArchSpecific.h"
 
 #include <mach/mach.h>
-#include <pthread.h>
 #include <stdbool.h>
 #include <sys/ucontext.h>
-
-
-// ============================================================================
-#pragma mark - Initialization -
-// ============================================================================
-
-/** Initializes KSMach.
- * Some functions (currently only ksmach_pthreadFromMachThread) require
- * initialization before use.
- */
-void ksmach_init(void);
 
 
 // ============================================================================
@@ -88,7 +76,7 @@ const char* ksmach_exceptionName(exception_type_t exceptionType);
 
 /** Get the name of a mach kernel return code.
  *
- * @param code The return code.
+ * @param returnCode The return code.
  *
  * @return The code's name or NULL if not found.
  */
@@ -253,7 +241,7 @@ int ksmach_stackGrowDirection(void);
  *
  * @return true if a name was found.
  */
-bool ksmach_getThreadName(const thread_t thread, char* const buffer, size_t bufLength);
+bool ksmach_getThreadName(const thread_t thread, char* const buffer, int bufLength);
 
 /** Get the name of a thread's dispatch queue. Internally, a queue name will
  * never be more than 64 characters long.
@@ -266,7 +254,7 @@ bool ksmach_getThreadName(const thread_t thread, char* const buffer, size_t bufL
  *
  * @return true if a name or label was found.
  */
-bool ksmach_getThreadQueueName(thread_t thread, char* buffer, size_t bufLength);
+bool ksmach_getThreadQueueName(thread_t thread, char* buffer, int bufLength);
 
 
 // ============================================================================
@@ -281,22 +269,6 @@ bool ksmach_getThreadQueueName(thread_t thread, char* buffer, size_t bufLength);
  * @return The current thread ID.
  */
 thread_t ksmach_thread_self();
-
-/** Get a mach thread's corresponding posix thread.
- *
- * @param thread The mach thread.
- *
- * @return The corresponding posix thread, or 0 if an error occurred.
- */
-pthread_t ksmach_pthreadFromMachThread(const thread_t thread);
-
-/** Get a posix thread's corresponding mach thread.
- *
- * @param pthread The posix thread.
- *
- * @return The corresponding mach thread, or 0 if an error occurred.
- */
-thread_t ksmach_machThreadFromPThread(const pthread_t pthread);
 
 /** Suspend all threads except for the current one.
  *
@@ -341,7 +313,7 @@ bool ksmach_resumeAllThreadsExcept(thread_t* exceptThreads, int exceptThreadsCou
  *
  * @return KERN_SUCCESS or an error code.
  */
-kern_return_t ksmach_copyMem(const void* src, void* dst, size_t numBytes);
+kern_return_t ksmach_copyMem(const void* src, void* dst, int numBytes);
 
 /** Copies up to numBytes of data from src to dest, stopping if memory
  * becomes inaccessible.
@@ -354,18 +326,7 @@ kern_return_t ksmach_copyMem(const void* src, void* dst, size_t numBytes);
  *
  * @return The number of bytes actually copied.
  */
-size_t ksmach_copyMaxPossibleMem(const void* src, void* dst, size_t numBytes);
-
-/** Get the difference in seconds between two timestamps fetched via
- * mach_absolute_time().
- *
- * @param endTime The greater of the two times.
- *
- * @param startTime The lesser of the two times.
- *
- * @return The difference between the two timestamps in seconds.
- */
-double ksmach_timeDifferenceInSeconds(uint64_t endTime, uint64_t startTime);
+int ksmach_copyMaxPossibleMem(const void* src, void* dst, int numBytes);
 
 /** Check if the current process is being traced or not.
  *

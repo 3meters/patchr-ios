@@ -26,6 +26,7 @@ NSString * const BRANCH_PREFS_KEY_SESSION_ID = @"bnc_session_id";
 NSString * const BRANCH_PREFS_KEY_IDENTITY_ID = @"bnc_identity_id";
 NSString * const BRANCH_PREFS_KEY_IDENTITY = @"bnc_identity";
 NSString * const BRANCH_PREFS_KEY_CHECKED_FACEBOOK_APP_LINKS = @"bnc_checked_fb_app_links";
+NSString * const BRANCH_PREFS_KEY_CHECKED_APPLE_SEARCH_ADS = @"bnc_checked_apple_search_ads";
 NSString * const BRANCH_PREFS_KEY_APPLE_SEARCH_ADS_INFO = @"bnc_apple_search_ads_info";
 NSString * const BRANCH_PREFS_KEY_LINK_CLICK_IDENTIFIER = @"bnc_link_click_identifier";
 NSString * const BRANCH_PREFS_KEY_SPOTLIGHT_IDENTIFIER = @"bnc_spotlight_identifier";
@@ -46,7 +47,10 @@ NSString * const BRANCH_PREFS_KEY_ANALYTICS_MANIFEST = @"bnc_branch_analytics_ma
 // The name of this key was specified in the account-creation API integration
 static NSString * const BNC_BRANCH_FABRIC_APP_KEY_KEY = @"branch_key";
 
-@interface BNCPreferenceHelper ()
+@interface BNCPreferenceHelper () {
+    NSString *_lastSystemBuildVersion;
+    NSString *_browserUserAgentString;
+}
 
 @property (strong, nonatomic) NSMutableDictionary *persistenceDict;
 @property (strong, nonatomic) NSMutableDictionary *creditsDictionary;
@@ -80,6 +84,7 @@ static NSString * const BNC_BRANCH_FABRIC_APP_KEY_KEY = @"branch_key";
             timeout = _timeout,
             lastStrongMatchDate = _lastStrongMatchDate,
             checkedFacebookAppLinks = _checkedFacebookAppLinks,
+            checkedAppleSearchAdAttribution = _checkedAppleSearchAdAttribution,
             appleSearchAdDetails = _appleSearchAdDetails,
             requestMetadataDictionary = _requestMetadataDictionary,
             instrumentationDictionary = _instrumentationDictionary;
@@ -161,6 +166,8 @@ static NSString * const BNC_BRANCH_FABRIC_APP_KEY_KEY = @"branch_key";
     NSUInteger index = BNC_API_BASE_URL.length;
     return [url substringFromIndex:index];
 }
+
+
 #pragma mark - Preference Storage
 
 - (NSString *)getBranchKey:(BOOL)isLive {
@@ -419,7 +426,10 @@ static NSString * const BNC_BRANCH_FABRIC_APP_KEY_KEY = @"branch_key";
 }
 
 - (void) setAppleSearchAdDetails:(NSDictionary*)details {
-    [self writeObjectToDefaults:BRANCH_PREFS_KEY_APPLE_SEARCH_ADS_INFO value:details];
+    if (details == nil || [details isKindOfClass:[NSDictionary class]]) {
+        _appleSearchAdDetails = details;
+        [self writeObjectToDefaults:BRANCH_PREFS_KEY_APPLE_SEARCH_ADS_INFO value:details];
+    }
 }
 
 - (NSDictionary*) appleSearchAdDetails {
@@ -427,6 +437,34 @@ static NSString * const BNC_BRANCH_FABRIC_APP_KEY_KEY = @"branch_key";
         _appleSearchAdDetails = (NSDictionary *) [self readObjectFromDefaults:BRANCH_PREFS_KEY_APPLE_SEARCH_ADS_INFO];
     }
     return [_appleSearchAdDetails isKindOfClass:[NSDictionary class]] ? _appleSearchAdDetails : nil;
+}
+
+- (NSString*) lastSystemBuildVersion {
+    if (!_lastSystemBuildVersion) {
+        _lastSystemBuildVersion = [self readStringFromDefaults:@"_lastSystemBuildVersion"];
+    }
+    return _lastSystemBuildVersion;
+}
+
+- (void) setLastSystemBuildVersion:(NSString *)lastSystemBuildVersion {
+    if (![_lastSystemBuildVersion isEqualToString:lastSystemBuildVersion]) {
+        _lastSystemBuildVersion = lastSystemBuildVersion;
+        [self writeObjectToDefaults:@"_lastSystemBuildVersion" value:_lastSystemBuildVersion];
+    }
+}
+
+- (NSString*) browserUserAgentString {
+    if (!_browserUserAgentString) {
+        _browserUserAgentString = [self readStringFromDefaults:@"_browserUserAgentString"];
+    }
+    return _browserUserAgentString;
+}
+
+- (void) setBrowserUserAgentString:(NSString *)browserUserAgentString {
+    if (![_browserUserAgentString isEqualToString:browserUserAgentString]) {
+        _browserUserAgentString = browserUserAgentString;
+        [self writeObjectToDefaults:@"_browserUserAgentString" value:_browserUserAgentString];
+    }
 }
 
 - (NSString *)userUrl {
@@ -443,6 +481,17 @@ static NSString * const BNC_BRANCH_FABRIC_APP_KEY_KEY = @"branch_key";
         [self writeObjectToDefaults:BRANCH_PREFS_KEY_USER_URL value:userUrl];
     }
 }
+
+- (BOOL)checkedAppleSearchAdAttribution {
+    _checkedAppleSearchAdAttribution = [self readBoolFromDefaults:BRANCH_PREFS_KEY_CHECKED_APPLE_SEARCH_ADS];
+    return _checkedAppleSearchAdAttribution;
+}
+
+- (void)setCheckedAppleSearchAdAttribution:(BOOL)checked {
+    _checkedAppleSearchAdAttribution = checked;
+    [self writeBoolToDefaults:BRANCH_PREFS_KEY_CHECKED_APPLE_SEARCH_ADS value:checked];
+}
+
 
 - (BOOL)checkedFacebookAppLinks {
     _checkedFacebookAppLinks = [self readBoolFromDefaults:BRANCH_PREFS_KEY_CHECKED_FACEBOOK_APP_LINKS];

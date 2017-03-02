@@ -16,8 +16,6 @@ class SideMenuViewController: BaseTableController, UITableViewDelegate, UITableV
     var user: FireUser?
     var userQuery: UserQuery?
  
-    var tableView = UITableView(frame: CGRect.zero, style: .plain)
-
     var menuHeader: UserHeaderView!
     var inviteCell: WrapperTableViewCell?
     var membersCell: WrapperTableViewCell?
@@ -114,12 +112,10 @@ class SideMenuViewController: BaseTableController, UITableViewDelegate, UITableV
     }
     
     func bind() {
-        let userId = UserController.instance.userId
-        let groupId = StateController.instance.groupId
-        
-        if userId != nil {
+        if let userId = UserController.instance.userId {
+            let groupId = StateController.instance.groupId!
             self.userQuery?.remove()
-            self.userQuery = UserQuery(userId: userId!, groupId: groupId)
+            self.userQuery = UserQuery(userId: userId, groupId: groupId)
             self.userQuery!.once(with: { [weak self] error, user in
                 if let user = user {
                     self?.user = user

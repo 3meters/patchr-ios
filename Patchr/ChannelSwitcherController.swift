@@ -13,12 +13,9 @@ import pop
 
 class ChannelSwitcherController: BaseTableController {
 
-	var channelsQuery: FIRDatabaseQuery!
 	var unreadsTotalQuery: UnreadQuery?
 	var unreadsGroupQuery: UnreadQuery?
-	var tableViewDataSource: FUITableViewDataSource!
 
-	var tableView = AirTableView(frame: CGRect.zero, style: .plain)
 	var searchBar: UISearchBar!
 	var searchBarHolder = UIView()
 	var searchController: SearchController!
@@ -140,7 +137,7 @@ class ChannelSwitcherController: BaseTableController {
 			self.search(on: false)
 			self.searchBar?.setShowsCancelButton(false, animated: false)
 			self.searchBar?.endEditing(true)
-			self.searchController.channelsFiltered.removeAll()
+			self.searchController.queryController.clearFilter()
 			self.searchTableView.reloadData()
 		}
 	}
@@ -164,7 +161,7 @@ class ChannelSwitcherController: BaseTableController {
 		self.tableView.separatorInset = UIEdgeInsets.zero
         self.tableView.contentInset = UIEdgeInsets(top: 74, left: 0, bottom: 44, right: 0)
         self.tableView.contentOffset = CGPoint(x: 0, y: -74)
-		self.tableView.register(UINib(nibName: "ChannelListCell", bundle: nil), forCellReuseIdentifier: "channel-list-cell")
+		self.tableView.register(UINib(nibName: "ChannelListCell", bundle: nil), forCellReuseIdentifier: "cell")
         
 		self.view.addSubview(self.tableView)
 
@@ -173,11 +170,10 @@ class ChannelSwitcherController: BaseTableController {
 		self.searchTableView.backgroundColor = Theme.colorBackgroundTable
 		self.searchTableView.tableFooterView = UIView()
 		self.searchTableView.delegate = self
-		self.searchTableView.dataSource = self.searchController
 		self.searchTableView.separatorInset = UIEdgeInsets.zero
         self.searchTableView.contentInset = UIEdgeInsets(top: 74, left: 0, bottom: 44, right: 0)
         self.searchTableView.contentOffset = CGPoint(x: 0, y: -74)
-		self.searchTableView.register(UINib(nibName: "ChannelSearchCell", bundle: nil), forCellReuseIdentifier: "channel-search-cell")
+		self.searchTableView.register(UINib(nibName: "ChannelSearchCell", bundle: nil), forCellReuseIdentifier: "cell")
 
 		self.searchBar = UISearchBar(frame: CGRect.zero)
 		self.searchBar.autocapitalizationType = .none
@@ -249,8 +245,6 @@ class ChannelSwitcherController: BaseTableController {
 		   let groupId = StateController.instance.groupId {
 
 			self.navigationItem.setRightBarButtonItems([self.showGroupsButton], animated: true)
-			self.searchController.channelsSource.removeAll()
-			self.searchController.channelsFiltered.removeAll()
 
 			let path = "member-groups/\(userId)/\(groupId)/role"
 			FireController.db.child(path).observeSingleEvent(of: .value, with: { [weak self] snap in
@@ -258,7 +252,6 @@ class ChannelSwitcherController: BaseTableController {
                     self!.role = role
                     if role != "guest" {
                         self!.navigationItem.setRightBarButtonItems([self!.showGroupsButton, self!.searchButton], animated: true)
-                        self!.searchController.role = role
                         self!.searchController.load()
                     }
 
@@ -276,11 +269,6 @@ class ChannelSwitcherController: BaseTableController {
                         self?.titleView.text = title
                     }
                 })
-			}
-
-			if self.tableViewDataSource != nil {
-				self.tableViewDataSource = nil
-				self.tableView.reloadData()
 			}
 
 			self.unreadsTotalQuery?.remove()
@@ -301,17 +289,50 @@ class ChannelSwitcherController: BaseTableController {
 				}
 			})
 
-			self.channelsQuery = FireController.db.child("member-channels/\(userId)/\(groupId)")
+			let query = FireController.db.child("member-channels/\(userId)/\(groupId)")
 					.queryOrdered(byChild: "index_priority_joined_at_desc")
-
-			self.tableViewDataSource = FUITableViewDataSource(
-					query: self.channelsQuery,
-					view: self.tableView,
-					populateCell: { [weak self] (tableView, indexPath, snap) -> UITableViewCell in
-						return (self?.populateCell(tableView, cellForRowAt: indexPath, snap: snap))!
-					})
-
-			self.tableView.dataSource = self.tableViewDataSource
+            
+            self.queryController = DataSourceController()
+            self.queryController.bind(to: self.tableView, query: query) { [weak self] tableView, indexPath, data in
+                
+                let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! ChannelListCell
+                
+                if self != nil {
+                    
+                    if let userId = UserController.instance.userId,
+                        let groupId = StateController.instance.groupId,
+                        let snap = data as? FIRDataSnapshot {
+                        
+                        let channelId = snap.key
+                        
+                        cell.reset()    // Releases previous data observers
+                        cell.query = ChannelQuery(groupId: groupId, channelId: channelId, userId: userId)    // Just channel lookup
+                        cell.query!.observe(with: { error, channel in
+                            
+                            if channel != nil {
+                                cell.selected(on: (channelId == StateController.instance.channelId), style: .prominent)
+                                cell.bind(channel: channel!)
+                                cell.unreadQuery = UnreadQuery(level: .channel, userId: userId, groupId: groupId, channelId: channelId)
+                                cell.unreadQuery!.observe(with: { error, total in
+                                    if total != nil && total! > 0 {
+                                        cell.badge?.text = "\(total!)"
+                                        cell.badge?.isHidden = false
+                                        cell.accessoryType = .none
+                                    }
+                                    else {
+                                        cell.badge?.isHidden = true
+                                        cell.accessoryType = cell.selectedOn ? .checkmark : .none
+                                    }
+                                })
+                            }
+                            else {
+                                Log.w("Ouch! User is member of channel that does not exist")
+                            }
+                        })
+                    }
+                }
+                return cell
+            }
 			self.view.setNeedsLayout()
 		}
 	}
@@ -354,43 +375,6 @@ class ChannelSwitcherController: BaseTableController {
 	override var prefersStatusBarHidden: Bool {
 		return false
 	}
-
-	func populateCell(_ tableView: UITableView, cellForRowAt indexPath: IndexPath, snap: FIRDataSnapshot) -> UITableViewCell {
-
-		let cell = tableView.dequeueReusableCell(withIdentifier: "channel-list-cell", for: indexPath) as! ChannelListCell
-
-		cell.reset()    // Releases previous data observers
-
-		if let userId = UserController.instance.userId,
-		   let groupId = StateController.instance.groupId {
-			let channelId = snap.key
-
-			cell.query = ChannelQuery(groupId: groupId, channelId: channelId, userId: userId)    // Just channel lookup
-			cell.query!.observe(with: { error, channel in
-
-				if channel != nil {
-					cell.selected(on: (channelId == StateController.instance.channelId), style: .prominent)
-					cell.bind(channel: channel!)
-					cell.unreadQuery = UnreadQuery(level: .channel, userId: userId, groupId: groupId, channelId: channelId)
-					cell.unreadQuery!.observe(with: { error, total in
-						if total != nil && total! > 0 {
-							cell.badge?.text = "\(total!)"
-							cell.badge?.isHidden = false
-							cell.accessoryType = .none
-						}
-						else {
-							cell.badge?.isHidden = true
-							cell.accessoryType = cell.selectedOn ? .checkmark : .none
-						}
-					})
-				}
-				else {
-					Log.w("Ouch! User is member of channel that does not exist")
-				}
-			})
-		}
-		return cell
-	}
 }
 
 extension ChannelSwitcherController: UITableViewDelegate {
@@ -432,7 +416,7 @@ extension ChannelSwitcherController: UISearchBarDelegate {
 		search(on: false)
 		self.searchBar?.setShowsCancelButton(false, animated: true)
 		self.searchBar?.endEditing(true)
-		self.searchController.channelsFiltered.removeAll()
+        self.searchController.queryController.clearFilter()
 		self.searchTableView.reloadData()
 	}
 }
@@ -454,75 +438,65 @@ extension ChannelSwitcherController: UINavigationControllerDelegate {
     }
 }
 
-class SearchController: NSObject, UITableViewDataSource {
+class SearchController: NSObject {
 
-	var channelsSource = [FireChannel]()
-	var channelsFiltered = [FireChannel]()
-	var tableView: UITableView? = nil
-	var role: String!
+	var tableView: UITableView!
+    var queryController: DataSourceController!
 
 	init(tableView: UITableView) {
 		self.tableView = tableView
 	}
 
 	func filter(searchText: String, scope: String = "All") {
-		self.channelsFiltered = self.channelsSource.filter { channel in
-			return channel.name!.lowercased().contains(searchText.lowercased())
-		}
-		self.tableView?.reloadData()
+        self.queryController.filter(searchText: searchText)
 	}
 
 	func load() {
 
-		self.channelsSource.removeAll()
-		self.channelsFiltered.removeAll()
-
 		let userId = UserController.instance.userId!
 		let groupId = StateController.instance.groupId!
-
-		let path = "group-channels/\(groupId)"
-		let query = FireController.db.child(path).queryOrdered(byChild: "name")
-
-		query.observe(.value, with: { [weak self] snap in
-			self?.channelsSource.removeAll()
-			if !(snap.value is NSNull) && snap.hasChildren() {
-				for item in snap.children {
-					let snapChannel = item as! FIRDataSnapshot
-					if let channel = FireChannel.from(dict: snapChannel.value as? [String: Any], id: snapChannel.key) {
-						let channelId = channel.id!
-						let path = "member-channels/\(userId)/\(groupId)/\(channelId)"
-						FireController.db.child(path).observeSingleEvent(of: .value, with: { snap in
-                            if !(snap.value is NSNull) {
-                                /* Channels public or private the user is already a member of */
-                                let link = snap.value as! [String: Any]
-                                channel.membershipFrom(dict: link)
-                                self?.channelsSource.append(channel) // Channels user is a member of
-                            }
-                            else {
-                                /* Open channels user is not a member of and they are not a guest member */
-                                if self?.role != "guest" && channel.visibility == "open" {
-                                    self?.channelsSource.append(channel)
-                                }
-                            }
-                        })
-					}
-				}
-			}
-		}, withCancel: { error in
-			Log.w("Permission denied: \(path)")
-		})
-	}
-
-	func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-		return self.channelsFiltered.count
-	}
-
-	func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-		let cell
-				= tableView.dequeueReusableCell(withIdentifier: "channel-search-cell", for: indexPath) as! ChannelListCell
-		let channel = self.channelsFiltered[indexPath.row]
-		cell.reset()
-		cell.bind(channel: channel, searching: true)
-		return cell
+        let path = "group-channels/\(groupId)"  // User must be group member and not guest
+        let query = FireController.db.child(path).queryOrdered(byChild: "name")
+        
+        self.queryController = DataSourceController()
+        self.queryController.startEmpty = true
+        self.queryController.matcher = { searchText, data in
+            let snap = data as! FIRDataSnapshot
+            let dict = snap.value as! [String: Any]
+            let name = dict["name"] as! String
+            return name.lowercased().contains(searchText.lowercased())
+        }
+        
+        self.queryController.mapper = { (snap, then) in
+            if let channel = FireChannel.from(dict: snap.value as? [String: Any], id: snap.key) {
+                if channel.visibility == "open" {
+                    then(snap)
+                }
+                else { // Only add if user is currently a member
+                    let channelId = channel.id!
+                    let path = "member-channels/\(userId)/\(groupId)/\(channelId)"
+                    FireController.db.child(path).observeSingleEvent(of: .value, with: { snapMember in
+                        if !(snapMember.value is NSNull) {
+                            then(snap)
+                        }
+                        else {
+                            then(nil)
+                        }
+                    })
+                }
+            }
+        }
+        
+        self.queryController.bind(to: self.tableView, query: query) { [weak self] tableView, indexPath, data in
+            let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! ChannelListCell
+            if self != nil {
+                let snap = data as! FIRDataSnapshot
+                if let channel = FireChannel.from(dict: snap.value as? [String: Any], id: snap.key) {
+                    cell.reset()
+                    cell.bind(channel: channel, searching: true)
+                }
+            }
+            return cell
+        }
 	}
 }

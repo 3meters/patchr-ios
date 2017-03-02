@@ -17,8 +17,6 @@ import TwicketSegmentedControl
 
 class InviteListController: BaseTableController, UITableViewDelegate {
     
-    var tableView = UITableView(frame: CGRect.zero, style: .plain)
-    var tableViewDataSource: FUITableViewDataSource!
     var switcher = TwicketSegmentedControl()
     var rule = UIView()
     var currentStatus = "pending"
@@ -129,23 +127,23 @@ class InviteListController: BaseTableController, UITableViewDelegate {
         
         self.navigationItem.title = "Invites: \(group.title!)"
         
-        if self.tableViewDataSource != nil {
-            self.tableViewDataSource = nil
+        if self.queryController != nil {
+            self.queryController = nil
             self.tableView.reloadData()
         }
         
-        self.tableViewDataSource = FUITableViewDataSource(
-            query: query,
-            view: self.tableView,
-            populateCell: { [weak self] (view, indexPath, snap) -> InviteListCell in
-                
-                var invite = snap.value as! [String: Any]
-                let status = invite["status"] as! String
-                invite["id"] = snap.key
-                
-                let reuseIdentifier = status
-                let cell = view.dequeueReusableCell(withIdentifier: reuseIdentifier, for: indexPath) as! InviteListCell
-                cell.reset()
+        self.queryController = DataSourceController()
+        self.queryController.bind(to: self.tableView, query: query) { [weak self] tableView, indexPath, data in
+            
+            let snap = data as! FIRDataSnapshot
+            var invite = snap.value as! [String: Any]
+            let status = invite["status"] as! String
+            invite["id"] = snap.key
+            
+            let cell = tableView.dequeueReusableCell(withIdentifier: status, for: indexPath) as! InviteListCell
+            
+            if self != nil {
+                cell.reset()    // Releases previous data observers
                 
                 if status == "accepted" {
                     let userId = invite["accepted_by"] as! String
@@ -165,10 +163,9 @@ class InviteListController: BaseTableController, UITableViewDelegate {
                     cell.revokeButton?.data = invite as AnyObject?
                     cell.revokeButton?.addTarget(self, action: #selector(self?.revokeInviteAction(sender:)), for: .touchUpInside)
                 }
-                return cell
-        })
-
-        self.tableView.dataSource = self.tableViewDataSource
+            }
+            return cell
+        }
     }
     
     func resendInvite(invite: [String: Any]) {

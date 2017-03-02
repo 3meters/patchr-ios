@@ -24,7 +24,9 @@
 // THE SOFTWARE.
 //
 
+
 #include "KSCrashSentry_MachException.h"
+#include "KSCrashSentry_Context.h"
 #include "KSCrashSentry_Private.h"
 #include "KSMach.h"
 #include "KSSystemCapabilities.h"
@@ -263,10 +265,10 @@ void* ksmachexc_i_handleExceptions(void* const userData)
         if(ksmach_thread_self() == g_primaryMachThread)
         {
             KSLOG_DEBUG("This is the primary exception thread. Activating secondary thread.");
+            ksmachexc_i_restoreExceptionPorts();
             if(thread_resume(g_secondaryMachThread) != KERN_SUCCESS)
             {
                 KSLOG_DEBUG("Could not activate secondary thread. Restoring original exception ports.");
-                ksmachexc_i_restoreExceptionPorts();
             }
         }
         else

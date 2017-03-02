@@ -95,8 +95,8 @@ class DisplayPhoto: IDMPhoto {
             }
         }
         
-        let userId = UserController.instance.userId
-        if message.getReaction(emoji: .thumbsup, userId: userId!) {
+        let userId = UserController.instance.userId!
+        if message.getReaction(emoji: .thumbsup, userId: userId) {
             displayPhoto.userLikes = true
             displayPhoto.userLikesId = userId
         }

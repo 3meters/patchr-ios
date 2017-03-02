@@ -11,13 +11,8 @@ import FirebaseDatabaseUI
 
 class GroupSwitcherController: BaseTableController {
     
-    var groupsQuery: FIRDatabaseQuery!
-    var tableViewDataSource: FUITableViewDataSource!
-    let cellReuseIdentifier = "group-cell"
-    
     var gradientImage: UIImage!
     var headingLabel = AirLabelTitle()
-    var tableView = UITableView(frame: CGRect.zero, style: .plain)
     var rule = UIView()
     var buttonLogin	= AirButton()
     var buttonSignup = AirButton()
@@ -134,8 +129,10 @@ class GroupSwitcherController: BaseTableController {
         
         self.automaticallyAdjustsScrollViewInsets = false
         self.navigationController?.setToolbarHidden(false, animated: true)
-        
         self.rule.backgroundColor = Theme.colorSeparator
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(userDidSwitch(notification:)), name: NSNotification.Name(rawValue: Events.UserDidSwitch), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(groupDidSwitch(notification:)), name: NSNotification.Name(rawValue: Events.GroupDidSwitch), object: nil)        
         
         if self.simplePicker {
             
@@ -146,7 +143,7 @@ class GroupSwitcherController: BaseTableController {
             self.tableView.separatorInset = UIEdgeInsets.zero
             self.tableView.contentInset = UIEdgeInsets(top: 74, left: 0, bottom: 44, right: 0)
             self.tableView.contentOffset = CGPoint(x: 0, y: -74)
-            self.tableView.register(UINib(nibName: "GroupListCell", bundle: nil), forCellReuseIdentifier: self.cellReuseIdentifier)
+            self.tableView.register(UINib(nibName: "GroupListCell", bundle: nil), forCellReuseIdentifier: "cell")
             
             self.view.addSubview(self.tableView)
             
@@ -203,7 +200,7 @@ class GroupSwitcherController: BaseTableController {
                 self.tableView.rowHeight = 64
                 self.tableView.separatorInset = UIEdgeInsets.zero
                 self.tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 44, right: 0)
-                self.tableView.register(UINib(nibName: "GroupListCell", bundle: nil), forCellReuseIdentifier: self.cellReuseIdentifier)
+                self.tableView.register(UINib(nibName: "GroupListCell", bundle: nil), forCellReuseIdentifier: "cell")
                 
                 self.view.addSubview(self.headingLabel)
                 self.view.addSubview(self.rule)
@@ -245,59 +242,48 @@ class GroupSwitcherController: BaseTableController {
                 self.navigationItem.rightBarButtonItems = [logoutButton]
             }
         })
-        
-        NotificationCenter.default.addObserver(self, selector: #selector(userDidSwitch(notification:)), name: NSNotification.Name(rawValue: Events.UserDidSwitch), object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(groupDidSwitch(notification:)), name: NSNotification.Name(rawValue: Events.GroupDidSwitch), object: nil)
     }
     
     func bind() {
         
         if let userId = UserController.instance.userId {
             
-            if self.tableViewDataSource != nil {
-                self.tableViewDataSource = nil
+            if self.queryController != nil {
+                self.queryController = nil
                 self.tableView.reloadData()
             }            
             
-            self.groupsQuery = FireController.db.child("member-groups/\(userId)").queryOrdered(byChild: "index_priority_joined_at_desc")
+            let query = FireController.db.child("member-groups/\(userId)")
+                .queryOrdered(byChild: "index_priority_joined_at_desc")
             
-            self.tableViewDataSource = FUITableViewDataSource(
-                query: self.groupsQuery,
-                view: self.tableView,
-                populateCell: { [weak self] (tableView, indexPath, snap) -> UITableViewCell in
-                    return (self?.populateCell(tableView, cellForRowAt: indexPath, snap: snap))!
-            })
+            self.queryController = DataSourceController()
             
-            self.tableView.dataSource = self.tableViewDataSource
+            self.queryController.bind(to: self.tableView, query: query) { [weak self] tableView, indexPath, data in
+                let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! GroupListCell
+                if self != nil {
+                    let snapMember = data as! FIRDataSnapshot
+                    let groupId = snapMember.key
+                    cell.reset()
+                    FireController.db.child("groups/\(groupId)").observeSingleEvent(of: .value, with: { snapGroup in
+                        if !(snapGroup.value is NSNull) {
+                            if let group = FireGroup.from(dict: snapGroup.value as? [String: Any], id: snapGroup.key) {
+                                group.membershipFrom(dict: snapMember.value as! [String : Any])
+                                cell.bind(group: group)
+                                if group.id! == StateController.instance.groupId {
+                                    cell.selected(on: true)
+                                }
+                            }
+                        }
+                        else {
+                            Log.w("Fatal: User is member of group that does not exist")
+                            fatalError("User is member of group that does not exist")
+                        }
+                    })
+                }
+                return cell
+            }
             self.view.setNeedsLayout()
         }
-    }
-    
-    func populateCell(_ tableView: UITableView, cellForRowAt indexPath: IndexPath, snap: FIRDataSnapshot) -> UITableViewCell {
-        
-        let cell = tableView.dequeueReusableCell(withIdentifier: self.cellReuseIdentifier, for: indexPath) as! GroupListCell
-        let link = snap.value as! [String: Any]
-        let groupId = snap.key
-        
-        cell.reset()
-        
-        if groupId == StateController.instance.groupId {
-            cell.selected(on: true)
-        }
-        
-        FireController.db.child("groups/\(groupId)").observeSingleEvent(of: .value, with: { snap in
-            if !(snap.value is NSNull) {
-                if let group = FireGroup.from(dict: snap.value as? [String: Any], id: snap.key) {
-                    group.membershipFrom(dict: link)
-                    cell.bind(group: group)
-                }
-            }
-            else {
-                Log.w("Ouch! User is member of group that does not exist")
-            }
-        })
-        
-        return cell
     }
 }
 
@@ -309,11 +295,11 @@ extension GroupSwitcherController: UITableViewDelegate {
         
         /* User last channel if available */
         let groupId = cell.group.id!
-        let userId = UserController.instance.userId
+        let userId = UserController.instance.userId!
         
         if let lastChannelIds = UserDefaults.standard.dictionary(forKey: PerUserKey(key: Prefs.lastChannelIds)),
             let lastChannelId = lastChannelIds[groupId] as? String {
-            let validateQuery = ChannelQuery(groupId: groupId, channelId: lastChannelId, userId: userId!)
+            let validateQuery = ChannelQuery(groupId: groupId, channelId: lastChannelId, userId: userId)
             validateQuery.once(with: { error, channel in
                 if channel == nil {
                     Log.w("Last channel invalid: \(lastChannelId): trying auto pick channel")

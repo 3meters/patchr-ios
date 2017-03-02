@@ -41,7 +41,7 @@ class MemberViewController: BaseViewController, UIScrollViewDelegate, UITextFiel
     override func viewDidLoad() {
         super.viewDidLoad()
         initialize()
-        let groupId = StateController.instance.groupId
+        let groupId = StateController.instance.groupId!
         self.userQuery = UserQuery(userId: self.inputUserId, groupId: groupId)
         self.userQuery?.observe(with: { [weak self] error, user in
             self?.user = user
@@ -177,8 +177,8 @@ class MemberViewController: BaseViewController, UIScrollViewDelegate, UITextFiel
         /* Push data into form and header */
         self.headerView.bind(user: self.user)   // Triggers layoutSubviews for header view
         
-        self.editButton.isHidden = (self.user?.id != UserController.instance.userId)
-        self.callButton.isHidden = (self.user?.profile?.phone?.isEmpty ?? true)
+        self.editButton.isHidden = (self.user.id! != UserController.instance.userId!)
+        self.callButton.isHidden = (self.user.profile?.phone?.isEmpty ?? true)
         self.buttonGroup.isHidden = (self.callButton.isHidden && self.editButton.isHidden)
         
         self.phone.isHidden = (self.user?.profile?.phone?.isEmpty ?? true)

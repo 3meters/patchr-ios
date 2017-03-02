@@ -28,25 +28,22 @@
 #include "KSCrashC.h"
 
 #include "KSCrashReport.h"
-#include "KSString.h"
-#include "KSMach.h"
-#include "KSObjC.h"
-#include "KSSignalInfo.h"
-#include "KSSystemInfoC.h"
-#include "KSZombie.h"
+#include "KSCrashReportStore.h"
 #include "KSCrashSentry_Deadlock.h"
 #include "KSCrashSentry_User.h"
+#include "KSFileUtils.h"
+#include "KSObjC.h"
+#include "KSString.h"
+#include "KSSystemInfo.h"
+#include "KSZombie.h"
 
 //#define KSLogger_LocalLevel TRACE
 #include "KSLogger.h"
 
-#include <errno.h>
-#include <execinfo.h>
-#include <fcntl.h>
-#include <mach/mach_time.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <unistd.h>
+#include <uuid/uuid.h>
 
 
 // ============================================================================
@@ -65,14 +62,7 @@ static KSCrash_Context g_crashReportContext =
     }
 };
 
-/** Path to store the next crash report. */
-static char* g_crashReportFilePath;
-
-/** Path to store the next crash report (only if the crash manager crashes). */
-static char* g_recrashReportFilePath;
-
-/** Path to store the state file. */
-static char* g_stateFilePath;
+static char* g_logFilePath;
 
 
 // ============================================================================
@@ -106,14 +96,16 @@ void kscrash_i_onCrash(void)
     {
         kscrashreport_logCrash(context);
     }
+    char crashReportFilePath[KSFU_MAX_PATH_LENGTH];
+    kscrs_getCrashReportPath(crashReportFilePath);
 
     if(context->crash.crashedDuringCrashHandling)
     {
-        kscrashreport_writeMinimalReport(context, g_recrashReportFilePath);
+        kscrashreport_writeRecrashReport(context, crashReportFilePath);
     }
     else
     {
-        kscrashreport_writeStandardReport(context, g_crashReportFilePath);
+        kscrashreport_writeStandardReport(context, crashReportFilePath);
     }
 }
 
@@ -122,10 +114,7 @@ void kscrash_i_onCrash(void)
 #pragma mark - API -
 // ============================================================================
 
-KSCrashType kscrash_install(const char* const crashReportFilePath,
-                            const char* const recrashReportFilePath,
-                            const char* stateFilePath,
-                            const char* crashID)
+KSCrashType kscrash_install(const char* appName, const char* const installPath)
 {
     KSLOG_DEBUG("Installing crash reporter.");
 
@@ -138,17 +127,28 @@ KSCrashType kscrash_install(const char* const crashReportFilePath,
     }
     g_installed = 1;
 
-    ksmach_init();
-    
+    char path[KSFU_MAX_PATH_LENGTH];
+    snprintf(path, sizeof(path), "%s/Reports", installPath);
+    ksfu_makePath(path);
+    kscrs_initialize(appName, path);
+
+    snprintf(path, sizeof(path), "%s/Data", installPath);
+    ksfu_makePath(path);
+    snprintf(path, sizeof(path), "%s/Data/CrashState.json", installPath);
+    if(!kscrashstate_init(path, &context->state))
+    {
+        KSLOG_ERROR("Failed to initialize persistent crash state");
+    }
+
+    snprintf(path, sizeof(path), "%s/Data/ConsoleLog.txt", installPath);
+    g_logFilePath = strdup(path);
+
     if(context->config.introspectionRules.enabled)
     {
         ksobjc_init();
     }
     
-    kscrash_reinstall(crashReportFilePath,
-                      recrashReportFilePath,
-                      stateFilePath,
-                      crashID);
+    kscrash_reinstall();
 
 
     KSCrashType crashTypes = kscrash_setHandlingCrashTypes(context->config.handlingCrashTypes);
@@ -160,27 +160,34 @@ KSCrashType kscrash_install(const char* const crashReportFilePath,
     return crashTypes;
 }
 
-void kscrash_reinstall(const char* const crashReportFilePath,
-                       const char* const recrashReportFilePath,
-                       const char* const stateFilePath,
-                       const char* const crashID)
+void kscrash_reinstall()
 {
-    KSLOG_TRACE("reportFilePath = %s", crashReportFilePath);
-    KSLOG_TRACE("secondaryReportFilePath = %s", recrashReportFilePath);
-    KSLOG_TRACE("stateFilePath = %s", stateFilePath);
-    KSLOG_TRACE("crashID = %s", crashID);
-
-    ksstring_replace((const char**)&g_stateFilePath, stateFilePath);
-    ksstring_replace((const char**)&g_crashReportFilePath, crashReportFilePath);
-    ksstring_replace((const char**)&g_recrashReportFilePath, recrashReportFilePath);
+    uuid_t uuid;
+    uuid_generate(uuid);
+    static char crashID[37];
+    sprintf(crashID, "%02X%02X%02X%02X-%02X%02X-%02X%02X-%02X%02X-%02X%02X%02X%02X%02X%02X",
+            (unsigned)uuid[0],
+            (unsigned)uuid[1],
+            (unsigned)uuid[2],
+            (unsigned)uuid[3],
+            (unsigned)uuid[4],
+            (unsigned)uuid[5],
+            (unsigned)uuid[6],
+            (unsigned)uuid[7],
+            (unsigned)uuid[8],
+            (unsigned)uuid[9],
+            (unsigned)uuid[10],
+            (unsigned)uuid[11],
+            (unsigned)uuid[12],
+            (unsigned)uuid[13],
+            (unsigned)uuid[14],
+            (unsigned)uuid[15]
+            );
     KSCrash_Context* context = crashContext();
     ksstring_replace(&context->config.crashID, crashID);
+    KSLOG_TRACE("crashID = %s", crashID);
 
-    if(!kscrashstate_init(g_stateFilePath, &context->state))
-    {
-        KSLOG_ERROR("Failed to initialize persistent crash state");
-    }
-    context->state.appLaunchTime = mach_absolute_time();
+    kscrashstate_reset();
 }
 
 KSCrashType kscrash_setHandlingCrashTypes(KSCrashType crashTypes)
@@ -234,24 +241,24 @@ void kscrash_setCatchZombies(bool catchZombies)
     kszombie_setEnabled(catchZombies);
 }
 
-void kscrash_setDoNotIntrospectClasses(const char** doNotIntrospectClasses, size_t length)
+void kscrash_setDoNotIntrospectClasses(const char** doNotIntrospectClasses, int length)
 {
     const char** oldClasses = crashContext()->config.introspectionRules.restrictedClasses;
-    size_t oldClassesLength = crashContext()->config.introspectionRules.restrictedClassesCount;
-    const char** newClasses = nil;
-    size_t newClassesLength = 0;
+    int oldClassesLength = crashContext()->config.introspectionRules.restrictedClassesCount;
+    const char** newClasses = NULL;
+    int newClassesLength = 0;
     
-    if(doNotIntrospectClasses != nil && length > 0)
+    if(doNotIntrospectClasses != NULL && length > 0)
     {
         newClassesLength = length;
-        newClasses = malloc(sizeof(*newClasses) * newClassesLength);
-        if(newClasses == nil)
+        newClasses = malloc(sizeof(*newClasses) * (unsigned)newClassesLength);
+        if(newClasses == NULL)
         {
             KSLOG_ERROR("Could not allocate memory");
             return;
         }
         
-        for(size_t i = 0; i < newClassesLength; i++)
+        for(int i = 0; i < newClassesLength; i++)
         {
             newClasses[i] = strdup(doNotIntrospectClasses[i]);
         }
@@ -260,9 +267,9 @@ void kscrash_setDoNotIntrospectClasses(const char** doNotIntrospectClasses, size
     crashContext()->config.introspectionRules.restrictedClasses = newClasses;
     crashContext()->config.introspectionRules.restrictedClassesCount = newClassesLength;
 
-    if(oldClasses != nil)
+    if(oldClasses != NULL)
     {
-        for(size_t i = 0; i < oldClassesLength; i++)
+        for(int i = 0; i < oldClassesLength; i++)
         {
             free((void*)oldClasses[i]);
         }
@@ -274,6 +281,11 @@ void kscrash_setCrashNotifyCallback(const KSReportWriteCallback onCrashNotify)
 {
     KSLOG_TRACE("Set onCrashNotify to %p", onCrashNotify);
     crashContext()->config.onCrashNotify = onCrashNotify;
+}
+
+bool kscrash_redirectConsoleLogToFile()
+{
+    return kslog_setLogFilename(g_logFilePath, true);
 }
 
 void kscrash_reportUserException(const char* name,
@@ -289,4 +301,10 @@ void kscrash_reportUserException(const char* name,
                                       lineOfCode,
                                       stackTrace,
                                       terminateProgram);
+
+    // If kscrash_reportUserException() returns, we did not terminate.
+    // Set up IDs and paths for the next crash.
+
+    kscrsi_incrementCrashReportIndex();
+    kscrash_reinstall();
 }

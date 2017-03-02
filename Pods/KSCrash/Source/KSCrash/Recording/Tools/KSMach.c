@@ -27,15 +27,17 @@
 
 #include "KSMach.h"
 
+#include "KSSystemCapabilities.h"
 #include "KSMachApple.h"
 
 //#define KSLogger_LocalLevel TRACE
 #include "KSLogger.h"
 
+#include <dispatch/dispatch.h>
 #include <errno.h>
 #include <mach-o/arch.h>
-#include <mach/mach_time.h>
 #include <mach/vm_map.h>
+#include <pthread.h>
 #include <sys/sysctl.h>
 
 
@@ -51,8 +53,6 @@
  */
 bool ksmach_i_VMStats(vm_statistics_data_t* const vmStats,
                       vm_size_t* const pageSize);
-
-static pthread_t g_topThread;
 
 // ============================================================================
 #pragma mark - General Information -
@@ -173,6 +173,7 @@ const char* ksmach_kernelReturnCodeName(const kern_return_t returnCode)
 #pragma mark - Thread State Info -
 // ============================================================================
 
+#if KSCRASH_HAS_THREADS_API
 bool ksmach_fillState(const thread_t thread,
                       const thread_state_t state,
                       const thread_state_flavor_t flavor,
@@ -189,33 +190,15 @@ bool ksmach_fillState(const thread_t thread,
     }
     return true;
 }
-
-void ksmach_init(void)
+#else
+bool ksmach_fillState(__unused const thread_t thread,
+                      __unused const thread_state_t state,
+                      __unused const thread_state_flavor_t flavor,
+                      __unused const mach_msg_type_number_t stateCount)
 {
-    static volatile sig_atomic_t initialized = 0;
-    if(!initialized)
-    {
-        kern_return_t kr;
-        const task_t thisTask = mach_task_self();
-        thread_act_array_t threads;
-        mach_msg_type_number_t numThreads;
-
-        if((kr = task_threads(thisTask, &threads, &numThreads)) != KERN_SUCCESS)
-        {
-            KSLOG_ERROR("task_threads: %s", mach_error_string(kr));
-            return;
-        }
-
-        g_topThread = pthread_from_mach_thread_np(threads[0]);
-
-        for(mach_msg_type_number_t i = 0; i < numThreads; i++)
-        {
-            mach_port_deallocate(thisTask, threads[i]);
-        }
-        vm_deallocate(thisTask, (vm_address_t)threads, sizeof(thread_t) * numThreads);
-        initialized = true;
-    }
+    return false;
 }
+#endif
 
 thread_t ksmach_thread_self()
 {
@@ -224,55 +207,15 @@ thread_t ksmach_thread_self()
     return thread_self;
 }
 
-thread_t ksmach_machThreadFromPThread(const pthread_t pthread)
-{
-    const internal_pthread_t threadStruct = (internal_pthread_t)pthread;
-    thread_t machThread = 0;
-    if(ksmach_copyMem(&threadStruct->kernel_thread, &machThread, sizeof(machThread)) != KERN_SUCCESS)
-    {
-        KSLOG_TRACE("Could not copy mach thread from %p", threadStruct->kernel_thread);
-        return 0;
-    }
-    return machThread;
-}
-
-pthread_t ksmach_pthreadFromMachThread(const thread_t thread)
-{
-    internal_pthread_t threadStruct = (internal_pthread_t)g_topThread;
-    thread_t machThread = 0;
-
-    for(int i = 0; i < 50; i++)
-    {
-        if(ksmach_copyMem(&threadStruct->kernel_thread, &machThread, sizeof(machThread)) != KERN_SUCCESS)
-        {
-            break;
-        }
-        if(machThread == thread)
-        {
-            return (pthread_t)threadStruct;
-        }
-
-        if(ksmach_copyMem(&threadStruct->plist.tqe_next, &threadStruct, sizeof(threadStruct)) != KERN_SUCCESS)
-        {
-            break;
-        }
-    }
-    return 0;
-}
-
-bool ksmach_getThreadName(const thread_t thread,
-                          char* const buffer,
-                          size_t bufLength)
+bool ksmach_getThreadName(const thread_t thread, char* const buffer, int bufLength)
 {
     // WARNING: This implementation is no longer async-safe!
 
     const pthread_t pthread = pthread_from_mach_thread_np(thread);
-    return pthread_getname_np(pthread, buffer, bufLength) == 0;
+    return pthread_getname_np(pthread, buffer, (unsigned)bufLength) == 0;
 }
 
-bool ksmach_getThreadQueueName(const thread_t thread,
-                               char* const buffer,
-                               size_t bufLength)
+bool ksmach_getThreadQueueName(const thread_t thread, char* const buffer, int bufLength)
 {
     // WARNING: This implementation is no longer async-safe!
 
@@ -306,10 +249,10 @@ bool ksmach_getThreadQueueName(const thread_t thread,
         return false;
     }
     KSLOG_TRACE("Dispatch queue name: %s", queue_name);
-    size_t length = strlen(queue_name);
+    int length = (int)strlen(queue_name);
 
     // Queue label must be a null terminated string.
-    size_t iLabel;
+    int iLabel;
     for(iLabel = 0; iLabel < length + 1; iLabel++)
     {
         if(queue_name[iLabel] < ' ' || queue_name[iLabel] > '~')
@@ -334,6 +277,7 @@ bool ksmach_getThreadQueueName(const thread_t thread,
 #pragma mark - Utility -
 // ============================================================================
 
+#if KSCRASH_HAS_THREADS_API
 static inline bool isThreadInList(thread_t thread, thread_t* list, int listCount)
 {
     for(int i = 0; i < listCount; i++)
@@ -345,12 +289,14 @@ static inline bool isThreadInList(thread_t thread, thread_t* list, int listCount
     }
     return false;
 }
+#endif
 
 bool ksmach_suspendAllThreads(void)
 {
     return ksmach_suspendAllThreadsExcept(NULL, 0);
 }
 
+#if KSCRASH_HAS_THREADS_API
 bool ksmach_suspendAllThreadsExcept(thread_t* exceptThreads, int exceptThreadsCount)
 {
     kern_return_t kr;
@@ -387,12 +333,19 @@ bool ksmach_suspendAllThreadsExcept(thread_t* exceptThreads, int exceptThreadsCo
 
     return true;
 }
+#else
+bool ksmach_suspendAllThreadsExcept(__unused thread_t* exceptThreads, __unused int exceptThreadsCount)
+{
+    return false;
+}
+#endif
 
 bool ksmach_resumeAllThreads(void)
 {
     return ksmach_resumeAllThreadsExcept(NULL, 0);
 }
 
+#if KSCRASH_HAS_THREADS_API
 bool ksmach_resumeAllThreadsExcept(thread_t* exceptThreads, int exceptThreadsCount)
 {
     kern_return_t kr;
@@ -429,10 +382,14 @@ bool ksmach_resumeAllThreadsExcept(thread_t* exceptThreads, int exceptThreadsCou
 
     return true;
 }
+#else
+bool ksmach_resumeAllThreadsExcept(__unused thread_t* exceptThreads, __unused int exceptThreadsCount)
+{
+    return false;
+}
+#endif
 
-kern_return_t ksmach_copyMem(const void* const src,
-                             void* const dst,
-                             const size_t numBytes)
+kern_return_t ksmach_copyMem(const void* const src, void* const dst, const int numBytes)
 {
     vm_size_t bytesCopied = 0;
     return vm_read_overwrite(mach_task_self(),
@@ -442,16 +399,14 @@ kern_return_t ksmach_copyMem(const void* const src,
                              &bytesCopied);
 }
 
-size_t ksmach_copyMaxPossibleMem(const void* const src,
-                                 void* const dst,
-                                 const size_t numBytes)
+int ksmach_copyMaxPossibleMem(const void* const src, void* const dst, const int numBytes)
 {
     const uint8_t* pSrc = src;
     const uint8_t* pSrcMax = (uint8_t*)src + numBytes;
     const uint8_t* pSrcEnd = (uint8_t*)src + numBytes;
     uint8_t* pDst = dst;
 
-    size_t bytesCopied = 0;
+    int bytesCopied = 0;
 
     // Short-circuit if no memory is readable
     if(ksmach_copyMem(src, dst, 1) != KERN_SUCCESS)
@@ -465,15 +420,15 @@ size_t ksmach_copyMaxPossibleMem(const void* const src,
 
     for(;;)
     {
-        ssize_t copyLength = pSrcEnd - pSrc;
+        int copyLength = (int)(pSrcEnd - pSrc);
         if(copyLength <= 0)
         {
             break;
         }
 
-        if(ksmach_copyMem(pSrc, pDst, (size_t)copyLength) == KERN_SUCCESS)
+        if(ksmach_copyMem(pSrc, pDst, copyLength) == KERN_SUCCESS)
         {
-            bytesCopied += (size_t)copyLength;
+            bytesCopied += copyLength;
             pSrc += copyLength;
             pDst += copyLength;
             pSrcEnd = pSrc + (pSrcMax - pSrc) / 2;
@@ -489,29 +444,6 @@ size_t ksmach_copyMaxPossibleMem(const void* const src,
         }
     }
     return bytesCopied;
-}
-
-double ksmach_timeDifferenceInSeconds(const uint64_t endTime,
-                                      const uint64_t startTime)
-{
-    // From http://lists.apple.com/archives/perfoptimization-dev/2005/Jan/msg00039.html
-
-    static double conversion = 0;
-
-    if(conversion == 0)
-    {
-        mach_timebase_info_data_t info = {0};
-        kern_return_t kr = mach_timebase_info(&info);
-        if(kr != KERN_SUCCESS)
-        {
-            KSLOG_ERROR("mach_timebase_info: %s", mach_error_string(kr));
-            return 0;
-        }
-
-        conversion = 1e-9 * (double)info.numer / (double)info.denom;
-    }
-
-    return conversion * (endTime - startTime);
 }
 
 /** Check if the current process is being traced or not.

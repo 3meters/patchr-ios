@@ -18,8 +18,6 @@ class SideMenuV2ViewController: BaseTableController, UITableViewDelegate, UITabl
     var group: FireGroup?
     var groupQuery: GroupQuery?
  
-    var tableView = UITableView(frame: CGRect.zero, style: .plain)
-
     var userHeader: UserMiniHeaderView!
     var groupHeader: GroupMiniHeaderView!
     
@@ -121,23 +119,18 @@ class SideMenuV2ViewController: BaseTableController, UITableViewDelegate, UITabl
     }
     
     func bind() {
-        let userId = UserController.instance.userId
-        let groupId = StateController.instance.groupId
-        
-        if userId != nil {
+        if let userId = UserController.instance.userId,
+            let groupId = StateController.instance.groupId {
             self.userQuery?.remove()
-            self.userQuery = UserQuery(userId: userId!, groupId: groupId)
+            self.userQuery = UserQuery(userId: userId, groupId: groupId)
             self.userQuery!.once(with: { [weak self] error, user in
                 if let user = user {
                     self?.user = user
                     self?.userHeader.bind(user: self?.user)
                 }
             })
-        }
-        
-        if groupId != nil {
             self.groupQuery?.remove()
-            self.groupQuery = GroupQuery(groupId: groupId!, userId: userId)
+            self.groupQuery = GroupQuery(groupId: groupId, userId: userId)
             self.groupQuery!.once(with: { [weak self] error, group in
                 if let group = group {
                     self?.group = group

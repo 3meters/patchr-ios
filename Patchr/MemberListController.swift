@@ -9,14 +9,9 @@ import AVFoundation
 import Firebase
 import FirebaseDatabaseUI
 
-class MemberListController: BaseTableController, UITableViewDelegate {
-    
-    var tableView = UITableView(frame: CGRect.zero, style: .plain)
-    var tableViewDataSource: FUITableViewDataSource!
-    let cellReuseIdentifier = "user-cell"
+class MemberListController: BaseTableController {
     
     var channel: FireChannel!
-    
     var scope: ListScope = .group
     var target: MemberTarget = .group
     var manage = false
@@ -101,7 +96,7 @@ class MemberListController: BaseTableController, UITableViewDelegate {
     override func initialize() {
         super.initialize()
         
-        self.tableView.register(UINib(nibName: "UserListCell", bundle: nil), forCellReuseIdentifier: self.cellReuseIdentifier)
+        self.tableView.register(UINib(nibName: "UserListCell", bundle: nil), forCellReuseIdentifier: "cell")
         self.tableView.backgroundColor = Theme.colorBackgroundTable
         self.tableView.separatorInset = UIEdgeInsets.zero
         self.tableView.tableFooterView = UIView()
@@ -127,7 +122,7 @@ class MemberListController: BaseTableController, UITableViewDelegate {
             query = FireController.db.child("group-channel-members/\(groupId)/\(channelId)")
         }
         
-        if (self.scope == .channel && self.channel.role == "owner") || StateController.instance.group?.role == "owner" {
+        if (self.scope == .channel && self.channel.role == "owner") || group.role == "owner" {
             if self.target == .channel {
                 let addButton = UIBarButtonItem(title: "Add", style: .plain, target: self, action: #selector(channelInviteAction(sender:)))
                 self.navigationItem.rightBarButtonItems = [addButton]
@@ -140,55 +135,70 @@ class MemberListController: BaseTableController, UITableViewDelegate {
         
         self.navigationItem.title = self.scope == .channel ? "# \(self.channel!.name!)" : group.title!
         
-        self.tableViewDataSource = FUITableViewDataSource(
-            query: query,
-            view: self.tableView,
-            populateCell: { [weak self] (view, indexPath, snap) -> UserListCell in
+        self.queryController = DataSourceController()
+        self.queryController.bind(to: self.tableView, query: query) { [weak self] tableView, indexPath, data in
+            
+            let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! UserListCell
+            
+            if self != nil {
                 
-                let cell = view.dequeueReusableCell(withIdentifier: (self?.cellReuseIdentifier)!, for: indexPath) as! UserListCell
+                cell.reset()
+                let snap = data as! FIRDataSnapshot
                 let userId = snap.key
+                let groupId = StateController.instance.groupId!
                 
                 var userQuery: UserQuery!
-                if self?.target == .group {
+                if self!.target == .group {
                     userQuery = UserQuery(userId: userId, groupId: groupId)
                 }
                 else {
-                    let channelId = self?.channel.id!
+                    let channelId = self!.channel.id!
                     userQuery = UserQuery(userId: userId, groupId: groupId, channelId: channelId)
                 }
                 
-                cell.reset()
-                
                 userQuery.once(with: { error, user in
                     if user != nil {
-                        let target = (self?.target == .group) ? "group" : "channel"
+                        let target = (self!.target == .group) ? "group" : "channel"
                         cell.bind(user: user!, target: target)
-                        if (self?.manage)! {
-                            if self?.scope == .group {
+                        if self!.manage {
+                            if self!.scope == .group {
                                 if let role = StateController.instance.group!.role, role == "owner" {
                                     cell.actionButton?.isHidden = false
                                     cell.actionButton?.setTitle("Manage", for: .normal)
                                     cell.actionButton?.data = user
-                                    cell.actionButton?.addTarget(self, action: #selector(self?.manageUserAction(sender:)), for: .touchUpInside)
+                                    cell.actionButton?.addTarget(self!, action: #selector(self!.manageUserAction(sender:)), for: .touchUpInside)
                                 }
                             }
-                            else if self?.scope == .channel {
-                                if let role = self?.channel.role, role == "owner" {
+                            else if self!.scope == .channel {
+                                if let role = self!.channel.role, role == "owner" {
                                     cell.actionButton?.isHidden = false
                                     cell.actionButton?.setTitle("Manage", for: .normal)
                                     cell.actionButton?.data = user
-                                    cell.actionButton?.addTarget(self, action: #selector(self?.manageUserAction(sender:)), for: .touchUpInside)
+                                    cell.actionButton?.addTarget(self!, action: #selector(self!.manageUserAction(sender:)), for: .touchUpInside)
                                 }
                             }
                         }
+                    } else {
+                        fatalError("User is missing for group or channel member")
                     }
                 })
-                
-                return cell
-        })
-
-        self.tableView.dataSource = self.tableViewDataSource
+            }
+            return cell
+        }
     }
+    
+    enum ListScope: Int {
+        case group
+        case channel
+    }
+    
+    enum MemberTarget: Int {
+        case group
+        case channel
+    }
+}
+
+extension MemberListController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let cell = tableView.cellForRow(at: indexPath) as! UserListCell
@@ -200,15 +210,5 @@ class MemberListController: BaseTableController, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 64
-    }
-    
-    enum ListScope: Int {
-        case group
-        case channel
-    }
-    
-    enum MemberTarget: Int {
-        case group
-        case channel
     }
 }

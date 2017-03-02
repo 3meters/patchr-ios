@@ -30,7 +30,7 @@ class BranchProvider: NSObject {
         
         let group = StateController.instance.group
         let inviter = UserController.instance.user
-        let inviterId = UserController.instance.userId
+        let inviterId = UserController.instance.userId!
         let inviterName = inviter!.profile?.fullName ?? username
         let photoUrl = ImageUtils.url(prefix: inviter?.profile?.photo?.filename, source: inviter?.profile?.photo?.source, category: SizeCategory.profile)
         let path = "group/\(groupId)"
@@ -80,7 +80,7 @@ class BranchProvider: NSObject {
     static func inviteGuest(group: FireGroup, channels: [String: Any], email: String, inviteId: String, completion: @escaping CompletionBlock) {
         
         let inviter = UserController.instance.user
-        let inviterId = UserController.instance.userId
+        let inviterId = UserController.instance.userId!
         let inviterName = inviter!.profile?.fullName ?? UserController.instance.user?.username
         let photoUrl = ImageUtils.url(prefix: inviter?.profile?.photo?.filename, source: inviter?.profile?.photo?.source, category: SizeCategory.profile)
         let path = "group/\(group.id!)"

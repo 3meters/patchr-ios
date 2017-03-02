@@ -7,9 +7,12 @@
 //
 
 import UIKit
+import FirebaseDatabaseUI
 
 class BaseTableController: UIViewController {
 	
+    var tableView = UITableView(frame: CGRect.zero, style: .plain)
+    var queryController: DataSourceController!
     var activity = UIActivityIndicatorView(activityIndicatorStyle: .whiteLarge)
     var controllerIsActive = false
     var statusBarHidden: Bool = false {
@@ -122,4 +125,149 @@ class BaseTableController: UIViewController {
 	func isEmptyString(value : String?) -> Bool {
 		return (value == nil || value!.isEmpty)
 	}	
+}
+
+class DataSourceController: NSObject, FUICollectionDelegate, UITableViewDataSource {
+    
+    weak var delegate: FUICollectionDelegate?
+    var tableView: UITableView!
+    
+    var populate: ((UITableView, IndexPath, Any) -> UITableViewCell)!
+    var matcher: ((String, Any) -> Bool)?
+    var mapper: ((FIRDataSnapshot, @escaping ((Any?) -> Void)) -> Void)?
+    
+    var snapshots: FUIArray! // Contains snapshots
+    private var dataScreened = [Any]() // Does NOT stay synchronized beyond initial pass
+    private var dataFiltered = [Any]() // Pulls from active array
+    
+    var filterActive = false
+    var mapperActive = false
+    var startEmpty = false
+    
+    var items: [Any] {
+        get {
+            if self.startEmpty {
+                return self.dataFiltered
+            }
+            else if self.mapperActive {
+                return self.filterActive ? self.dataFiltered : self.dataScreened
+            }
+            else {
+                return self.filterActive ? self.dataFiltered : self.snapshots.items
+            }
+        }
+    }
+
+    func bind(to tableView: UITableView, populateCell: @escaping (UITableView, IndexPath, Any) -> UITableViewCell) {
+        self.tableView = tableView
+        self.populate = populateCell
+        self.tableView.dataSource = self
+    }
+    
+    func bind(to tableView: UITableView, query: FUIDataObservable, populateCell: @escaping (UITableView, IndexPath, Any) -> UITableViewCell) {
+        self.tableView = tableView
+        self.populate = populateCell
+        self.tableView.dataSource = self
+        self.snapshots = FUIArray(query: query)
+        self.snapshots.delegate = self
+        self.snapshots.observeQuery()
+    }
+    
+    func unbind() {
+        self.tableView.dataSource = nil
+        self.tableView = nil
+        self.snapshots?.invalidate()
+    }
+    
+    func snapshot(at index: Int) -> FIRDataSnapshot {
+        let item = self.items.at(index)
+        return item as! FIRDataSnapshot
+    }
+    
+    func filter(searchText text: String?) {
+        guard self.matcher != nil else {
+            fatalError("Filtering requires filterMatcher")
+        }
+        self.dataFiltered.removeAll()
+        self.filterActive = false
+        if text != nil {
+            let items = (self.dataScreened.count > 0) ? self.dataScreened : self.snapshots.items
+            for item in items {
+                if self.matcher!(text!, item) {
+                    self.dataFiltered.append(item)
+                }
+            }
+            self.filterActive = true
+        }
+        DispatchQueue.main.async {
+            self.tableView.reloadData()
+        }
+        return
+    }
+    
+    func clearFilter() {
+        self.dataFiltered.removeAll()
+        self.filterActive = false
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let data = self.items.at(indexPath.row)
+        let cell = self.populate(tableView, indexPath, data!)
+        return cell
+    }
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        let count = self.items.count
+        return count
+    }
+    
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return 1
+    }
+    
+    func arrayDidEndUpdates(_ collection: FUICollection) {
+        if self.mapper != nil {
+            self.dataScreened.removeAll()
+            var remaining = self.snapshots.count
+            for snap in self.snapshots.items {
+                self.mapper!(snap as! FIRDataSnapshot) { any in
+                    if any != nil {
+                        self.dataScreened.append(any!)
+                    }
+                    remaining -= 1
+                    if remaining == 0 {
+                        DispatchQueue.main.async {
+                            self.tableView.reloadData()
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    func array(_ array: FUICollection, didAdd object: Any, at index: UInt) {
+        if self.filterActive || self.mapperActive || self.startEmpty { return }
+        self.tableView.insertRows(at: [IndexPath(row: Int(index), section: 0)], with: .automatic)
+    }
+    
+    func array(_ array: FUICollection, didMove object: Any, from fromIndex: UInt, to toIndex: UInt) {
+        if self.filterActive || self.mapperActive || self.startEmpty { return }
+        self.tableView.moveRow(at: IndexPath(row: Int(fromIndex), section: 0), to: IndexPath(row: Int(toIndex), section: 0))
+    }
+    
+    func array(_ array: FUICollection, didRemove object: Any, at index: UInt) {
+        if self.filterActive || self.mapperActive || self.startEmpty { return }
+        self.tableView.deleteRows(at: [IndexPath(row: Int(index), section: 0)], with: .automatic)
+    }
+    
+    func array(_ array: FUICollection, didChange object: Any, at index: UInt) {
+        if self.filterActive || self.mapperActive || self.startEmpty { return }
+        self.tableView.reloadRows(at: [IndexPath(row: Int(index), section: 0)], with: .automatic)
+        self.delegate?.array?(array, didChange: object, at: index)
+    }
+    
+    func array(_ array: FUICollection, queryCancelledWithError error: Error) {
+        Log.w("Query canceled: \(error.localizedDescription)")
+        self.delegate?.array?(array, queryCancelledWithError: error)
+    }
 }

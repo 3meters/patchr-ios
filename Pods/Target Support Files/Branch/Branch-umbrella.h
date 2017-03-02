@@ -3,6 +3,7 @@
 #endif
 
 #import "BNCCallbacks.h"
+#import "BNCCommerceEvent.h"
 #import "BNCConfig.h"
 #import "BNCContentDiscoveryManager.h"
 #import "BNCDeviceInfo.h"
@@ -30,6 +31,7 @@
 #import "BranchUniversalObject.h"
 #import "BranchView.h"
 #import "BranchViewHandler.h"
+#import "NSMutableDictionary+Branch.h"
 #import "BNCServerRequest.h"
 #import "BranchCloseRequest.h"
 #import "BranchCreditHistoryRequest.h"
@@ -46,6 +48,7 @@
 #import "BranchUserCompletedActionRequest.h"
 #import "PromoViewHandler.h"
 #import "BNCCallbacks.h"
+#import "BNCCommerceEvent.h"
 #import "BNCConfig.h"
 #import "BNCContentDiscoveryManager.h"
 #import "BNCDeviceInfo.h"
@@ -73,6 +76,7 @@
 #import "BranchUniversalObject.h"
 #import "BranchView.h"
 #import "BranchViewHandler.h"
+#import "NSMutableDictionary+Branch.h"
 #import "BNCServerRequest.h"
 #import "BranchCloseRequest.h"
 #import "BranchCreditHistoryRequest.h"

@@ -19,13 +19,9 @@ class MemberPickerController: BaseTableController, CLTokenInputViewDelegate {
     
     var heading	= AirLabelTitle()
     var tokenView: AirTokenView!
-    var tableView = UITableView(frame: CGRect.zero, style: .plain)
-    var tableViewDataSource: FUITableViewDataSource!
     var doneButton: UIBarButtonItem!
 
     var items: [String: Any] = [:]
-    var itemsFiltered = [FireUser]()
-    var itemsSource = [FireUser]()
 
     var filterText: String?
     var filterActive = false
@@ -45,9 +41,9 @@ class MemberPickerController: BaseTableController, CLTokenInputViewDelegate {
         let groupId = StateController.instance.groupId!
         let channelId = self.inputChannelId ?? StateController.instance.channelId!
         let userId = UserController.instance.userId!
-        let channelQuery = ChannelQuery(groupId: groupId, channelId: channelId, userId: userId)
+        let query = ChannelQuery(groupId: groupId, channelId: channelId, userId: userId)
         
-        channelQuery.once(with: { error, channel in
+        query.once(with: { error, channel in
             if channel != nil {
                 self.channel = channel
                 let channelName = self.channel.name!
@@ -129,11 +125,10 @@ class MemberPickerController: BaseTableController, CLTokenInputViewDelegate {
         self.tokenView.delegate = self
         self.tokenView.autoresizingMask = [UIViewAutoresizing.flexibleBottomMargin, UIViewAutoresizing.flexibleWidth]
         
-        self.tableView.register(UINib(nibName: "UserListCell", bundle: nil), forCellReuseIdentifier: "user-cell")
+        self.tableView.register(UINib(nibName: "UserListCell", bundle: nil), forCellReuseIdentifier: "cell")
         self.tableView.backgroundColor = Theme.colorBackgroundTable
         self.tableView.tableFooterView = UIView()
         self.tableView.delegate = self
-        self.tableView.dataSource = self
         self.tableView.estimatedRowHeight = 64
         self.tableView.separatorInset = UIEdgeInsets.zero
         
@@ -151,55 +146,92 @@ class MemberPickerController: BaseTableController, CLTokenInputViewDelegate {
 
     func bind() {
 
-        self.itemsSource.removeAll()
-        self.itemsFiltered.removeAll()
-
         let groupId = StateController.instance.groupId!
         let query = FireController.db.child("group-members/\(groupId)")
             .queryOrdered(byChild: "index_priority_joined_at_desc")
         
-        query.observe(.value, with: { [weak self] snap in
-            self?.itemsSource.removeAll()
-            if !(snap.value is NSNull) && snap.hasChildren() {
-                for item in snap.children {
-                    let member = item as! FIRDataSnapshot
-                    let userId = member.key
+        self.queryController = DataSourceController()
+        self.queryController.mapperActive = true
+        self.queryController.matcher = { searchText, data in
+            let user = data as! FireUser
+            if user.username!.lowercased().contains(searchText.lowercased()) {
+                return true
+            }
+            else if let profile = user.profile, let fullName = profile.fullName {
+                if fullName.lowercased().contains(searchText.lowercased()) {
+                    return true
+                }
+            }
+            return false
+        }
+        
+        self.queryController.mapper = { (snap, then) in
+            let userId = snap.key
+            UserQuery(userId: userId, groupId: nil).once(with: { error, user in
+                if error != nil {
+                    Log.w("Permission denied")
+                    return
+                }
+                if user != nil {
+                    user!.membershipFrom(dict: snap.value as! [String : Any])
+                    then(user)
+                }
+            })
+        }
+
+        self.queryController.bind(to: self.tableView, query: query) { [weak self] tableView, indexPath, data in
+            
+            let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! UserListCell
+            
+            func bindCell(user: FireUser) {
+                
+                let userId = user.id!
+                let channelId = self!.channel.id!
+                
+                cell.selectionStyle = .none
+                cell.accessoryType = .none
+                cell.roleLabel?.isHidden = true
+                
+                FireController.instance.isChannelMember(userId: userId, channelId: channelId, groupId: groupId, next: { result in
+                    cell.bind(user: user)
+                    if result == nil { return }
+                    if result! {
+                        cell.roleLabel?.isHidden = false
+                        cell.roleLabel?.text = "already a member"
+                        cell.roleLabel?.textColor = MaterialColor.lightGreen.base
+                        cell.checkBox?.isHidden = true
+                        cell.allowSelection = false
+                    }
+                    else {
+                        cell.roleLabel?.isHidden = true
+                        cell.checkBox?.isHidden = false
+                        cell.checkBox?.on = cell.isSelected
+                    }
+                })
+            }
+            
+            if self != nil {
+                cell.reset()
+                if let user = data as? FireUser {
+                    bindCell(user: user)
+                }
+                else {
+                    let snap = data as! FIRDataSnapshot
+                    let userId = snap.key
                     UserQuery(userId: userId, groupId: nil).once(with: { error, user in
                         if error != nil {
                             Log.w("Permission denied")
                             return
                         }
                         if user != nil {
-                            user!.membershipFrom(dict: member.value as! [String : Any])
-                            self?.itemsSource.append(user!)
+                            user!.membershipFrom(dict: snap.value as! [String : Any])
+                            bindCell(user: user!)
                         }
                     })
                 }
             }
-            DispatchQueue.main.async {
-                self?.tableView.reloadData()
-            }
-        }, withCancel: { error in
-            Log.w("Permission denied")
-        })
-
-        self.tableView.dataSource = self.tableViewDataSource
-    }
-
-    func filter() {
-        self.itemsFiltered.removeAll()
-        for user in self.itemsSource {
-            if user.username!.lowercased().contains(self.filterText!.lowercased()) {
-                self.itemsFiltered.append(user)
-            }
-            else if let profile = user.profile, let fullName = profile.fullName {
-                if fullName.lowercased().contains(self.filterText!.lowercased()) {
-                    self.itemsFiltered.append(user)
-                }
-            }
-        }
-        DispatchQueue.main.async {
-            self.tableView.reloadData()
+            
+            return cell
         }
     }
 
@@ -291,62 +323,12 @@ extension MemberPickerController: UITableViewDelegate {
     }
 }
 
-extension MemberPickerController: UITableViewDataSource {
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        
-        let cell = tableView.dequeueReusableCell(withIdentifier: "user-cell", for: indexPath) as! UserListCell
-        let user = self.filterActive ? self.itemsFiltered[indexPath.row] : self.itemsSource[indexPath.row]
-        let userId = user.id!
-        let groupId = StateController.instance.groupId!
-        let channelId = self.channel.id!
-        
-        cell.selectionStyle = .none
-        cell.accessoryType = .none
-        cell.roleLabel?.isHidden = true
-        cell.reset()
-        
-        FireController.instance.isChannelMember(userId: userId, channelId: channelId, groupId: groupId, next: { result in
-            cell.bind(user: user)
-            if result == nil { return }
-            if result! {
-                cell.roleLabel?.isHidden = false
-                cell.roleLabel?.text = "already a member"
-                cell.roleLabel?.textColor = MaterialColor.lightGreen.base
-                cell.checkBox?.isHidden = true
-                cell.allowSelection = false
-            }
-            else {
-                cell.roleLabel?.isHidden = true
-                cell.checkBox?.isHidden = false
-                cell.checkBox?.on = cell.isSelected
-            }
-        })
-        
-        return cell
-    }
-    
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.filterActive ? self.itemsFiltered.count : self.itemsSource.count
-    }
-    
-    func numberOfSections(in: UITableView) -> Int {
-        return 1
-    }
-}
-
 extension MemberPickerController {
     
     func tokenInputView(_ view: CLTokenInputView, didChangeText text: String?) {
-        self.filterActive = (text != nil && !text!.trimmingCharacters(in: .whitespaces).isEmpty)
-        self.filterText = (text != nil) ? text!.trimmingCharacters(in: .whitespaces) : nil
-        if filterActive {
-            filter()
-        }
-        else {
-            DispatchQueue.main.async {
-                self.tableView.reloadData()
-            }
+        if text != nil && !text!.trimmingCharacters(in: .whitespaces).isEmpty {
+            let searchText = text!.trimmingCharacters(in: .whitespaces)
+            self.queryController.filter(searchText: searchText)
         }
     }
     

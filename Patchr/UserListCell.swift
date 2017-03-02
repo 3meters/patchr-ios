@@ -95,7 +95,7 @@ class UserListCell: UITableViewCell {
             self.agoLabel.isHidden = false
         }
         
-        if user.id == UserController.instance.userId {
+        if user.id == UserController.instance.userId! {
             self.title?.text = "\(user.profile?.fullName ?? user.username!) (you)"
         }
         else {

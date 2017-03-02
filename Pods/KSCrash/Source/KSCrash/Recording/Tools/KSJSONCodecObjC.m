@@ -29,7 +29,7 @@
 
 #import "KSJSONCodec.h"
 #import "NSError+SimpleConstructor.h"
-#import "RFC3339DateTool.h"
+#import "RFC3339UTFString.h"
 
 
 @interface KSJSONCodec ()
@@ -136,7 +136,7 @@ int ksjsoncodecobjc_i_onFloatingPointElement(const char* const cName,
                                              void* const userData);
 
 int ksjsoncodecobjc_i_onIntegerElement(const char* const cName,
-                                       const long long value,
+                                       const int64_t value,
                                        void* const userData);
 
 int ksjsoncodecobjc_i_onNullElement(const char* const cName,
@@ -157,7 +157,7 @@ int ksjsoncodecobjc_i_onEndContainer(void* const userData);
 int ksjsoncodecobjc_i_onEndData(void* const userData);
 
 int ksjsoncodecobjc_i_addJSONData(const char* const bytes,
-                                  const size_t length,
+                                  const int length,
                                   void* const userData);
 
 @end
@@ -297,7 +297,7 @@ int ksjsoncodecobjc_i_onFloatingPointElement(const char* const cName,
 }
 
 int ksjsoncodecobjc_i_onIntegerElement(const char* const cName,
-                                       const long long value,
+                                       const int64_t value,
                                        void* const userData)
 {
     NSString* name = stringFromCString(cName);
@@ -382,11 +382,11 @@ int ksjsoncodecobjc_i_onEndData(__unused void* const userData)
 }
 
 int ksjsoncodecobjc_i_addJSONData(const char* const bytes,
-                                  const size_t length,
+                                  const int length,
                                   void* const userData)
 {
     NSMutableData* data = (__bridge NSMutableData*)userData;
-    [data appendBytes:bytes length:length];
+    [data appendBytes:bytes length:(unsigned)length];
     return KSJSON_OK;
 }
 
@@ -400,10 +400,7 @@ int ksjsoncodecobjc_i_encodeObject(KSJSONCodec* codec,
     if([object isKindOfClass:[NSString class]])
     {
         NSData* data = [object dataUsingEncoding:NSUTF8StringEncoding];
-        result = ksjson_addStringElement(context,
-                                         cName,
-                                         [data bytes],
-                                         [data length]);
+        result = ksjson_addStringElement(context, cName, data.bytes, (int)data.length);
         if(result == KSJSON_ERROR_INVALID_CHARACTER)
         {
             codec.error = [NSError errorWithDomain:@"KSJSONCodecObjC"
@@ -422,17 +419,11 @@ int ksjsoncodecobjc_i_encodeObject(KSJSONCodec* codec,
             case kCFNumberFloatType:
             case kCFNumberCGFloatType:
             case kCFNumberDoubleType:
-                return ksjson_addFloatingPointElement(context,
-                                                      cName,
-                                                      [object doubleValue]);
+                return ksjson_addFloatingPointElement(context, cName, [object doubleValue]);
             case kCFNumberCharType:
-                return ksjson_addBooleanElement(context,
-                                                cName,
-                                                [object boolValue]);
+                return ksjson_addBooleanElement(context, cName, [object boolValue]);
             default:
-                return ksjson_addIntegerElement(context,
-                                                cName,
-                                                [object longLongValue]);
+                return ksjson_addIntegerElement(context, cName, [object longLongValue]);
         }
     }
 
@@ -470,10 +461,7 @@ int ksjsoncodecobjc_i_encodeObject(KSJSONCodec* codec,
         }
         for(id subObject in object)
         {
-            if((result = ksjsoncodecobjc_i_encodeObject(codec,
-                                                        subObject,
-                                                        NULL,
-                                                        context)) != KSJSON_OK)
+            if((result = ksjsoncodecobjc_i_encodeObject(codec, subObject, NULL, context)) != KSJSON_OK)
             {
                 return result;
             }
@@ -487,7 +475,7 @@ int ksjsoncodecobjc_i_encodeObject(KSJSONCodec* codec,
         {
             return result;
         }
-        NSArray* keys = [object allKeys];
+        NSArray* keys = [(NSDictionary*)object allKeys];
         if(codec->_sorted)
         {
             keys = [keys sortedArrayUsingSelector:@selector(compare:)];
@@ -512,21 +500,17 @@ int ksjsoncodecobjc_i_encodeObject(KSJSONCodec* codec,
 
     if([object isKindOfClass:[NSDate class]])
     {
-        NSData* data = [[RFC3339DateTool stringFromDate:object]
-                        dataUsingEncoding:NSUTF8StringEncoding];
-        return ksjson_addStringElement(context,
-                                       cName,
-                                       [data bytes],
-                                       [data length]);
+        char string[21];
+        time_t timestamp = (time_t)((NSDate*)object).timeIntervalSince1970;
+        rfc3339UtcStringFromUNIXTimestamp(timestamp, string);
+        NSData* data = [NSData dataWithBytes:string length:strnlen(string, 20)];
+        return ksjson_addStringElement(context, cName, data.bytes, (int)data.length);
     }
 
     if([object isKindOfClass:[NSData class]])
     {
         NSData* data = (NSData*)object;
-        return ksjson_addDataElement(context,
-                                     cName,
-                                     [data bytes],
-                                     [data length]);
+        return ksjson_addDataElement(context, cName, data.bytes, (int)data.length);
     }
 
     codec.error = [NSError errorWithDomain:@"KSJSONCodecObjC"
@@ -549,12 +533,9 @@ int ksjsoncodecobjc_i_encodeObject(KSJSONCodec* codec,
                        ksjsoncodecobjc_i_addJSONData,
                        (__bridge void*)data);
     KSJSONCodec* codec = [self codecWithEncodeOptions:encodeOptions
-                                        decodeOptions:0];
+                                        decodeOptions:KSJSONDecodeOptionNone];
 
-    int result = ksjsoncodecobjc_i_encodeObject(codec,
-                                                object,
-                                                NULL,
-                                                &JSONContext);
+    int result = ksjsoncodecobjc_i_encodeObject(codec, object, NULL, &JSONContext);
     if(error != nil)
     {
         *error = codec.error;
@@ -568,9 +549,12 @@ int ksjsoncodecobjc_i_encodeObject(KSJSONCodec* codec,
 {
     KSJSONCodec* codec = [self codecWithEncodeOptions:0
                                         decodeOptions:decodeOptions];
-    size_t errorOffset;
-    int result = ksjson_decode([JSONData bytes],
-                               [JSONData length],
+    NSMutableData* stringData = [NSMutableData dataWithLength:10001];
+    int errorOffset;
+    int result = ksjson_decode(JSONData.bytes,
+                               (int)JSONData.length,
+                               stringData.mutableBytes,
+                               (int)stringData.length,
                                codec.callbacks,
                                (__bridge void*)codec, &errorOffset);
     if(result != KSJSON_OK && codec.error == nil)

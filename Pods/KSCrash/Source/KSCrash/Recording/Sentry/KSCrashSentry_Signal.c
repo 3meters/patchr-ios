@@ -27,6 +27,7 @@
 #include <TargetConditionals.h>
 
 #include "KSCrashSentry_Signal.h"
+#include "KSCrashSentry_Context.h"
 #include "KSCrashSentry_Private.h"
 
 #include "KSSignalInfo.h"
@@ -51,7 +52,7 @@
  */
 static volatile sig_atomic_t g_installed = 0;
 
-#if !TARGET_OS_TV
+#if KSCRASH_HAS_SIGNAL_STACK
 /** Our custom signal stack. The signal handler will use this as its stack. */
 static stack_t g_signalStack = {0};
 #endif
@@ -75,7 +76,7 @@ static KSCrash_SentryContext* g_context;
  * Once we're done, re-raise the signal and let the default handlers deal with
  * it.
  *
- * @param signal The signal that was raised.
+ * @param sigNum The signal that was raised.
  *
  * @param signalInfo Information about the signal.
  *
@@ -145,7 +146,8 @@ bool kscrashsentry_installSignalHandler(KSCrash_SentryContext* context)
 
     g_context = context;
 
-#if !TARGET_OS_TV
+#if KSCRASH_HAS_SIGNAL_STACK
+
     if(g_signalStack.ss_size == 0)
     {
         KSLOG_DEBUG("Allocating signal stack area.");

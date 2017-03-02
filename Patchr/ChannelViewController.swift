@@ -18,11 +18,9 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
     var inputChannelId: String?
     var inputGroupId: String?
     
-    var channelQuery: ChannelQuery?
-    var messagesQuery: FIRDatabaseQuery!
-    var unreadQuery: UnreadQuery?   // Used to know when channel unreads == 0 and should fix sort priority
+    var queryChannel: ChannelQuery?
+    var queryUnread: UnreadQuery?   // Used to know when channel unreads == 0 and should fix sort priority
     
-    let cellReuseIdentifier = "message-cell"
     var headerView = ChannelDetailView()
     var unreads = [String: Bool]()
     var displayPhotos = [String: DisplayPhoto]()
@@ -43,8 +41,8 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
     var viewIsVisible = false
 
     /* Only used for row sizing */
-    var rowHeights			: NSMutableDictionary = [:]
-    var itemTemplate		= MessageViewCell()
+    var rowHeights: NSMutableDictionary = [:]
+    var itemTemplate = MessageViewCell()
     var itemPadding	= UIEdgeInsetsMake(12, 12, 12, 12)
     
     /* Observes typers for channel. If we see typers (but not this user), we 
@@ -148,8 +146,8 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
         if self.typingRemoveHandle != nil {
             self.typingRef.removeObserver(withHandle: self.typingRemoveHandle)
         }
-        self.channelQuery?.remove()
-        self.unreadQuery?.remove()
+        self.queryChannel?.remove()
+        self.queryUnread?.remove()
     }
 
     /*--------------------------------------------------------------------------------------------
@@ -272,7 +270,7 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
             if let indexPath = self.tableView.indexPathForRow(at: point) {
                 dismissKeyboard(true)
                 let cell = self.tableView.cellForRow(at: indexPath) as! WrapperTableViewCell
-                let snap = self.tableViewDataSource.object(at: UInt(indexPath.row)) as! FIRDataSnapshot
+                let snap = self.queryController.snapshot(at: indexPath.row)
                 let message = FireMessage.from(dict: snap.value as? [String: Any], id: snap.key)
                 showMessageActions(message: message!, sourceView: cell.view)
             }
@@ -359,7 +357,8 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
             channelId == self.channel.id {
             
             var index = 0
-            for snap in self.tableViewDataSource.items as! [FIRDataSnapshot] {
+            for data in self.queryController.items {
+                let snap = data as! FIRDataSnapshot
                 if snap.key == messageId {
                     self.tableView.beginUpdates()
                     self.tableView.reloadRows(at: [IndexPath(row: index, section: 0)], with: .automatic)
@@ -396,8 +395,6 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
         self.automaticallyAdjustsScrollViewInsets = false
         let viewWidth = min(Config.contentWidthMax, self.view.width())
         self.headerHeight = viewWidth * 0.625
-        self.tableView.contentInset = UIEdgeInsets(top: self.headerHeight + 74, left: 0, bottom: 0, right: 0)
-        self.tableView.contentOffset = CGPoint(x: 0, y: -(self.headerHeight + 74))
         
         updateHeaderView()
         
@@ -411,7 +408,9 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
         self.tableView.separatorInset = UIEdgeInsets.zero
         self.tableView.allowsSelection = false
         self.tableView.delegate = self
-        self.tableView.register(WrapperTableViewCell.self, forCellReuseIdentifier: self.cellReuseIdentifier)
+        self.tableView.contentInset = UIEdgeInsets(top: self.headerHeight + 74, left: 0, bottom: 0, right: 0)
+        self.tableView.contentOffset = CGPoint(x: 0, y: -(self.headerHeight + 74))
+        self.tableView.register(WrapperTableViewCell.self, forCellReuseIdentifier: "cell")
         
         self.titleView = (Bundle.main.loadNibNamed("ChannelTitleView", owner: nil, options: nil)?.first as? ChannelTitleView)!
         
@@ -491,46 +490,101 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
     
     fileprivate func bind(groupId: String, channelId: String) {
         
+        /* Only called once */
+        
         Log.d("Binding to: \(channelId)")
         
         let userId = UserController.instance.userId!
         let username = UserController.instance.user!.username!
         
-        self.typingRef = FireController.db.child("typing/\(groupId)/\(channelId)")
-        self.typingAddHandle = self.typingRef.observe(.childAdded, with: { [weak self] snap in
-            if self != nil {
-                if let typerName = snap.value as? String {
-                    if typerName != username {
-                        self!.typingIndicatorView?.insertUsername(typerName)    // Auto removed in 8 secs
-                    }
-                }
-            }
-        })
-        self.typingRemoveHandle = self.typingRef.observe(.childRemoved, with: { [weak self] snap in
-            if self != nil {
-                if let typerName = snap.value as? String {
-                    if typerName != username {
-                        self!.typingIndicatorView?.removeUsername(typerName)
-                    }
-                }
-            }
-        })
-        self.typingRef.child(userId).onDisconnectRemoveValue()
+        /* Primary list */
         
-        FireController.db.child("groups/\(groupId)/title").observe(.value, with: { [weak self] snap in
-            if let title = snap.value as? String {
-                self?.titleView.title?.text = title
-            }
-        })
+        let query = FireController.db.child("group-messages/\(groupId)/\(channelId)")
+            .queryOrdered(byChild: "created_at_desc")
         
-        self.channelQuery?.remove()
-        self.channelQuery = ChannelQuery(groupId: groupId, channelId: channelId, userId: userId)
-        self.channelQuery!.observe(with: { [weak self] error, channel in
+        self.queryController = DataSourceController()
+        
+        self.queryController.bind(to: self.tableView, query: query) { [weak self] tableView, indexPath, data in
+            
+            let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! WrapperTableViewCell
+            
+            if self != nil {
+                
+                let snap = data as! FIRDataSnapshot
+                let userId = UserController.instance.userId!
+                let message = FireMessage.from(dict: snap.value as? [String: Any], id: snap.key)! as FireMessage
+                
+                if let messageView = cell.view as? MessageViewCell {
+                    messageView.reset()
+                }
+                
+                guard message.createdBy != nil else {
+                    return cell
+                }
+                
+                UserQuery(userId: message.createdBy!, groupId: groupId).once(with: { error, user in
+                    message.creator = user
+                    
+                    if cell.view == nil {
+                        let recognizer = UILongPressGestureRecognizer(target: self!, action: #selector(self!.longPressAction(sender:)))
+                        recognizer.minimumPressDuration = TimeInterval(0.2)
+                        cell.addGestureRecognizer(recognizer)
+                        
+                        let view = MessageViewCell(frame: CGRect(x: 0, y: 0, width: self!.view.width(), height: 40))
+                        if view.description_ != nil && (view.description_ is TTTAttributedLabel) {
+                            let label = view.description_ as! TTTAttributedLabel
+                            label.delegate = self
+                        }
+                        
+                        view.photoView?.isUserInteractionEnabled = true
+                        view.photoView?.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self!.browsePhotoAction(sender:))))
+                        cell.injectView(view: view, padding: self!.itemPadding)
+                        cell.layoutSubviews()   // Make sure padding has been applied
+                    }
+                    
+                    if let messageView = cell.view! as? MessageViewCell {
+                        
+                        messageView.bind(message: message)
+                        
+                        if message.creator != nil {
+                            messageView.userPhotoControl.target = message.creator
+                            messageView.userPhotoControl.addTarget(self!, action: #selector(self!.browseMemberAction(sender:)), for: .touchUpInside)
+                        }
+                        
+                        let messageId = message.id!
+                        if self!.unreads[messageId] != nil {
+                            messageView.unread.isHidden = false
+                            self!.unreads.removeValue(forKey: messageId)
+                        }
+                        else {
+                            let unreadPath = "unreads/\(userId)/\(groupId)/\(channelId)/\(messageId)"
+                            FireController.db.child(unreadPath).observeSingleEvent(of: .value, with: { snap in
+                                if !(snap.value is NSNull) {
+                                    if !self!.viewIsVisible {
+                                        self!.unreads[messageId] = true
+                                    }
+                                    messageView.unread.isHidden = false
+                                    FireController.instance.clearMessageUnread(messageId: messageId, channelId: channelId, groupId: groupId)
+                                }
+                            })
+                        }
+                    }
+                })
+            }
+            return cell
+        }
+        
+        self.queryController.delegate = self
+        
+        /* Header */
+        
+        self.queryChannel = ChannelQuery(groupId: groupId, channelId: channelId, userId: userId)
+        self.queryChannel!.observe(with: { [weak self] error, channel in
             
             guard channel != nil else {
                 if error == nil {
                     /* The channel has been deleted from under us. */
-                    self?.channelQuery?.remove()
+                    self?.queryChannel?.remove()
                     FireController.instance.autoPickChannel(groupId: groupId) { channelId in
                         if channelId != nil {
                             StateController.instance.setChannelId(channelId: channelId!, groupId: groupId)
@@ -548,8 +602,9 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
                 self?.hideJoinBar()
                 self?.setTextInputbarHidden(false, animated: true)
                 self?.textView.placeholder = "Message #\((self?.channel.name!)!)"
-                self?.unreadQuery = UnreadQuery(level: .channel, userId: userId, groupId: groupId, channelId: channelId)
-                self?.unreadQuery!.observe(with: { [weak self] error, total in
+                
+                self?.queryUnread = UnreadQuery(level: .channel, userId: userId, groupId: groupId, channelId: channelId)
+                self?.queryUnread!.observe(with: { [weak self] error, total in
                     if self != nil, error == nil {
                         let total = total ?? 0
                         if total == 0 && self!.channel?.priority == 0 {
@@ -583,20 +638,39 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
                 self!.updateHeaderView()
             }
         })
+
+        /* Typing */
         
-        self.messagesQuery = FireController.db.child("group-messages/\(groupId)/\(channelId)").queryOrdered(byChild: "created_at_desc")
+        self.typingRef = FireController.db.child("typing/\(groupId)/\(channelId)")
+        self.typingAddHandle = self.typingRef.observe(.childAdded, with: { [weak self] snap in
+            if self != nil {
+                if let typerName = snap.value as? String {
+                    if typerName != username {
+                        self!.typingIndicatorView?.insertUsername(typerName)    // Auto removed in 8 secs
+                    }
+                }
+            }
+        })
+        self.typingRemoveHandle = self.typingRef.observe(.childRemoved, with: { [weak self] snap in
+            if self != nil {
+                if let typerName = snap.value as? String {
+                    if typerName != username {
+                        self!.typingIndicatorView?.removeUsername(typerName)
+                    }
+                }
+            }
+        })
+        self.typingRef.child(userId).onDisconnectRemoveValue()
         
-        self.tableViewDataSource = MessagesDataSource(
-            query: self.messagesQuery,
-            view: self.tableView,
-            populateCell: { [weak self] tableView, indexPath, snap in
-                return (self?.populateCell(tableView, cellForRowAt: indexPath, snap: snap))!
-            })
+        /* Title */
         
-        self.tableViewDataSource.rowHeights = self.rowHeights
+        FireController.db.child("groups/\(groupId)/title").observe(.value, with: { [weak self] snap in
+            if let title = snap.value as? String {
+                self?.titleView.title?.text = title
+            }
+        })
         
         Log.d("Observe query triggered for channel messages")
-        self.tableView.dataSource = self.tableViewDataSource
         
         if !MainController.instance.introPlayed {
             if UserDefaults.standard.bool(forKey: PerUserKey(key: Prefs.soundEffects)) {
@@ -615,86 +689,12 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
         self.headerView.frame = headerRect
     }
     
-    func populateCell(_ tableView: UITableView, cellForRowAt indexPath: IndexPath, snap: FIRDataSnapshot) -> UITableViewCell {
-        
-        let cell = tableView.dequeueReusableCell(withIdentifier: self.cellReuseIdentifier, for: indexPath) as! WrapperTableViewCell
-        let message = FireMessage.from(dict: snap.value as? [String: Any], id: snap.key)! as FireMessage
-        let userId = UserController.instance.userId!
-        if self.channel == nil {
-            return cell
-        }
-        let groupId = self.channel.groupId!
-        let channelId = self.channel.id!
-        let userQuery: UserQuery!
-        
-        if let messageView = cell.view as? MessageViewCell {
-            messageView.reset()
-        }
-        
-        guard message.createdBy != nil else {
-            return cell
-        }
-        
-        userQuery = UserQuery(userId: message.createdBy!, groupId: groupId)
-        userQuery.once(with: { error, user in
-            
-            message.creator = user
-            
-            if cell.view == nil {
-                let recognizer = UILongPressGestureRecognizer(target: self, action: #selector(self.longPressAction(sender:)))
-                recognizer.minimumPressDuration = TimeInterval(0.2)
-                cell.addGestureRecognizer(recognizer)
-                
-                let view = MessageViewCell(frame: CGRect(x: 0, y: 0, width: self.view.width(), height: 40))
-                if view.description_ != nil && (view.description_ is TTTAttributedLabel) {
-                    let label = view.description_ as! TTTAttributedLabel
-                    label.delegate = self
-                }
-                
-                view.photoView?.isUserInteractionEnabled = true
-                view.photoView?.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.browsePhotoAction(sender:))))
-                cell.injectView(view: view, padding: self.itemPadding)
-                cell.layoutSubviews()   // Make sure padding has been applied
-            }
-            
-            if let messageView = cell.view! as? MessageViewCell {
-                
-                messageView.bind(message: message)
-                
-                if message.creator != nil {
-                    messageView.userPhotoControl.target = message.creator
-                    messageView.userPhotoControl.addTarget(self, action: #selector(self.browseMemberAction(sender:)), for: .touchUpInside)
-                }
-                
-                let messageId = message.id!
-                if self.unreads[messageId] != nil {
-                    messageView.unread.isHidden = false
-                    self.unreads.removeValue(forKey: messageId)
-                }
-                else {
-                    let unreadPath = "unreads/\(userId)/\(groupId)/\(channelId)/\(messageId)"
-                    FireController.db.child(unreadPath).observeSingleEvent(of: .value, with: { snap in
-                        if !(snap.value is NSNull) {
-                            if !self.viewIsVisible {
-                                self.unreads[messageId] = true
-                            }
-                            messageView.unread.isHidden = false
-                            FireController.instance.clearMessageUnread(messageId: messageId, channelId: channelId, groupId: groupId)
-                        }
-                    })
-                }
-            }
-        })
-        
-        return cell
-    }
-    
     func showMessageActions(message: FireMessage, sourceView: UIView?) {
         
-        let userId = UserController.instance.userId
+        let userId = UserController.instance.userId!
         let sheet = UIAlertController(title: nil, message: nil, preferredStyle: UIAlertControllerStyle.actionSheet)
 
-        let likes = message.getReaction(emoji: .thumbsup, userId: userId!)
+        let likes = message.getReaction(emoji: .thumbsup, userId: userId)
         let likeTitle = likes ? "Remove like" : "Add like"
         let like = UIAlertAction(title: likeTitle, style: .default) { action in
             if self.channel?.joinedAt == nil {
@@ -814,7 +814,7 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
                 let controller = ContactPickerController()
                 controller.role = "guests"
                 controller.channels = [self.channel.id!: self.channel.name!]
-                controller.inputGroupId = StateController.instance.groupId
+                controller.inputGroupId = StateController.instance.groupId!
                 controller.inputGroupTitle = StateController.instance.group.title
                 let wrapper = AirNavigationController(rootViewController: controller)
                 UIViewController.topMostViewController()?.present(wrapper, animated: true, completion: nil)
@@ -874,11 +874,11 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
     func showPhotos(mode: PhotoBrowserMode, fromView: UIView? = nil, initialUrl: URL? = nil) {
 
         /* Cherry pick display photos */
-        var remaining = self.tableViewDataSource.items.count
+        var remaining = self.queryController.items.count
         self.displayPhotos.removeAll()
         
-        for data in self.tableViewDataSource.items {
-            let snap = data as! FIRDataSnapshot            
+        for data in self.queryController.items {
+            let snap = data as! FIRDataSnapshot
             if let message = FireMessage.from(dict: snap.value as? [String: Any], id: snap.key) {
                 
                 message.getCreator(with: { user in
@@ -998,7 +998,7 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
     }
     
     func scrollToLastRow(animated: Bool = true) {
-        let itemCount = self.tableViewDataSource.items.count
+        let itemCount = self.queryController.items.count
         if itemCount > 0 {
             let indexPath = IndexPath(row: itemCount - 1, section: 0)
             self.tableView.scrollToRow(at: indexPath, at: .bottom, animated: true)
@@ -1016,7 +1016,7 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
          */
         let viewWidth = min(Config.contentWidthMax, self.tableView.width())
         var viewHeight = CGFloat(100)
-        let snap = self.tableViewDataSource.object(at: UInt(indexPath.row)) as! FIRDataSnapshot
+        let snap = self.queryController.snapshots.snapshot(at: indexPath.row)
         
         if let message = FireMessage.from(dict: snap.value as? [String: Any], id: snap.key), message.channelId != nil {
             
@@ -1041,15 +1041,11 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
     }
 }
 
-class MessagesDataSource: FUITableViewDataSource {
-    
-    var rowHeights: NSMutableDictionary?
-    
-    override func array(_ array: FUIArray!, didChange object: Any!, at index: UInt) {
+extension ChannelViewController: FUICollectionDelegate {
+    func array(_ array: FUICollection, didChange object: Any, at index: UInt) {
         if let snap = object as? FIRDataSnapshot {
-            self.rowHeights?.removeObject(forKey: snap.key)
+            self.rowHeights.removeObject(forKey: snap.key)
         }
-        super.array(array, didChange: object, at: index)
     }
 }
 

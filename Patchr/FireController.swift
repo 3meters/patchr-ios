@@ -7,6 +7,7 @@ import UIKit
 import Firebase
 import FirebaseDatabase
 import FirebaseAuth
+import FirebaseDatabaseUI
 
 class FireController: NSObject {
 
@@ -790,6 +791,150 @@ class FireController: NSObject {
     
     func getServerTimestamp() -> Int64 {
         return (DateUtils.now() + (FireController.instance.serverOffset ?? 0))
+    }
+}
+
+@objc(DataSourceDelegate)
+protocol DataSourceDelegate: class {
+    @objc optional func array(_ array: FirebaseArray, didAdd object: Any, at index: UInt)
+    @objc optional func array(_ array: FirebaseArray, didChange object: Any, at index: UInt)
+    @objc optional func array(_ array: FirebaseArray, didRemove object: Any, at index: UInt)
+    @objc optional func array(_ array: FirebaseArray, didMove object: Any, from fromIndex: UInt, to toIndex: UInt)
+    @objc optional func array(_ array: FirebaseArray, queryCancelledWithError error: Error)
+    @objc optional func arrayDidBeginUpdates(_ array: FirebaseArray)
+    @objc optional func arrayDidEndUpdates(_ array: FirebaseArray)
+}
+
+class FirebaseArray: NSObject {
+    
+    weak var delegate: DataSourceDelegate?
+    private var snapshots = [FIRDataSnapshot]()
+    private var handles = Set<UInt>()
+    private let query: FUIDataObservable
+    private var isSendingUpdates = false
+    
+    var items: [Any] {
+        get {
+            return self.snapshots
+        }
+    }
+    
+    init(query: FUIDataObservable) {
+        self.query = query
+    }
+    
+    deinit {
+        self.invalidate()
+    }
+    
+    func observeQuery() {
+        
+        if self.handles.count == 5 { return }
+        
+        var handle = self.query.observe(.childAdded, andPreviousSiblingKeyWith: { snap, previousChildKey in
+            self.didUpdate()
+            self.insert(snap, withPreviousChildKey: previousChildKey)
+        }, withCancel: { error in
+            self.raiseError(error: error)
+        })
+        self.handles.insert(handle)
+        
+        handle = self.query.observe(.childChanged, andPreviousSiblingKeyWith: { snap, previousChildKey in
+            self.didUpdate()
+            self.change(snap, withPreviousChildKey: previousChildKey)
+        }, withCancel: { error in
+            self.raiseError(error: error)
+        })
+        self.handles.insert(handle)
+        
+        handle = self.query.observe(.childRemoved, andPreviousSiblingKeyWith: { snap, previousChildKey in
+            self.didUpdate()
+            self.remove(snap, withPreviousChildKey: previousChildKey)
+        }, withCancel: { error in
+            self.raiseError(error: error)
+        })
+        self.handles.insert(handle)
+        
+        handle = self.query.observe(.childMoved, andPreviousSiblingKeyWith: { snap, previousChildKey in
+            self.didUpdate()
+            self.move(snap, withPreviousChildKey: previousChildKey)
+        }, withCancel: { error in
+            self.raiseError(error: error)
+        })
+        self.handles.insert(handle)
+        
+        handle = self.query.observe(.value, andPreviousSiblingKeyWith: { snap, previousChildKey in
+            self.didFinishUpdates()
+        }, withCancel: { error in
+            self.raiseError(error: error)
+        })
+        self.handles.insert(handle)
+    }
+    
+    func didUpdate() {
+        if self.isSendingUpdates { return }
+        self.isSendingUpdates = true
+        self.delegate?.arrayDidBeginUpdates?(self)
+    }
+    
+    func didFinishUpdates() {
+        if !self.isSendingUpdates { return }
+        self.isSendingUpdates = false
+        self.delegate?.arrayDidEndUpdates?(self)
+    }
+    
+    func raiseError(error: Error) {
+        self.delegate?.array?(self, queryCancelledWithError: error)
+    }
+    
+    func invalidate() {
+        for handle in self.handles {
+            self.query.removeObserver(withHandle: handle)
+        }
+    }
+    
+    func index(forKey key: String) -> Int {
+        for (index, snap) in self.snapshots.enumerated() {
+            if snap.key == key {
+                return index
+            }
+        }
+        return NSNotFound
+    }
+    
+    func insert(_ snap: FIRDataSnapshot, withPreviousChildKey previous: String?) {
+        var index: UInt = 0
+        if previous != nil {
+            index = UInt(self.index(forKey: previous!))
+        }
+        self.snapshots.insert(snap, at: Int(index))
+        self.delegate?.array?(self, didAdd: snap, at: index)
+    }
+    
+    func remove(_ snap: FIRDataSnapshot, withPreviousChildKey previous: String?) {
+        let index: UInt = UInt(self.index(forKey: snap.key))
+        self.snapshots.remove(at: Int(index))
+        self.delegate?.array?(self, didRemove: snap, at: index)
+    }
+    
+    func change(_ snap: FIRDataSnapshot, withPreviousChildKey previous: String?) {
+        let index: UInt = UInt(self.index(forKey: snap.key))
+        self.snapshots[Int(index)] = snap
+        self.delegate?.array?(self, didChange: snap, at: index)
+    }
+    
+    func move(_ snap: FIRDataSnapshot, withPreviousChildKey previous: String?) {
+        let fromIndex: UInt = UInt(self.index(forKey: snap.key))
+        self.snapshots.remove(at: Int(fromIndex))
+        var toIndex: UInt = 0
+        if previous != nil {
+            let prevIndex: UInt = UInt(self.index(forKey: previous!))
+            if prevIndex != UInt(NSNotFound) {
+                toIndex = prevIndex + 1
+            }
+        }
+        self.snapshots.insert(snap, at: Int(toIndex))
+        self.delegate?.array?(self, didMove: snap, from: fromIndex, to: toIndex)
     }
 }
 

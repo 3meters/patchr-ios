@@ -72,13 +72,21 @@ class FireMessage: NSObject {
     func addReaction(emoji: Emoji) {
         let userId = UserController.instance.userId!
         let path = "group-messages/\(self.groupId!)/\(self.channelId!)/\(self.id!)/reactions/\(emoji.rawValue)/\(userId)"
-        FireController.db.child(path).setValue(true)
+        FireController.db.child(path).setValue(true) { error, ref in
+            if error != nil {
+                Log.w("Permission denied: \(path)")
+            }
+        }
     }
     
     func removeReaction(emoji: Emoji) {
-        let userId = UserController.instance.userId
+        let userId = UserController.instance.userId!
         let path = "group-messages/\(self.groupId!)/\(self.channelId!)/\(self.id!)/reactions/\(emoji.rawValue)/\(userId)"
-        FireController.db.child(path).removeValue()
+        FireController.db.child(path).removeValue() { error, ref in
+            if error != nil {
+                Log.w("Permission denied: \(path)")
+            }
+        }
     }
     
     func getReactionCount(emoji: Emoji) -> Int {

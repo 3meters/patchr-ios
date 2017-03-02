@@ -26,8 +26,10 @@
 
 
 #import "KSCrashSentry_NSException.h"
+#include "KSCrashSentry_Context.h"
 #import "KSCrashSentry_Private.h"
 #include "KSMach.h"
+#import <Foundation/Foundation.h>
 
 //#define KSLogger_LocalLevel TRACE
 #import "KSLogger.h"

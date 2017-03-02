@@ -19,21 +19,14 @@ class ChannelPickerController: BaseTableController, CLTokenInputViewDelegate {
 
     var heading	= AirLabelTitle()
     var tokenView: AirTokenView!
-    var tableView = AirTableView(frame: CGRect.zero, style: .plain)
     var doneButton: UIBarButtonItem!
 
-    var items: [String: Any] = [:]
-    var itemsFiltered = [FireChannel]()
-    var itemsSource = [FireChannel]()
-
-    var filterText: String?
-    var filterActive = false
-    var flow: Flow = .none
-
+    var channels: [String: Any] = [:]
     var delegate: PickerDelegate?
     var selectedStyle: SelectedStyle = .prominent
     var allowMultiSelect = true
     var simplePicker = false
+    var flow: Flow = .none
 
     /*--------------------------------------------------------------------------------------------
     * MARK: - Lifecycle
@@ -70,7 +63,7 @@ class ChannelPickerController: BaseTableController, CLTokenInputViewDelegate {
     func doneAction(sender: AnyObject?) {
         if isValid() {
             if self.simplePicker {
-                self.delegate?.update(channels: self.items)
+                self.delegate?.update(channels: self.channels)
                 close()
                 return
             }
@@ -78,7 +71,7 @@ class ChannelPickerController: BaseTableController, CLTokenInputViewDelegate {
             let controller = ContactPickerController()
             controller.role = "guests"
             controller.flow = self.flow
-            controller.channels = self.items
+            controller.channels = self.channels
             controller.inputGroupId = self.inputGroupId
             controller.inputGroupTitle = self.inputGroupTitle
             self.navigationController?.pushViewController(controller, animated: true)
@@ -131,11 +124,10 @@ class ChannelPickerController: BaseTableController, CLTokenInputViewDelegate {
         self.tokenView.delegate = self
         self.tokenView.autoresizingMask = [UIViewAutoresizing.flexibleBottomMargin, UIViewAutoresizing.flexibleWidth]
 
-        self.tableView.register(UINib(nibName: "ChannelSearchCell", bundle: nil), forCellReuseIdentifier: "channel-search-cell")
+        self.tableView.register(UINib(nibName: "ChannelSearchCell", bundle: nil), forCellReuseIdentifier: "cell")
         self.tableView.backgroundColor = Theme.colorBackgroundTable
         self.tableView.tableFooterView = UIView()
         self.tableView.delegate = self
-        self.tableView.dataSource = self
         self.tableView.estimatedRowHeight = 36
         self.tableView.separatorInset = UIEdgeInsets.zero
         
@@ -162,8 +154,8 @@ class ChannelPickerController: BaseTableController, CLTokenInputViewDelegate {
             self.navigationItem.rightBarButtonItems = [doneButton]
         }
         
-        if self.items.count > 0 {
-            for (channelId, channelName) in self.items {
+        if self.channels.count > 0 {
+            for (channelId, channelName) in self.channels {
                 let token = CLToken(displayText: channelName as! String, context: channelId as NSObject)
                 self.tokenView.add(token)
             }
@@ -172,80 +164,44 @@ class ChannelPickerController: BaseTableController, CLTokenInputViewDelegate {
     
     func bind() {
         
-        self.itemsSource.removeAll()
-        self.itemsFiltered.removeAll()
-        
         let groupId = StateController.instance.groupId!
         
         let query = FireController.db.child("group-channels/\(groupId)")
             .queryOrdered(byChild: "name")
         
-        query.observe(.value, with: { [weak self] snap in
-            self?.itemsSource.removeAll()
-            if !(snap.value is NSNull) && snap.hasChildren() {
-                for item in snap.children {
-                    let snapChannel = item as! FIRDataSnapshot
-                    if let channel = FireChannel.from(dict: snapChannel.value as? [String: Any], id: snapChannel.key) {
-                        self?.itemsSource.append(channel)
-                    }
-                }
-            }
-            DispatchQueue.main.async {
-                self?.tableView.reloadData()
-            }
-        }, withCancel: { error in
-            Log.w("Permission denied")
-        })
-    }
-    
-    func filter() {
-        
-        self.itemsFiltered.removeAll()
-        for channel in self.itemsSource {
-            let match = channel.name!.lowercased().contains(self.filterText!.lowercased())
-            if match {
-                self.itemsFiltered.append(channel)
-            }
+        self.queryController = DataSourceController()
+        self.queryController.matcher = { searchText, data in
+            let snap = data as! FIRDataSnapshot
+            let dict = snap.value as! [String: Any]
+            let name = dict["name"] as! String
+            return name.lowercased().contains(searchText.lowercased())
         }
         
-        DispatchQueue.main.async {
-            self.tableView.reloadData()
+        self.queryController.bind(to: self.tableView, query: query) { [weak self] tableView, indexPath, data in
+            let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! ChannelListCell
+            if self != nil {
+                let snap = data as! FIRDataSnapshot
+                if let channel = FireChannel.from(dict: snap.value as? [String: Any], id: snap.key) {
+                    let channelId = channel.id!
+                    cell.selectionStyle = .none
+                    cell.reset()
+                    cell.selected(on: (self!.channels[channelId] != nil), style: .normal)
+                    cell.bind(channel: channel)
+                    cell.status?.isHidden = true
+                }
+            }
+            return cell
         }
     }
     
     func isValid() -> Bool {
         
-        if self.items.count == 0 {
+        if self.channels.count == 0 {
             alert(title: "Select a channel")
             return false
         }
         
         return true
-    }
-}
-
-extension ChannelPickerController: UITableViewDataSource {
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "channel-search-cell", for: indexPath) as! ChannelListCell
-        let channel = self.filterActive ? self.itemsFiltered[indexPath.row] : self.itemsSource[indexPath.row]
-        let channelId = channel.id!
-        
-        cell.selectionStyle = .none
-        cell.reset()
-        cell.selected(on: (self.items[channelId] != nil), style: .normal)
-        cell.bind(channel: channel)
-        cell.status?.isHidden = true
-
-        return cell
-    }
-    
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.filterActive ? self.itemsFiltered.count : self.itemsSource.count
-    }
-    
-    func numberOfSections(in: UITableView) -> Int {
-        return 1
     }
 }
 
@@ -257,7 +213,7 @@ extension ChannelPickerController: UITableViewDelegate {
             let channel = cell.channel!
             let channelId = channel.id!
             let channelName = channel.name!
-            let included = (self.items[channelId] != nil)
+            let included = (self.channels[channelId] != nil)
             let token = CLToken(displayText: channelName, context: channelId as NSObject?)
             if included {
                 self.tokenView.remove(token)
@@ -274,29 +230,23 @@ extension ChannelPickerController: UITableViewDelegate {
 extension ChannelPickerController {
     
     func tokenInputView(_ view: CLTokenInputView, didChangeText text: String?) {
-        self.filterActive = (text != nil && !text!.trimmingCharacters(in: .whitespaces).isEmpty)
-        self.filterText = (text != nil) ? text!.trimmingCharacters(in: .whitespaces) : nil
-        if filterActive {
-            filter()
-        }
-        else {
-            DispatchQueue.main.async {
-                self.tableView.reloadData()
-            }
+        if text != nil && !text!.trimmingCharacters(in: .whitespaces).isEmpty {
+            let searchText = text!.trimmingCharacters(in: .whitespaces)
+            self.queryController.filter(searchText: searchText)
         }
     }
     
     func tokenInputView(_ view: CLTokenInputView, didAdd token: CLToken) {
         self.doneButton.isEnabled = (self.tokenView.allTokens.count > 0)
         if let channelId = token.context as? String {
-            self.items[channelId] = token.displayText
+            self.channels[channelId] = token.displayText
         }
     }
     
     func tokenInputView(_ view: CLTokenInputView, didRemove token: CLToken) {
         self.doneButton.isEnabled = (self.tokenView.allTokens.count > 0)
         if let channelId = token.context as? String {
-            self.items.removeValue(forKey: channelId)
+            self.channels.removeValue(forKey: channelId)
         }
     }
     
@@ -314,7 +264,7 @@ extension ChannelPickerController {
         Log.d("tokenForText")
         if let cell = self.tableView.cellForRow(at: IndexPath(row: 0, section: 0)) as? ChannelListCell {
             let channel = cell.channel!
-            self.items[channel.id!] = channel
+            self.channels[channel.id!] = channel
             return CLToken(displayText: channel.name!, context: cell)
         }
         

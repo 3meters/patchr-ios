@@ -164,7 +164,7 @@ class SettingsTableViewController: UITableViewController {
         self.logoutButton.setTitle("Log out".uppercased(), for: .normal)
         self.leaveGroupButton.setTitle("Leave group".uppercased(), for: .normal)
         
-        if StateController.instance.group?.ownedBy == UserController.instance.userId {
+        if StateController.instance.group?.ownedBy == UserController.instance.userId! {
             self.leaveGroupCell.isHidden = true
         }
         
@@ -195,10 +195,10 @@ class SettingsTableViewController: UITableViewController {
     func toggleAction(sender: AnyObject?) {
         if let switcher = sender as? UISwitch {
             if switcher.tag == Setting.hideEmail.rawValue {
-                let groupId = StateController.instance.groupId
-                let userId = UserController.instance.userId
-                let memberGroupsPath = "member-groups/\(userId!)/\(groupId!)/email"
-                let groupMembersPath = "group-members/\(groupId!)/\(userId!)/email"
+                let groupId = StateController.instance.groupId!
+                let userId = UserController.instance.userId!
+                let memberGroupsPath = "member-groups/\(userId)/\(groupId)/email"
+                let groupMembersPath = "group-members/\(groupId)/\(userId)/email"
                 if switcher.isOn {
                     let updates: [String: Any] = [
                         groupMembersPath: NSNull(),
@@ -277,7 +277,7 @@ extension SettingsTableViewController {
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         
         if indexPath.section == 1 && indexPath.row == 2 {
-            if StateController.instance.group?.ownedBy == UserController.instance.userId {
+            if StateController.instance.group?.ownedBy == UserController.instance.userId! {
                 return CGFloat(0)
             }
         }

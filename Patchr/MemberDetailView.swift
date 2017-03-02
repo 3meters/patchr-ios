@@ -127,10 +127,12 @@ class MemberDetailView: UIView {
             }
         }
         else if fullName != nil {
+            self.photoView.showGradient = false
             let seed = Utils.numberFromName(fullname: user.id!)
             self.photoView.backgroundColor = ColorArray.randomColor(seed: seed)
         }
         else {
+            self.photoView.showGradient = false
             self.photoView.backgroundColor = Colors.accentColorFill
         }
         

@@ -27,7 +27,6 @@ class ContactPickerController: BaseTableController, UITableViewDelegate, UITable
 
     var heading = AirLabelTitle()
     var tokenView: AirTokenView!
-    var tableView = UITableView(frame: CGRect.zero, style: .plain)
     var doneButton: UIBarButtonItem!
 
     var itemsBySection = [String: [CNContact]]()

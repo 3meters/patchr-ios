@@ -25,6 +25,7 @@ class BaseSlackController: SLKTextViewController {
         }
     }
     
+    var queryController: DataSourceController!
     var channel: FireChannel!
     var searchResult: [String]?
     var editingMessage: FireMessage!
@@ -37,7 +38,7 @@ class BaseSlackController: SLKTextViewController {
     var photoHolder	: UIVisualEffectView!
     var rule = UIView()
 	
-    var tableViewDataSource: MessagesDataSource!
+    var array: FUIArray!
 
     override var tableView: UITableView {
         get {
@@ -124,7 +125,7 @@ class BaseSlackController: SLKTextViewController {
         hidePhotoEdit()
         self.photoEditView.reset()
         
-        if self.tableViewDataSource.items.count > 0 {
+        if self.queryController.items.count > 0 {
             let indexPath = IndexPath(row: 0, section: 0)
             let scrollPosition: UITableViewScrollPosition = self.isInverted ? .bottom : .bottom
             self.tableView.scrollToRow(at: indexPath, at: scrollPosition, animated: true)

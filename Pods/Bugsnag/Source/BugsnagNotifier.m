@@ -41,7 +41,7 @@
 #import <AppKit/AppKit.h>
 #endif
 
-NSString *const NOTIFIER_VERSION = @"5.6.5";
+NSString *const NOTIFIER_VERSION = @"5.7.0";
 NSString *const NOTIFIER_URL = @"https://github.com/bugsnag/bugsnag-cocoa";
 NSString *const BSTabCrash = @"crash";
 NSString *const BSTabConfig = @"config";
@@ -73,16 +73,16 @@ static struct bugsnag_data_t g_bugsnag_data;
  */
 void BSSerializeDataCrashHandler(const KSCrashReportWriter *writer) {
     if (g_bugsnag_data.configJSON) {
-        writer->addJSONElement(writer, "config", g_bugsnag_data.configJSON);
+        writer->addJSONElement(writer, "config", g_bugsnag_data.configJSON, true);
     }
     if (g_bugsnag_data.metaDataJSON) {
-        writer->addJSONElement(writer, "metaData", g_bugsnag_data.metaDataJSON);
+        writer->addJSONElement(writer, "metaData", g_bugsnag_data.metaDataJSON, true);
     }
     if (g_bugsnag_data.stateJSON) {
-        writer->addJSONElement(writer, "state", g_bugsnag_data.stateJSON);
+        writer->addJSONElement(writer, "state", g_bugsnag_data.stateJSON, true);
     }
     if (g_bugsnag_data.userOverridesJSON) {
-        writer->addJSONElement(writer, "overrides", g_bugsnag_data.userOverridesJSON);
+        writer->addJSONElement(writer, "overrides", g_bugsnag_data.userOverridesJSON, true);
     }
     if (g_bugsnag_data.onCrash) {
         g_bugsnag_data.onCrash(writer);

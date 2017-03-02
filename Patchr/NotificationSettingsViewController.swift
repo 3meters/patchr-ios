@@ -101,10 +101,10 @@ extension NotificationSettingsViewController {
         
         if indexPath.section == 0 {
             
-            let groupId = StateController.instance.groupId
-            let userId = UserController.instance.userId
-            let memberGroupsPath = "member-groups/\(userId!)/\(groupId!)/notifications"
-            let groupMembersPath = "group-members/\(groupId!)/\(userId!)/notifications"
+            let groupId = StateController.instance.groupId!
+            let userId = UserController.instance.userId!
+            let memberGroupsPath = "member-groups/\(userId)/\(groupId)/notifications"
+            let groupMembersPath = "group-members/\(groupId)/\(userId)/notifications"
             
             let selectedCell = tableView.cellForRow(at: indexPath)
             

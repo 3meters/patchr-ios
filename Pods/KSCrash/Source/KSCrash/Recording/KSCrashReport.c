@@ -43,10 +43,10 @@
 //#define KSLogger_LocalLevel TRACE
 #include "KSLogger.h"
 
-#include <mach-o/dyld.h>
-#include <stdio.h>
-#include <fcntl.h>
 #include <errno.h>
+#include <fcntl.h>
+#include <stdio.h>
+#include <time.h>
 #include <unistd.h>
 
 
@@ -149,16 +149,16 @@ void kscrw_i_addFloatingPointElement(const KSCrashReportWriter* const writer,
 
 void kscrw_i_addIntegerElement(const KSCrashReportWriter* const writer,
                                const char* const key,
-                               const long long value)
+                               const int64_t value)
 {
     ksjson_addIntegerElement(getJsonContext(writer), key, value);
 }
 
 void kscrw_i_addUIntegerElement(const KSCrashReportWriter* const writer,
                                 const char* const key,
-                                const unsigned long long value)
+                                const uint64_t value)
 {
-    ksjson_addIntegerElement(getJsonContext(writer), key, (long long)value);
+    ksjson_addIntegerElement(getJsonContext(writer), key, (int64_t)value);
 }
 
 void kscrw_i_addStringElement(const KSCrashReportWriter* const writer,
@@ -186,14 +186,12 @@ void kscrw_i_addTextFileElement(const KSCrashReportWriter* const writer,
     }
 
     char buffer[512];
-    ssize_t bytesRead;
-    for(bytesRead = read(fd, buffer, sizeof(buffer));
+    int bytesRead;
+    for(bytesRead = (int)read(fd, buffer, sizeof(buffer));
         bytesRead > 0;
-        bytesRead = read(fd, buffer, sizeof(buffer)))
+        bytesRead = (int)read(fd, buffer, sizeof(buffer)))
     {
-        if(ksjson_appendStringElement(getJsonContext(writer),
-                                      buffer,
-                                      (size_t)bytesRead) != KSJSON_OK)
+        if(ksjson_appendStringElement(getJsonContext(writer), buffer, bytesRead) != KSJSON_OK)
         {
             KSLOG_ERROR("Could not append string element");
             goto done;
@@ -208,7 +206,7 @@ done:
 void kscrw_i_addDataElement(const KSCrashReportWriter* const writer,
                             const char* const key,
                             const char* const value,
-                            const size_t length)
+                            const int length)
 {
     ksjson_addDataElement(getJsonContext(writer), key, value, length);
 }
@@ -221,7 +219,7 @@ void kscrw_i_beginDataElement(const KSCrashReportWriter* const writer,
 
 void kscrw_i_appendDataElement(const KSCrashReportWriter* const writer,
                                const char* const value,
-                               const size_t length)
+                               const int length)
 {
     ksjson_appendDataElement(getJsonContext(writer), value, length);
 }
@@ -274,21 +272,20 @@ void kscrw_i_addUUIDElement(const KSCrashReportWriter* const writer,
             *dst++ = g_hexNybbles[(*src++)&15];
         }
 
-        ksjson_addStringElement(getJsonContext(writer),
-                                key,
-                                uuidBuffer,
-                                (size_t)(dst - uuidBuffer));
+        ksjson_addStringElement(getJsonContext(writer), key, uuidBuffer, (int)(dst - uuidBuffer));
     }
 }
 
 void kscrw_i_addJSONElement(const KSCrashReportWriter* const writer,
                             const char* const key,
-                            const char* const jsonElement)
+                            const char* const jsonElement,
+                            bool closeLastContainer)
 {
     int jsonResult = ksjson_addJSONElement(getJsonContext(writer),
                                            key,
                                            jsonElement,
-                                           strlen(jsonElement));
+                                           (int)strlen(jsonElement),
+                                           closeLastContainer);
     if(jsonResult != KSJSON_OK)
     {
         char errorBuff[100];
@@ -311,36 +308,10 @@ void kscrw_i_addJSONElement(const KSCrashReportWriter* const writer,
 
 void kscrw_i_addJSONElementFromFile(const KSCrashReportWriter* const writer,
                                     const char* const key,
-                                    const char* const filePath)
+                                    const char* const filePath,
+                                    bool closeLastContainer)
 {
-    const int fd = open(filePath, O_RDONLY);
-    if(fd < 0)
-    {
-        KSLOG_ERROR("Could not open file %s: %s", filePath, strerror(errno));
-        return;
-    }
-    
-    if(ksjson_beginElement(getJsonContext(writer), key) != KSJSON_OK)
-    {
-        KSLOG_ERROR("Could not start JSON element");
-        goto done;
-    }
-    
-    char buffer[512];
-    ssize_t bytesRead;
-    while((bytesRead = read(fd, buffer, sizeof(buffer))) > 0)
-    {
-        if(ksjson_addRawJSONData(getJsonContext(writer),
-                                 buffer,
-                                 (size_t)bytesRead) != KSJSON_OK)
-        {
-            KSLOG_ERROR("Could not append JSON data");
-            goto done;
-        }
-    }
-    
-done:
-    close(fd);
+    ksjson_addJSONFromFile(getJsonContext(writer), key, filePath, closeLastContainer);
 }
 
 void kscrw_i_beginObject(const KSCrashReportWriter* const writer,
@@ -360,12 +331,69 @@ void kscrw_i_endContainer(const KSCrashReportWriter* const writer)
     ksjson_endContainer(getJsonContext(writer));
 }
 
-int kscrw_i_addJSONData(const char* const data,
-                        const size_t length,
-                        void* const userData)
+typedef struct
 {
-    const int fd = *((int*)userData);
-    const bool success = ksfu_writeBytesToFD(fd, data, (ssize_t)length);
+    char buffer[1024];
+    int length;
+    int position;
+    int fd;
+} BufferedWriter;
+
+static bool flushBufferedWriter(BufferedWriter* writer)
+{
+    if(writer->fd > 0 && writer->position > 0)
+    {
+        if(!ksfu_writeBytesToFD(writer->fd, writer->buffer, writer->position))
+        {
+            return false;
+        }
+        writer->position = 0;
+    }
+    return true;
+}
+
+static void closeBufferedWriter(BufferedWriter* writer)
+{
+    if(writer->fd > 0)
+    {
+        flushBufferedWriter(writer);
+        close(writer->fd);
+        writer->fd = -1;
+    }
+}
+
+static bool openBufferedWriter(BufferedWriter* writer, const char* const path)
+{
+    writer->position = 0;
+    writer->length = sizeof(writer->buffer);
+    writer->fd = open(path, O_RDWR | O_CREAT | O_EXCL, 0644);
+    if(writer->fd < 0)
+    {
+        KSLOG_ERROR("Could not open crash report file %s: %s", path, strerror(errno));
+        return false;
+    }
+    return true;
+}
+
+static bool writeBufferedWriter(BufferedWriter* writer, const char* restrict const data, const int length)
+{
+    if(length > writer->length - writer->position)
+    {
+        flushBufferedWriter(writer);
+    }
+    if(length > writer->length)
+    {
+        return ksfu_writeBytesToFD(writer->fd, data, length);
+    }
+    memcpy(writer->buffer + writer->position, data, length);
+    writer->position += length;
+    return true;
+}
+
+int kscrw_i_addJSONData(const char* restrict const data, const int length, void* restrict userData)
+{
+    BufferedWriter* writer = (BufferedWriter*)userData;
+    const bool success = writeBufferedWriter(writer, data, length);
     return success ? KSJSON_OK : KSJSON_ERROR_CANNOT_ADD_DATA;
 }
 
@@ -485,7 +513,7 @@ STRUCT_MCONTEXT_L* kscrw_i_getMachineContext(const KSCrash_SentryContext* const 
  * @param backtraceLength In: The length of backtraceBuffer.
  *                        Out: The length of the backtrace.
  *
- * @param skippedEntries: Out: The number of entries that were skipped due to
+ * @param skippedEntries Out: The number of entries that were skipped due to
  *                             stack overflow.
  *
  * @return The backtrace, or NULL if not found.
@@ -850,19 +878,19 @@ void kscrw_i_writeUnknownObjectContents(const KSCrashReportWriter* const writer,
     (*limit)--;
     const void* object = (const void*)objectAddress;
     KSObjCIvar ivars[10];
-    char s8;
-    short s16;
+    int8_t s8;
+    int16_t s16;
     int sInt;
-    long s32;
-    long long s64;
-    unsigned char u8;
-    unsigned short u16;
+    int32_t s32;
+    int64_t s64;
+    uint8_t u8;
+    uint16_t u16;
     unsigned int uInt;
-    unsigned long u32;
-    unsigned long long u64;
+    uint32_t u32;
+    uint64_t u64;
     float f32;
     double f64;
-    _Bool b;
+    bool b;
     void* pointer;
     
     
@@ -870,14 +898,14 @@ void kscrw_i_writeUnknownObjectContents(const KSCrashReportWriter* const writer,
     {
         if(ksobjc_isTaggedPointer(object))
         {
-            writer->addIntegerElement(writer, "tagged_payload", (long long)ksobjc_taggedPointerPayload(object));
+            writer->addIntegerElement(writer, "tagged_payload", (int64_t)ksobjc_taggedPointerPayload(object));
         }
         else
         {
             const void* class = ksobjc_isaPointer(object);
-            size_t ivarCount = ksobjc_ivarList(class, ivars, sizeof(ivars)/sizeof(*ivars));
-            *limit -= (int)ivarCount;
-            for(size_t i = 0; i < ivarCount; i++)
+            int ivarCount = ksobjc_ivarList(class, ivars, sizeof(ivars)/sizeof(*ivars));
+            *limit -= ivarCount;
+            for(int i = 0; i < ivarCount; i++)
             {
                 KSObjCIvar* ivar = &ivars[i];
                 switch(ivar->type[0])
@@ -954,7 +982,7 @@ bool kscrw_i_isRestrictedClass(const char* name)
 {
     if(g_introspectionRules->restrictedClasses != NULL)
     {
-        for(size_t i = 0; i < g_introspectionRules->restrictedClassesCount; i++)
+        for(int i = 0; i < g_introspectionRules->restrictedClassesCount; i++)
         {
             if(strcmp(name, g_introspectionRules->restrictedClasses[i]) == 0)
             {
@@ -1130,7 +1158,7 @@ void kscrw_i_writeAddressReferencedByString(const KSCrashReportWriter* const wri
                                             const char* string)
 {
     uint64_t address = 0;
-    if(string == NULL || !ksstring_extractHexValue(string, strlen(string), &address))
+    if(string == NULL || !ksstring_extractHexValue(string, (int)strlen(string), &address))
     {
         return;
     }
@@ -1149,7 +1177,7 @@ void kscrw_i_writeAddressReferencedByString(const KSCrashReportWriter* const wri
  *
  * @param address The memory address.
  *
- * @param dlInfo Information about the nearest symbols to the address.
+ * @param info Information about the nearest symbols to the address.
  */
 void kscrw_i_writeBacktraceEntry(const KSCrashReportWriter* const writer,
                                  const char* const key,
@@ -1256,7 +1284,7 @@ void kscrw_i_writeStackContents(const KSCrashReportWriter* const writer,
         writer->addUIntegerElement(writer, KSCrashField_StackPtr, sp);
         writer->addBooleanElement(writer, KSCrashField_Overflow, isStackOverflow);
         uint8_t stackBuffer[kStackContentsTotalDistance * sizeof(sp)];
-        size_t copyLength = highAddress - lowAddress;
+        int copyLength = (int)(highAddress - lowAddress);
         if(ksmach_copyMem((void*)lowAddress, stackBuffer, copyLength) == KERN_SUCCESS)
         {
             writer->addDataElement(writer, KSCrashField_Contents, (void*)stackBuffer, copyLength);
@@ -1385,7 +1413,7 @@ void kscrw_i_writeExceptionRegisters(const KSCrashReportWriter* const writer,
  *
  * @param machineContext The context to retrieve the registers from.
  *
- * @param isCrashedThread If true, this context represents the crashing thread.
+ * @param isCrashedContext If true, this context represents the crashing thread.
  */
 void kscrw_i_writeRegisters(const KSCrashReportWriter* const writer,
                             const char* const key,
@@ -1468,7 +1496,11 @@ void kscrw_i_writeNotableAddresses(const KSCrashReportWriter* const writer,
  *
  * @param index The thread's index relative to all threads.
  *
- * @paran If true, write any notable addresses found.
+ * @param writeNotableAddresses If true, write any notable addresses found.
+ *
+ * @param searchThreadNames If true, search thread names as well.
+ *
+ * @param searchQueueNames If true, search queue names as well.
  */
 void kscrw_i_writeThread(const KSCrashReportWriter* const writer,
                          const char* const key,
@@ -1913,7 +1945,7 @@ void kscrw_i_writeError(const KSCrashReportWriter* const writer,
                     }
                     if(crash->userException.customStackTrace != NULL)
                     {
-                        writer->addJSONElement(writer, KSCrashField_Backtrace, crash->userException.customStackTrace);
+                        writer->addJSONElement(writer, KSCrashField_Backtrace, crash->userException.customStackTrace, true);
                     }
                 }
                 writer->endContainer(writer);
@@ -2025,6 +2057,13 @@ void kscrw_i_writeReportInfo(const KSCrashReportWriter* const writer,
     writer->endContainer(writer);
 }
 
+static void writeRecrash(const KSCrashReportWriter* const writer,
+                         const char* const key,
+                         const char* crashReportPath)
+{
+    writer->addJSONFileElement(writer, key, crashReportPath, true);
+}
+
 
 #pragma mark Setup
 
@@ -2056,24 +2095,6 @@ void kscrw_i_prepareReportWriter(KSCrashReportWriter* const writer,
     writer->context = context;
 }
 
-/** Open the crash report file.
- *
- * @param path The path to the file.
- *
- * @return The file descriptor, or -1 if an error occurred.
- */
-int kscrw_i_openCrashReportFile(const char* const path)
-{
-    int fd = open(path, O_RDWR | O_CREAT | O_EXCL, 0644);
-    if(fd < 0)
-    {
-        KSLOG_ERROR("Could not open crash report file %s: %s",
-                    path,
-                    strerror(errno));
-    }
-    return fd;
-}
-
 /** Record whether the crashed thread had a stack overflow or not.
  *
  * @param crashContext the context.
@@ -2098,13 +2119,20 @@ void kscrw_i_callUserCrashHandler(KSCrash_Context* const crashContext,
 #pragma mark - Main API -
 // ============================================================================
 
-void kscrashreport_writeMinimalReport(KSCrash_Context* const crashContext,
+void kscrashreport_writeRecrashReport(KSCrash_Context* const crashContext,
                                       const char* const path)
 {
-    KSLOG_INFO("Writing minimal crash report to %s", path);
+    BufferedWriter bufferedWriter = {{0}};
+    static char tempPath[1000];
+    strncpy(tempPath, path, sizeof(tempPath) - 10);
+    strncpy(tempPath + strlen(tempPath) - 5, ".old", 5);
+    KSLOG_INFO("Writing recrash report to %s", path);
 
-    int fd = kscrw_i_openCrashReportFile(path);
-    if(fd < 0)
+    if(rename(path, tempPath) < 0)
+    {
+        KSLOG_ERROR("Could not rename %s to %s: %s", path, tempPath, strerror(errno));
+    }
+    if(!openBufferedWriter(&bufferedWriter, path))
     {
         return;
     }
@@ -2114,23 +2142,27 @@ void kscrashreport_writeMinimalReport(KSCrash_Context* const crashContext,
     kscrw_i_updateStackOverflowStatus(crashContext);
 
     KSJSONEncodeContext jsonContext;
-    jsonContext.userData = &fd;
+    jsonContext.userData = &bufferedWriter;
     KSCrashReportWriter concreteWriter;
     KSCrashReportWriter* writer = &concreteWriter;
     kscrw_i_prepareReportWriter(writer, &jsonContext);
 
-    ksjson_beginEncode(getJsonContext(writer),
-                       true,
-                       kscrw_i_addJSONData,
-                       &fd);
+    ksjson_beginEncode(getJsonContext(writer), true, kscrw_i_addJSONData, &bufferedWriter);
 
     writer->beginObject(writer, KSCrashField_Report);
     {
+        writeRecrash(writer, KSCrashField_RecrashReport, tempPath);
+        flushBufferedWriter(&bufferedWriter);
+        if(remove(tempPath) < 0)
+        {
+            KSLOG_ERROR("Could not remove %s: %s", tempPath, strerror(errno));
+        }
         kscrw_i_writeReportInfo(writer,
                                 KSCrashField_Report,
                                 KSCrashReportType_Minimal,
                                 crashContext->config.crashID,
                                 crashContext->config.processName);
+        flushBufferedWriter(&bufferedWriter);
 
         writer->beginObject(writer, KSCrashField_Crash);
         {
@@ -2140,24 +2172,25 @@ void kscrashreport_writeMinimalReport(KSCrash_Context* const crashContext,
                                 crashContext->crash.offendingThread,
                                 kscrw_i_threadIndex(crashContext->crash.offendingThread),
                                 false, false, false);
+            flushBufferedWriter(&bufferedWriter);
             kscrw_i_writeError(writer, KSCrashField_Error, &crashContext->crash);
+            flushBufferedWriter(&bufferedWriter);
         }
         writer->endContainer(writer);
     }
     writer->endContainer(writer);
 
     ksjson_endEncode(getJsonContext(writer));
-
-    close(fd);
+    closeBufferedWriter(&bufferedWriter);
 }
 
 void kscrashreport_writeStandardReport(KSCrash_Context* const crashContext,
                                        const char* const path)
 {
     KSLOG_INFO("Writing crash report to %s", path);
+    BufferedWriter bufferedWriter = {{0}};
 
-    int fd = kscrw_i_openCrashReportFile(path);
-    if(fd < 0)
+    if(!openBufferedWriter(&bufferedWriter, path))
     {
         return;
     }
@@ -2167,12 +2200,12 @@ void kscrashreport_writeStandardReport(KSCrash_Context* const crashContext,
     kscrw_i_updateStackOverflowStatus(crashContext);
 
     KSJSONEncodeContext jsonContext;
-    jsonContext.userData = &fd;
+    jsonContext.userData = &bufferedWriter;
     KSCrashReportWriter concreteWriter;
     KSCrashReportWriter* writer = &concreteWriter;
     kscrw_i_prepareReportWriter(writer, &jsonContext);
 
-    ksjson_beginEncode(getJsonContext(writer), true, kscrw_i_addJSONData, &fd);
+    ksjson_beginEncode(getJsonContext(writer), true, kscrw_i_addJSONData, &bufferedWriter);
 
     writer->beginObject(writer, KSCrashField_Report);
     {
@@ -2181,27 +2214,28 @@ void kscrashreport_writeStandardReport(KSCrash_Context* const crashContext,
                                 KSCrashReportType_Standard,
                                 crashContext->config.crashID,
                                 crashContext->config.processName);
+        flushBufferedWriter(&bufferedWriter);
 
         kscrw_i_writeBinaryImages(writer, KSCrashField_BinaryImages);
+        flushBufferedWriter(&bufferedWriter);
 
         kscrw_i_writeProcessState(writer, KSCrashField_ProcessState);
+        flushBufferedWriter(&bufferedWriter);
 
         if(crashContext->config.systemInfoJSON != NULL)
         {
-            kscrw_i_addJSONElement(writer, KSCrashField_System, crashContext->config.systemInfoJSON);
+            kscrw_i_addJSONElement(writer, KSCrashField_System, crashContext->config.systemInfoJSON, false);
+            flushBufferedWriter(&bufferedWriter);
         }
-
-        writer->beginObject(writer, KSCrashField_SystemAtCrash);
+        else
         {
-            kscrw_i_writeMemoryInfo(writer, KSCrashField_Memory);
-            kscrw_i_writeAppStats(writer, KSCrashField_AppStats, &crashContext->state);
+            writer->beginObject(writer, KSCrashField_System);
         }
+        kscrw_i_writeMemoryInfo(writer, KSCrashField_Memory);
+        flushBufferedWriter(&bufferedWriter);
+        kscrw_i_writeAppStats(writer, KSCrashField_AppStats, &crashContext->state);
+        flushBufferedWriter(&bufferedWriter);
         writer->endContainer(writer);
-
-        if(crashContext->config.userInfoJSON != NULL)
-        {
-            kscrw_i_addJSONElement(writer, KSCrashField_User, crashContext->config.userInfoJSON);
-        }
 
         writer->beginObject(writer, KSCrashField_Crash);
         {
@@ -2211,24 +2245,33 @@ void kscrashreport_writeStandardReport(KSCrash_Context* const crashContext,
                                     crashContext->config.introspectionRules.enabled,
                                     crashContext->config.searchThreadNames,
                                     crashContext->config.searchQueueNames);
+            flushBufferedWriter(&bufferedWriter);
             kscrw_i_writeError(writer, KSCrashField_Error, &crashContext->crash);
+            flushBufferedWriter(&bufferedWriter);
         }
         writer->endContainer(writer);
 
+        if(crashContext->config.userInfoJSON != NULL)
+        {
+            kscrw_i_addJSONElement(writer, KSCrashField_User, crashContext->config.userInfoJSON, false);
+            flushBufferedWriter(&bufferedWriter);
+        }
+        else
+        {
+            writer->beginObject(writer, KSCrashField_User);
+        }
         if(crashContext->config.onCrashNotify != NULL)
         {
-            writer->beginObject(writer, KSCrashField_UserAtCrash);
-            {
-                kscrw_i_callUserCrashHandler(crashContext, writer);
-            }
-            writer->endContainer(writer);
+            flushBufferedWriter(&bufferedWriter);
+            kscrw_i_callUserCrashHandler(crashContext, writer);
+            flushBufferedWriter(&bufferedWriter);
         }
+        writer->endContainer(writer);
     }
     writer->endContainer(writer);
     
     ksjson_endEncode(getJsonContext(writer));
-    
-    close(fd);
+    closeBufferedWriter(&bufferedWriter);
 }
 
 void kscrashreport_logCrash(const KSCrash_Context* const crashContext)
