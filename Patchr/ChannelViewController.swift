@@ -444,7 +444,7 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
         button.addTarget(self, action: #selector(openGalleryAction(sender:)), for: .touchUpInside)
         button.showsTouchWhenHighlighted = true
         button.setImage(UIImage(named: "imgGallery2Light"), for: .normal)
-        button.imageEdgeInsets = UIEdgeInsetsMake(6, 6, 6, 6);
+        button.imageEdgeInsets = UIEdgeInsetsMake(6, 6, 6, 6)
         let photosButton = UIBarButtonItem(customView: button)
         
         /* Menu button */
@@ -453,7 +453,7 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
         button.addTarget(self, action: #selector(openMenuAction(sender:)), for: .touchUpInside)
         button.showsTouchWhenHighlighted = true
         button.setImage(UIImage(named: "imgOverflowVerticalLight"), for: .normal)
-        button.imageEdgeInsets = UIEdgeInsetsMake(8, 16, 8, 0);
+        button.imageEdgeInsets = UIEdgeInsetsMake(8, 16, 8, 0)
         let moreButton = UIBarButtonItem(customView: button)
         
         self.navigationItem.setLeftBarButtonItems([self.navButton, spacerFixed, self.titleButton], animated: true)
@@ -502,7 +502,7 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
         let query = FireController.db.child("group-messages/\(groupId)/\(channelId)")
             .queryOrdered(byChild: "created_at_desc")
         
-        self.queryController = DataSourceController()
+        self.queryController = DataSourceController(name: "channel_view")
         
         self.queryController.bind(to: self.tableView, query: query) { [weak self] tableView, indexPath, data in
             
@@ -811,11 +811,12 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
             }
 
             let inviteAction = UIAlertAction(title: "Invite to channel", style: .default) { action in
-                let controller = ContactPickerController()
-                controller.role = "guests"
-                controller.channels = [self.channel.id!: self.channel.name!]
-                controller.inputGroupId = StateController.instance.groupId!
-                controller.inputGroupTitle = StateController.instance.group.title
+                
+                let controller = ChannelInviteController()
+                controller.flow = .none
+                controller.inputChannelId = self.channel.id!
+                controller.inputChannelName = self.channel.name!
+                controller.inputAsOwner = isOwner
                 let wrapper = AirNavigationController(rootViewController: controller)
                 UIViewController.topMostViewController()?.present(wrapper, animated: true, completion: nil)
             }

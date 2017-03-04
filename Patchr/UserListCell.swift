@@ -50,6 +50,7 @@ class UserListCell: UITableViewCell {
     }
     
     func bind(contact: CNContact, status: String) {
+        
         self.roleLabel?.isHidden = true
         self.actionButton?.isHidden = true
         self.presenceView?.isHidden = true
@@ -96,10 +97,10 @@ class UserListCell: UITableViewCell {
         }
         
         if user.id == UserController.instance.userId! {
-            self.title?.text = "\(user.profile?.fullName ?? user.username!) (you)"
+            self.title?.text = "\(user.fullName!) (you)"
         }
         else {
-            self.title?.text = user.profile?.fullName ?? user.username!
+            self.title?.text = user.fullName!
         }
         
         if user.username != nil {

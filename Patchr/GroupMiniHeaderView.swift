@@ -30,7 +30,7 @@ class GroupMiniHeaderView: BaseDetailView {
     
     func initialize() {
         
-        self.clipsToBounds = true
+        self.clipsToBounds = false
         self.backgroundColor = Theme.colorBackgroundForm
         
         let gradient = CAGradientLayer()
@@ -75,7 +75,7 @@ class GroupMiniHeaderView: BaseDetailView {
         self.subtitle.bounds.size.width = columnWidth
         self.subtitle.sizeToFit()
         
-        self.gradientView.anchorTopCenterFillingWidth(withLeftAndRightPadding: 0, topPadding: 0, height: 24)
+        self.gradientView.anchorTopCenterFillingWidth(withLeftAndRightPadding: 0, topPadding: -400, height: 424)
         self.photoControl.anchorBottomLeft(withLeftPadding: 16, bottomPadding: 12, width: 48, height: 48)
         
         if !self.title.isHidden {

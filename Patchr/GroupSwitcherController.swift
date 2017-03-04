@@ -256,7 +256,7 @@ class GroupSwitcherController: BaseTableController {
             let query = FireController.db.child("member-groups/\(userId)")
                 .queryOrdered(byChild: "index_priority_joined_at_desc")
             
-            self.queryController = DataSourceController()
+            self.queryController = DataSourceController(name: "group_switcher")
             
             self.queryController.bind(to: self.tableView, query: query) { [weak self] tableView, indexPath, data in
                 let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! GroupListCell

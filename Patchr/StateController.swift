@@ -121,6 +121,11 @@ class StateController: NSObject {
             
             Log.d("Current group: \(groupId)")
             
+            if self.groupId != nil {
+                FireController.db.child("channel-names/\(self.groupId!)").keepSynced(false)
+            }
+            FireController.db.child("channel-names/\(groupId)").keepSynced(true)
+            
             self.groupId = groupId
             NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.GroupDidSwitch), object: self, userInfo: userInfo)
             UserDefaults.standard.set(groupId, forKey: PerUserKey(key: Prefs.lastGroupId))

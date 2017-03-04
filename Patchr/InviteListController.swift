@@ -132,7 +132,7 @@ class InviteListController: BaseTableController, UITableViewDelegate {
             self.tableView.reloadData()
         }
         
-        self.queryController = DataSourceController()
+        self.queryController = DataSourceController(name:"invite_list")
         self.queryController.bind(to: self.tableView, query: query) { [weak self] tableView, indexPath, data in
             
             let snap = data as! FIRDataSnapshot

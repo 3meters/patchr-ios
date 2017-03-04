@@ -126,8 +126,8 @@ class GroupCreateController: BaseEditViewController {
                 if CNContactStore.authorizationStatus(for: .contacts) == .authorized {
                     /* Straight to contact picker */
                     let controller = ContactPickerController()
-                    controller.role = "members"
                     controller.flow = self.flow
+                    controller.inputRole = "members"
                     controller.inputGroupId = groupId
                     controller.inputGroupTitle = self.groupTitleField.text!
                     self.navigationController?.setViewControllers([controller], animated: true)

@@ -91,66 +91,75 @@ class UserController: NSObject {
         
         var calledBack = false
         
-        guard userId != self.userId else {
+        if userId != self.userId {
+            
+            Log.i("User logged in: \(userId)")
+            
+            if self.userId != nil {
+                FireController.db.child("unreads/\(self.userId!)").keepSynced(false)
+                FireController.db.child("member-groups/\(self.userId!)").keepSynced(false)
+                FireController.db.child("member-channels/\(self.userId!)").keepSynced(false)
+            }
+            
+            FireController.db.child("unreads/\(userId)").keepSynced(true)
+            FireController.db.child("member-groups/\(userId)").keepSynced(true)
+            FireController.db.child("member-channels/\(userId)").keepSynced(true)
+            
+            if let token = FIRInstanceID.instanceID().token() {
+                Log.i("UserController: setting firebase messaging token: \(token)")
+                FireController.db.child("installs/\(userId)/\(token)").setValue(true)
+            }
+            else {
+                Log.w("No firebase messaging token - device not registered for remote notifications")
+            }
+            
+            self.userId = userId
+            Reporting.updateUser(user: FIRAuth.auth()?.currentUser)
+            NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.UserDidSwitch), object: nil, userInfo: nil)
+            
+            /* Per user defaults */
+            if UserDefaults.standard.string(forKey: PerUserKey(key: Prefs.soundEffects)) == nil {
+                UserDefaults.standard.setValue(true, forKey: PerUserKey(key: Prefs.soundEffects))
+            }
+            
+            self.userQuery?.remove()
+            self.userQuery = UserQuery(userId: userId, groupId: nil, trackPresence: true)
+            self.userQuery!.observe(with: { error, user in
+                
+                guard user != nil && error == nil else {
+                    assertionFailure("User not found, no longer exists or permission denied")
+                    then?(nil)
+                    return
+                }
+                
+                if self.user != nil {
+                    Log.d("User updated: \(user!.id!)")
+                }
+                
+                self.user = user
+                
+                if !calledBack {
+                    then?(nil)
+                    calledBack = true
+                }
+                
+            })
+            
+            self.counterRef = FireController.db.child("counters/\(userId)")
+            self.counterHandle = self.counterRef!.observe(.value, with: { [weak self] snap in
+                var count = 0
+                if let unreads = snap.value as? [String: Any] {
+                    count = unreads["unreads"] as! Int
+                }
+                self?.unreads = count
+                UIApplication.shared.applicationIconBadgeNumber = count
+                NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.UnreadChange), object: self, userInfo: nil)
+            })
+        }
+        else {
             then?(nil)
             return
         }
-        
-        Log.i("User logged in: \(userId)")
-        
-        FireController.db.child("unreads/\(userId)").keepSynced(true)
-        FireController.db.child("member-groups/\(userId)").keepSynced(true)
-        FireController.db.child("member-channels/\(userId)").keepSynced(true)
-        
-        if let token = FIRInstanceID.instanceID().token() {
-            Log.i("UserController: setting firebase messaging token: \(token)")
-            FireController.db.child("installs/\(userId)/\(token)").setValue(true)
-        }
-        else {
-            Log.w("No firebase messaging token - device not registered for remote notifications")
-        }
-        
-        self.userId = userId
-        
-        /* Per user defaults */
-        if UserDefaults.standard.string(forKey: PerUserKey(key: Prefs.soundEffects)) == nil {
-            UserDefaults.standard.setValue(true, forKey: PerUserKey(key: Prefs.soundEffects))
-        }
-        
-        self.userQuery?.remove()
-        self.userQuery = UserQuery(userId: userId, groupId: nil, trackPresence: true)
-        self.userQuery!.observe(with: { error, user in
-            
-            guard user != nil else {
-                assertionFailure("user not found or no longer exists")
-                return
-            }
-            
-            if self.user != nil {
-                Log.d("User updated: \(user!.id!)")
-            }
-            
-            self.user = user
-            
-            if !calledBack {
-                then?(nil)
-                calledBack = true
-            }
-            
-            Reporting.updateUser(user: FIRAuth.auth()?.currentUser)
-            NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.UserDidSwitch), object: nil, userInfo: nil)
-        })
-        
-        self.counterRef = FireController.db.child("counters/\(userId)")
-        self.counterHandle = self.counterRef!.observe(.value, with: { [weak self] snap in
-            var count = 0
-            if let unreads = snap.value as? [String: Any] {
-                count = unreads["unreads"] as! Int
-            }
-            self?.unreads = count
-            UIApplication.shared.applicationIconBadgeNumber = count
-            NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.UnreadChange), object: self, userInfo: nil)
-        })
     }
 
     func logout() {

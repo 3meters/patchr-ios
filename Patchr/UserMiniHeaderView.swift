@@ -8,8 +8,8 @@ import UIKit
 class UserMiniHeaderView: BaseDetailView {
 
 	var photoControl = PhotoControl()
-    var fullName = AirLabelTitle()
-    var username = UILabel()
+    var title = AirLabelTitle()
+    var subtitle = UILabel()
 	
 	init() {
 		super.init(frame: CGRect.zero)
@@ -32,19 +32,19 @@ class UserMiniHeaderView: BaseDetailView {
 		self.backgroundColor = Theme.colorBackgroundForm
 		
 		/* User friendly name */
-		self.fullName.lineBreakMode = .byTruncatingMiddle
-		self.fullName.font = Theme.fontTextDisplay
-        self.fullName.textAlignment = .left
+		self.title.lineBreakMode = .byTruncatingMiddle
+		self.title.font = Theme.fontTextDisplay
+        self.title.textAlignment = .left
 		
         /* Username */
-        self.username.lineBreakMode = .byTruncatingMiddle
-        self.username.font = Theme.fontComment
-        self.username.textColor = Theme.colorTextSecondary
-        self.username.textAlignment = .left
+        self.subtitle.lineBreakMode = .byTruncatingMiddle
+        self.subtitle.font = Theme.fontComment
+        self.subtitle.textColor = Theme.colorTextSecondary
+        self.subtitle.textAlignment = .left
         
 		self.addSubview(self.photoControl)
-		self.addSubview(self.fullName)
-        self.addSubview(self.username)
+		self.addSubview(self.title)
+        self.addSubview(self.subtitle)
 	}
 	
 	override func layoutSubviews() {
@@ -53,43 +53,37 @@ class UserMiniHeaderView: BaseDetailView {
         let contentWidth = self.bounds.size.width - 32
         let columnWidth = contentWidth - 56
 
-        self.username.bounds.size.width = columnWidth
-        self.username.sizeToFit()
+        self.subtitle.bounds.size.width = columnWidth
+        self.subtitle.sizeToFit()
         
         self.photoControl.anchorBottomLeft(withLeftPadding: 16, bottomPadding: 12, width: 48, height: 48)
         
-        if !self.fullName.isHidden {
-            self.fullName.bounds.size.width = columnWidth
-            self.fullName.sizeToFit()
-            self.username.align(toTheRightOf: self.photoControl, matchingBottomWithLeftPadding: 8, width: columnWidth, height: self.username.height())
-            self.fullName.align(above: self.username, matchingLeftWithBottomPadding: 0, width: columnWidth, height: self.fullName.height())
+        if !self.title.isHidden {
+            self.title.bounds.size.width = columnWidth
+            self.title.sizeToFit()
+            self.subtitle.align(toTheRightOf: self.photoControl, matchingBottomWithLeftPadding: 8, width: columnWidth, height: self.subtitle.height())
+            self.title.align(above: self.subtitle, matchingLeftWithBottomPadding: 0, width: columnWidth, height: self.title.height())
         }
         else {
-            self.username.align(toTheRightOf: self.photoControl, matchingBottomWithLeftPadding: 8, width: columnWidth, height: self.username.height())
-            self.fullName.align(above: self.username, matchingLeftWithBottomPadding: 0, width: columnWidth, height: 0)
+            self.subtitle.align(toTheRightOf: self.photoControl, matchingBottomWithLeftPadding: 8, width: columnWidth, height: self.subtitle.height())
+            self.title.align(above: self.subtitle, matchingLeftWithBottomPadding: 0, width: columnWidth, height: 0)
             self.anchorTopCenterFillingWidth(withLeftAndRightPadding: 0, topPadding: 0, height: (16 + 96 + 32 + 16))
         }
 	}
 	
 	func bind(user: FireUser?) {
         
-        self.fullName.text?.removeAll(keepingCapacity: false)
-        self.username.text?.removeAll(keepingCapacity: false)
-        self.fullName.isHidden = true
+        self.title.text?.removeAll(keepingCapacity: false)
+        self.subtitle.text?.removeAll(keepingCapacity: false)
         
         if user != nil {
             
             if user!.username != nil {
-                self.username.text = "@\(user!.username!)"
-                self.fullName.text = user!.username!
+                self.subtitle.text = "@\(user!.username!)"
             }
             
-            if user!.profile?.fullName != nil && !user!.profile!.fullName!.isEmpty {
-                self.fullName.text = user!.profile?.fullName
-            }
-            
-            self.fullName.isHidden = (self.fullName.text == nil || self.fullName.text!.isEmpty)
-            let fullName = self.fullName.text
+            self.title.text = user!.fullName
+            let fullName = self.title.text!
             
             if let photo = user!.profile?.photo {
                 if photo.uploading != nil {

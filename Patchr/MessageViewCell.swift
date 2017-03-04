@@ -231,7 +231,7 @@ class MessageViewCell: AirUIView {
         }
         
         self.userName.text = message.creator?.username
-        let fullName = message.creator?.profile?.fullName ?? message.creator?.username
+        let fullName = message.creator?.fullName
         
         if let photo = message.creator?.profile?.photo {
             if !self.template {

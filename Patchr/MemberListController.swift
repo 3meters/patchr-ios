@@ -58,13 +58,21 @@ class MemberListController: BaseTableController {
      *--------------------------------------------------------------------------------------------*/
     
     func groupInviteAction(sender: AnyObject?) {
-        let controller = InviteViewController()
-        controller.flow = .internalInvite
+        
+        let controller = ContactPickerController()
+        controller.flow = .none
+        controller.inputRole = "members"
+        controller.inputGroupId = StateController.instance.groupId!
+        controller.inputGroupTitle = StateController.instance.group.title
         self.navigationController?.pushViewController(controller, animated: true)
     }
     
     func channelInviteAction(sender: AnyObject?) {
-        let controller = MemberPickerController()
+        
+        let controller = ChannelInviteController()
+        controller.flow = .none
+        controller.inputChannelId = self.channel.id!
+        controller.inputChannelName = self.channel.name!
         self.navigationController?.pushViewController(controller, animated: true)
     }
     
@@ -124,7 +132,7 @@ class MemberListController: BaseTableController {
         
         if (self.scope == .channel && self.channel.role == "owner") || group.role == "owner" {
             if self.target == .channel {
-                let addButton = UIBarButtonItem(title: "Add", style: .plain, target: self, action: #selector(channelInviteAction(sender:)))
+                let addButton = UIBarButtonItem(title: "Invite", style: .plain, target: self, action: #selector(channelInviteAction(sender:)))
                 self.navigationItem.rightBarButtonItems = [addButton]
             }
             else if self.target == .group {
@@ -135,7 +143,7 @@ class MemberListController: BaseTableController {
         
         self.navigationItem.title = self.scope == .channel ? "# \(self.channel!.name!)" : group.title!
         
-        self.queryController = DataSourceController()
+        self.queryController = DataSourceController(name: "member_list")
         self.queryController.bind(to: self.tableView, query: query) { [weak self] tableView, indexPath, data in
             
             let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! UserListCell

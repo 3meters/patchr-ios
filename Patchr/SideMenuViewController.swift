@@ -15,8 +15,14 @@ class SideMenuViewController: BaseTableController, UITableViewDelegate, UITableV
 
     var user: FireUser?
     var userQuery: UserQuery?
+    var group: FireGroup?
+    var groupQuery: GroupQuery?
  
-    var menuHeader: UserHeaderView!
+    var userHeader: UserMiniHeaderView!
+    var groupHeader: GroupMiniHeaderView!
+    
+    var userCell: WrapperTableViewCell?
+    var groupCell: WrapperTableViewCell?
     var inviteCell: WrapperTableViewCell?
     var membersCell: WrapperTableViewCell?
     var profileCell: WrapperTableViewCell?
@@ -90,19 +96,20 @@ class SideMenuViewController: BaseTableController, UITableViewDelegate, UITableV
         self.tableView.separatorInset = UIEdgeInsets.zero
         self.tableView.separatorStyle = .none
         
-        self.menuHeader = UserHeaderView(frame: CGRect.zero)
-        let headerTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(editProfileAction(sender:)))
-        self.menuHeader.addGestureRecognizer(headerTapGestureRecognizer)
-        self.tableView.tableHeaderView = self.menuHeader	// Triggers table binding
+        self.userHeader = UserMiniHeaderView(frame: CGRect.zero)
+        self.groupHeader = GroupMiniHeaderView(frame: CGRect.zero)
 
+        self.userCell = WrapperTableViewCell(view: self.userHeader, padding: UIEdgeInsets.zero, reuseIdentifier: nil)
+        self.groupCell = WrapperTableViewCell(view: self.groupHeader, padding: UIEdgeInsets.zero, reuseIdentifier: nil)
+        self.userCell?.separator.backgroundColor = Colors.brandColorLighter
+        self.groupCell?.separator.backgroundColor = Colors.brandColorLighter
+        
         self.membersCell = WrapperTableViewCell(view: MenuItemView(title: "Group members", image: UIImage(named: "imgUsersLight")!), padding: UIEdgeInsets.zero, reuseIdentifier: nil)
         self.inviteCell = WrapperTableViewCell(view: MenuItemView(title: "Invite to group", image: UIImage(named: "imgInvite2Light")!), padding: UIEdgeInsets.zero, reuseIdentifier: nil)
         self.profileCell = WrapperTableViewCell(view: MenuItemView(title: "Edit profile", image: UIImage(named: "imgEdit2Light")!), padding: UIEdgeInsets.zero, reuseIdentifier: nil)
         self.switchCell = WrapperTableViewCell(view: MenuItemView(title: "Switch groups", image: UIImage(named: "imgSwitchLight")!), padding: UIEdgeInsets.zero, reuseIdentifier: nil)
         self.manageCell = WrapperTableViewCell(view: MenuItemView(title: "Manage group", image: UIImage(named: "imgGroupLight")!), padding: UIEdgeInsets.zero, reuseIdentifier: nil)
         self.settingsCell = WrapperTableViewCell(view: MenuItemView(title: "Settings", image: UIImage(named: "imgSettingsLight")!), padding: UIEdgeInsets.zero, reuseIdentifier: nil)
-        
-        self.tableView.tableFooterView = self.settingsCell
         
         self.view.addSubview(self.tableView)
         
@@ -112,16 +119,22 @@ class SideMenuViewController: BaseTableController, UITableViewDelegate, UITableV
     }
     
     func bind() {
-        if let userId = UserController.instance.userId {
-            let groupId = StateController.instance.groupId!
+        if let userId = UserController.instance.userId,
+            let groupId = StateController.instance.groupId {
             self.userQuery?.remove()
             self.userQuery = UserQuery(userId: userId, groupId: groupId)
             self.userQuery!.once(with: { [weak self] error, user in
                 if let user = user {
                     self?.user = user
-                    self?.menuHeader.bind(user: self?.user)
-                    self?.tableView.tableHeaderView = self?.menuHeader
-                    self?.tableView.reloadData()
+                    self?.userHeader.bind(user: self?.user)
+                }
+            })
+            self.groupQuery?.remove()
+            self.groupQuery = GroupQuery(groupId: groupId, userId: userId)
+            self.groupQuery!.once(with: { [weak self] error, group in
+                if let group = group {
+                    self?.group = group
+                    self?.groupHeader.bind(group: self?.group)
                 }
             })
         }
@@ -146,9 +159,13 @@ extension SideMenuViewController {
             }
         }
         if selectedCell == self.inviteCell {
-            let controller = InviteViewController()
+            
+            let controller = ContactPickerController()
+            controller.flow = .none
+            controller.inputRole = "members"
+            controller.inputGroupId = StateController.instance.groupId!
+            controller.inputGroupTitle = StateController.instance.group.title
             let wrapper = AirNavigationController(rootViewController: controller)
-            controller.flow = .internalInvite
             UIViewController.topMostViewController()?.present(wrapper, animated: true, completion: nil)
         }
         if selectedCell == self.profileCell {
@@ -188,18 +205,29 @@ extension SideMenuViewController {
     }
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return CGFloat(60)
+        if indexPath.row == 0 {
+            return CGFloat(96)
+        }
+        else if indexPath.row == 5 {
+            return CGFloat(36)
+        }
+        else if indexPath.row == 6 {
+            return CGFloat(72)
+        }
+        else {
+            return CGFloat(56)
+        }
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if indexPath.row == 0 {
-            return self.membersCell!
+            return self.groupCell!
         }
         else if indexPath.row == 1 {
-            return self.inviteCell!
+            return self.membersCell!
         }
         else if indexPath.row == 2 {
-            return self.profileCell!
+            return self.inviteCell!
         }
         else if indexPath.row == 3 {
             return self.switchCell!
@@ -208,6 +236,17 @@ extension SideMenuViewController {
             return self.manageCell!
         }
         else if indexPath.row == 5 {
+            let cell = UITableViewCell()
+            cell.backgroundColor = Colors.gray95pcntColor
+            return cell
+        }
+        else if indexPath.row == 6 {
+            return self.userCell!
+        }
+        else if indexPath.row == 7 {
+            return self.profileCell!
+        }
+        else if indexPath.row == 8 {
             return self.settingsCell!
         }
         return UITableViewCell()
@@ -218,6 +257,6 @@ extension SideMenuViewController {
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 6
+        return 9
     }
 }

@@ -9,26 +9,22 @@ import FirebaseDatabaseUI
 import CLTokenInputView
 
 /* Routes
- * - Channel create flow: channeledit->memberpicker (.internalCreate)
- * - From member list: memberlist->memberpicker (.none)
+ * - Channel create flow: channelswitcher->channeledit->channelinvite->memberpicker (.internalCreate)
+ * - Invite/add channel member flow: memberlist->channelinvite->memberpicker (.none)
+ * - Invite/add channel member flow: channelview->channelinvite->memberpicker (.none)
  */
-
 class MemberPickerController: BaseTableController, CLTokenInputViewDelegate {
     
-    var inputChannelId: String?
+    var inputChannelId: String!
+    var inputChannelName: String!
+    var inputAsOwner = false
     
     var heading	= AirLabelTitle()
     var tokenView: AirTokenView!
     var doneButton: UIBarButtonItem!
 
-    var items: [String: Any] = [:]
-
-    var filterText: String?
-    var filterActive = false
     var flow: Flow = .none
-
-    var invites: [String: Any] = [:]
-    var channel: FireChannel!
+    var picks: [String: Any] = [:]
     
     /*--------------------------------------------------------------------------------------------
      * Lifecycle
@@ -37,21 +33,7 @@ class MemberPickerController: BaseTableController, CLTokenInputViewDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         initialize()
-        
-        let groupId = StateController.instance.groupId!
-        let channelId = self.inputChannelId ?? StateController.instance.channelId!
-        let userId = UserController.instance.userId!
-        let query = ChannelQuery(groupId: groupId, channelId: channelId, userId: userId)
-        
-        query.once(with: { error, channel in
-            if channel != nil {
-                self.channel = channel
-                let channelName = self.channel.name!
-                self.heading.text = "Add group members to #\(channelName)"
-                self.view.setNeedsLayout()
-                self.bind()
-            }
-        })
+        bind()
     }
     
     override func viewWillLayoutSubviews() {
@@ -70,14 +52,14 @@ class MemberPickerController: BaseTableController, CLTokenInputViewDelegate {
      * Events
      *--------------------------------------------------------------------------------------------*/
     
-    func addMembersAction(sender: AnyObject?) {
-        addMembers()
+    func inviteMembersAction(sender: AnyObject?) {
+        inviteMembers()
     }
 
     func closeAction(sender: AnyObject?) {
         if self.flow == .internalCreate {
             let groupId = StateController.instance.groupId!
-            let channelId = self.inputChannelId ?? StateController.instance.channelId!
+            let channelId = self.inputChannelId!
             StateController.instance.setChannelId(channelId: channelId, groupId: groupId) // We know it's good
             MainController.instance.showChannel(groupId: groupId, channelId: channelId)
         }
@@ -112,8 +94,8 @@ class MemberPickerController: BaseTableController, CLTokenInputViewDelegate {
         
         self.automaticallyAdjustsScrollViewInsets = false
         
-        self.heading.text = "Add group members"
-        self.heading.textAlignment = NSTextAlignment.center
+        self.heading.text = "Invite group members to #\(self.inputChannelName!)."
+        self.heading.textAlignment = .center
         self.heading.numberOfLines = 0
         
         self.tokenView = AirTokenView(frame: CGRect(x: 0, y: 0, width: self.view.width(), height: 44))
@@ -127,19 +109,20 @@ class MemberPickerController: BaseTableController, CLTokenInputViewDelegate {
         
         self.tableView.register(UINib(nibName: "UserListCell", bundle: nil), forCellReuseIdentifier: "cell")
         self.tableView.backgroundColor = Theme.colorBackgroundTable
-        self.tableView.tableFooterView = UIView()
         self.tableView.delegate = self
         self.tableView.estimatedRowHeight = 64
+        self.tableView.allowsMultipleSelection = true
         self.tableView.separatorInset = UIEdgeInsets.zero
+        self.tableView.tableFooterView = UIView()
         
         self.view.addSubview(self.heading)
         self.view.addSubview(self.tokenView)
         self.view.addSubview(self.tableView)
         
         let closeButton = UIBarButtonItem(barButtonSystemItem: .stop, target: self, action: #selector(self.closeAction(sender:)))
-        let doneTitle = self.flow == .internalCreate ? "Done" : "Add"
-        self.doneButton = UIBarButtonItem(title: doneTitle, style: .plain, target: self, action: #selector(addMembersAction(sender:)))
-        self.doneButton.isEnabled = self.flow == .internalCreate ? true : false
+        let doneTitle = (self.flow == .internalCreate) ? "Done" : "Invite"
+        self.doneButton = UIBarButtonItem(title: doneTitle, style: .plain, target: self, action: #selector(inviteMembersAction(sender:)))
+        self.doneButton.isEnabled = (self.flow == .internalCreate) ? true : false
         self.navigationItem.rightBarButtonItems = [self.doneButton]
         self.navigationItem.leftBarButtonItems = [closeButton]
     }
@@ -150,21 +133,8 @@ class MemberPickerController: BaseTableController, CLTokenInputViewDelegate {
         let query = FireController.db.child("group-members/\(groupId)")
             .queryOrdered(byChild: "index_priority_joined_at_desc")
         
-        self.queryController = DataSourceController()
+        self.queryController = DataSourceController(name: "member_picker")
         self.queryController.mapperActive = true
-        self.queryController.matcher = { searchText, data in
-            let user = data as! FireUser
-            if user.username!.lowercased().contains(searchText.lowercased()) {
-                return true
-            }
-            else if let profile = user.profile, let fullName = profile.fullName {
-                if fullName.lowercased().contains(searchText.lowercased()) {
-                    return true
-                }
-            }
-            return false
-        }
-        
         self.queryController.mapper = { (snap, then) in
             let userId = snap.key
             UserQuery(userId: userId, groupId: nil).once(with: { error, user in
@@ -178,6 +148,19 @@ class MemberPickerController: BaseTableController, CLTokenInputViewDelegate {
                 }
             })
         }
+        
+        self.queryController.matcher = { searchText, data in
+            let user = data as! FireUser
+            if user.username!.lowercased().contains(searchText.lowercased()) {
+                return true
+            }
+            else if let profile = user.profile, let fullName = profile.fullName {
+                if fullName.lowercased().contains(searchText.lowercased()) {
+                    return true
+                }
+            }
+            return false
+        }
 
         self.queryController.bind(to: self.tableView, query: query) { [weak self] tableView, indexPath, data in
             
@@ -186,7 +169,7 @@ class MemberPickerController: BaseTableController, CLTokenInputViewDelegate {
             func bindCell(user: FireUser) {
                 
                 let userId = user.id!
-                let channelId = self!.channel.id!
+                let channelId = self!.inputChannelId!
                 
                 cell.selectionStyle = .none
                 cell.accessoryType = .none
@@ -203,9 +186,18 @@ class MemberPickerController: BaseTableController, CLTokenInputViewDelegate {
                         cell.allowSelection = false
                     }
                     else {
-                        cell.roleLabel?.isHidden = true
-                        cell.checkBox?.isHidden = false
-                        cell.checkBox?.on = cell.isSelected
+                        if user.email != nil {
+                            cell.roleLabel?.isHidden = true
+                            cell.checkBox?.isHidden = false
+                            cell.checkBox?.on = cell.isSelected
+                        }
+                        else if !(self?.inputAsOwner)! {
+                            cell.roleLabel?.isHidden = false
+                            cell.roleLabel?.text = "email unavailable"
+                            cell.roleLabel?.textColor = MaterialColor.lightGreen.base
+                            cell.checkBox?.isHidden = true
+                            cell.allowSelection = false
+                        }
                     }
                 })
             }
@@ -234,38 +226,91 @@ class MemberPickerController: BaseTableController, CLTokenInputViewDelegate {
             return cell
         }
     }
-
-    func addMembers() {
+    
+    func inviteMembers() {
         
-        if self.flow == .internalCreate {
-            let groupId = self.channel.groupId!
-            let channelId = self.channel.id!
-            let channelName = self.channel.name!
-            for userId in self.invites.keys {
-                FireController.instance.addUserToChannel(userId: userId, groupId: groupId, channelId: channelId, channelName: channelName)
+        if self.inputAsOwner {
+            
+            let groupId = StateController.instance.groupId!
+            let channelId = self.inputChannelId!
+            let channelName = self.inputChannelName!
+            
+            if self.flow == .internalCreate {
+                for userId in self.picks.keys {
+                    FireController.instance.addUserToChannel(userId: userId, groupId: groupId, channelId: channelId, channelName: channelName)
+                }
+                StateController.instance.setChannelId(channelId: channelId, groupId: groupId) // We know it's good
+                MainController.instance.showChannel(groupId: groupId, channelId: channelId)
+                self.close(animated: true)
             }
-            StateController.instance.setChannelId(channelId: channelId, groupId: groupId) // We know it's good
-            MainController.instance.showChannel(groupId: groupId, channelId: channelId)
-            self.close(animated: true)
+            else {
+                var message = "The following group members will be added to the \(channelName) channel:\n\n"
+                for userId in self.picks.keys {
+                    if let username = (self.picks[userId] as! FireUser).username {
+                        message += "\(username)\n"
+                    }
+                }
+                UpdateConfirmationAlert(title: "Add to channel", message: message, actionTitle: "Add", cancelTitle: "Cancel", delegate: nil, onDismiss: { doit in
+                    if doit {
+                        for userId in self.picks.keys {
+                            FireController.instance.addUserToChannel(userId: userId, groupId: groupId, channelId: channelId, channelName: channelName)
+                        }
+                        self.close(animated: true)
+                    }
+                })
+            }
         }
         else {
-            let channelName = self.channel.name!
-            var message = "The following group members will be added to the \(channelName) channel:\n\n"
-            for userId in self.invites.keys {
-                if let username = (self.invites[userId] as! FireUser).username {
-                    message += "\(username)\n"
-                }
-            }
-            UpdateConfirmationAlert(title: "Add to channel", message: message, actionTitle: "Add", cancelTitle: "Cancel", delegate: nil, onDismiss: { doit in
-                if doit {
-                    let groupId = self.channel.groupId!
-                    let channelId = self.channel.id!
-                    for userId in self.invites.keys {
-                        FireController.instance.addUserToChannel(userId: userId, groupId: groupId, channelId: channelId, channelName: channelName)
+            
+            let channels = [self.inputChannelId!: self.inputChannelName!]
+            
+            for key in self.picks.keys {
+                
+                let inviteId = "in-\(Utils.genRandomId())"
+                let email = self.picks[key] as! String
+                
+                BranchProvider.inviteGuest(group: StateController.instance.group, channels: channels, email: email, inviteId: inviteId, completion: { response, error in
+                    
+                    if error == nil {
+                        
+                        let invite = response as! InviteItem
+                        let inviteUrl = invite.url
+                        let userTitle = UserController.instance.userTitle
+                        let userEmail = UserController.instance.userEmail
+                        let userId = UserController.instance.userId!
+                        let username = UserController.instance.user?.username
+                        
+                        let group = StateController.instance.group!
+                        let groupTitle = group.title!
+                        let groupId = StateController.instance.groupId!
+                        let timestamp = FireController.instance.getServerTimestamp()
+                        let ref = FireController.db.child("queue/invites").childByAutoId()
+                        
+                        var task: [String: Any] = [:]
+                        task["channels"] = channels
+                        task["created_at"] = timestamp
+                        task["created_by"] = userId
+                        task["group"] = ["id": groupId, "title": groupTitle]
+                        task["id"] = ref.key
+                        task["inviter"] = ["id": userId, "title": userTitle, "username": username, "email": userEmail]
+                        task["invite_id"] = inviteId
+                        task["link"] = inviteUrl
+                        task["recipient"] = email
+                        task["state"] = "waiting"
+                        task["type"] = "invite-guests"
+                        
+                        ref.setValue(task) { error, ref in
+                            if error != nil {
+                                Log.w("Error queueing invite task: \(error!)")
+                            }
+                            else {
+                                UIShared.toast(message: "Invites sent")
+                            }
+                            self.close(root: (self.flow != .internalInvite))
+                        }
                     }
-                    self.close(animated: true)
-                }
-            })
+                })
+            }
         }
     }
 }
@@ -275,10 +320,11 @@ extension MemberPickerController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if let cell = self.tableView.cellForRow(at: indexPath) as? UserListCell {
             if cell.allowSelection {
-                cell.checkBox?.setOn(true, animated: true)
                 let user = cell.user!
-                self.invites[user.id!] = user
-                if self.invites.count == 0 {
+                cell.checkBox?.setOn(true, animated: true)
+                self.picks[user.id!] = user
+                self.tokenView.add(CLToken(displayText: user.fullName!, context: cell))
+                if self.picks.count == 0 {
                     if self.flow == .internalCreate {
                         self.doneButton.title = "Done"
                     } else {
@@ -298,10 +344,11 @@ extension MemberPickerController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
         if let cell = self.tableView.cellForRow(at: indexPath) as? UserListCell {
-            cell.checkBox?.setOn(false, animated: true)
             let user = cell.user!
-            self.invites.removeValue(forKey: user.id!)
-            if self.invites.count == 0 {
+            cell.checkBox?.setOn(false, animated: true)
+            self.picks.removeValue(forKey: user.id!)
+            self.tokenView.remove(CLToken(displayText: user.fullName!, context: cell))
+            if self.picks.count == 0 {
                 if self.flow == .internalCreate {
                     self.doneButton.title = "Done"
                 } else {
@@ -334,16 +381,10 @@ extension MemberPickerController {
     
     func tokenInputView(_ view: CLTokenInputView, didAdd token: CLToken) {
         self.doneButton.isEnabled = (self.tokenView.allTokens.count > 0)
-        if let itemId = token.context as? String {
-            self.items[itemId] = token.displayText
-        }
     }
     
     func tokenInputView(_ view: CLTokenInputView, didRemove token: CLToken) {
         self.doneButton.isEnabled = (self.tokenView.allTokens.count > 0)
-        if let itemId = token.context as? String {
-            self.items.removeValue(forKey: itemId)
-        }
     }
     
     func tokenInputView(_ view: CLTokenInputView, didChangeHeightTo height: CGFloat) {
@@ -360,7 +401,6 @@ extension MemberPickerController {
         Log.d("tokenForText")
         if let cell = self.tableView.cellForRow(at: IndexPath(row: 0, section: 0)) as? UserListCell {
             let user = cell.user!
-            self.items[user.id!] = channel
             return CLToken(displayText: user.username!, context: cell)
         }
         
@@ -382,4 +422,3 @@ extension MemberPickerController {
         return true
     }
 }
-

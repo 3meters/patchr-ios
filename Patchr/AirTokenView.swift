@@ -11,7 +11,8 @@ import CLTokenInputView
 
 class AirTokenView: CLTokenInputView {
     
-    var rule = UIView()
+    var topRule = UIView()
+    var bottomRule = UIView()
     var searchImage = AirImageView(frame: CGRect.zero)
     var placeholder = AirLabelDisplay()
     
@@ -30,9 +31,11 @@ class AirTokenView: CLTokenInputView {
     func initialize() {
         self.searchImage.image = UIImage(named: "imgSearchLight")
         self.searchImage.tintColor = Theme.colorTextPlaceholder
-        self.rule.backgroundColor = Theme.colorRule
+        self.topRule.backgroundColor = Theme.colorRule
+        self.bottomRule.backgroundColor = Theme.colorRule
         
-        self.addSubview(self.rule)
+        self.addSubview(self.topRule)
+        self.addSubview(self.bottomRule)
         self.addSubview(self.searchImage)
         self.addSubview(self.placeholder)
     }
@@ -42,17 +45,18 @@ class AirTokenView: CLTokenInputView {
         self.placeholder.sizeToFit()
         self.searchImage.anchorCenterLeft(withLeftPadding: 16, width: 16, height: 16)
         self.placeholder.align(toTheRightOf: self.searchImage, matchingCenterWithLeftPadding: 8, width: self.placeholder.width(), height: self.placeholder.height())
-        self.rule.anchorBottomCenterFillingWidth(withLeftAndRightPadding: 0, bottomPadding: 0, height: Theme.dimenRuleThickness)
+        self.bottomRule.anchorBottomCenterFillingWidth(withLeftAndRightPadding: 0, bottomPadding: 0, height: Theme.dimenRuleThickness)
+        self.topRule.anchorTopCenterFillingWidth(withLeftAndRightPadding: 0, topPadding: 0, height: Theme.dimenRuleThickness)
     }
     
     func editingBegin() {
-        self.rule.backgroundColor = Theme.colorRuleActive
+        self.bottomRule.backgroundColor = Theme.colorRuleActive
         self.searchImage.fadeOut(duration: 0.2)
         self.placeholder.fadeOut(duration: 0.2)
     }
     
     func editingEnd() {
-        self.rule.backgroundColor = Theme.colorRule
+        self.bottomRule.backgroundColor = Theme.colorRule
         self.searchImage.fadeIn(duration: 0.2)
         self.placeholder.fadeIn(duration: 0.2)
     }

@@ -69,9 +69,7 @@ class ChannelPickerController: BaseTableController, CLTokenInputViewDelegate {
             }
             
             let controller = ContactPickerController()
-            controller.role = "guests"
             controller.flow = self.flow
-            controller.channels = self.channels
             controller.inputGroupId = self.inputGroupId
             controller.inputGroupTitle = self.inputGroupTitle
             self.navigationController?.pushViewController(controller, animated: true)
@@ -169,7 +167,7 @@ class ChannelPickerController: BaseTableController, CLTokenInputViewDelegate {
         let query = FireController.db.child("group-channels/\(groupId)")
             .queryOrdered(byChild: "name")
         
-        self.queryController = DataSourceController()
+        self.queryController = DataSourceController(name: "channel_picker")
         self.queryController.matcher = { searchText, data in
             let snap = data as! FIRDataSnapshot
             let dict = snap.value as! [String: Any]

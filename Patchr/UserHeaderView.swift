@@ -88,15 +88,10 @@ class UserHeaderView: BaseDetailView {
             
             if user!.username != nil {
                 self.username.text = "@\(user!.username!)"
-                self.fullName.text = user!.username!
             }
             
-            if user!.profile?.fullName != nil && !user!.profile!.fullName!.isEmpty {
-                self.fullName.text = user!.profile?.fullName
-            }
-            
-            self.fullName.isHidden = (self.fullName.text == nil || self.fullName.text!.isEmpty)
-            let fullName = self.fullName.text
+            self.fullName.text = user!.fullName!
+            let fullName = self.fullName.text!
             
             if let photo = user!.profile?.photo {
                 if photo.uploading != nil {

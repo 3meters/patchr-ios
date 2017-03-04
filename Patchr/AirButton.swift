@@ -10,6 +10,9 @@ import UIKit
 
 class AirButton: AirButtonBase {
     
+    var rightPadding = CGFloat(24)
+    var leftPadding = CGFloat(24)
+    
     var imageRight: UIImageView? {
         didSet {
             self.addSubview(self.imageRight!)
@@ -55,10 +58,10 @@ class AirButton: AirButtonBase {
 	override func layoutSubviews() {
 		super.layoutSubviews()
         if let image = self.imageRight {
-            image.anchorCenterRight(withRightPadding: 24, width: image.width(), height: image.height())
+            image.anchorCenterRight(withRightPadding: rightPadding, width: image.width(), height: image.height())
         }
         if let image = self.imageLeft {
-            image.anchorCenterLeft(withLeftPadding: 24, width: image.width(), height: image.height())
+            image.anchorCenterLeft(withLeftPadding: leftPadding, width: image.width(), height: image.height())
         }
 	}
 }

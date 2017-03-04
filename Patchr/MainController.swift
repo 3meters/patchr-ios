@@ -66,6 +66,7 @@ class MainController: NSObject, iRateDelegate {
         UIBarButtonItem.appearance().setTitleTextAttributes([NSFontAttributeName: Theme.fontBarText], for: UIControlState.normal)
         self.window?.backgroundColor = Theme.colorBackgroundWindow
         self.window?.tintColor = Theme.colorTint
+        UIToolbar.appearance().tintColor = Theme.colorTint
         UINavigationBar.appearance().tintColor = Theme.colorTint
         UITabBar.appearance().tintColor = Theme.colorTabBarTint
         UISwitch.appearance().onTintColor = Theme.colorTint
@@ -193,7 +194,7 @@ class MainController: NSObject, iRateDelegate {
         }
         
         let mainWrapper = AirNavigationController(navigationBarClass: AirNavigationBar.self, toolbarClass: nil)
-        let menuController = SideMenuV2ViewController()
+        let menuController = SideMenuViewController()
         let drawerWrapper = AirNavigationController(navigationBarClass: AirNavigationBar.self, toolbarClass: nil)
         let slideController = SlideMenuController(mainViewController: mainWrapper
             , leftMenuViewController: drawerWrapper

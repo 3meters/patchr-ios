@@ -77,8 +77,8 @@ class InviteListCell: UITableViewCell {
             self.actionAt?.text = "Accepted \(DateUtils.dateMediumString(timestamp: acceptedAt))"
             self.actionAt?.textColor = MaterialColor.lightGreen.darken1
             
-            let fullName = user.profile?.fullName ?? user.username
             let userId = user.id!
+            let fullName = user.fullName
             if let photo = user.profile?.photo {
                 if photo.uploading != nil {
                     self.photoControl?.bind(url: URL(string: photo.cacheKey)!, fallbackUrl: nil, name: nil, colorSeed: nil, uploading: true)

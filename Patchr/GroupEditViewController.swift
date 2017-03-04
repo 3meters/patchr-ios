@@ -164,7 +164,7 @@ class GroupEditViewController: BaseEditViewController {
         self.titleField.keyboardType = .default
         self.titleField.returnKeyType = .next
         
-        self.usersButton.setTitle("Manage Group Members".uppercased(), for: .normal)
+        self.usersButton.setTitle("Manage Members".uppercased(), for: .normal)
         self.usersButton.imageRight = UIImageView(image: UIImage(named: "imgArrowRightLight"))
         self.usersButton.imageRight?.bounds.size = CGSize(width: 10, height: 14)
         self.usersButton.addTarget(self, action: #selector(manageUsersAction(sender:)), for: .touchUpInside)
@@ -184,7 +184,7 @@ class GroupEditViewController: BaseEditViewController {
         let deleteTitleButton = UIBarButtonItem(title: "Delete", style: .plain, target: self, action: #selector(deleteAction(sender:)))
         deleteIconButton.tintColor = Colors.brandColor
         deleteTitleButton.tintColor = Colors.brandColor
-        self.toolbarItems = [spacerFlex, deleteIconButton, deleteTitleButton]
+        self.toolbarItems = [spacerFlex, deleteIconButton, deleteTitleButton, spacerFlex]
 
         /* Navigation bar buttons */
         if self.presented {

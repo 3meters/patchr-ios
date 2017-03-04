@@ -14,34 +14,37 @@ import Contacts
  * - Group create flow: password->groupcreate->contactpicker (.onboardCreate)
  * - Group create flow (authorized): groupswitcher->groupcreate->contactpicker (.internalCreate)
  * - Group create flow (not authorized): groupswitcher->groupcreate->invite->contactpicker (.internalCreate)
- * - Invite member flow: memberlist->invite->contactpicker (.internalInvite)
- * - Invite member flow: sidemenu->invite->contactpicker (.internalInvite)
- * - Invite guest flow: invite->channelpicker->contactpicker
- * - From channel view: channelview->contactpicker (.none)
+ * - Invite group member flow: memberlist->contactpicker (.internalInvite)
+ * - Invite group member flow: sidemenu->contactpicker (.internalInvite)
+ *
+ * - Channel create flow: channelswitcher->channeledit->channelinvite->contactpicker (.internalCreate)
+ * - Invite channel member flow: channelview->channelinvite->contactpicker (.none)
  */
+class ContactPickerController: BaseTableController, CLTokenInputViewDelegate {
 
-class ContactPickerController: BaseTableController, UITableViewDelegate, UITableViewDataSource, CLTokenInputViewDelegate {
-
-    var inputGroupId: String?
-    var inputGroupTitle: String?
+    var inputGroupId: String!
+    var inputGroupTitle: String!
+    var inputChannelId: String?
+    var inputChannelName: String?
+    var inputRole: String!
 
     var heading = AirLabelTitle()
+    var message = AirLabelDisplay()
     var tokenView: AirTokenView!
     var doneButton: UIBarButtonItem!
 
-    var itemsBySection = [String: [CNContact]]()
-    var itemsFiltered = [CNContact]()
-    var itemsSource = [CNContact]()
+    var contactsBySection = [String: [CNContact]]()
+    var contactsFiltered = [CNContact]()
+    var contactsSource = [CNContact]()
 
     var filterText: String?
     var filterActive = false
+    
     var flow: Flow = .none
 
-    var channels: [String: Any] = [:]
-    var emails = [AnyHashable: Any]()
-    var invites = [AnyHashable: Any]()
-    var invitedEmails = [AnyHashable: [[String: Any]]]()
-    var role = "members"
+    var picks = [AnyHashable: Any]()
+    
+    var invitedEmails = [AnyHashable: [[String: Any]]]()    // From existing invites
     var sectionTitles: [String]?
 
     let keysToFetch = [
@@ -58,20 +61,26 @@ class ContactPickerController: BaseTableController, UITableViewDelegate, UITable
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        guard self.inputGroupId != nil,
+            self.inputGroupTitle != nil,
+            self.inputRole != nil else {
+            assertionFailure("inputGroupId, inputGroupTitle, inputRole must be set")
+            return
+        }
         initialize()
         bind()
     }
     
-    override func viewDidAppear(_ animated: Bool) {
-        let _ = self.tokenView.beginEditing()
-    }
-
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
         
+        let headingSize = self.heading.sizeThatFits(CGSize(width:288, height:CGFloat.greatestFiniteMagnitude))
         let navHeight = self.navigationController?.navigationBar.height() ?? 0
         let statusHeight = UIApplication.shared.statusBarFrame.size.height
-        self.tokenView.anchorTopCenterFillingWidth(withLeftAndRightPadding: 0, topPadding: (navHeight + statusHeight), height: tokenView.height())
+        
+        self.heading.anchorTopCenter(withTopPadding: (navHeight + statusHeight + 24), width: 288, height: headingSize.height)
+        self.tokenView.alignUnder(self.heading, centeredFillingWidthWithLeftAndRightPadding: 0, topPadding: 16, height: tokenView.height())
         self.tableView.alignUnder(self.tokenView, matchingLeftAndRightFillingHeightWithTopPadding: 0, bottomPadding: 0)
     }
 
@@ -79,17 +88,34 @@ class ContactPickerController: BaseTableController, UITableViewDelegate, UITable
     * Events
     *--------------------------------------------------------------------------------------------*/
     
-    func closeAction(sender: AnyObject?) {
-        self.close()
-    }
-    
     func doneAction(sender: AnyObject?) {
-        if self.invites.count > 0 {
+        if self.tokenView.text != nil && !self.tokenView.text!.isEmpty {
+            let token = self.tokenView.tokenizeTextfieldText()
+            if token == nil {
+                return
+            }
+        }
+        if self.picks.count > 0 {
             invite()
         }
-        else if self.flow == .onboardCreate || self.flow == .internalCreate {
+        else if self.flow == .onboardCreate {
             self.navigateToGroup()
         }
+        else if self.flow == .internalCreate {
+            if self.inputChannelId != nil {
+                self.navigateToChannel()
+            } else {
+                self.navigateToGroup()
+            }
+        }
+    }
+    
+    func inviteListAction(sender: AnyObject?) {
+        inviteList()
+    }
+
+    func closeAction(sender: AnyObject?) {
+        self.close()
     }
     
     /*--------------------------------------------------------------------------------------------
@@ -118,8 +144,17 @@ class ContactPickerController: BaseTableController, UITableViewDelegate, UITable
     override func initialize() {
         super.initialize()
         
+        let tap = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard(sender:)));
+        tap.cancelsTouchesInView = false
+        tap.delegate = self
+        self.view.addGestureRecognizer(tap)
+        
         self.automaticallyAdjustsScrollViewInsets = false
         
+        self.heading.text = self.inputChannelId == nil ? "Invite contacts to \(self.inputGroupTitle!)." : "Invite contacts to #\(self.inputChannelName!)."
+        self.heading.textAlignment = .center
+        self.heading.numberOfLines = 2
+
         self.tokenView = AirTokenView(frame: CGRect(x: 0, y: 0, width: self.view.width(), height: 44))
         self.tokenView.placeholder.text = "Search"
         self.tokenView.placeholder.textColor = Theme.colorTextPlaceholder
@@ -129,17 +164,18 @@ class ContactPickerController: BaseTableController, UITableViewDelegate, UITable
         self.tokenView.delegate = self
         self.tokenView.autoresizingMask = [UIViewAutoresizing.flexibleBottomMargin, UIViewAutoresizing.flexibleWidth]
         
-        self.tableView.register(UINib(nibName: "UserListCell", bundle: nil), forCellReuseIdentifier: "contact-cell")
+        self.tableView.register(UINib(nibName: "UserListCell", bundle: nil), forCellReuseIdentifier: "cell")
         self.tableView.backgroundColor = Colors.white
         self.tableView.delegate = self
         self.tableView.dataSource = self
+        self.tableView.estimatedRowHeight = 64
+        self.tableView.separatorInset = UIEdgeInsets.zero
         self.tableView.tableFooterView = UIView()
         
+        self.view.addSubview(self.heading)
         self.view.addSubview(self.tokenView)
         self.view.addSubview(self.tableView)
         self.view.addSubview(self.activity)
-        
-        self.navigationItem.title = self.role == "members" ? "Invite Members from Contacts" : "Invite Guests from Contacts"
         
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(notification:)), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(notification:)), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
@@ -147,7 +183,17 @@ class ContactPickerController: BaseTableController, UITableViewDelegate, UITable
         let doneTitle = (self.flow == .internalCreate || self.flow == .onboardCreate) ? "Done" : "Invite"
         self.doneButton = UIBarButtonItem(title: doneTitle, style: .plain, target: self, action: #selector(doneAction(sender:)))
         self.doneButton.isEnabled = (self.flow == .internalCreate || self.flow == .onboardCreate) ? true : false
-        self.navigationItem.rightBarButtonItems = [doneButton]
+        
+        if self.flow == .none {
+            /* Invites button */
+            let invitesButton = UIBarButtonItem(title: "Pending", style: .plain, target: self, action: #selector(inviteListAction(sender:)))
+            let invitesIconButton = UIBarButtonItem(image: UIImage(named: "imgEnvelopeLight"), style: .plain, target: self, action: #selector(inviteListAction(sender:)))
+            invitesIconButton.imageInsets = UIEdgeInsetsMake(7, 20, 7, -8)
+            self.navigationItem.rightBarButtonItems = [doneButton, spacerFlex, invitesButton, invitesIconButton, spacerFlex]
+        }
+        else {
+            self.navigationItem.rightBarButtonItems = [doneButton]
+        }
         
         if self.flow == .none {
             let closeButton = UIBarButtonItem(barButtonSystemItem: .stop, target: self, action: #selector(closeAction(sender:)))
@@ -159,6 +205,7 @@ class ContactPickerController: BaseTableController, UITableViewDelegate, UITable
         
         let groupId = StateController.instance.group?.id ?? self.inputGroupId!
         let userId = UserController.instance.userId!
+        
         self.invitedEmails.removeAll()
         FireController.db.child("invites/\(groupId)/\(userId)").observeSingleEvent(of: .value, with: { snap in
             if !(snap.value is NSNull) && snap.hasChildren() {
@@ -166,8 +213,8 @@ class ContactPickerController: BaseTableController, UITableViewDelegate, UITable
                     let snapInvite = item as! FIRDataSnapshot
                     let map = snapInvite.value as! [String: Any]
                     if let role = map["role"] as? String {
-                        if (self.role == "members" && role == "member") ||
-                            (self.role == "guests" && role == "guest") {
+                        if (self.inputRole == "members" && role == "member") ||
+                            (self.inputRole == "guests" && role == "guest") {
                             let email = map["email"] as! String
                             if self.invitedEmails[email] == nil {
                                 self.invitedEmails[email] = []
@@ -208,7 +255,15 @@ class ContactPickerController: BaseTableController, UITableViewDelegate, UITable
             }
         }
     }
-    
+
+    func navigateToChannel() {
+        let groupId = self.inputGroupId!
+        let channelId = self.inputChannelId!
+        StateController.instance.setChannelId(channelId: channelId, groupId: groupId)
+        MainController.instance.showChannel(groupId: groupId, channelId: channelId)
+        self.navigationController?.close()
+    }
+
     func loadContacts() {
         DispatchQueue.main.async {
             self.activity.startAnimating()
@@ -221,7 +276,7 @@ class ContactPickerController: BaseTableController, UITableViewDelegate, UITable
                 if !contact.emailAddresses.isEmpty
                     , let email = contact.emailAddresses.first?.value as? String
                     , email != "[No email address found]" {
-                    self.itemsSource.append(contact)
+                    self.contactsSource.append(contact)
                 }
             }
             filterContacts()
@@ -234,39 +289,44 @@ class ContactPickerController: BaseTableController, UITableViewDelegate, UITable
         }
     }
     
+    func inviteList() {
+        let controller = InviteListController()
+        self.navigationController?.pushViewController(controller, animated: true)
+    }
+    
     func filterContacts() {
         
-        self.itemsBySection.removeAll()
-        self.itemsFiltered.removeAll()
+        self.contactsBySection.removeAll()
+        self.contactsFiltered.removeAll()
         self.sectionTitles = nil
-        self.emails.removeAll()
+        var emails = [AnyHashable: Any]()
         
         if !self.filterActive {
             
-            for contact in self.itemsSource {
+            for contact in self.contactsSource {
                 let email = contact.emailAddresses.first?.value as? String
                 
-                if self.emails[email!] == nil {
+                if emails[email!] == nil {
                     let fullName = CNContactFormatter.string(from: contact, style: .fullName)
                     let title = fullName ?? email
                     let sectionTitle = String(title!.characters.prefix(1)).uppercased()
                     
-                    if self.itemsBySection[sectionTitle] == nil {
-                        self.itemsBySection[sectionTitle] = [contact]
+                    if self.contactsBySection[sectionTitle] == nil {
+                        self.contactsBySection[sectionTitle] = [contact]
                     }
                     else {
-                        self.itemsBySection[sectionTitle]!.append(contact)
+                        self.contactsBySection[sectionTitle]!.append(contact)
                     }
-                    self.emails[email!] = true
+                    emails[email!] = true
                 }
             }
-            self.sectionTitles = self.itemsBySection.keys.sorted()
+            self.sectionTitles = self.contactsBySection.keys.sorted()
         }
         else {
             
-            for contact in self.itemsSource {
+            for contact in self.contactsSource {
                 let email = contact.emailAddresses.first?.value as? String
-                if self.emails[email!] == nil {
+                if emails[email!] == nil {
                     let fullName = CNContactFormatter.string(from: contact, style: .fullName)
                     let title = fullName ?? email
                     
@@ -274,8 +334,8 @@ class ContactPickerController: BaseTableController, UITableViewDelegate, UITable
                         || (email?.lowercased().contains(self.filterText!.lowercased()))!
                     
                     if match {
-                        self.itemsFiltered.append(contact)
-                        self.emails[email!] = true
+                        self.contactsFiltered.append(contact)
+                        emails[email!] = true
                     }
                 }
             }
@@ -288,17 +348,17 @@ class ContactPickerController: BaseTableController, UITableViewDelegate, UITable
     
     func invite() {
         
-        if self.role == "members" {
+        if self.inputRole == "members" {
             
             let groupId = self.inputGroupId ?? StateController.instance.groupId!
             let groupTitle = self.inputGroupTitle ?? StateController.instance.group!.title!
             let username = UserController.instance.user!.username!
             
-            for key in self.invites.keys {
+            for key in self.picks.keys {
                 var email: String!
-                if let contact = self.invites[key] as? CNContact {
+                if let contact = self.picks[key] as? CNContact {
                     email = contact.emailAddresses.first?.value as? String
-                } else if let contact = self.invites[key] as? String {
+                } else if let contact = self.picks[key] as? String {
                     email = contact
                 }
                 let inviteId = "in-\(Utils.genRandomId())"
@@ -346,18 +406,23 @@ class ContactPickerController: BaseTableController, UITableViewDelegate, UITable
                 })
             }
         }
-        else if self.role == "guests" {
+        else if self.inputRole == "guests" {
             
-            for key in self.invites.keys {
+            let channels = [self.inputChannelId!: self.inputChannelName!]
+            
+            for key in self.picks.keys {
+                
+                let inviteId = "in-\(Utils.genRandomId())"
                 var email: String!
-                if let contact = self.invites[key] as? CNContact {
+                
+                if let contact = self.picks[key] as? CNContact {
                     email = contact.emailAddresses.first?.value as? String
-                } else if let contact = self.invites[key] as? String {
+                }
+                else if let contact = self.picks[key] as? String {
                     email = contact
                 }
-                let inviteId = "in-\(Utils.genRandomId())"
                 
-                BranchProvider.inviteGuest(group: StateController.instance.group, channels: self.channels, email: email!, inviteId: inviteId, completion: { response, error in
+                BranchProvider.inviteGuest(group: StateController.instance.group, channels: channels, email: email!, inviteId: inviteId, completion: { response, error in
                     
                     if error == nil {
                         
@@ -375,11 +440,6 @@ class ContactPickerController: BaseTableController, UITableViewDelegate, UITable
                         let ref = FireController.db.child("queue/invites").childByAutoId()
                         
                         var task: [String: Any] = [:]
-                        var channels = [String: Any]()
-                        for (channelId, channelName) in self.channels {
-                            channels[channelId] = channelName
-                        }
-                        let type = (self.channels.count > 1) ? "invite-guests-multi-channel" : "invite-guests"
                         task["channels"] = channels
                         task["created_at"] = timestamp
                         task["created_by"] = userId
@@ -390,7 +450,7 @@ class ContactPickerController: BaseTableController, UITableViewDelegate, UITable
                         task["link"] = inviteUrl
                         task["recipient"] = email
                         task["state"] = "waiting"
-                        task["type"] = type
+                        task["type"] = "invite-guests"
                         
                         ref.setValue(task) { error, ref in
                             if error != nil {
@@ -399,7 +459,12 @@ class ContactPickerController: BaseTableController, UITableViewDelegate, UITable
                             else {
                                 UIShared.toast(message: "Invites sent")
                             }
-                            self.close(root: (self.flow != .internalInvite))
+                            if self.flow == .internalCreate {
+                                self.navigateToChannel()
+                            }
+                            else {
+                                self.close()
+                            }
                         }
                     }
                 })
@@ -408,7 +473,95 @@ class ContactPickerController: BaseTableController, UITableViewDelegate, UITable
     }
 }
 
-extension ContactPickerController {
+extension ContactPickerController: UITableViewDataSource {
+    
+    func numberOfSections(in: UITableView) -> Int {
+        if self.sectionTitles != nil {
+            return self.sectionTitles!.count
+        }
+        return 1
+    }
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        if self.sectionTitles != nil {
+            let sectionTitle = self.sectionTitles?[section]
+            return self.contactsBySection[sectionTitle!]!.count
+        }
+        else {
+            return self.contactsFiltered.count
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! UserListCell
+        var contact: CNContact!
+        cell.selectionStyle = .none
+        
+        if self.sectionTitles != nil {
+            let sectionTitle = self.sectionTitles?[indexPath.section]
+            contact = self.contactsBySection[sectionTitle!]?[indexPath.row]
+        }
+        else {
+            contact = self.contactsFiltered[indexPath.row]
+        }
+        
+        let email = contact.emailAddresses.first?.value as String!
+        let invites: [[String: Any]]? = self.invitedEmails[email!]
+        let status = statusFromInvites(invites: invites)
+        cell.bind(contact: contact, status: status)
+        
+        cell.checkBox?.on = false
+        if let contact = cell.contact {
+            let invited = (self.picks[contact.identifier] != nil)
+            cell.checkBox?.on = invited
+        }
+        
+        return cell
+    }
+    
+    func statusFromInvites(invites: [[String: Any]]?) -> String {
+        
+        guard invites != nil && invites!.count > 0 else {
+            return "none"
+        }
+        
+        if self.inputRole == "members" {
+            for invite in invites! {
+                let inviteStatus = (invite["status"] as? String) ?? "none"
+                if inviteStatus == "accepted" {
+                    return "accepted"
+                }
+            }
+            return "pending"
+        }
+        else if self.inputRole == "guests" {
+            /* Do current invites cover all the targeted channels */
+            var status = "accepted"
+            let channelId = self.inputChannelId!
+            var hit = false
+            for invite in invites! {
+                let inviteStatus = invite["status"] as! String
+                if let inviteChannels = invite["channels"] as? [String: String] {
+                    for inviteChannelId in inviteChannels.keys {
+                        if inviteChannelId == channelId {
+                            hit = true
+                            if inviteStatus == "pending" {
+                                status = "pending"
+                            }
+                        }
+                    }
+                }
+            }
+            if !hit {
+                return "none"
+            }
+            return status
+        }
+        return "none"
+    }
+}
+
+extension ContactPickerController: UITableViewDelegate  {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
@@ -418,17 +571,17 @@ extension ContactPickerController {
                 let fullName = CNContactFormatter.string(from: contact, style: .fullName)
                 let title = fullName ?? contact.emailAddresses.first!.value as String
                 
-                let hasInvite = (self.invites[contact.identifier] != nil)
+                let hasInvite = (self.picks[contact.identifier] != nil)
                 
                 if hasInvite {
-                    self.invites.removeValue(forKey: contact.identifier)
+                    self.picks.removeValue(forKey: contact.identifier)
                     self.tokenView.remove(CLToken(displayText: title, context: cell))
                     cell.checkBox?.setOn(false, animated: true)
                 }
                 else {
                     cell.checkBox?.setOn(hasInvite, animated: true)
                     self.tokenView.add(CLToken(displayText: title, context: cell))
-                    self.invites[contact.identifier] = contact
+                    self.picks[contact.identifier] = contact
                 }
             }
         }
@@ -444,91 +597,6 @@ extension ContactPickerController {
     
     func sectionIndexTitles(for tableView: UITableView) -> [String]? {
         return self.tokenView.isEditing ? nil : self.sectionTitles
-    }
-    
-    func numberOfSections(in: UITableView) -> Int {
-        if self.sectionTitles != nil {
-            return self.sectionTitles!.count
-        }
-        return 1
-    }
-    
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if self.sectionTitles != nil {
-            let sectionTitle = self.sectionTitles?[section]
-            return self.itemsBySection[sectionTitle!]!.count
-        }
-        else {
-            return self.itemsFiltered.count
-        }
-    }
-    
-    func statusFromInvites(invites: [[String: Any]]?) -> String {
-        guard invites != nil && invites!.count > 0 else {
-            return "none"
-        }
-        
-        if self.role == "members" {
-            for invite in invites! {
-                let inviteStatus = (invite["status"] as? String) ?? "none"
-                if inviteStatus == "accepted" {
-                    return "accepted"
-                }
-            }
-            return "pending"
-        }
-        else if self.role == "guests" {
-            /* Do current invites cover all the targeted channels */
-            var status = "accepted"
-            for channelId in self.channels.keys {
-                var hit = false
-                for invite in invites! {
-                    let inviteStatus = invite["status"] as! String
-                    if let inviteChannels = invite["channels"] as? [String: String] {
-                        for inviteChannelId in inviteChannels.keys {
-                            if inviteChannelId == channelId {
-                                hit = true
-                                if inviteStatus == "pending" {
-                                    status = "pending"
-                                }
-                            }
-                        }
-                    }
-                }
-                if !hit {
-                    return "none"
-                }
-            }
-            return status
-        }
-        return "none"
-    }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "contact-cell", for: indexPath) as! UserListCell
-        var contact: CNContact!
-        cell.selectionStyle = .none
-        
-        if self.sectionTitles != nil {
-            let sectionTitle = self.sectionTitles?[indexPath.section]
-            contact = self.itemsBySection[sectionTitle!]?[indexPath.row]
-        }
-        else {
-            contact = self.itemsFiltered[indexPath.row]
-        }
-        
-        let email = contact.emailAddresses.first?.value as String!
-        let invites: [[String: Any]]? = self.invitedEmails[email!]
-        let status = statusFromInvites(invites: invites)
-        cell.bind(contact: contact, status: status)
-        
-        cell.checkBox?.on = false
-        if let contact = cell.contact {
-            let invited = (self.invites[contact.identifier] != nil)
-            cell.checkBox?.on = invited
-        }
-        
-        return cell
     }
 }
 
@@ -584,7 +652,7 @@ extension ContactPickerController {
         if let cell = token.context as? UserListCell, let contact = cell.contact {
             cell.setSelected(false, animated: true)
             cell.checkBox?.setOn(false, animated: true)
-            self.invites.removeValue(forKey: contact.identifier)
+            self.picks.removeValue(forKey: contact.identifier)
         }
     }
     
@@ -600,7 +668,7 @@ extension ContactPickerController {
             let fullName = CNContactFormatter.string(from: contact, style: .fullName)
             let title = fullName ?? contact.emailAddresses.first!.value as String
             cell.checkBox?.setOn(true, animated: true)
-            self.invites[contact.identifier] = contact
+            self.picks[contact.identifier] = contact
             return CLToken(displayText: title, context: cell)
         }
         else {
@@ -609,7 +677,7 @@ extension ContactPickerController {
                 return nil
             }
             else {
-                self.invites[text] = text
+                self.picks[text] = text
                 return CLToken(displayText: text, context: nil)
             }
         }
@@ -634,3 +702,22 @@ extension ContactPickerController {
         return true
     }
 }
+
+extension ContactPickerController: UIGestureRecognizerDelegate {
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
+        if (touch.view is UITableViewCell) {
+            return false
+        }
+        if (touch.view?.superview is UITableViewCell) {
+            return false
+        }
+        if (touch.view?.superview?.superview is UITableViewCell) {
+            return false
+        }
+        if (touch.view?.superview?.superview?.superview is UITableViewCell) {
+            return false
+        }
+        return true
+    }
+}
+

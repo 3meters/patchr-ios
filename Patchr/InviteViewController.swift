@@ -13,10 +13,6 @@ import Firebase
 import FirebaseAuth
 import CLTokenInputView
 
-protocol PickerDelegate {
-    func update(channels: [String: Any])
-}
-
 class InviteViewController: BaseEditViewController {
 	
 	var heading = AirLabelTitle()
@@ -184,7 +180,6 @@ class InviteViewController: BaseEditViewController {
     
     func inviteMembers() {
         let controller = ContactPickerController()
-        controller.role = "members"
         controller.flow = self.flow
         controller.inputGroupId = self.inputGroupId
         controller.inputGroupTitle = self.inputGroupTitle

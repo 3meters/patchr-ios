@@ -38,6 +38,15 @@ class FireUser: NSObject {
     var role: String?
     var joinedAt: Int?
     
+    var fullName: String! {
+        get {
+            if profile?.fullName != nil && !profile!.fullName!.isEmpty {
+                return profile!.fullName!
+            }
+            return username!
+        }
+    }
+    
     static func from(dict: [String: Any]?, id: String?) -> FireUser? {
         if dict != nil {
             let user = FireUser()

@@ -292,7 +292,7 @@ class ChannelSwitcherController: BaseTableController {
 			let query = FireController.db.child("member-channels/\(userId)/\(groupId)")
 					.queryOrdered(byChild: "index_priority_joined_at_desc")
             
-            self.queryController = DataSourceController()
+            self.queryController = DataSourceController(name: "channel_switcher")
             self.queryController.bind(to: self.tableView, query: query) { [weak self] tableView, indexPath, data in
                 
                 let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! ChannelListCell
@@ -458,7 +458,7 @@ class SearchController: NSObject {
         let path = "group-channels/\(groupId)"  // User must be group member and not guest
         let query = FireController.db.child(path).queryOrdered(byChild: "name")
         
-        self.queryController = DataSourceController()
+        self.queryController = DataSourceController(name:"channel_switcher")
         self.queryController.startEmpty = true
         self.queryController.matcher = { searchText, data in
             let snap = data as! FIRDataSnapshot

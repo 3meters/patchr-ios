@@ -131,6 +131,7 @@ class DataSourceController: NSObject, FUICollectionDelegate, UITableViewDataSour
     
     weak var delegate: FUICollectionDelegate?
     var tableView: UITableView!
+    var name: String!
     
     var populate: ((UITableView, IndexPath, Any) -> UITableViewCell)!
     var matcher: ((String, Any) -> Bool)?
@@ -156,6 +157,11 @@ class DataSourceController: NSObject, FUICollectionDelegate, UITableViewDataSour
                 return self.filterActive ? self.dataFiltered : self.snapshots.items
             }
         }
+    }
+    
+    init(name: String) {
+        self.name = name
+        super.init()
     }
 
     func bind(to tableView: UITableView, populateCell: @escaping (UITableView, IndexPath, Any) -> UITableViewCell) {

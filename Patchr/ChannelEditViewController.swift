@@ -25,6 +25,7 @@ class ChannelEditViewController: BaseEditViewController {
     var visibilityGroup = AirRuleView()
     var visibilitySwitch = UISwitch()
     var visibilityLabel	= AirLabelDisplay()
+    var visibilityComment = AirLabelDisplay()
     var visibilityValue = "open"
     var usersButton = AirButton()
     var doneButton: UIBarButtonItem!
@@ -82,8 +83,10 @@ class ChannelEditViewController: BaseEditViewController {
         }
         else {
             self.visibilityLabel.sizeToFit()
+            self.visibilityComment.sizeToFit()
             self.visibilityGroup.alignUnder(self.nameField, matchingCenterWithTopPadding: 8, width: 288, height: 48)
-            self.visibilityLabel.anchorCenterLeft(withLeftPadding: 0, width: 144, height: self.visibilityLabel.height())
+            self.visibilityLabel.anchorCenterLeft(withLeftPadding: 0, width: self.visibilityLabel.width(), height: self.visibilityLabel.height())
+            self.visibilityComment.align(toTheRightOf: self.visibilityLabel, matchingBottomWithLeftPadding: 8, width: self.visibilityComment.width(), height: self.visibilityComment.height())
             self.visibilitySwitch.anchorCenterRight(withRightPadding: 0, width: self.visibilitySwitch.width(), height: self.visibilitySwitch.height())
         }
         
@@ -195,7 +198,9 @@ class ChannelEditViewController: BaseEditViewController {
         self.doneButton.isEnabled = isDirty()
         if let switchView = sender as? UISwitch {
             self.visibilityValue = (switchView.isOn) ? "private" : "open"
-            self.banner.text = (self.visibilityValue == "private") ? "New Private Channel" : "New Channel"
+            self.banner.text = (switchView.isOn) ? "New Private Channel" : "New Channel"
+            self.visibilityLabel.text = (switchView.isOn) ? "Private" : "Open"
+            self.visibilityComment.text = (switchView.isOn) ? "Invite only" : "Any member can join."
             self.view.setNeedsLayout()
         }
     }
@@ -243,8 +248,12 @@ class ChannelEditViewController: BaseEditViewController {
         self.purposeField.initialize()
         self.purposeField.delegate = self
 
-        self.visibilityLabel.text = "Private"
+        self.visibilityLabel.text = "Open"
         self.visibilitySwitch.isOn = false
+        
+        self.visibilityComment.text = "Any member can join."
+        self.visibilityComment.font = Theme.fontComment
+        self.visibilityComment.textColor = Theme.colorTextSecondary
         
         self.usersButton.setTitle("Manage Members".uppercased(), for: .normal)
         self.usersButton.imageRight = UIImageView(image: UIImage(named: "imgArrowRightLight"))
@@ -253,6 +262,7 @@ class ChannelEditViewController: BaseEditViewController {
         self.usersButton.addTarget(self, action: #selector(manageUsersAction(sender:)), for: .touchUpInside)
 
         self.visibilityGroup.addSubview(self.visibilityLabel)
+        self.visibilityGroup.addSubview(self.visibilityComment)
         self.visibilityGroup.addSubview(self.visibilitySwitch)
 
         self.contentHolder.addSubview(self.banner)
@@ -318,7 +328,7 @@ class ChannelEditViewController: BaseEditViewController {
             let deleteTitleButton = UIBarButtonItem(title: "Delete", style: .plain, target: self, action: #selector(deleteAction(sender:)))
             deleteIconButton.tintColor = Colors.brandColor
             deleteTitleButton.tintColor = Colors.brandColor
-            self.toolbarItems = [spacerFlex, deleteIconButton, deleteTitleButton]
+            self.toolbarItems = [spacerFlex, deleteIconButton, deleteTitleButton, spacerFlex]
         }
 
         /* Visibility */
@@ -400,7 +410,7 @@ class ChannelEditViewController: BaseEditViewController {
         if self.mode == .insert {
             
             let channelId = "ch-\(Utils.genRandomId())"
-            let name = self.nameField.text!
+            let channelName = self.nameField.text!
             let ref = FireController.db.child("group-channels/\(groupId)/\(channelId)")
             let timestamp = FireController.instance.getServerTimestamp()
             
@@ -421,7 +431,7 @@ class ChannelEditViewController: BaseEditViewController {
             channelMap["created_by"] = userId
             channelMap["general"] = false
             channelMap["group_id"] = groupId
-            channelMap["name"] = name
+            channelMap["name"] = channelName
             channelMap["owned_by"] = userId
             if photoMap != nil {
                 channelMap["photo"] = photoMap!
@@ -437,9 +447,12 @@ class ChannelEditViewController: BaseEditViewController {
                     Log.w("Error creating channel")
                     return
                 }
-                let controller = MemberPickerController()
+                
+                let controller = ChannelInviteController()
                 controller.flow = .internalCreate
+                controller.inputAsOwner = true
                 controller.inputChannelId = channelId
+                controller.inputChannelName = channelName
                 self.navigationController?.setViewControllers([controller], animated: true)
             }
         }
