@@ -116,6 +116,7 @@ if [[ "$CONFIGURATION" == "Debug" ]]; then
   install_framework "$BUILT_PRODUCTS_DIR/TTTAttributedLabel/TTTAttributedLabel.framework"
   install_framework "$BUILT_PRODUCTS_DIR/TwicketSegmentedControl/TwicketSegmentedControl.framework"
   install_framework "$BUILT_PRODUCTS_DIR/UIDevice-Hardware/UIDevice_Hardware.framework"
+  install_framework "$BUILT_PRODUCTS_DIR/VTAcknowledgementsViewController/VTAcknowledgementsViewController.framework"
   install_framework "$BUILT_PRODUCTS_DIR/iRate/iRate.framework"
   install_framework "$BUILT_PRODUCTS_DIR/pop/pop.framework"
 fi
@@ -152,6 +153,7 @@ if [[ "$CONFIGURATION" == "Release" ]]; then
   install_framework "$BUILT_PRODUCTS_DIR/TTTAttributedLabel/TTTAttributedLabel.framework"
   install_framework "$BUILT_PRODUCTS_DIR/TwicketSegmentedControl/TwicketSegmentedControl.framework"
   install_framework "$BUILT_PRODUCTS_DIR/UIDevice-Hardware/UIDevice_Hardware.framework"
+  install_framework "$BUILT_PRODUCTS_DIR/VTAcknowledgementsViewController/VTAcknowledgementsViewController.framework"
   install_framework "$BUILT_PRODUCTS_DIR/iRate/iRate.framework"
   install_framework "$BUILT_PRODUCTS_DIR/pop/pop.framework"
 fi
@@ -188,6 +190,7 @@ if [[ "$CONFIGURATION" == "Adhoc" ]]; then
   install_framework "$BUILT_PRODUCTS_DIR/TTTAttributedLabel/TTTAttributedLabel.framework"
   install_framework "$BUILT_PRODUCTS_DIR/TwicketSegmentedControl/TwicketSegmentedControl.framework"
   install_framework "$BUILT_PRODUCTS_DIR/UIDevice-Hardware/UIDevice_Hardware.framework"
+  install_framework "$BUILT_PRODUCTS_DIR/VTAcknowledgementsViewController/VTAcknowledgementsViewController.framework"
   install_framework "$BUILT_PRODUCTS_DIR/iRate/iRate.framework"
   install_framework "$BUILT_PRODUCTS_DIR/pop/pop.framework"
 fi

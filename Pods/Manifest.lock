@@ -139,6 +139,7 @@ PODS:
   - TTTAttributedLabel (2.0.0)
   - TwicketSegmentedControl (0.1.1)
   - UIDevice-Hardware (0.1.8)
+  - VTAcknowledgementsViewController (1.2.1)
 
 DEPENDENCIES:
   - AFNetworkActivityLogger (~> 2.0)
@@ -176,6 +177,7 @@ DEPENDENCIES:
   - TTTAttributedLabel
   - TwicketSegmentedControl
   - UIDevice-Hardware (~> 0.1.7)
+  - VTAcknowledgementsViewController
 
 EXTERNAL SOURCES:
   DateTools:
@@ -238,7 +240,8 @@ SPEC CHECKSUMS:
   TTTAttributedLabel: 8cffe8e127e4e82ff3af1e5386d4cd0ad000b656
   TwicketSegmentedControl: bbb2d155792dbfcee7fea995a614d0c0a3de4a16
   UIDevice-Hardware: ecb52d9a7b223b31f81982358e2b0769ac1a7918
+  VTAcknowledgementsViewController: e1de80f2c0ce31cc7e1c6f1c8aaeec2770371f09
 
-PODFILE CHECKSUM: f55040eeef6feb982ee63acdea8b5e5f9af23813
+PODFILE CHECKSUM: bb99aa5ddee77cf415e59462f16efd4937a08ccf
 
 COCOAPODS: 1.1.0.rc.3

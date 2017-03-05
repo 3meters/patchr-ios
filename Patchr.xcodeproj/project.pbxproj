@@ -115,6 +115,7 @@
 		E26BBF981DB5734F00038754 /* PHAsset+identifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = E26BBF961DB5734F00038754 /* PHAsset+identifier.swift */; };
 		E26BBF991DB5734F00038754 /* PHPhotoLibrary+PhotoAsset.swift in Sources */ = {isa = PBXBuildFile; fileRef = E26BBF971DB5734F00038754 /* PHPhotoLibrary+PhotoAsset.swift */; };
 		E26C80921C3AE246001514B3 /* Animation.swift in Sources */ = {isa = PBXBuildFile; fileRef = E26C80911C3AE246001514B3 /* Animation.swift */; };
+		E27C12091E6CD403003F052B /* Pods-acknowledgements.plist in Resources */ = {isa = PBXBuildFile; fileRef = E27C12081E6CD403003F052B /* Pods-acknowledgements.plist */; };
 		E27CE2801E632E4800149305 /* DropdownButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E27CE27F1E632E4800149305 /* DropdownButton.swift */; };
 		E27F80AF1C56C84700D436E3 /* run-tests.sh in Resources */ = {isa = PBXBuildFile; fileRef = E27F80AE1C56C84700D436E3 /* run-tests.sh */; };
 		E27F8A7E1DFB3A180020E852 /* FloatTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = E27F8A7D1DFB3A180020E852 /* FloatTextField.swift */; };
@@ -326,6 +327,7 @@
 		E2737DC61B8F7E3B00C176B1 /* UIImage+Resize.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIImage+Resize.swift"; sourceTree = "<group>"; };
 		E2737DC81B8F7EA100C176B1 /* UIImage+Alpha.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIImage+Alpha.swift"; sourceTree = "<group>"; };
 		E2737DC91B8F7EA100C176B1 /* UIImage+RoundedCorner.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIImage+RoundedCorner.swift"; sourceTree = "<group>"; };
+		E27C12081E6CD403003F052B /* Pods-acknowledgements.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Pods-acknowledgements.plist"; sourceTree = "<group>"; };
 		E27CE27F1E632E4800149305 /* DropdownButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DropdownButton.swift; sourceTree = "<group>"; };
 		E27F80AE1C56C84700D436E3 /* run-tests.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = "run-tests.sh"; sourceTree = "<group>"; };
 		E27F8A7D1DFB3A180020E852 /* FloatTextField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FloatTextField.swift; sourceTree = "<group>"; };
@@ -826,6 +828,7 @@
 		E2F85C751C32610E00FC2364 /* Support */ = {
 			isa = PBXGroup;
 			children = (
+				E27C12081E6CD403003F052B /* Pods-acknowledgements.plist */,
 				E2CF51321DAEF39100515506 /* ServiceAccount.json */,
 				E2A603221CD97B7A00FBD55B /* InfoPlist.strings */,
 				7D3D39EE1A6F09CC00A44CB2 /* BridgingHeader.h */,
@@ -947,6 +950,7 @@
 				E20C74311DD548A400D90A4D /* invite_member.html in Resources */,
 				E207B5021E2978140019C2A1 /* ChannelListCell.xib in Resources */,
 				E25327CD1B13DB2900990A81 /* notification_activity.aac in Resources */,
+				E27C12091E6CD403003F052B /* Pods-acknowledgements.plist in Resources */,
 				E2DA16D71DCFDF770096D86F /* ChannelTitleView.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -12,6 +12,7 @@ import MBProgressHUD
 import PBWebViewController
 import Firebase
 import FirebaseAuth
+import VTAcknowledgementsViewController
 
 class AboutViewController: UITableViewController {
 
@@ -78,7 +79,7 @@ class AboutViewController: UITableViewController {
 
         self.termsOfServiceCell.textLabel!.text = "Terms of Service"
         self.privacyPolicyCell.textLabel!.text = "Privacy Policy"
-        self.softwareLicensesCell.textLabel!.text = "Software Licenses"
+        self.softwareLicensesCell.textLabel!.text = "Acknowledgements"
     }
     
     func appVersion() -> String {
@@ -118,8 +119,9 @@ extension AboutViewController {
         }
             
         if selectedCell == self.softwareLicensesCell {
-            let softwareLicensesURLString = "http://patchr.com/ios"
-            self.pushWebViewController(url: NSURL(string: softwareLicensesURLString) as URL?)
+            let controller = VTAcknowledgementsViewController.acknowledgementsViewController()
+            controller?.headerText = "The following third party software may be contained in portions of the Patchr mobile application. We offer our sincere thanks to the open source community for all of their contributions. Carry on!"
+            self.navigationController?.pushViewController(controller!, animated: true)
             Reporting.track("Viewed Software Licenses")
         }
     }
