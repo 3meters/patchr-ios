@@ -189,7 +189,7 @@ class ContactPickerController: BaseTableController, CLTokenInputViewDelegate {
             let invitesButton = UIBarButtonItem(title: "Pending", style: .plain, target: self, action: #selector(inviteListAction(sender:)))
             let invitesIconButton = UIBarButtonItem(image: UIImage(named: "imgEnvelopeLight"), style: .plain, target: self, action: #selector(inviteListAction(sender:)))
             invitesIconButton.imageInsets = UIEdgeInsetsMake(7, 20, 7, -8)
-            self.navigationItem.rightBarButtonItems = [doneButton, spacerFlex, invitesButton, invitesIconButton, spacerFlex]
+            self.navigationItem.rightBarButtonItems = [doneButton, Ui.spacerFlex, invitesButton, invitesIconButton, Ui.spacerFlex]
         }
         else {
             self.navigationItem.rightBarButtonItems = [doneButton]
@@ -631,8 +631,8 @@ extension ContactPickerController {
     
     func tokenInputView(_ view: CLTokenInputView, didRemove token: CLToken) {
         if self.tokenView.allTokens.count == 0 {
-            self.tokenView.searchImage.fadeIn(duration: 0.2)
-            self.tokenView.placeholder.fadeIn(duration: 0.2)
+            self.tokenView.searchImage.fadeIn(duration: 0.1)
+            self.tokenView.placeholder.fadeIn(duration: 0.1)
             if self.flow == .internalCreate || self.flow == .onboardCreate {
                 self.doneButton.title = "Done"
             }
@@ -685,16 +685,20 @@ extension ContactPickerController {
     
     func tokenInputViewDidEndEditing(_ view: CLTokenInputView) {
         if self.tokenView.allTokens.count == 0 {
-            self.tokenView.searchImage.fadeIn(duration: 0.2)
-            self.tokenView.placeholder.fadeIn(duration: 0.2)
+            self.tokenView.searchImage.fadeIn(duration: 0.1)
+            self.tokenView.placeholder.fadeIn(duration: 0.1)
         }
-        self.tableView.reloadData()
+        DispatchQueue.main.async {
+            self.tableView.reloadData()
+        }
     }
     
     func tokenInputViewDidBeginEditing(_ view: CLTokenInputView) {
-        self.tokenView.searchImage.fadeOut(duration: 0.2)
-        self.tokenView.placeholder.fadeOut(duration: 0.2)
-        self.tableView.reloadData()
+        self.tokenView.searchImage.fadeOut(duration: 0.1)
+        self.tokenView.placeholder.fadeOut(duration: 0.1)
+        DispatchQueue.main.async {
+            self.tableView.reloadData()
+        }
     }
     
     func tokenInputViewShouldReturn(_ view: CLTokenInputView) -> Bool {

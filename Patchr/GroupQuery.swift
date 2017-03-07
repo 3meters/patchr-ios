@@ -4,9 +4,12 @@
 //
 
 import Foundation
+import FirebaseAuth
 
 class GroupQuery: NSObject {
 
+    var authHandle: FIRAuthStateDidChangeListenerHandle!
+    
     var groupPath: String!
     var groupHandle: UInt!
     var group: FireGroup!
@@ -24,26 +27,32 @@ class GroupQuery: NSObject {
         }
     }
 
-    func observe(with block: @escaping (Error?, FireGroup?) -> Swift.Void) {
+    func observe(with block: @escaping (Error?, Trigger?, FireGroup?) -> Swift.Void) {
+        
+        self.authHandle = FIRAuth.auth()?.addStateDidChangeListener() { [weak self] auth, user in
+            if auth.currentUser == nil {
+                self?.remove()
+            }
+        }
 
         self.groupHandle = FireController.db.child(self.groupPath).observe(.value, with: { snap in
             if !(snap.value is NSNull) {
                 self.group = FireGroup.from(dict: snap.value as? [String: Any], id: snap.key)
                 if self.linkPath == nil || self.linkMapMiss {
-                    block(nil, self.group)
+                    block(nil, .object, self.group)
                 }
                 else if self.linkMap != nil {
                     self.group!.membershipFrom(dict: self.linkMap)
-                    block(nil, self.group)
+                    block(nil, .object, self.group)
                 }
             }
             else {
                 Log.w("Group snapshot is null")
-                block(nil, nil)
+                block(nil, nil, nil)
             }
         }, withCancel: { error in
             Log.w("Permission denied trying to read group: \(self.groupPath!)")
-            block(error, nil)
+            block(error, nil, nil)
         })
         
         if self.linkPath != nil {
@@ -52,7 +61,7 @@ class GroupQuery: NSObject {
                     self.linkMap = snap.value as! [String: Any]
                     if self.group != nil {
                         self.group!.membershipFrom(dict: self.linkMap)
-                        block(nil, self.group)
+                        block(nil, .link, self.group)
                     }
                 }
                 else {
@@ -60,12 +69,12 @@ class GroupQuery: NSObject {
                     self.linkMapMiss = true
                     if self.group != nil {
                         self.group!.membershipClear()
-                        block(nil, self.group)
+                        block(nil, .link, self.group)
                     }
                 }
             }, withCancel: { error in
                 Log.w("Permission denied trying to read group membership: \(self.linkPath!)")
-                block(error, nil)
+                block(error, nil, nil)
             })
         }
     }
@@ -126,6 +135,9 @@ class GroupQuery: NSObject {
     }
 
     func remove() {
+        if self.authHandle != nil {
+            FIRAuth.auth()?.removeStateDidChangeListener(self.authHandle)
+        }
         if self.groupHandle != nil {
             FireController.db.child(self.groupPath).removeObserver(withHandle: self.groupHandle)
         }

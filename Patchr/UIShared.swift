@@ -26,18 +26,20 @@ struct UIShared {
 						if doIt {
                             Log.w("Incompatible version: Update selected")
                             Reporting.track("Selected to Update Incompatible Version")
-                            var appStoreURL = "itms-apps://itunes.apple.com/app/id\(APPLE_APP_ID)"
+                            var appStoreURL = "itms-apps://itunes.apple.com/app/id\(Ids.appleAppId)"
                             if Config.appConfiguration == .testFlight {
-                                appStoreURL = "https://beta.itunes.apple.com/v1/app/\(APPLE_APP_ID)"
+                                appStoreURL = "https://beta.itunes.apple.com/v1/app/\(Ids.appleAppId)"
                             }
 							if let url = NSURL(string: appStoreURL) {
 								UIApplication.shared.openURL(url as URL)
 							}
 						}
 						else {
-							Log.w("Incompatible version: Declined so signout and jump to lobby")
-							Reporting.track("Declined to Update Incompatible Version")
-							UserController.instance.logout()
+							if UserController.instance.authenticated {
+								Log.w("Incompatible version: Declined so signout and jump to lobby")
+								Reporting.track("Declined to Update Incompatible Version")
+								UserController.instance.logout()
+							}
 						}
 				}
 			}

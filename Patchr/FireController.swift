@@ -346,48 +346,62 @@ class FireController: NSObject {
     }
 
     func removeUserFromGroup(userId: String, groupId: String, then: ((Bool) -> Void)? = nil) {
+        
         var updates: [String: Any] = [:]
         updates["member-groups/\(userId)/\(groupId)"] = NSNull()    // delete requires group owner or creator
         updates["group-members/\(groupId)/\(userId)"] = NSNull()    // delete requires group owner or creator
+        
         FireController.db.updateChildValues(updates) { error, ref in
             if error == nil {
                 FireController.db.child("member-channels/\(userId)/\(groupId)")
                     .observeSingleEvent(of: .value, with: { snap in
                     
                         if !(snap.value is NSNull) && snap.hasChildren() {
+                            var remaining = snap.childrenCount
                             for channelSnap in snap.children  {
                                 let channelFoo = channelSnap as! FIRDataSnapshot
                                 let channelId = channelFoo.key
-                                self.removeUserFromChannel(userId: userId, groupId: groupId, channelId: channelId, channelName: nil)
+                                self.removeUserFromChannel(userId: userId, groupId: groupId, channelId: channelId, channelName: nil) { success in
+                                    if !success {
+                                        then?(false)
+                                        return
+                                    }
+                                    else {
+                                        remaining -= 1
+                                        if remaining == 0 {
+                                            let ref = FireController.db.child("queue/clear-unreads").childByAutoId()
+                                            let timestamp = FireController.instance.getServerTimestamp()
+                                            
+                                            var task: [String: Any] = [:]
+                                            task["created_at"] = timestamp
+                                            task["created_by"] = userId
+                                            task["group_id"] = groupId
+                                            task["id"] = ref.key
+                                            task["state"] = "waiting"
+                                            task["target"] = "group"
+                                            ref.setValue(task)
+                                            then?(true)
+                                        }
+                                    }
+                                }
                             }
                         }
                         
-                        let ref = FireController.db.child("queue/clear-unreads").childByAutoId()
-                        let timestamp = FireController.instance.getServerTimestamp()
-                        
-                        var task: [String: Any] = [:]
-                        task["created_at"] = timestamp
-                        task["created_by"] = userId
-                        task["group_id"] = groupId
-                        task["id"] = ref.key
-                        task["state"] = "waiting"
-                        task["target"] = "group"
-                        ref.setValue(task)
-                        
-                        then?(error == nil)
                 })
             }
             else {
                 Log.w("Permission denied removing group member")
-                then?(error == nil)
+                then?(false)
             }
         }
     }
 
     func removeUserFromChannel(userId: String, groupId: String, channelId: String, channelName: String?, then: ((Bool) -> Void)? = nil) {
+        
         var updates: [String: Any] = [:]
         updates["member-channels/\(userId)/\(groupId)/\(channelId)"] = NSNull()         // delete requires creator or owner (channel or group)
         updates["group-channel-members/\(groupId)/\(channelId)/\(userId)"] = NSNull()   // delete requires creator or owner (channel or group)
+        
         FireController.db.updateChildValues(updates) { error, ref in
             if error == nil {
                 let ref = FireController.db.child("queue/clear-unreads").childByAutoId()
@@ -406,11 +420,12 @@ class FireController: NSObject {
                 
                 let text = channelName != nil ? "left #\(channelName!)." : "left."
                 self.sendAdminMessage(channelId: channelId, groupId: groupId, userId: userId, text: text)
-                then?(error == nil)
+                
+                then?(true)
             }
             else {
                 Log.w("Permission denied removing channel member")
-                then?(error == nil)
+                then?(false)
             }
         }
     }
@@ -631,7 +646,10 @@ class FireController: NSObject {
     
     func autoPickGroupAndChannel(userId: String, next: @escaping (String?, String?) -> Void) {
         self.findFirstGroup(userId: userId) { groupId in
-            if groupId == nil { next(nil, nil) }
+            if groupId == nil {
+                next(nil, nil)
+                return
+            }
             if let lastChannelIds = UserDefaults.standard.dictionary(forKey: PerUserKey(key: Prefs.lastChannelIds)),
                 let lastChannelId = lastChannelIds[groupId!] as? String {
                 let validateQuery = ChannelQuery(groupId: groupId!, channelId: lastChannelId, userId: userId)
@@ -936,6 +954,11 @@ class FirebaseArray: NSObject {
         self.snapshots.insert(snap, at: Int(toIndex))
         self.delegate?.array?(self, didMove: snap, from: fromIndex, to: toIndex)
     }
+}
+
+enum Trigger: Int {
+    case object
+    case link
 }
 
 /* FIRAuthErrorCode enum

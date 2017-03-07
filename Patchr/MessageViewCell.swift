@@ -21,7 +21,6 @@ class MessageViewCell: AirUIView {
     var createdDate = AirLabelDisplay()
     var edited = AirLabelDisplay()
     var unread = AirLabelDisplay()
-    var optionsButton = AirLinkButton(frame: CGRect.zero)
 
     var toolbar = AirUIView()
     var likeButton = AirLikeButton(frame: CGRect.zero)
@@ -61,7 +60,6 @@ class MessageViewCell: AirUIView {
         let photoHeight = columnWidth * 0.5625        // 16:9 aspect ratio
 
         self.userPhotoControl.anchorTopLeft(withLeftPadding: 0, topPadding: 0, width: 48, height: 48)
-        self.optionsButton.anchorTopRight(withRightPadding: -4, topPadding: 2, width: 20, height: 20)
 
         /* Header */
 
@@ -165,10 +163,6 @@ class MessageViewCell: AirUIView {
         self.unread.textAlignment = .left
         self.unread.isHidden = true
         
-        self.optionsButton.setImage(UIImage(named: "imgOverflowVerticalLight"), for: .normal)
-        self.optionsButton.tintColor = Colors.gray75pcntColor
-        self.optionsButton.showsTouchWhenHighlighted = true
-
         /* Footer */
 
         self.toolbar.hitInsets = UIEdgeInsets(top: -16, left: -16, bottom: -16, right: -16)
@@ -214,7 +208,6 @@ class MessageViewCell: AirUIView {
         self.message = message
 
         self.description_?.isHidden = true
-        self.photoView?.isHidden = true
         
         if let description = message.text {
             self.description_?.isHidden = false
@@ -256,18 +249,23 @@ class MessageViewCell: AirUIView {
                 if let url = ImageUtils.url(prefix: photo.filename, source: photo.source, category: SizeCategory.standard) {
                     if !self.photoView.associated(withUrl: url) {
                         self.photoView?.image = nil
-                        if (photo.uploading != nil) {
-                            self.photoView.setImageFromCache(url: URL(string: photo.cacheKey)!, animate: true)
-                        }
-                        else {
-                            let fallbackUrl = ImageUtils.fallbackUrl(prefix: photo.filename!)
-                            self.photoView.setImageWithUrl(url: url, fallbackUrl: fallbackUrl, animate: true)
+                        FireController.instance.isConnected() { connected in
+                            if connected == nil || !connected! {
+                                let cacheUrl = URL(string: photo.cacheKey)!
+                                self.photoView.setImageFromCache(url: cacheUrl, animate: true)
+                            }
+                            else {
+                                let fallbackUrl = ImageUtils.fallbackUrl(prefix: photo.filename!)
+                                self.photoView?.image = nil
+                                self.photoView.setImageWithUrl(url: url, fallbackUrl: fallbackUrl, animate: true)
+                            }
                         }
                     }
                 }
             }
         }
         else {
+            self.photoView?.isHidden = true
             self.photoView?.image = nil
         }
 

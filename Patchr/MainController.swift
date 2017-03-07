@@ -35,7 +35,7 @@ class MainController: NSObject, iRateDelegate {
         NotificationCenter.default.removeObserver(self, name: NSNotification.Name(rawValue: Events.StateInitialized), object: nil)
         Log.d("State initialized - app state: \(Config.appState())")
         checkCompatibility() { compatible in
-            if compatible {
+            if compatible || Config.appConfiguration == .debug {
                 self.route()
             }
         }
@@ -167,7 +167,9 @@ class MainController: NSObject, iRateDelegate {
     
     func showLobby(controller: UIViewController? = nil, then: (() -> Void)? = nil) {
         
-        StateController.instance.clearGroup()   // Make sure group and channel are both unset
+        if StateController.instance.groupId != nil {
+            StateController.instance.clearGroup()   // Make sure group and channel are both unset
+        }
         
         let controller = controller ?? LobbyViewController()
         let wrapper = AirNavigationController(rootViewController: controller)

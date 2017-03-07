@@ -16,7 +16,7 @@ class MemberViewController: BaseViewController, UIScrollViewDelegate, UITextFiel
     
     var inputUserId: String!
     
-    var userQuery: UserQuery?
+    var queryUser: UserQuery?
     var user: FireUser!
 
     var headerView = MemberDetailView()
@@ -42,8 +42,8 @@ class MemberViewController: BaseViewController, UIScrollViewDelegate, UITextFiel
         super.viewDidLoad()
         initialize()
         let groupId = StateController.instance.groupId!
-        self.userQuery = UserQuery(userId: self.inputUserId, groupId: groupId)
-        self.userQuery?.observe(with: { [weak self] error, user in
+        self.queryUser = UserQuery(userId: self.inputUserId, groupId: groupId)
+        self.queryUser?.observe(with: { [weak self] error, user in
             self?.user = user
             self?.bind()
         })
@@ -76,7 +76,7 @@ class MemberViewController: BaseViewController, UIScrollViewDelegate, UITextFiel
 	}
     
     deinit {
-        self.userQuery?.remove()
+        self.queryUser?.remove()
     }
 	
 	/*--------------------------------------------------------------------------------------------
@@ -91,18 +91,20 @@ class MemberViewController: BaseViewController, UIScrollViewDelegate, UITextFiel
     }
     
     func emailAction(sender: AnyObject?) {
-        let email = self.user!.email!
-        if MFMailComposeViewController.canSendMail() {
-            MailComposer!.mailComposeDelegate = self
-            MailComposer!.setToRecipients([email])
-            self.present(MailComposer!, animated: true, completion: nil)
-        }
-        else {
-            var emailURL = "mailto:\(email)"
-            emailURL = emailURL.addingPercentEncoding(withAllowedCharacters: NSMutableCharacterSet.urlQueryAllowed) ?? emailURL
-            if let url = URL(string: emailURL) {
-                UIApplication.shared.openURL(url as URL)
+        
+        if let email = self.user!.email {
+            if MFMailComposeViewController.canSendMail() {
+                Ui.mailComposer!.mailComposeDelegate = self
+                Ui.mailComposer!.setToRecipients([email])
+                self.present(Ui.mailComposer!, animated: true, completion: nil)
             }
+            else {
+                var emailURL = "mailto:\(email)"
+                emailURL = emailURL.addingPercentEncoding(withAllowedCharacters: NSMutableCharacterSet.urlQueryAllowed) ?? emailURL
+                if let url = URL(string: emailURL) {
+                    UIApplication.shared.openURL(url as URL)
+                }
+            }            
         }
     }
 
@@ -232,8 +234,8 @@ extension MemberViewController: MFMailComposeViewControllerDelegate {
 		}
 		
 		self.dismiss(animated: true) {
-			MailComposer = nil
-			MailComposer = MFMailComposeViewController()
+			Ui.mailComposer = nil
+			Ui.mailComposer = MFMailComposeViewController()
 		}
 	}
 }

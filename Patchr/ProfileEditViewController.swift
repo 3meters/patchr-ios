@@ -152,7 +152,7 @@ class ProfileEditViewController: BaseEditViewController {
         self.message.numberOfLines = 0
         self.message.textAlignment = .center
 
-        self.photoEditView.photoSchema = Schema.ENTITY_USER
+        self.photoEditView.photoSchema = Schema.entityUser
         self.photoEditView.setHost(controller: self, view: self.photoEditView)
 
         self.firstNameField.placeholder = "First name"
@@ -212,7 +212,7 @@ class ProfileEditViewController: BaseEditViewController {
 
     func bind() {
         
-        self.photoEditView.configureTo(photoMode: self.user.profile?.photo != nil ? .Photo : .Placeholder)
+        self.photoEditView.configureTo(photoMode: self.user.profile?.photo != nil ? .photo : .placeholder)
         
         self.firstNameField.text = self.user.profile?.firstName
         self.lastNameField.text = self.user.profile?.lastName

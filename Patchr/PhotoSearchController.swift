@@ -320,10 +320,10 @@ extension PhotoSearchController {
 	*/
 	@objc(tableView:cellForRowAtIndexPath:) func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 		
-		var cell = tableView.dequeueReusableCell(withIdentifier: CELL_IDENTIFIER)
+		var cell = tableView.dequeueReusableCell(withIdentifier: "cell")
 		
 		if cell == nil {
-			cell = UITableViewCell(style: .default, reuseIdentifier: CELL_IDENTIFIER)
+			cell = UITableViewCell(style: .default, reuseIdentifier: "cell")
 		}
 		
 		let search = self.autocompleteData[indexPath.row]

@@ -5,8 +5,11 @@
 
 import Foundation
 import Firebase
+import FirebaseAuth
 
 class UserQuery: NSObject {
+    
+    var authHandle: FIRAuthStateDidChangeListenerHandle!
 
     var onlineHandle: UInt!
 
@@ -43,6 +46,12 @@ class UserQuery: NSObject {
     }
 
     func observe(with block: @escaping (Error?, FireUser?) -> ()) {
+        
+        self.authHandle = FIRAuth.auth()?.addStateDidChangeListener() { [weak self] auth, user in
+            if auth.currentUser == nil {
+                self?.remove()
+            }
+        }
         
         self.block = block
         self.userHandle = FireController.db.child(self.userPath).observe(.value, with: { snap in
@@ -146,6 +155,9 @@ class UserQuery: NSObject {
     }
 
     func remove() {
+        if self.authHandle != nil {
+            FIRAuth.auth()?.removeStateDidChangeListener(self.authHandle)
+        }
         if self.userHandle != nil {
             FireController.db.child(self.userPath).removeObserver(withHandle: self.userHandle)
         }

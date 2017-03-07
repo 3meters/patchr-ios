@@ -8,8 +8,11 @@
 
 import UIKit
 import FirebaseDatabaseUI
+import FirebaseAuth
 
 class BaseTableController: UIViewController {
+    
+    var handleAuth: FIRAuthStateDidChangeListenerHandle!
 	
     var tableView = UITableView(frame: CGRect.zero, style: .plain)
     var queryController: DataSourceController!
@@ -61,6 +64,11 @@ class BaseTableController: UIViewController {
 	*--------------------------------------------------------------------------------------------*/
 	
 	func initialize() {
+        self.handleAuth = FIRAuth.auth()?.addStateDidChangeListener() { auth, user in
+            if user == nil && self.queryController != nil {
+                self.queryController.unbind()
+            }
+        }
         self.view.backgroundColor = Theme.colorBackgroundForm
         self.activity.color = Theme.colorActivityIndicator
         self.activity.hidesWhenStopped = true
@@ -128,7 +136,7 @@ class BaseTableController: UIViewController {
 }
 
 class DataSourceController: NSObject, FUICollectionDelegate, UITableViewDataSource {
-    
+
     weak var delegate: FUICollectionDelegate?
     var tableView: UITableView!
     var name: String!
@@ -273,7 +281,6 @@ class DataSourceController: NSObject, FUICollectionDelegate, UITableViewDataSour
     }
     
     func array(_ array: FUICollection, queryCancelledWithError error: Error) {
-        Log.w("Query canceled: \(error.localizedDescription)")
         self.delegate?.array?(array, queryCancelledWithError: error)
     }
 }

@@ -153,9 +153,9 @@ class GroupEditViewController: BaseEditViewController {
         self.message.numberOfLines = 0
         self.message.textAlignment = .center
 
-        self.photoEditView.photoSchema = Schema.ENTITY_PATCH
+        self.photoEditView.photoSchema = Schema.entityPatch
         self.photoEditView.setHost(controller: self, view: self.photoEditView)
-        self.photoEditView.configureTo(photoMode: .Placeholder)
+        self.photoEditView.configureTo(photoMode: .placeholder)
 
         self.titleField.placeholder = "Group Name"
         self.titleField.delegate = self
@@ -184,7 +184,7 @@ class GroupEditViewController: BaseEditViewController {
         let deleteTitleButton = UIBarButtonItem(title: "Delete", style: .plain, target: self, action: #selector(deleteAction(sender:)))
         deleteIconButton.tintColor = Colors.brandColor
         deleteTitleButton.tintColor = Colors.brandColor
-        self.toolbarItems = [spacerFlex, deleteIconButton, deleteTitleButton, spacerFlex]
+        self.toolbarItems = [Ui.spacerFlex, deleteIconButton, deleteTitleButton, Ui.spacerFlex]
 
         /* Navigation bar buttons */
         if self.presented {
@@ -205,7 +205,7 @@ class GroupEditViewController: BaseEditViewController {
         self.titleField.text = self.group.title
         
         if let photo = self.group.photo {
-            self.photoEditView.configureTo(photoMode: .Photo)
+            self.photoEditView.configureTo(photoMode: .photo)
             if photo.uploading != nil {
                 self.photoEditView.bind(url: URL(string: photo.cacheKey)!, fallbackUrl: nil, uploading: true)
             }

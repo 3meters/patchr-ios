@@ -230,9 +230,9 @@ class ChannelEditViewController: BaseEditViewController {
         self.banner.numberOfLines = 0
         self.banner.textAlignment = .center
 
-        self.photoEditView.photoSchema = Schema.ENTITY_PATCH
+        self.photoEditView.photoSchema = Schema.entityPatch
         self.photoEditView.setHost(controller: self, view: self.photoEditView)
-        self.photoEditView.configureTo(photoMode: .Placeholder)
+        self.photoEditView.configureTo(photoMode: .placeholder)
 
         self.nameField.placeholder = "Channel name"
         self.nameField.title = "Channel name (lower case)"
@@ -312,7 +312,7 @@ class ChannelEditViewController: BaseEditViewController {
         self.purposeField.text = self.channel.purpose
         
         if let photo = self.channel.photo {
-            self.photoEditView.configureTo(photoMode: .Photo)
+            self.photoEditView.configureTo(photoMode: .photo)
             if photo.uploading != nil {
                 self.photoEditView.bind(url: URL(string: photo.cacheKey)!, fallbackUrl: nil, uploading: true)
             }
@@ -328,7 +328,7 @@ class ChannelEditViewController: BaseEditViewController {
             let deleteTitleButton = UIBarButtonItem(title: "Delete", style: .plain, target: self, action: #selector(deleteAction(sender:)))
             deleteIconButton.tintColor = Colors.brandColor
             deleteTitleButton.tintColor = Colors.brandColor
-            self.toolbarItems = [spacerFlex, deleteIconButton, deleteTitleButton, spacerFlex]
+            self.toolbarItems = [Ui.spacerFlex, deleteIconButton, deleteTitleButton, Ui.spacerFlex]
         }
 
         /* Visibility */

@@ -16,7 +16,8 @@ import FirebaseDatabaseUI
 class BaseSlackController: SLKTextViewController {
 	
     var controllerIsActive = false
-
+    var authHandle: FIRAuthStateDidChangeListenerHandle!
+    
     var statusBarHidden: Bool = false {
         didSet {
             UIView.animate(withDuration: 0.5) { () -> Void in
@@ -205,7 +206,7 @@ class BaseSlackController: SLKTextViewController {
         
         self.photoEditView = PhotoEditView()
         self.photoEditView.setHost(controller: self, view: self.leftButton)
-        self.photoEditView.configureTo(photoMode: .Photo)
+        self.photoEditView.configureTo(photoMode: .photo)
         
         self.rule.backgroundColor = Theme.colorRule
         
@@ -249,13 +250,13 @@ class BaseSlackController: SLKTextViewController {
         
         if let photo = message.attachments?.values.first?.photo {
             if photo.uploading != nil {
-                self.photoEditView.configureTo(photoMode: .Photo)
+                self.photoEditView.configureTo(photoMode: .photo)
                 self.photoEditView.bind(url: URL(string: photo.cacheKey)!, fallbackUrl: nil, uploading: true)
                 showPhotoEdit()
             }
             else {
                 if let photoUrl = ImageUtils.url(prefix: photo.filename, source: photo.source, category: SizeCategory.standard) {
-                    self.photoEditView.configureTo(photoMode: .Photo)
+                    self.photoEditView.configureTo(photoMode: .photo)
                     self.photoEditView.bind(url: photoUrl, fallbackUrl: ImageUtils.fallbackUrl(prefix: photo.filename!))
                     showPhotoEdit()
                 }

@@ -25,11 +25,11 @@ class BingController: NSObject {
         
         Log.d("Image search count: \(count), offset: \(offset) ")
         
-        let bingSessionManager: AFHTTPSessionManager = AFHTTPSessionManager(baseURL: NSURL(string: URI_PROXIBASE_SEARCH_IMAGES) as URL?)
+        let urlString = "https://api.cognitive.microsoft.com/bing/v5.0"
+        let bingSessionManager: AFHTTPSessionManager = AFHTTPSessionManager(baseURL: NSURL(string: urlString) as URL?)
         let requestSerializer: AFJSONRequestSerializer = AFJSONRequestSerializer()
-        let bingKey = "3ca600480b5341ebba4b61d405427ae3"
         
-        requestSerializer.setValue(bingKey, forHTTPHeaderField: "Ocp-Apim-Subscription-Key")
+        requestSerializer.setValue(Ids.bingKey, forHTTPHeaderField: "Ocp-Apim-Subscription-Key")
         bingSessionManager.requestSerializer = requestSerializer
         bingSessionManager.responseSerializer = JSONResponseSerializerWithData()
         

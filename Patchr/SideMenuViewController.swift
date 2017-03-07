@@ -14,9 +14,7 @@ import SlideMenuControllerSwift
 class SideMenuViewController: BaseTableController, UITableViewDelegate, UITableViewDataSource {
 
     var user: FireUser?
-    var userQuery: UserQuery?
     var group: FireGroup?
-    var groupQuery: GroupQuery?
  
     var userHeader: UserMiniHeaderView!
     var groupHeader: GroupMiniHeaderView!
@@ -42,10 +40,6 @@ class SideMenuViewController: BaseTableController, UITableViewDelegate, UITableV
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-    }
-    
-    deinit {
-        self.userQuery?.remove()
     }
     
     /*--------------------------------------------------------------------------------------------
@@ -121,18 +115,14 @@ class SideMenuViewController: BaseTableController, UITableViewDelegate, UITableV
     func bind() {
         if let userId = UserController.instance.userId,
             let groupId = StateController.instance.groupId {
-            self.userQuery?.remove()
-            self.userQuery = UserQuery(userId: userId, groupId: groupId)
-            self.userQuery!.once(with: { [weak self] error, user in
-                if let user = user {
+            UserQuery(userId: userId, groupId: groupId).once(with: { [weak self] error, user in
+                if user != nil {
                     self?.user = user
                     self?.userHeader.bind(user: self?.user)
                 }
             })
-            self.groupQuery?.remove()
-            self.groupQuery = GroupQuery(groupId: groupId, userId: userId)
-            self.groupQuery!.once(with: { [weak self] error, group in
-                if let group = group {
+            GroupQuery(groupId: groupId, userId: userId).once(with: { [weak self] error, group in
+                if group != nil {
                     self?.group = group
                     self?.groupHeader.bind(group: self?.group)
                 }

@@ -12,13 +12,15 @@ class UserController: NSObject {
     
     static let instance = UserController()
 
-    fileprivate var userQuery: UserQuery?
-    fileprivate var unreadQuery: UnreadQuery?
+    fileprivate var queryUser: UserQuery?
+    fileprivate var queryUnread: UnreadQuery?
+
     fileprivate(set) internal var userId: String?
     fileprivate(set) internal var user: FireUser?
     fileprivate(set) internal var unreads = 0
-    fileprivate var counterRef: FIRDatabaseReference?
-    fileprivate var counterHandle: UInt?
+
+    fileprivate var refCounter: FIRDatabaseReference?
+    fileprivate var handleCounter: UInt?
 
     var authenticated: Bool {
         return (self.userId != nil)
@@ -122,9 +124,9 @@ class UserController: NSObject {
                 UserDefaults.standard.setValue(true, forKey: PerUserKey(key: Prefs.soundEffects))
             }
             
-            self.userQuery?.remove()
-            self.userQuery = UserQuery(userId: userId, groupId: nil, trackPresence: true)
-            self.userQuery!.observe(with: { error, user in
+            self.queryUser?.remove()
+            self.queryUser = UserQuery(userId: userId, groupId: nil, trackPresence: true)
+            self.queryUser!.observe(with: { error, user in
                 
                 guard user != nil && error == nil else {
                     assertionFailure("User not found, no longer exists or permission denied")
@@ -145,8 +147,8 @@ class UserController: NSObject {
                 
             })
             
-            self.counterRef = FireController.db.child("counters/\(userId)")
-            self.counterHandle = self.counterRef!.observe(.value, with: { [weak self] snap in
+            self.refCounter = FireController.db.child("counters/\(userId)")
+            self.handleCounter = self.refCounter!.observe(.value, with: { [weak self] snap in
                 var count = 0
                 if let unreads = snap.value as? [String: Any] {
                     count = unreads["unreads"] as! Int
@@ -164,19 +166,25 @@ class UserController: NSObject {
 
     func logout() {
         let userId = UserController.instance.userId!
+        
         if let token = FIRInstanceID.instanceID().token() {
             Log.i("Removing messaging token for user: \(userId)")
             FireController.db.child("installs/\(userId)/\(token)").removeValue()
         }
-        self.counterRef?.removeObserver(withHandle: self.counterHandle!)
-        try! FIRAuth.auth()!.signOut()
+        
+        self.refCounter?.removeObserver(withHandle: self.handleCounter!)
+        FireController.db.child("unreads/\(userId)").keepSynced(false)
+        FireController.db.child("member-groups/\(userId)").keepSynced(false)
+        FireController.db.child("member-channels/\(userId)").keepSynced(false)
+        
+        try! FIRAuth.auth()!.signOut()  // Triggers cleanup by canned queries
+        
         Reporting.updateUser(user: nil)
         StateController.instance.clearGroup() // Also clears channel
-        self.userQuery?.remove()
-        self.userQuery = nil
         self.user = nil
         self.userId = nil
-        MainController.instance.route()
+        
+        MainController.instance.route() // Showing lobby also clears group and channel
         Reporting.track("Logged Out")
         Log.i("User logged out")
     }

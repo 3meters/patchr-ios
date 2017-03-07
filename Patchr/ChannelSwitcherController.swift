@@ -8,13 +8,17 @@ import UIKit
 import AVFoundation
 import Firebase
 import FirebaseDatabaseUI
+import FirebaseAuth
 import SlideMenuControllerSwift
 import pop
 
 class ChannelSwitcherController: BaseTableController {
-
-	var unreadsTotalQuery: UnreadQuery?
-	var unreadsGroupQuery: UnreadQuery?
+    
+    var handleAuthState: FIRAuthStateDidChangeListenerHandle!
+    
+    var queryGroup: GroupQuery!
+	var queryUnreadsTotal: UnreadQuery?
+	var queryUnreadsGroup: UnreadQuery?
 
 	var searchBar: UISearchBar!
 	var searchBarHolder = UIView()
@@ -22,7 +26,10 @@ class ChannelSwitcherController: BaseTableController {
 	var searchTableView = AirTableView(frame: CGRect.zero, style: .plain)
 	var searchOn = false
 	var rule = UIView()
-	var transitionManager = PushDownAnimationController()
+    
+    lazy var transitionManager: PushDownAnimationController = {
+        return PushDownAnimationController()
+    }()
 
 	var gradientImage: UIImage!
 	var dropdownButton: DropdownButton!
@@ -69,7 +76,8 @@ class ChannelSwitcherController: BaseTableController {
         self.view.fillSuperview()
 		if self.searchOn {
 			self.searchTableView.fillSuperview()
-		} else {
+        }
+        else {
 			self.tableView.fillSuperview()
 		}
 	}
@@ -148,7 +156,15 @@ class ChannelSwitcherController: BaseTableController {
 
 	override func initialize() {
 		super.initialize()
-
+        
+        self.handleAuthState = FIRAuth.auth()?.addStateDidChangeListener() { auth, user in
+            if user == nil {
+                self.queryGroup?.remove()
+                self.queryUnreadsGroup?.remove()
+                self.queryUnreadsTotal?.remove()
+            }
+        }
+        
         self.automaticallyAdjustsScrollViewInsets = false
         self.navigationController?.setToolbarHidden(false, animated: true)
 
@@ -257,32 +273,32 @@ class ChannelSwitcherController: BaseTableController {
 
                     let addButton = UIBarButtonItem(title: "New Channel", style: .plain, target: self, action: #selector(self?.addAction(sender:)))
                     addButton.tintColor = Colors.brandColor
-                    self?.toolbarItems = [spacerFlex, addButton, spacerFlex]
+                    self?.toolbarItems = [Ui.spacerFlex, addButton, Ui.spacerFlex]
                 }
             }, withCancel: { error in
                 Log.w("Permission denied: \(path)")
             })
+            
+            self.queryGroup?.remove()
+            self.queryGroup = GroupQuery(groupId: groupId, userId: nil)
+            self.queryGroup!.observe(with: { [weak self] error, trigger, group in
+                if self?.titleButton != nil && group != nil {
+                    self?.titleView.text = group!.title
+                }
+            })
 
-			if self.titleButton != nil {
-				FireController.db.child("groups/\(groupId)/title").observe(.value, with: { [weak self] snap in
-                    if let title = snap.value as? String {
-                        self?.titleView.text = title
-                    }
-                })
-			}
-
-			self.unreadsTotalQuery?.remove()
-			self.unreadsTotalQuery = UnreadQuery(level: .user, userId: userId)
-			self.unreadsTotalQuery!.observe(with: { error, total in
+			self.queryUnreadsTotal?.remove()
+			self.queryUnreadsTotal = UnreadQuery(level: .user, userId: userId)
+			self.queryUnreadsTotal!.observe(with: { error, total in
 				if total != self.unreadTotal {
 					self.unreadTotal = total ?? 0
 					self.unreadOther = self.unreadTotal - self.unreadGroup
 				}
 			})
 
-			self.unreadsGroupQuery?.remove()
-			self.unreadsGroupQuery = UnreadQuery(level: .group, userId: userId, groupId: groupId)
-			self.unreadsGroupQuery!.observe(with: { error, total in
+			self.queryUnreadsGroup?.remove()
+			self.queryUnreadsGroup = UnreadQuery(level: .group, userId: userId, groupId: groupId)
+			self.queryUnreadsGroup!.observe(with: { error, total in
 				if total != self.unreadGroup {
 					self.unreadGroup = total ?? 0
 					self.unreadOther = self.unreadTotal - self.unreadGroup
@@ -440,11 +456,18 @@ extension ChannelSwitcherController: UINavigationControllerDelegate {
 
 class SearchController: NSObject {
 
+    var authHandle: FIRAuthStateDidChangeListenerHandle!
 	var tableView: UITableView!
     var queryController: DataSourceController!
 
 	init(tableView: UITableView) {
+        super.init()
 		self.tableView = tableView
+        self.authHandle = FIRAuth.auth()?.addStateDidChangeListener() { [weak self] auth, user in
+            if auth.currentUser == nil && self?.queryController != nil {
+                self?.queryController.unbind()
+            }
+        }
 	}
 
 	func filter(searchText: String, scope: String = "All") {

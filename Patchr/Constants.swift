@@ -11,39 +11,24 @@ import MessageUI
 
 typealias CompletionBlock = (_ response: Any?, _ error: NSError?) -> Void
 
-let APPLE_APP_ID = "983436323"
-let GOOGLE_ANALYTICS_ID = "UA-33660954-6"
-let BUNDLE_ID = "com.3meters.patchr.ios"
-let KEYCHAIN_GROUP = "7542324V6B.\(BUNDLE_ID)"// Team id + bundle id
-let BUGSNAG_KEY = "d1313b8d5fc14d937419406f33fd4c01"
+struct Ids {
+    static let bingKey = "3ca600480b5341ebba4b61d405427ae3"
+    static let appleAppId = "983436323"
+    static let keychainGroup = "7542324V6B.com.3meters.patchr.ios"// Team id + bundle id
+    static let bugsnagKey = "d1313b8d5fc14d937419406f33fd4c01"
+}
 
-let THIRD_PARTY_AUTH_ENABLED = false
-let TIMEOUT_REQUEST: Int = 10    // Seconds
-let BLOCKING = false
-let debugAuth = true
-
-let URI_PROXIBASE_SEARCH_IMAGES = "https://api.cognitive.microsoft.com/bing/v5.0"
-let NAMESPACE = "com.3meters.patchr.ios."
-let CELL_IDENTIFIER = "cell"
-let COGNITO_POOLID = "us-east-1:ff1976dc-9c27-4046-a59f-7dd43355869b"
-
-var LOG_TIMERS = false
-var MailComposer: MFMailComposeViewController? = MFMailComposeViewController()
-
-let spacerFlex = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
-let spacerFixed = UIBarButtonItem(barButtonSystemItem: .fixedSpace, target: nil, action: nil)
+struct Ui {
+    static var mailComposer: MFMailComposeViewController? = MFMailComposeViewController()
+    static let spacerFlex = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
+    static let spacerFixed = UIBarButtonItem(barButtonSystemItem: .fixedSpace, target: nil, action: nil)
+}
 
 func PerUserKey(key: String) -> String {
     guard let userId = UserController.instance.userId else {
         fatalError("PerUserKey requires an authenticated user")
     }
     return "\(userId).\(key)"
-}
-
-enum AppConfiguration {
-    case debug
-    case testFlight
-    case appStore
 }
 
 struct Config {
@@ -157,9 +142,9 @@ public struct Events {
 }
 
 public struct Schema {
-    static let ENTITY_MESSAGE = "message"
-    static let ENTITY_PATCH = "patch"
-    static let ENTITY_USER = "user"
+    static let entityMessage = "message"
+    static let entityPatch = "patch"
+    static let entityUser = "user"
 }
 
 /*
@@ -183,4 +168,10 @@ public struct SizeCategory {
     static let profile = "profile"
     static let thumbnail = "thumbnail"
     static let standard = "standard"
+}
+
+enum AppConfiguration {
+    case debug
+    case testFlight
+    case appStore
 }

@@ -4,8 +4,11 @@
 //
 
 import Foundation
+import FirebaseAuth
 
 class ChannelQuery: NSObject {
+    
+    var authHandle: FIRAuthStateDidChangeListenerHandle!
 
     var channelPath: String!
     var channelHandle: UInt!
@@ -25,6 +28,12 @@ class ChannelQuery: NSObject {
     }
 
     func observe(with block: @escaping (Error?, FireChannel?) -> Swift.Void) {
+        
+        self.authHandle = FIRAuth.auth()?.addStateDidChangeListener() { [weak self] auth, user in
+            if auth.currentUser == nil {
+                self?.remove()
+            }
+        }
 
         self.channelHandle = FireController.db.child(self.channelPath).observe(.value, with: { snap in
             if !(snap.value is NSNull) {
@@ -128,6 +137,9 @@ class ChannelQuery: NSObject {
     }
 
     func remove() {
+        if self.authHandle != nil {
+            FIRAuth.auth()?.removeStateDidChangeListener(self.authHandle)
+        }
         if self.channelHandle != nil {
             FireController.db.child(self.channelPath).removeObserver(withHandle: self.channelHandle)
         }

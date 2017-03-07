@@ -55,7 +55,12 @@ class InviteListCell: UITableViewCell {
             self.title?.text = user.profile?.fullName ?? user.username!
             
             if user.username != nil {
-                self.subtitle?.text = "@\(user.username!) • \(user.email!)"
+                if user.email != nil {
+                    self.subtitle?.text = "@\(user.username!) • \(user.email!)"
+                }
+                else {
+                    self.subtitle?.text = "@\(user.username!) • (email hidden)"
+                }
             }
             
             if let channels = invite["channels"] as? [String: Any] {

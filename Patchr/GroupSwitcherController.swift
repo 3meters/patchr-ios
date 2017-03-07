@@ -12,11 +12,11 @@ import FirebaseDatabaseUI
 class GroupSwitcherController: BaseTableController {
     
     var gradientImage: UIImage!
-    var headingLabel = AirLabelTitle()
-    var rule = UIView()
-    var buttonLogin	= AirButton()
-    var buttonSignup = AirButton()
-    var buttonGroup	= UIView()
+    var headingLabel: AirLabelTitle!
+    var rule: UIView!
+    var buttonLogin: AirButton!
+    var buttonSignup: AirButton!
+    var buttonGroup: UIView!
     var titleView: UIBarButtonItem!
     
     var message: String = "Select from groups you are a member of. You can switch groups at anytime."
@@ -56,18 +56,20 @@ class GroupSwitcherController: BaseTableController {
             self.tableView.fillSuperview()
         }
         else {
-            let headingSize = self.headingLabel.sizeThatFits(CGSize(width:288, height:CGFloat.greatestFiniteMagnitude))
-            
-            self.headingLabel.anchorTopCenter(withTopPadding: 74, width: 288, height:  headingSize.height + 24)
-            self.rule.alignUnder(self.headingLabel, centeredFillingWidthWithLeftAndRightPadding: 0, topPadding: 0, height: 1)
-            
-            if self.groupAvailable {
-                self.tableView.alignUnder(self.rule, matchingLeftAndRightFillingHeightWithTopPadding: 0, bottomPadding: 0)
-            }
-            else {
-                self.buttonGroup.anchorInCenter(withWidth: 240, height: 96)
-                self.buttonSignup.anchorTopCenterFillingWidth(withLeftAndRightPadding: 0, topPadding: 0, height: 44)
-                self.buttonLogin.anchorBottomCenterFillingWidth(withLeftAndRightPadding: 0, bottomPadding: 0, height: 44)
+            if self.headingLabel != nil {
+                let headingSize = self.headingLabel.sizeThatFits(CGSize(width:288, height:CGFloat.greatestFiniteMagnitude))
+                
+                self.headingLabel.anchorTopCenter(withTopPadding: 74, width: 288, height:  headingSize.height + 24)
+                self.rule.alignUnder(self.headingLabel, centeredFillingWidthWithLeftAndRightPadding: 0, topPadding: 0, height: 1)
+                
+                if self.groupAvailable {
+                    self.tableView.alignUnder(self.rule, matchingLeftAndRightFillingHeightWithTopPadding: 0, bottomPadding: 0)
+                }
+                else {
+                    self.buttonGroup.anchorInCenter(withWidth: 240, height: 96)
+                    self.buttonSignup.anchorTopCenterFillingWidth(withLeftAndRightPadding: 0, topPadding: 0, height: 44)
+                    self.buttonLogin.anchorBottomCenterFillingWidth(withLeftAndRightPadding: 0, bottomPadding: 0, height: 44)
+                }                
             }
         }
     }
@@ -129,7 +131,6 @@ class GroupSwitcherController: BaseTableController {
         
         self.automaticallyAdjustsScrollViewInsets = false
         self.navigationController?.setToolbarHidden(false, animated: true)
-        self.rule.backgroundColor = Theme.colorSeparator
         
         NotificationCenter.default.addObserver(self, selector: #selector(userDidSwitch(notification:)), name: NSNotification.Name(rawValue: Events.UserDidSwitch), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(groupDidSwitch(notification:)), name: NSNotification.Name(rawValue: Events.GroupDidSwitch), object: nil)        
@@ -174,7 +175,7 @@ class GroupSwitcherController: BaseTableController {
             self.navigationItem.leftBarButtonItems = [self.titleView]
             
             let addButton = UIBarButtonItem(title: "New Group", style: .plain, target: self, action: #selector(addAction(sender:)))
-            self.toolbarItems = [spacerFlex, addButton, spacerFlex]
+            self.toolbarItems = [Ui.spacerFlex, addButton, Ui.spacerFlex]
             
             return
         }
@@ -190,9 +191,13 @@ class GroupSwitcherController: BaseTableController {
                 
                 self.groupAvailable = true
                 
+                self.headingLabel = AirLabelTitle()
                 self.headingLabel.textAlignment = NSTextAlignment.center
                 self.headingLabel.numberOfLines = 0
                 self.headingLabel.text = "Select from groups you are a member of. You can switch groups at anytime."
+                
+                self.rule = UIView()
+                self.rule.backgroundColor = Theme.colorSeparator
                 
                 self.tableView.backgroundColor = Theme.colorBackgroundTable
                 self.tableView.delegate = self
@@ -207,7 +212,7 @@ class GroupSwitcherController: BaseTableController {
                 self.view.addSubview(self.tableView)
                 
                 let addButton = UIBarButtonItem(title: "New Group", style: .plain, target: self, action: #selector(self.addAction(sender:)))
-                self.toolbarItems = [spacerFlex, addButton, spacerFlex]
+                self.toolbarItems = [Ui.spacerFlex, addButton, Ui.spacerFlex]
                 
                 if self.presented {
                     let closeButton = UIBarButtonItem(barButtonSystemItem: .stop, target: self, action: #selector(self.closeAction(sender:)))
@@ -218,15 +223,22 @@ class GroupSwitcherController: BaseTableController {
             /* User is not a member of any group */
             else {
                 
+                self.headingLabel = AirLabelTitle()
                 self.headingLabel.textAlignment = NSTextAlignment.center
                 self.headingLabel.numberOfLines = 0
-                self.headingLabel.text = "Oops, you are not a member of any Patchr group."
+                self.headingLabel.text = "You are currently not a member of any Patchr group."
+
+                self.rule = UIView()
+                self.rule.backgroundColor = Theme.colorSeparator
                 
+                self.buttonLogin = AirButton()
                 self.buttonLogin.setTitle("Log in with another email", for: .normal)
                 self.buttonLogin.addTarget(self, action: #selector(self.switchLoginAction(sender:)), for: .touchUpInside)
+                self.buttonSignup = AirButton()
                 self.buttonSignup.setTitle("Create a new Patchr group", for: .normal)
                 self.buttonSignup.addTarget(self, action: #selector(self.addAction(sender:)), for: .touchUpInside)
                 
+                self.buttonGroup = UIView()
                 self.buttonGroup.addSubview(self.buttonLogin)
                 self.buttonGroup.addSubview(self.buttonSignup)
                 

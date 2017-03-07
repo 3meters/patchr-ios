@@ -240,10 +240,10 @@ extension SettingsTableViewController {
             let email = "feedback@patchr.com"
             let subject = "Feedback for Patchr iOS"
             if MFMailComposeViewController.canSendMail() {
-                MailComposer!.mailComposeDelegate = self
-                MailComposer!.setToRecipients([email])
-                MailComposer!.setSubject(subject)
-                self.present(MailComposer!, animated: true, completion: nil)
+                Ui.mailComposer!.mailComposeDelegate = self
+                Ui.mailComposer!.setToRecipients([email])
+                Ui.mailComposer!.setSubject(subject)
+                self.present(Ui.mailComposer!, animated: true, completion: nil)
             }
             else {
                 var emailURL = "mailto:\(email)"
@@ -256,7 +256,7 @@ extension SettingsTableViewController {
         }
             
         if selectedCell == self.rateCell {
-            let appStoreURL = "itms-apps://itunes.apple.com/app/id\(APPLE_APP_ID)"
+            let appStoreURL = "itms-apps://itunes.apple.com/app/id\(Ids.appleAppId)"
             if let url = NSURL(string: appStoreURL) {
                 UIApplication.shared.openURL(url as URL)
             }
@@ -389,8 +389,8 @@ extension SettingsTableViewController: MFMailComposeViewControllerDelegate {
         }
 
         self.dismiss(animated: true) {
-            MailComposer = nil
-            MailComposer = MFMailComposeViewController()
+            Ui.mailComposer = nil
+            Ui.mailComposer = MFMailComposeViewController()
         }
     }
 }

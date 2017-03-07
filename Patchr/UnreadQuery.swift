@@ -4,8 +4,11 @@
 //
 
 import Foundation
+import FirebaseAuth
 
 class UnreadQuery: NSObject {
+    
+    var authHandle: FIRAuthStateDidChangeListenerHandle!
     
     var path: String!
     var handle: UInt!
@@ -25,6 +28,13 @@ class UnreadQuery: NSObject {
     }
     
     func observe(with block: @escaping (Error?, Int?) -> Void) {
+        
+        self.authHandle = FIRAuth.auth()?.addStateDidChangeListener() { [weak self] auth, user in
+            if auth.currentUser == nil {
+                self?.remove()
+            }
+        }
+
         self.handle = FireController.db.child(self.path).observe(.value, with: { snap in
             var total = 0
             if !(snap.value is NSNull) {
@@ -62,6 +72,9 @@ class UnreadQuery: NSObject {
     }
     
     func remove() {
+        if self.authHandle != nil {
+            FIRAuth.auth()?.removeStateDidChangeListener(self.authHandle)
+        }
         if self.handle != nil {
             FireController.db.child(self.path).removeObserver(withHandle: self.handle)
         }

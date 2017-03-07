@@ -70,12 +70,10 @@ class Stopwatch: NSObject {
 	@discardableResult func stop(message: String) -> TimeInterval {
 		let lapTime = processSegmentTime(message: "*** Stopped ***: \(message)", prefixIncluded: true)
 		self.lastThreshold = 0
-		if LOG_TIMERS {
-			Log.v("*** Timer log ***")
-			for line in self.log {
-				Log.v("\(line)")
-			}
-		}
+        Log.v("*** Timer log ***")
+        for line in self.log {
+            Log.v("\(line)")
+        }
 		self.log = []
 		return lapTime
 	}

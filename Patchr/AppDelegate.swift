@@ -81,7 +81,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FIRMessagingDelegate {
         }
         
         /* Initialize Bugsnag */
-        Bugsnag.start(withApiKey: BUGSNAG_KEY)
+        Bugsnag.start(withApiKey: Ids.bugsnagKey)
         
         #if DEBUG
         AFNetworkActivityLogger.shared().startLogging()

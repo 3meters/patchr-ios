@@ -137,7 +137,7 @@ extension NotificationSettingsViewController {
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch (section) {
-            case 0: return 3
+            case 0: return 2
             case 1: return 1
             default: fatalError("Unknown number of sections")
         }
@@ -148,8 +148,7 @@ extension NotificationSettingsViewController {
             case 0:
                 switch (indexPath.row) {
                     case 0: return self.typeAllCell
-                    case 1: return self.typeDirectOnlyCell
-                    case 2: return self.typeNoneCell
+                    case 1: return self.typeNoneCell
                     default: fatalError("Unknown row in section 0")
                 }
             case 1:

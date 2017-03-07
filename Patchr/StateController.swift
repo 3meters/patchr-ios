@@ -11,20 +11,32 @@ import iRate
 import SlideMenuControllerSwift
 import Firebase
 import FirebaseDatabase
+import FirebaseAuth
 
 class StateController: NSObject {
 
     static let instance = StateController()
     
+    var handleAuth: FIRAuthStateDidChangeListenerHandle!
+    var refChannelNames: FIRDatabaseReference!
+
     fileprivate(set) internal var groupId: String?
     fileprivate(set) internal var groupGeneralId: String?
     fileprivate(set) internal var group: FireGroup! // Used by FireController, invite links
-    fileprivate var groupQuery: GroupQuery?
+
+    fileprivate var queryGroup: GroupQuery?
 
     fileprivate(set) internal var channelId: String?
     fileprivate(set) internal var stateIntialized = false
     
-    private override init() { }
+    private override init() {
+        super.init()
+        FIRAuth.auth()?.addStateDidChangeListener() { auth, user in
+            if user == nil && self.refChannelNames != nil {
+                self.refChannelNames.keepSynced(false)
+            }
+        }
+    }
 
     /*--------------------------------------------------------------------------------------------
      * MARK: - Methods
@@ -106,6 +118,7 @@ class StateController: NSObject {
             NotificationCenter.default.post(
                 name: NSNotification.Name(rawValue: Events.StateInitialized),
                 object: self, userInfo: nil)
+            
         }
         
         queue.run()
@@ -121,10 +134,12 @@ class StateController: NSObject {
             
             Log.d("Current group: \(groupId)")
             
-            if self.groupId != nil {
-                FireController.db.child("channel-names/\(self.groupId!)").keepSynced(false)
+            
+            if self.refChannelNames != nil {
+                self.refChannelNames.keepSynced(false)
             }
-            FireController.db.child("channel-names/\(groupId)").keepSynced(true)
+            self.refChannelNames = FireController.db.child("channel-names/\(groupId)")
+            self.refChannelNames.keepSynced(true)
             
             self.groupId = groupId
             NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.GroupDidSwitch), object: self, userInfo: userInfo)
@@ -136,9 +151,9 @@ class StateController: NSObject {
             
             /* Convenience for other parts of the code that need quick access to the group object */
             let userId = UserController.instance.userId!
-            self.groupQuery?.remove()
-            self.groupQuery = GroupQuery(groupId: groupId, userId: userId)
-            self.groupQuery!.observe(with: { error, group in
+            self.queryGroup?.remove()
+            self.queryGroup = GroupQuery(groupId: groupId, userId: userId)
+            self.queryGroup!.observe(with: { error, trigger, group in
                 
                 guard group != nil && error == nil else {
                     Log.w("Requested group invalid: \(groupId)")
@@ -159,7 +174,12 @@ class StateController: NSObject {
                 }
                 
                 if self.group != nil {
-                    Log.d("Group updated: \(group!.id!)")
+                    if trigger == .object {
+                        Log.d("Group updated: \(group!.id!)")
+                    }
+                    else if trigger == .link {
+                        Log.d("Group membership updated: \(group!.id!)")
+                    }
                 }
                 else if let role = group?.role, role != "guest" {
                     /* Stash channelId for general channel if not guest */
@@ -202,10 +222,10 @@ class StateController: NSObject {
     func clearGroup() {
         Log.d("Current group: nothing")
         clearChannel()
-        self.groupQuery?.remove() // Clear active observer if one
+        self.queryGroup?.remove() // Clear active observer if one
         self.groupId = nil
         self.group = nil
-        self.groupQuery = nil
+        self.queryGroup = nil
         //UserDefaults.standard.removeObject(forKey: PerUserKey(key: Prefs.lastGroupId))
     }
     
