@@ -167,6 +167,10 @@ class ChannelSwitcherController: BaseTableController {
         
         self.automaticallyAdjustsScrollViewInsets = false
         self.navigationController?.setToolbarHidden(false, animated: true)
+        
+        let statusHeight = UIApplication.shared.statusBarFrame.size.height
+        let navigationHeight = self.navigationController?.navigationBar.height() ?? 44
+        let chromeHeight = statusHeight + navigationHeight
 
 		self.rule.backgroundColor = Theme.colorSeparator
         
@@ -175,8 +179,8 @@ class ChannelSwitcherController: BaseTableController {
         self.tableView.tableFooterView = UIView()
 		self.tableView.estimatedRowHeight = 36
 		self.tableView.separatorInset = UIEdgeInsets.zero
-        self.tableView.contentInset = UIEdgeInsets(top: 74, left: 0, bottom: 44, right: 0)
-        self.tableView.contentOffset = CGPoint(x: 0, y: -74)
+        self.tableView.contentInset = UIEdgeInsets(top: chromeHeight, left: 0, bottom: 44, right: 0)
+        self.tableView.contentOffset = CGPoint(x: 0, y: -chromeHeight)
 		self.tableView.register(UINib(nibName: "ChannelListCell", bundle: nil), forCellReuseIdentifier: "cell")
         
 		self.view.addSubview(self.tableView)
@@ -187,8 +191,8 @@ class ChannelSwitcherController: BaseTableController {
 		self.searchTableView.tableFooterView = UIView()
 		self.searchTableView.delegate = self
 		self.searchTableView.separatorInset = UIEdgeInsets.zero
-        self.searchTableView.contentInset = UIEdgeInsets(top: 74, left: 0, bottom: 44, right: 0)
-        self.searchTableView.contentOffset = CGPoint(x: 0, y: -74)
+        self.searchTableView.contentInset = UIEdgeInsets(top: chromeHeight, left: 0, bottom: 44, right: 0)
+        self.searchTableView.contentOffset = CGPoint(x: 0, y: -chromeHeight)
 		self.searchTableView.register(UINib(nibName: "ChannelSearchCell", bundle: nil), forCellReuseIdentifier: "cell")
 
 		self.searchBar = UISearchBar(frame: CGRect.zero)
@@ -312,40 +316,38 @@ class ChannelSwitcherController: BaseTableController {
             self.queryController.bind(to: self.tableView, query: query) { [weak self] tableView, indexPath, data in
                 
                 let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! ChannelListCell
+                cell.reset()    // Releases previous data observers
+                guard self != nil else { return cell }
                 
-                if self != nil {
+                if let userId = UserController.instance.userId,
+                    let groupId = StateController.instance.groupId,
+                    let snap = data as? FIRDataSnapshot {
                     
-                    if let userId = UserController.instance.userId,
-                        let groupId = StateController.instance.groupId,
-                        let snap = data as? FIRDataSnapshot {
+                    let channelId = snap.key
+                    
+                    cell.query = ChannelQuery(groupId: groupId, channelId: channelId, userId: userId)    // Just channel lookup
+                    cell.query!.observe(with: { error, channel in
                         
-                        let channelId = snap.key
-                        
-                        cell.reset()    // Releases previous data observers
-                        cell.query = ChannelQuery(groupId: groupId, channelId: channelId, userId: userId)    // Just channel lookup
-                        cell.query!.observe(with: { error, channel in
-                            
-                            if channel != nil {
-                                cell.selected(on: (channelId == StateController.instance.channelId), style: .prominent)
-                                cell.bind(channel: channel!)
-                                cell.unreadQuery = UnreadQuery(level: .channel, userId: userId, groupId: groupId, channelId: channelId)
-                                cell.unreadQuery!.observe(with: { error, total in
-                                    if total != nil && total! > 0 {
-                                        cell.badge?.text = "\(total!)"
-                                        cell.badge?.isHidden = false
-                                        cell.accessoryType = .none
-                                    }
-                                    else {
-                                        cell.badge?.isHidden = true
-                                        cell.accessoryType = cell.selectedOn ? .checkmark : .none
-                                    }
-                                })
-                            }
-                            else {
-                                Log.w("Ouch! User is member of channel that does not exist")
-                            }
-                        })
-                    }
+                        if channel != nil {
+                            cell.selected(on: (channelId == StateController.instance.channelId), style: .prominent)
+                            cell.bind(channel: channel!)
+                            cell.unreadQuery = UnreadQuery(level: .channel, userId: userId, groupId: groupId, channelId: channelId)
+                            cell.unreadQuery!.observe(with: { error, total in
+                                if total != nil && total! > 0 {
+                                    cell.badge?.text = "\(total!)"
+                                    cell.badge?.isHidden = false
+                                    cell.accessoryType = .none
+                                }
+                                else {
+                                    cell.badge?.isHidden = true
+                                    cell.accessoryType = cell.selectedOn ? .checkmark : .none
+                                }
+                            })
+                        }
+                        else {
+                            Log.w("Ouch! User is member of channel that does not exist")
+                        }
+                    })
                 }
                 return cell
             }

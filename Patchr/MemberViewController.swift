@@ -137,9 +137,13 @@ class MemberViewController: BaseViewController, UIScrollViewDelegate, UITextFiel
         
         self.automaticallyAdjustsScrollViewInsets = false
         let viewWidth = min(Config.contentWidthMax, self.view.bounds.size.width)
+        let statusHeight = UIApplication.shared.statusBarFrame.size.height
+        let navigationHeight = self.navigationController?.navigationBar.height() ?? 44
+        let chromeHeight = statusHeight + navigationHeight
+        
         self.headerHeight = viewWidth * 0.625
-        self.scrollView.contentInset = UIEdgeInsets(top: self.headerHeight + 64, left: 0, bottom: 0, right: 0)
-        self.scrollView.contentOffset = CGPoint(x: 0, y: -(self.headerHeight + 64))
+        self.scrollView.contentInset = UIEdgeInsets(top: self.headerHeight + chromeHeight, left: 0, bottom: 0, right: 0)
+        self.scrollView.contentOffset = CGPoint(x: 0, y: -(self.headerHeight + chromeHeight))
         updateHeaderView()
         
         self.phone.caption.text = "Phone"
@@ -200,9 +204,14 @@ class MemberViewController: BaseViewController, UIScrollViewDelegate, UITextFiel
     
     func updateHeaderView() {
         var headerRect = CGRect(x: 0, y: -self.headerHeight, width: self.view.width(), height: self.headerHeight)
-        if self.scrollView.contentOffset.y < -(self.headerHeight + 64) {
-            headerRect.origin.y = (self.scrollView.contentOffset.y + 64)
-            headerRect.size.height = -(self.scrollView.contentOffset.y + 64)
+        
+        let statusHeight = UIApplication.shared.statusBarFrame.size.height
+        let navigationHeight = self.navigationController?.navigationBar.height() ?? 44
+        let chromeHeight = statusHeight + navigationHeight
+
+        if self.scrollView.contentOffset.y < -(self.headerHeight + chromeHeight) {
+            headerRect.origin.y = (self.scrollView.contentOffset.y + chromeHeight)
+            headerRect.size.height = -(self.scrollView.contentOffset.y + chromeHeight)
         }
         self.headerView.frame = headerRect
     }

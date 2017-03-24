@@ -1,14 +1,11 @@
 //
-//  AirImageView.swift
-//  Patchr
-//
 //  Created by Jay Massena on 5/22/15.
 //  Copyright (c) 2015 3meters. All rights reserved.
 //
 
 import UIKit
 
-class AirToggleButton: AirImageButton {
+class AirToggleButton: AirButtonBase {
     
     var imageOff: UIImage?
     var imageOn: UIImage?
@@ -29,10 +26,8 @@ class AirToggleButton: AirImageButton {
 	
 	func onClick(sender: AnyObject) { }
 		
-    override func initialize() {
-        super.initialize()
+    func initialize() {
         toggle(on: false, animate: false)
-        self.progressAuto = false
         self.addTarget(self, action: #selector(onClick(sender:)), for: .touchUpInside)
     }
     

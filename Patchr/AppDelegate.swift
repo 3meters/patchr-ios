@@ -214,7 +214,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FIRMessagingDelegate {
     
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
         Log.d("Success registering for remote notifications: APNS: \(deviceToken.description)")
-        FIRInstanceID.instanceID().setAPNSToken(deviceToken, type: .unknown)
+        FIRInstanceID.instanceID().setAPNSToken(deviceToken, type: Config.isDebug ? .sandbox : .prod)
         if let token = FIRInstanceID.instanceID().token(),
             let userId = UserController.instance.userId {
             Log.i("AppDelegate: setting firebase messaging token: \(userId)")

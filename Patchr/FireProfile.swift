@@ -10,7 +10,6 @@ import Foundation
 
 class FireProfile: NSObject {
     
-    var developer: Bool?
     var firstName: String?
     var fullName: String?
     var lastName: String?
@@ -24,7 +23,6 @@ class FireProfile: NSObject {
             profile.lastName = dict!["last_name"] as? String
             profile.fullName = dict!["full_name"] as? String
             profile.phone = dict!["phone"] as? String
-            profile.developer = dict!["developer"] as? Bool
             profile.photo = FirePhoto.from(dict: dict!["photo"] as! [String : Any]?)
             return profile
         }

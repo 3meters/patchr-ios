@@ -22,6 +22,7 @@ class FireUser: NSObject {
     var createdBy: String?
     var modifiedAt: Int64?
     var presence: Any?
+    var developer: Bool?
     var username: String?
     var profile: FireProfile?
     
@@ -56,6 +57,7 @@ class FireUser: NSObject {
             user.modifiedAt = dict!["modified_at"] as? Int64
             user.presence = dict!["presence"]
             user.username = dict!["username"] as? String
+            user.developer = dict!["developer"] as? Bool
             user.profile = FireProfile.from(dict: dict!["profile"] as! [String : Any]?)
             return user
         }

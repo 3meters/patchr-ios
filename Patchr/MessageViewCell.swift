@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import SDWebImage
 import TTTAttributedLabel
 
 class MessageViewCell: AirUIView {
@@ -86,9 +85,11 @@ class MessageViewCell: AirUIView {
             self.description_?.sizeToFit()
             self.description_?.alignUnder(self.userName, matchingLeftAndFillingWidthWithRightPadding: 0, topPadding: 2, height: self.description_!.height())
             self.photoView?.alignUnder(self.description_!, matchingLeftAndFillingWidthWithRightPadding: 0, topPadding: 10, height: photoHeight)
+            self.photoView.progressView.anchorInCenter(withWidth: 20, height: 20)
         }
         else if (self.message.attachments?.first) != nil {
             self.photoView?.alignUnder(self.userName, matchingLeftAndFillingWidthWithRightPadding: 0, topPadding: 10, height: photoHeight)
+            self.photoView.progressView.anchorInCenter(withWidth: 20, height: 20)
         }
 
         self.edited.alignUnder(bottomView!, matchingLeftWithTopPadding: 2, width: self.edited.width(), height: self.edited.isHidden ? 0 : self.edited.height())
@@ -192,6 +193,8 @@ class MessageViewCell: AirUIView {
     }
 
     func reset() {
+        self.photoView.reset()
+        self.userPhotoControl.reset()
         self.description_?.text = nil
         self.description_?.textColor = Colors.black
         self.description_!.font = Theme.fontTextList
@@ -228,39 +231,21 @@ class MessageViewCell: AirUIView {
         
         if let photo = message.creator?.profile?.photo {
             if !self.template {
-                if photo.uploading != nil {
-                    self.userPhotoControl.bind(url: URL(string: photo.cacheKey)!, fallbackUrl: nil, name: nil, colorSeed: nil, uploading: true)
-                }
-                else {
-                    if let url = ImageUtils.url(prefix: photo.filename, source: photo.source, category: SizeCategory.profile) {
-                        let fallbackUrl = ImageUtils.fallbackUrl(prefix: photo.filename!)
-                        self.userPhotoControl.bind(url: url, fallbackUrl: fallbackUrl, name: fullName, colorSeed: message.creator?.id)
-                    }
-                }
+                let url = Cloudinary.url(prefix: photo.filename, category: SizeCategory.profile)
+                self.userPhotoControl.bind(url: url, name: fullName, colorSeed: message.creator?.id)
             }
         }
         else {
-            self.userPhotoControl.bind(url: nil, fallbackUrl: nil, name: fullName, colorSeed: message.creator?.id)
+            self.userPhotoControl.bind(url: nil, name: fullName, colorSeed: message.creator?.id)
         }
         
         if let photo = message.attachments?.values.first?.photo {
             self.photoView?.isHidden = false
             if !self.template { // Don't fetch if acting as template
-                if let url = ImageUtils.url(prefix: photo.filename, source: photo.source, category: SizeCategory.standard) {
-                    if !self.photoView.associated(withUrl: url) {
-                        self.photoView?.image = nil
-                        FireController.instance.isConnected() { connected in
-                            if connected == nil || !connected! {
-                                let cacheUrl = URL(string: photo.cacheKey)!
-                                self.photoView.setImageFromCache(url: cacheUrl, animate: true)
-                            }
-                            else {
-                                let fallbackUrl = ImageUtils.fallbackUrl(prefix: photo.filename!)
-                                self.photoView?.image = nil
-                                self.photoView.setImageWithUrl(url: url, fallbackUrl: fallbackUrl, animate: true)
-                            }
-                        }
-                    }
+                let url = Cloudinary.url(prefix: photo.filename!)
+                if !self.photoView.associated(withUrl: url) {
+                    self.photoView?.image = nil
+                    self.photoView.setImageWithUrl(url: url, animate: true)
                 }
             }
         }

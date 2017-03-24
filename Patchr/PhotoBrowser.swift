@@ -104,6 +104,9 @@ class PhotoBrowser: IDMPhotoBrowser {
             if self.mode == .gallery {
                 self.likeButton.isHidden = false
             }
+            
+            self.trackTintColor = Colors.gray90pcntColor
+            self.progressTintColor = Colors.accentColor
         }
     }
     

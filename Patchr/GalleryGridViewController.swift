@@ -12,15 +12,15 @@ import NHBalancedFlowLayout
 
 class GalleryGridViewController: UICollectionViewController {
 	
-	var entityId				: String?
-	var displayPhotos			= [String: DisplayPhoto]()
-	var displayPhotosArray		: [DisplayPhoto]!
-	var threshold				= 0
-	var processing				= false
-	var activity				: UIActivityIndicatorView?
-	var footerView				: UIView!
-	var loadMoreMessage			: String = "LOAD MORE"
-	var morePhotos				= false
+	var displayPhotos = [String: DisplayPhoto]()
+	var displayPhotosArray: [DisplayPhoto]!
+	var threshold = 0
+	var processing = false
+	var activity: UIActivityIndicatorView?
+	var footerView: UIView!
+	var loadMoreMessage: String = "LOAD MORE"
+	var morePhotos = false
+    var photoBrowser: PhotoBrowser!
 	
     var largePhotoIndexPath : IndexPath? {
 		
@@ -47,14 +47,14 @@ class GalleryGridViewController: UICollectionViewController {
     }
     
     fileprivate let reuseIdentifier = "ThumbnailCell"
-    fileprivate var sectionInsets	: UIEdgeInsets?
-    fileprivate var thumbnailWidth	: CGFloat?
-    fileprivate var availableWidth	: CGFloat?
-    fileprivate let pageSize		= 49
-	fileprivate var virtualSize		= 49
-	fileprivate var maxSize			= 500
-    fileprivate let maxImageSize	: Int = 500000
-    fileprivate let maxDimen		: Int = Int(Config.imageDimensionMax)
+    fileprivate var sectionInsets: UIEdgeInsets?
+    fileprivate var thumbnailWidth: CGFloat?
+    fileprivate var availableWidth: CGFloat?
+    fileprivate let pageSize = 49
+	fileprivate var virtualSize	= 49
+	fileprivate var maxSize = 500
+    fileprivate let maxImageSize: Int = 500000
+    fileprivate let maxDimen: Int = Int(Config.imageDimensionMax)
     
 	/*--------------------------------------------------------------------------------------------
 	 * Lifecycle
@@ -103,15 +103,14 @@ class GalleryGridViewController: UICollectionViewController {
 	
 	func initialize() {
 		
-		self.collectionView?.backgroundColor = Theme.colorBackgroundForm
-		
+		self.collectionView!.backgroundColor = Theme.colorBackgroundForm
 		self.collectionView!.register(GalleryViewCell.self, forCellWithReuseIdentifier: reuseIdentifier)
 		
 		if let layout = self.collectionViewLayout as? UICollectionViewFlowLayout {
 			layout.minimumLineSpacing = 4
 			layout.minimumInteritemSpacing = 4
 		}
-		
+        
 		/* Create sorted array for data binding */
 		self.displayPhotosArray = Array(self.displayPhotos.values).sorted(by: { $0.createdDateValue! > $1.createdDateValue! })
 		
@@ -140,9 +139,7 @@ extension GalleryGridViewController: IDMPhotoBrowserDelegate {
 	}
 	
 	func photoBrowser(_ photoBrowser: IDMPhotoBrowser!, didShowPhotoAt index: UInt) {
-		
-		let index = Int(index)
-		
+		let index = Int(index)		
 		if let browser = photoBrowser as? PhotoBrowser {
 			let displayPhoto = self.displayPhotosArray![index]
 			browser.likeButton.bind(displayPhoto: displayPhoto)
@@ -153,25 +150,23 @@ extension GalleryGridViewController: IDMPhotoBrowserDelegate {
 extension GalleryGridViewController { /* UICollectionViewDelegate, UICollectionViewDataSource */
 	
 	override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) -> Void {
-		
 		/*
 		* Create browser (must be done each time photo browser is displayed. Photo
 		* browser objects cannot be re-used)
 		*/
 		let cell = collectionView.cellForItem(at: indexPath) as! GalleryViewCell
         
-        let browser = PhotoBrowser(photos: self.displayPhotosArray! as [Any], animatedFrom: cell)
-        browser?.mode = .gallery
-		
-		browser?.setInitialPageIndex(UInt(indexPath.row))
-		browser?.useWhiteBackgroundColor = true
-		browser?.usePopAnimation = true
-		browser?.scaleImage = cell.displayImageView.image  // Used because final image might have different aspect ratio than initially
-		browser?.disableVerticalSwipe = false
-		browser?.autoHideInterface = false
-		browser?.delegate = self
-		
-		self.navigationController!.present(browser!, animated:true, completion:nil)
+        self.photoBrowser = PhotoBrowser(photos: self.displayPhotosArray! as [Any], animatedFrom: cell)
+        self.photoBrowser.mode = .gallery
+        self.photoBrowser.useWhiteBackgroundColor = true
+        self.photoBrowser.usePopAnimation = true
+        self.photoBrowser.disableVerticalSwipe = false
+        self.photoBrowser.autoHideInterface = false
+        self.photoBrowser.delegate = self
+        
+		self.photoBrowser.setInitialPageIndex(UInt(indexPath.row))
+		self.photoBrowser.scaleImage = cell.displayImageView.image  // Used because final image might have different aspect ratio than initially
+		self.navigationController!.present(self.photoBrowser, animated: true, completion: nil)
 	}
 	
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -192,12 +187,7 @@ extension GalleryGridViewController { /* UICollectionViewDelegate, UICollectionV
             if !cell!.displayImageView.associated(withUrl: displayPhoto.photoURL!) {
                 cell!.displayImageView.image = nil
                 cell!.displayPhoto = displayPhoto
-                if displayPhoto.uploading != nil {
-                    cell!.displayImageView.setImageFromCache(url: displayPhoto.photoURL!, animate: true)
-                }
-                else {
-                    cell!.displayImageView.setImageWithUrl(url: displayPhoto.photoURL!, fallbackUrl: displayPhoto.fallbackUrl, animate: false)
-                }
+                cell!.displayImageView.setImageWithUrl(url: displayPhoto.photoURL!, animate: true)
             }
 		}
 		

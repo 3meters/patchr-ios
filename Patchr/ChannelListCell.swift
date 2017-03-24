@@ -54,6 +54,7 @@ class ChannelListCell: UITableViewCell {
     }
     
     func reset() {
+        self.selected(on: false)
         self.title?.text = nil
         self.star?.isHidden = true
         self.lock?.isHidden = true

@@ -421,7 +421,8 @@ extension PhotoSearchController {
 			if let thumbCell = cell as? ThumbnailCollectionViewCell {
 				if let imageView = thumbCell.thumbnail {
 					thumbCell.imageResult = imageResult
-					imageView.setImageWithUrl(url: URL(string: imageResult.thumbnailUrl!)!, fallbackUrl: nil, animate: false)
+                    imageView.enableProgress = false
+					imageView.setImageWithUrl(url: URL(string: imageResult.thumbnailUrl!)!, animate: false)
 				}
 			}			
 		}

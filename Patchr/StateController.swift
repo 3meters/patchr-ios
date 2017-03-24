@@ -18,7 +18,6 @@ class StateController: NSObject {
     static let instance = StateController()
     
     var handleAuth: FIRAuthStateDidChangeListenerHandle!
-    var refChannelNames: FIRDatabaseReference!
 
     fileprivate(set) internal var groupId: String?
     fileprivate(set) internal var groupGeneralId: String?
@@ -32,8 +31,17 @@ class StateController: NSObject {
     private override init() {
         super.init()
         FIRAuth.auth()?.addStateDidChangeListener() { auth, user in
-            if user == nil && self.refChannelNames != nil {
-                self.refChannelNames.keepSynced(false)
+            if user == nil {
+                if let groupId = self.groupId {
+                    FireController.db.child("group-members/\(groupId)").keepSynced(false)
+                    FireController.db.child("channel-names/\(groupId)").keepSynced(false)
+                    if let userId = UserController.instance.userId {
+                        FireController.db.child("invites/\(groupId)/\(userId)").keepSynced(false)
+                    }
+                    if let channelId = self.channelId {
+                        FireController.db.child("group-channel-members/\(groupId)/\(channelId)").keepSynced(false)
+                    }
+                }
             }
         }
     }
@@ -134,13 +142,21 @@ class StateController: NSObject {
             
             Log.d("Current group: \(groupId)")
             
+            let userId = UserController.instance.userId!
             
-            if self.refChannelNames != nil {
-                self.refChannelNames.keepSynced(false)
+            if self.groupId != nil {
+                FireController.db.child("group-members/\(self.groupId!)").keepSynced(false)
+                FireController.db.child("channel-names/\(self.groupId!)").keepSynced(false)
+                FireController.db.child("invites/\(self.groupId!)/\(userId)").keepSynced(false)
+                if self.channelId != nil {
+                    FireController.db.child("group-channel-members/\(self.groupId!)/\(self.channelId!)").keepSynced(false)
+                }
             }
-            self.refChannelNames = FireController.db.child("channel-names/\(groupId)")
-            self.refChannelNames.keepSynced(true)
-            
+
+            FireController.db.child("group-members/\(groupId)").keepSynced(true)
+            FireController.db.child("channel-names/\(groupId)").keepSynced(true)
+            FireController.db.child("invites/\(groupId)/\(userId)").keepSynced(true)
+
             self.groupId = groupId
             NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.GroupDidSwitch), object: self, userInfo: userInfo)
             UserDefaults.standard.set(groupId, forKey: PerUserKey(key: Prefs.lastGroupId))
@@ -150,7 +166,6 @@ class StateController: NSObject {
             }
             
             /* Convenience for other parts of the code that need quick access to the group object */
-            let userId = UserController.instance.userId!
             self.queryGroup?.remove()
             self.queryGroup = GroupQuery(groupId: groupId, userId: userId)
             self.queryGroup!.observe(with: { error, trigger, group in
@@ -205,6 +220,8 @@ class StateController: NSObject {
             }
             
             Log.d("Current channel: \(channelId!)")
+            
+            FireController.db.child("group-channel-members/\(groupId)/\(channelId!)").keepSynced(true)
             
             userInfo["fromChannelId"] = self.channelId
             userInfo["toChannelId"] = channelId!

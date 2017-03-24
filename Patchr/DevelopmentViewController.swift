@@ -58,14 +58,13 @@ class DevelopmentViewController: BaseViewController {
 
 	func statusBarHiddenAction(sender: AnyObject) {
 		UserDefaults.standard.set(statusBarHiddenSwitch.isOn, forKey: Prefs.statusBarHidden)
-        self.statusBarHidden = statusBarHiddenSwitch.isOn
+        self.setNeedsStatusBarAppearanceUpdate()
 		self.view.setNeedsLayout()
 	}
 	
     func clearImageCacheAction(sender: AnyObject) {
-        let imageCache = SDImageCache.shared()
-        imageCache?.clearDisk()
-        imageCache?.clearMemory()
+        SDImageCache.shared().clearDisk()
+        SDImageCache.shared().clearMemory()
         UIShared.toast(message: "Image cache cleared")
         AudioController.instance.play(sound: Sound.pop.rawValue)        
     }
@@ -97,4 +96,8 @@ class DevelopmentViewController: BaseViewController {
 		self.statusBarHiddenSwitch.addTarget(self, action: #selector(DevelopmentViewController.statusBarHiddenAction(sender:)), for: .touchUpInside)
 		self.clearImageCacheButton.addTarget(self, action: #selector(DevelopmentViewController.clearImageCacheAction(sender:)), for: .touchUpInside)
 	}
+    
+    override var prefersStatusBarHidden: Bool {
+        return UserDefaults.standard.bool(forKey: Prefs.statusBarHidden)
+    }
 }

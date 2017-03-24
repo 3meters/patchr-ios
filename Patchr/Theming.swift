@@ -62,7 +62,7 @@ class Snow {
 	let colorScrimInvite            = UIColor(red: CGFloat(0), green: CGFloat(0), blue: CGFloat(0), alpha: CGFloat(0.15))
 	let colorScrimDarken            = UIColor(red: CGFloat(0), green: CGFloat(0), blue: CGFloat(0), alpha: CGFloat(0.3))
 	let colorScrimLighten           = UIColor(red: CGFloat(1), green: CGFloat(1), blue: CGFloat(1), alpha: CGFloat(0.75))
-    let colorScrimCaption           = UIColor(red: CGFloat(0.9), green: CGFloat(0.9), blue: CGFloat(0.9), alpha: CGFloat(0.75))
+    let colorScrimCaption           = UIColor(red: CGFloat(0.9), green: CGFloat(0.9), blue: CGFloat(0.9), alpha: CGFloat(1.0))
 	let colorActionOn               = Colors.brandColorTextDark
 	let colorActionOff              = Colors.brandColorTextDark
 	let colorActivityIndicator      = Colors.brandColor

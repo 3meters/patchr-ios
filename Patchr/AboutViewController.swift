@@ -96,6 +96,10 @@ class AboutViewController: UITableViewController {
         webViewController.showsNavigationToolbar = false
         self.navigationController?.pushViewController(webViewController, animated: true)
     }
+    
+    override var prefersStatusBarHidden: Bool {
+        return UserDefaults.standard.bool(forKey: Prefs.statusBarHidden)
+    }
 }
 
 extension AboutViewController {

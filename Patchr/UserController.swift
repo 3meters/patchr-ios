@@ -54,14 +54,32 @@ class UserController: NSObject {
         return userEmail
     }
 
-    private override init() { }
+    private override init() {
+    }
 
     /*--------------------------------------------------------------------------------------------
      * Methods
      *--------------------------------------------------------------------------------------------*/
 
     func prepare(then: ((Bool) -> Void)? = nil) {
+        
+        FIRAuth.auth()?.addStateDidChangeListener() { auth, user in
+            if user != nil {
+                let userId = user!.uid
+                FireController.db.child("unreads/\(userId)").keepSynced(true)
+                FireController.db.child("member-groups/\(userId)").keepSynced(true)
+                FireController.db.child("member-channels/\(userId)").keepSynced(true)
+            }
+            else if let userId = self.userId {
+                FireController.db.child("unreads/\(userId)").keepSynced(false)
+                FireController.db.child("member-groups/\(userId)").keepSynced(false)
+                FireController.db.child("member-channels/\(userId)").keepSynced(false)
+            }
+        }
+        
         if let user = FIRAuth.auth()?.currentUser {
+            
+            /* Verify user account */
             user.reload(completion: { error in
                 if let error = error as? NSError {
                     Log.w(error.localizedDescription)
@@ -76,13 +94,13 @@ class UserController: NSObject {
                         /* User account could have been deleted */
                         try! FIRAuth.auth()!.signOut()
                         StateController.instance.clearGroup() // Also clears channel
-                        then?(false)
                         return
                     }
                 }
-                self.setUserId(userId: user.uid)
-                then?(error == nil)
             })
+            
+            self.setUserId(userId: user.uid)
+            then?(true)
         }
         else {
             then?(true)
@@ -96,16 +114,6 @@ class UserController: NSObject {
         if userId != self.userId {
             
             Log.i("User logged in: \(userId)")
-            
-            if self.userId != nil {
-                FireController.db.child("unreads/\(self.userId!)").keepSynced(false)
-                FireController.db.child("member-groups/\(self.userId!)").keepSynced(false)
-                FireController.db.child("member-channels/\(self.userId!)").keepSynced(false)
-            }
-            
-            FireController.db.child("unreads/\(userId)").keepSynced(true)
-            FireController.db.child("member-groups/\(userId)").keepSynced(true)
-            FireController.db.child("member-channels/\(userId)").keepSynced(true)
             
             if let token = FIRInstanceID.instanceID().token() {
                 Log.i("UserController: setting firebase messaging token: \(token)")
@@ -173,9 +181,6 @@ class UserController: NSObject {
         }
         
         self.refCounter?.removeObserver(withHandle: self.handleCounter!)
-        FireController.db.child("unreads/\(userId)").keepSynced(false)
-        FireController.db.child("member-groups/\(userId)").keepSynced(false)
-        FireController.db.child("member-channels/\(userId)").keepSynced(false)
         
         try! FIRAuth.auth()!.signOut()  // Triggers cleanup by canned queries
         

@@ -18,13 +18,6 @@ class BaseTableController: UIViewController {
     var queryController: DataSourceController!
     var activity = UIActivityIndicatorView(activityIndicatorStyle: .whiteLarge)
     var controllerIsActive = false
-    var statusBarHidden: Bool = false {
-        didSet {
-            UIView.animate(withDuration: 0.5) { () -> Void in
-                self.setNeedsStatusBarAppearanceUpdate()
-            }
-        }
-    }
     
     var presentedShallow: Bool {
         return self.presentingViewController?.presentedViewController == self
@@ -76,14 +69,6 @@ class BaseTableController: UIViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(viewDidBecomeActive(sender:)), name: NSNotification.Name.UIApplicationDidBecomeActive, object: nil)
 	}
 	
-    override var preferredStatusBarUpdateAnimation: UIStatusBarAnimation {
-        return UIStatusBarAnimation.slide
-    }
-    
-    override var prefersStatusBarHidden: Bool {
-        return self.statusBarHidden
-    }
-	
 	func dismissKeyboard(sender: NSNotification) {
 		self.view.endEditing(true)
 	}
@@ -132,7 +117,15 @@ class BaseTableController: UIViewController {
 	
 	func isEmptyString(value : String?) -> Bool {
 		return (value == nil || value!.isEmpty)
-	}	
+	}
+    
+    override var preferredStatusBarUpdateAnimation: UIStatusBarAnimation {
+        return UIStatusBarAnimation.slide
+    }
+    
+    override var prefersStatusBarHidden: Bool {
+        return UserDefaults.standard.bool(forKey: Prefs.statusBarHidden)
+    }
 }
 
 class DataSourceController: NSObject, FUICollectionDelegate, UITableViewDataSource {

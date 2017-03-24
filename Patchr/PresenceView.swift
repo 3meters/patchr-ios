@@ -4,7 +4,6 @@
 //
 
 import UIKit
-import SDWebImage
 
 @IBDesignable
 class PresenceView: UIView {

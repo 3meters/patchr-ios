@@ -219,12 +219,8 @@ class ProfileEditViewController: BaseEditViewController {
         self.phoneField.text = self.user.profile?.phone
         
         if let photo = self.user.profile?.photo {
-            if photo.uploading != nil {
-                self.photoEditView.bind(url: URL(string: photo.cacheKey)!, fallbackUrl: nil, uploading: true)
-            }
-            else if let photoUrl = ImageUtils.url(prefix: photo.filename, source: photo.source, category: SizeCategory.standard) {
-                self.photoEditView.bind(url: photoUrl, fallbackUrl: ImageUtils.fallbackUrl(prefix: photo.filename!))
-            }
+            let photoUrl = Cloudinary.url(prefix: photo.filename)
+            self.photoEditView.bind(url: photoUrl)
         }
     }
     
@@ -259,16 +255,16 @@ class ProfileEditViewController: BaseEditViewController {
             if self.photoEditView.photoActive {
                 let image = self.photoEditView.imageButton.image
                 let asset = self.photoEditView.imageButton.asset
-                var photoMap: [String: Any]?
+                var photoMap = [String: Any]()
                 photoMap = postPhoto(image: image!, asset: asset, progress: self.photoEditView.progressBlock, next: { error in
                     if error == nil {
-                        photoMap!["uploading"] = NSNull()
-                        FireController.db.child("users/\(userId)/profile").updateChildValues(["photo": photoMap!])
+                        photoMap["uploading"] = NSNull()
+                        FireController.db.child("users/\(userId)/profile").updateChildValues(["photo": photoMap])
                     }
                 })
                 
-                updates["photo"] = photoMap!
-                let photoUrl = ImageUtils.url(prefix: photoMap!["filename"] as! String?, source: photoMap!["source"] as! String?, category: SizeCategory.profile)
+                updates["photo"] = photoMap
+                let photoUrl = Cloudinary.url(prefix: (photoMap["filename"] as! String?)!, category: SizeCategory.profile)
                 let changeRequest = FIRAuth.auth()?.currentUser?.profileChangeRequest()
                 changeRequest?.photoURL = photoUrl
                 changeRequest?.commitChanges()

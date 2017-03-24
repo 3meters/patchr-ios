@@ -93,6 +93,10 @@ class NotificationSettingsViewController: UITableViewController {
         switchView.isOn = state
         return switchView
     }
+    
+    override var prefersStatusBarHidden: Bool {
+        return UserDefaults.standard.bool(forKey: Prefs.statusBarHidden)
+    }
 }
 
 extension NotificationSettingsViewController {

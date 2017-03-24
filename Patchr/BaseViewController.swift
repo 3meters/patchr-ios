@@ -14,14 +14,6 @@ class BaseViewController: UIViewController {
 	var contentHolder	= UIView()
     var controllerIsActive = false
 
-    var statusBarHidden: Bool = false {
-        didSet {
-            UIView.animate(withDuration: 0.5) { [weak self] () -> Void in
-                self?.setNeedsStatusBarAppearanceUpdate()
-            }
-        }
-    }
-	
 	/*--------------------------------------------------------------------------------------------
 	* Lifecycle
 	*--------------------------------------------------------------------------------------------*/
@@ -82,7 +74,7 @@ class BaseViewController: UIViewController {
     }
     
     override var prefersStatusBarHidden: Bool {
-        return self.statusBarHidden
+        return UserDefaults.standard.bool(forKey: Prefs.statusBarHidden)
     }
 	
 	func dismissKeyboard(sender: NSNotification) {

@@ -90,6 +90,14 @@ class EmptyViewController: UIViewController {
         }
     }
     
+    override var preferredStatusBarUpdateAnimation: UIStatusBarAnimation {
+        return UIStatusBarAnimation.slide
+    }
+    
+    override var prefersStatusBarHidden: Bool {
+        return UserDefaults.standard.bool(forKey: Prefs.statusBarHidden)
+    }
+    
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return UIStatusBarStyle.lightContent
     }

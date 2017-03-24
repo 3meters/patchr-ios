@@ -306,6 +306,10 @@ class MemberSettingsController: UITableViewController {
             }
         }
     }
+    
+    override var prefersStatusBarHidden: Bool {
+        return UserDefaults.standard.bool(forKey: Prefs.statusBarHidden)
+    }
 }
 
 extension MemberSettingsController {

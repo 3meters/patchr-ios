@@ -172,7 +172,6 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
     }
     
     func browsePhotoAction(sender: AnyObject?) {
-
         if let recognizer = sender as? UITapGestureRecognizer,
             let control = recognizer.view as? AirImageView,
             let url = control.fromUrl {
@@ -390,11 +389,13 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
                 self?.unbind()
             }
         }
-
-        Reporting.screen("PatchDetail")
         
         self.automaticallyAdjustsScrollViewInsets = false
         let viewWidth = min(Config.contentWidthMax, self.view.width())
+        let statusHeight = UIApplication.shared.statusBarFrame.size.height
+        let navigationHeight = self.navigationController?.navigationBar.height() ?? 44
+        let chromeHeight = statusHeight + navigationHeight
+        
         self.headerHeight = viewWidth * 0.625
         
         updateHeaderView()
@@ -409,8 +410,8 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
         self.tableView.separatorInset = UIEdgeInsets.zero
         self.tableView.allowsSelection = false
         self.tableView.delegate = self
-        self.tableView.contentInset = UIEdgeInsets(top: self.headerHeight + 74, left: 0, bottom: 0, right: 0)
-        self.tableView.contentOffset = CGPoint(x: 0, y: -(self.headerHeight + 74))
+        self.tableView.contentInset = UIEdgeInsets(top: self.headerHeight + chromeHeight, left: 0, bottom: 0, right: 0)
+        self.tableView.contentOffset = CGPoint(x: 0, y: -(self.headerHeight + chromeHeight))
         self.tableView.register(WrapperTableViewCell.self, forCellReuseIdentifier: "cell")
         
         self.titleView = (Bundle.main.loadNibNamed("ChannelTitleView", owner: nil, options: nil)?.first as? ChannelTitleView)!
@@ -699,9 +700,13 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
     
     func updateHeaderView() {
         var headerRect = CGRect(x: 0, y: -self.headerHeight, width: self.view.width(), height: self.headerHeight)
-        if self.tableView.contentOffset.y < -(self.headerHeight + 74) {
-            headerRect.origin.y = (self.tableView.contentOffset.y + 74)
-            headerRect.size.height = -(self.tableView.contentOffset.y + 74)
+        let statusHeight = UIApplication.shared.statusBarFrame.size.height
+        let navigationHeight = self.navigationController?.navigationBar.height() ?? 44
+        let chromeHeight = statusHeight + navigationHeight
+        
+        if self.tableView.contentOffset.y < -(self.headerHeight + chromeHeight) {
+            headerRect.origin.y = (self.tableView.contentOffset.y + chromeHeight)
+            headerRect.size.height = -(self.tableView.contentOffset.y + chromeHeight)
         }
         self.headerView.frame = headerRect
     }
@@ -905,7 +910,7 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
                     if (message.attachments?.values.first?.photo) != nil {
                         message.creator = user
                         let displayPhoto = DisplayPhoto.fromMessage(message: message)
-                        self.displayPhotos[displayPhoto.entityId!] = displayPhoto
+                        self.displayPhotos[message.id!] = displayPhoto
                     }
                     
                     if remaining <= 0 {
@@ -958,27 +963,33 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
     func shareUsing(route: ShareRoute) { }
     
     func showMessageBar() {
-        self.view.insertSubview(self.messageBar, at: self.view.subviews.count)
-        self.messageBar.alignUnder(self.navigationController?.navigationBar, centeredFillingWidthWithLeftAndRightPadding: 0, topPadding: 0, height: 40)
-        self.messageBarTop = self.messageBar.frame.origin.y
-        UIView.animate(
-            withDuration: 0.10,
-            delay: 0,
-            options: UIViewAnimationOptions.curveEaseOut,
-            animations: {
-                self.messageBar.alpha = 1
+        if self.messageBar.alpha == 0 && self.messageBar.superview == nil {
+            Log.d("Showing message bar")
+            self.view.insertSubview(self.messageBar, at: self.view.subviews.count)
+            self.messageBar.alignUnder(self.navigationController?.navigationBar, centeredFillingWidthWithLeftAndRightPadding: 0, topPadding: 0, height: 40)
+            self.messageBarTop = self.messageBar.frame.origin.y
+            UIView.animate(
+                withDuration: 0.20,
+                delay: 0,
+                options: UIViewAnimationOptions.curveEaseOut,
+                animations: {
+                    self.messageBar.alpha = 1
             })
+        }
     }
 
     func hideMessageBar() {
-        UIView.animate(
-            withDuration: 0.30,
-            delay: 0,
-            options: UIViewAnimationOptions.curveEaseOut,
-            animations: {
-                self.messageBar.alpha = 0
+        if self.messageBar.alpha == 1 && self.messageBar.superview != nil {
+            Log.d("Hiding message bar")
+            UIView.animate(
+                withDuration: 0.30,
+                delay: 0,
+                options: UIViewAnimationOptions.curveEaseOut,
+                animations: {
+                    self.messageBar.alpha = 0
             }) { _ in
-            self.messageBar.removeFromSuperview()
+                self.messageBar.removeFromSuperview()
+            }
         }
     }
     

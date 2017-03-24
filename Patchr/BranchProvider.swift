@@ -32,7 +32,6 @@ class BranchProvider: NSObject {
         let inviter = UserController.instance.user
         let inviterId = UserController.instance.userId!
         let inviterName = inviter!.profile?.fullName ?? username
-        let photoUrl = ImageUtils.url(prefix: inviter?.profile?.photo?.filename, source: inviter?.profile?.photo?.source, category: SizeCategory.profile)
         let path = "group/\(groupId)"
         let applink = BranchUniversalObject(canonicalIdentifier: path)
         
@@ -43,9 +42,12 @@ class BranchProvider: NSObject {
         applink.metadata?["invite_id"] = inviteId
         applink.metadata?["invited_by"] = inviterId
         applink.metadata?["inviterName"] = inviterName
-        if photoUrl != nil {
+        
+        if let photo = inviter!.profile?.photo {
+            let photoUrl = Cloudinary.url(prefix: photo.filename!, category: SizeCategory.profile)
             applink.metadata?["inviterPhotoUrl"] = photoUrl
         }
+        
         applink.metadata?["role"] = "member"
         
         /* $og_title */
@@ -53,9 +55,8 @@ class BranchProvider: NSObject {
         
         /* $og_image */
         if let photo = group?.photo {
-            let settings = "h=250&crop&fit=crop&q=50"
-            let photoUrl = "https://3meters-images.imgix.net/\(photo.filename!)?\(settings)"
-            applink.imageUrl = photoUrl
+            let photoUrl = Cloudinary.url(prefix: photo.filename!, params: "w_250,q_auto,c_fill")
+            applink.imageUrl = photoUrl.absoluteString
         }
         
         /* $og_description */
@@ -82,7 +83,6 @@ class BranchProvider: NSObject {
         let inviter = UserController.instance.user
         let inviterId = UserController.instance.userId!
         let inviterName = inviter!.profile?.fullName ?? UserController.instance.user?.username
-        let photoUrl = ImageUtils.url(prefix: inviter?.profile?.photo?.filename, source: inviter?.profile?.photo?.source, category: SizeCategory.profile)
         let path = "group/\(group.id!)"
         let applink = BranchUniversalObject(canonicalIdentifier: path)
         
@@ -94,9 +94,12 @@ class BranchProvider: NSObject {
         applink.metadata?["invite_id"] = inviteId
         applink.metadata?["invited_by"] = inviterId
         applink.metadata?["inviterName"] = inviterName
-        if photoUrl != nil {
+        
+        if let photo = inviter!.profile?.photo {
+            let photoUrl = Cloudinary.url(prefix: photo.filename!, category: SizeCategory.profile)
             applink.metadata?["inviterPhotoUrl"] = photoUrl
         }
+        
         applink.metadata?["role"] = "guest"
         
         /* $og_title */

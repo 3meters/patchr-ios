@@ -94,22 +94,15 @@ class UserHeaderView: BaseDetailView {
             let fullName = self.fullName.text!
             
             if let photo = user!.profile?.photo {
-                if photo.uploading != nil {
-                    self.photoControl.bind(url: URL(string: photo.cacheKey)!, fallbackUrl: nil, name: nil, colorSeed: nil, uploading: true)
-                }
-                else {
-                    if let url = ImageUtils.url(prefix: photo.filename, source: photo.source, category: SizeCategory.profile) {
-                        let fallbackUrl = ImageUtils.fallbackUrl(prefix: photo.filename!)
-                        self.photoControl.bind(url: url, fallbackUrl: fallbackUrl, name: fullName, colorSeed: user!.id)
-                    }
-                }
+                let url = Cloudinary.url(prefix: photo.filename!, category: SizeCategory.profile)
+                self.photoControl.bind(url: url, name: fullName, colorSeed: user!.id)
             }
             else {
-                self.photoControl.bind(url: nil, fallbackUrl: nil, name: fullName, colorSeed: user!.id)
+                self.photoControl.bind(url: nil, name: fullName, colorSeed: user!.id)
             }
         }
         else {
-            self.photoControl.bind(url: nil, fallbackUrl: nil, name: nil, colorSeed: nil, color: Theme.colorBackgroundImage)
+            self.photoControl.bind(url: nil, name: nil, colorSeed: nil, color: Theme.colorBackgroundImage)
         }
         
         self.setNeedsLayout()

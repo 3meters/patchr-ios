@@ -13,6 +13,7 @@ import Firebase
 import FirebaseDatabase
 import Branch
 import PopupDialog
+import SDWebImage
 
 class MainController: NSObject, iRateDelegate {
 
@@ -196,8 +197,14 @@ class MainController: NSObject, iRateDelegate {
         }
         
         let mainWrapper = AirNavigationController(navigationBarClass: AirNavigationBar.self, toolbarClass: nil)
+        let mainBar = mainWrapper.navigationBar as! AirNavigationBar
         let menuController = SideMenuViewController()
         let drawerWrapper = AirNavigationController(navigationBarClass: AirNavigationBar.self, toolbarClass: nil)
+        let drawerBar = drawerWrapper.navigationBar as! AirNavigationBar
+        
+        mainBar.navigationBarHeight = 54
+        drawerBar.navigationBarHeight = UserDefaults.standard.bool(forKey: Prefs.statusBarHidden) ? 74 : 54
+
         let slideController = SlideMenuController(mainViewController: mainWrapper
             , leftMenuViewController: drawerWrapper
             , rightMenuViewController: menuController)

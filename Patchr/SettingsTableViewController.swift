@@ -216,6 +216,10 @@ class SettingsTableViewController: UITableViewController {
             }
         }
     }
+    
+    override var prefersStatusBarHidden: Bool {
+        return UserDefaults.standard.bool(forKey: Prefs.statusBarHidden)
+    }
 }
 
 extension SettingsTableViewController {
@@ -284,8 +288,9 @@ extension SettingsTableViewController {
         
         if indexPath.section == 2 && indexPath.row == 3 {
             developmentCell.isHidden = true
-            if let developer = UserController.instance.user?.profile?.developer {
+            if let developer = UserController.instance.user?.developer {
                 if developer {
+                    developmentCell.isHidden = false
                     return CGFloat(44)
                 }
             }

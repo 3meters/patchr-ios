@@ -51,6 +51,7 @@ class MemberDetailView: UIView {
         
         self.contentGroup.fillSuperview()
         self.photoView.fillSuperview(withLeftPadding: -24, rightPadding: -24, topPadding: -36, bottomPadding: -36)
+        self.photoView.progressView.anchorInCenter(withWidth: 20, height: 20)
 
         self.titleGroup.anchorBottomLeft(withLeftPadding: 16, bottomPadding: 16, width: viewWidth - 32, height: 72)
         self.subtitle.bounds.size.width = self.titleGroup.width()
@@ -79,7 +80,6 @@ class MemberDetailView: UIView {
         self.backgroundColor = Theme.colorBackgroundForm
         
         self.photoView.parallaxIntensity = -40
-        self.photoView.sizeCategory = SizeCategory.standard
         self.photoView.clipsToBounds = true
         self.photoView.contentMode = .scaleAspectFill
         self.photoView.backgroundColor = Theme.colorBackgroundImage
@@ -111,17 +111,12 @@ class MemberDetailView: UIView {
         let fullName = user.profile?.fullName ?? user.username
         
         if let photo = user.profile?.photo {
-            if photo.uploading != nil {
-                self.photoView.setImageFromCache(url: URL(string: photo.cacheKey)!, animate: true)
-            }
-            else {
-                if let url = ImageUtils.url(prefix: photo.filename, source: photo.source, category: SizeCategory.standard) {
-                    if !self.photoView.associated(withUrl: url) {
-                        self.photoView.gradientLayer.isHidden = true
-                        let fallbackUrl = ImageUtils.fallbackUrl(prefix: photo.filename!)
-                        self.photoView.setImageWithUrl(url: url, fallbackUrl: fallbackUrl) { success in
-                            self.photoView.gradientLayer.isHidden = false
-                        }
+            let url = Cloudinary.url(prefix: photo.filename)
+            if !self.photoView.associated(withUrl: url) {
+                self.photoView.gradientLayer.isHidden = true
+                self.photoView.setImageWithUrl(url: url) { success in
+                    if success {
+                        self.photoView.gradientLayer.isHidden = false
                     }
                 }
             }

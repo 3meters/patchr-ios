@@ -9,15 +9,35 @@
 import UIKit
 
 class AirNavigationController: UINavigationController {
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+    }
+    
+    override var preferredStatusBarUpdateAnimation: UIStatusBarAnimation {
+        return .slide
+    }
+    
+    override var prefersStatusBarHidden: Bool {
+        return UserDefaults.standard.bool(forKey: Prefs.statusBarHidden)
     }
 }
 
 class AirNavigationBar: UINavigationBar {
     
-    static let navigationBarHeight = CGFloat(54)
-    static let heightIncrease = CGFloat(navigationBarHeight - 44)
+    var navigationBarHeight: CGFloat = 44 {
+        didSet {
+            self.heightIncrease = CGFloat(self.navigationBarHeight - 44)
+            var shift = self.heightIncrease / 2
+            if UserDefaults.standard.bool(forKey: Prefs.statusBarHidden) {
+                shift = 5
+            }
+            self.transform = CGAffineTransform(translationX: 0, y: -shift)
+            self.setNeedsLayout()
+        }
+    }
+    
+    var heightIncrease = CGFloat(0)
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -29,15 +49,19 @@ class AirNavigationBar: UINavigationBar {
         initialize()
     }
     
-    private func initialize() {
-        let shift = AirNavigationBar.heightIncrease / 2
-        self.transform = CGAffineTransform(translationX: 0, y: -shift)
+    func initialize() {
+        if UserDefaults.standard.bool(forKey: Prefs.statusBarHidden) {
+            self.navigationBarHeight = CGFloat(74)
+        }
+        else {
+            self.navigationBarHeight = CGFloat(54)
+        }
     }
     
     override func layoutSubviews() {
         super.layoutSubviews()
         
-        let shift = AirNavigationBar.heightIncrease / 2
+        let shift = self.heightIncrease / 2
         var classNamesToReposition = ["_UINavigationBarBackground"]
         if #available(iOS 10.0, *) {
             classNamesToReposition = ["_UIBarBackground"]
@@ -56,7 +80,7 @@ class AirNavigationBar: UINavigationBar {
     
     override func sizeThatFits(_ size: CGSize) -> CGSize {
         let amendedSize = super.sizeThatFits(size)
-        let newSize = CGSize(width: amendedSize.width, height: AirNavigationBar.navigationBarHeight);
+        let newSize = CGSize(width: amendedSize.width, height: self.navigationBarHeight);
         return newSize
     }
 }

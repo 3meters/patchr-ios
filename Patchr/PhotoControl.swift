@@ -4,13 +4,12 @@
 //
 
 import UIKit
-import SDWebImage
 
 @IBDesignable
 class PhotoControl: UIControl {
 
     var nameLabel = AirLabelDisplay()
-	fileprivate var photoView = AirImageView(frame: CGRect.zero)
+	var photoView = AirImageView(frame: CGRect.zero)
     var target: AnyObject?
     
     @IBInspectable var initialsCount: Int = 2
@@ -54,6 +53,10 @@ class PhotoControl: UIControl {
         self.addSubview(self.nameLabel)
 	}
     
+    func reset() {
+        self.photoView.reset()
+    }
+    
     override func prepareForInterfaceBuilder() {
         super.prepareForInterfaceBuilder()
         self.backgroundColor = Colors.accentColorLight
@@ -66,6 +69,7 @@ class PhotoControl: UIControl {
 		super.layoutSubviews()
         self.layer.cornerRadius = self.rounded ? self.width() * 0.5 : self.radius
 		self.photoView.fillSuperview()
+        self.photoView.progressView.anchorInCenter(withWidth: 20, height: 20)
 		self.nameLabel.fillSuperview()
 	}
     
@@ -75,7 +79,7 @@ class PhotoControl: UIControl {
         self.nameLabel.isHidden = (image != nil)
     }
 	
-    func bind(url: URL?, fallbackUrl: URL?, name: String?, colorSeed: String?, color: UIColor? = nil, uploading: Bool = false) {
+    func bind(url: URL?, name: String?, colorSeed: String?, color: UIColor? = nil, uploading: Bool = false) {
         
         if url != nil && self.photoView.associated(withUrl: url!) {
             return
@@ -86,15 +90,10 @@ class PhotoControl: UIControl {
 		self.nameLabel.isHidden = false
 		
 		if url != nil {
-            if uploading {
-                self.photoView.setImageFromCache(url: url!, animate: true)
-            }
-            else {
-                self.photoView.setImageWithUrl(url: url!, fallbackUrl: fallbackUrl) { [weak self] success in
-                    if success {
-                        self?.nameLabel.isHidden = true
-                        self?.photoView.isHidden = false
-                    }
+            self.photoView.setImageWithUrl(url: url!) { [weak self] success in
+                if success {
+                    self?.nameLabel.isHidden = true
+                    self?.photoView.isHidden = false
                 }
             }
 		}

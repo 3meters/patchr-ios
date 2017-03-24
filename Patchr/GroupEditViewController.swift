@@ -206,12 +206,8 @@ class GroupEditViewController: BaseEditViewController {
         
         if let photo = self.group.photo {
             self.photoEditView.configureTo(photoMode: .photo)
-            if photo.uploading != nil {
-                self.photoEditView.bind(url: URL(string: photo.cacheKey)!, fallbackUrl: nil, uploading: true)
-            }
-            else if let photoUrl = ImageUtils.url(prefix: photo.filename, source: photo.source, category: SizeCategory.standard) {
-                self.photoEditView.bind(url: photoUrl, fallbackUrl: ImageUtils.fallbackUrl(prefix: photo.filename!))
-            }
+            let photoUrl = Cloudinary.url(prefix: photo.filename)
+            self.photoEditView.bind(url: photoUrl)
         }
     }
     

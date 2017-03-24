@@ -1,7 +1,4 @@
 //
-//  AirImageView.swift
-//  Patchr
-//
 //  Created by Jay Massena on 5/22/15.
 //  Copyright (c) 2015 3meters. All rights reserved.
 //
@@ -9,18 +6,19 @@
 import UIKit
 import SDWebImage
 import Photos
+import DACircularProgress
 
 class AirImageView: UIImageView {
 
-    var fromUrl: URL?
-    var fallbackUrl: URL?
-    var processing = false
-    var activity = UIActivityIndicatorView(activityIndicatorStyle: .gray)
-    var sizeCategory = SizeCategory.thumbnail
-    var enableLogging = false
+    var progressView: DACircularProgressView!
+    
     var gradientHeightPcnt = CGFloat(0.35)
     var gradientLayer: CAGradientLayer!
-    var asset: Any?
+    var asset: Any? // Holds extra metadata when image is from device library
+    var fromUrl: URL?
+    var processing = false
+    var enableProgress = true
+    var enableLogging = false
     
     var showGradient: Bool = false {
         didSet {
@@ -79,12 +77,10 @@ class AirImageView: UIImageView {
         initialize()
     }
     
-    func initialize(){
-		self.activity.hidesWhenStopped = true
-        self.layer.delegate = self
-        addSubview(self.activity)
-    }
-	
+    /*--------------------------------------------------------------------------------------------
+     * MARK: - Events
+     *--------------------------------------------------------------------------------------------*/
+    
     override func layoutSublayers(of layer: CALayer) {
         if layer == self.layer {
             if self.gradientLayer != nil {
@@ -100,112 +96,94 @@ class AirImageView: UIImageView {
         }
     }
     
-	override func layoutSubviews() {
-		super.layoutSubviews()
-		self.activity.anchorInCenter(withWidth: 20, height: 20)
-	}
+    /*--------------------------------------------------------------------------------------------
+     * MARK: - Methods
+     *--------------------------------------------------------------------------------------------*/
 
-    func startActivity(){
-        self.activity.startAnimating()
+    func initialize(){
+        self.layer.delegate = self
+        self.progressView = DACircularProgressView()
+        self.progressView.trackTintColor = Colors.white
+        self.progressView.progressTintColor = Colors.accentColor
+        self.progressView.thicknessRatio = 0.15
+    }
+    
+    func reset() {
+        self.processing = false
+        self.hideProgress()
+    }
+    
+    func showProgress() {
+        addSubview(self.progressView)
+    }
+    
+    func hideProgress() {
+        if self.progressView.superview != nil {
+            self.progressView.setProgress(0, animated: false)
+            self.progressView.removeFromSuperview()
+        }
     }
 	
-    func stopActivity(){
-        self.activity.stopAnimating()
-    }
+    func setImageWithUrl(url: URL, animate: Bool = true, then: ((Bool) -> Void)? = nil) {
+        
+		/* Stash the url we are loading so we can check for a match later when download is completed. */
+		self.fromUrl = url
+        self.processing = true
+        self.contentMode = .scaleAspectFill
+        if self.enableProgress {
+            self.showProgress()
+        }
+        
+        let progress: SDWebImageDownloaderProgressBlock = { loadedSize, expectedSize, url in
+            let progress = CGFloat(loadedSize) / CGFloat(expectedSize)
+            DispatchQueue.main.async {
+                self.progressView.setProgress(progress, animated: true)
+            }
+        }
+        
+        let completed: SDExternalCompletionBlock = { [weak self] image, error, cacheType, imageUrl in
+            
+            self?.processing = false
+            
+            DispatchQueue.main.async() {
+
+                self?.hideProgress()
+                if error != nil {
+                    Log.w("*** Image fetch failed: " + error!.localizedDescription)
+                    Log.w("*** Failed url: \(url.absoluteString)")
+                    self?.fromUrl = nil
+                    return
+                }
+                
+                /* Image returned is not the one we want anymore */
+                if self?.fromUrl?.absoluteString != url.absoluteString {
+                    return
+                }
+                
+                if animate {
+                    UIView.transition(with: self!
+                        , duration: 0.3
+                        , options: .transitionCrossDissolve
+                        , animations: { self?.image = image })
+                }
+                else {
+                    self?.image = image
+                }
+                then?(true)
+            }
+        }
+        
+        sd_setImage(with: url
+            , placeholderImage: nil
+            , options: [.retryFailed, .lowPriority, .avoidAutoSetImage]
+            , progress: progress
+            , completed: completed)
+	}
     
     func associated(withUrl: URL) -> Bool {
         if self.fromUrl != nil && withUrl.absoluteString == self.fromUrl?.absoluteString {
             return (self.image != nil || self.processing)
         }
         return false
-    }
-    
-    func setImageFromCache(url: URL, animate: Bool = true, then: ((Bool) -> Void)? = nil) {
-        if ImageUtils.imageCached(url: url) {
-            self.setImageWithUrl(url: url, fallbackUrl: nil, animate: animate, then: then)
-            return
-        }
-        Utils.delay(1.0) {
-            if ImageUtils.imageCached(url: url) {
-                self.setImageWithUrl(url: url, fallbackUrl: nil, animate: animate, then: then)
-            }
-            else {
-                then?(false)
-            }
-        }
-    }
-    
-    func setImageWithUrl(url: URL, fallbackUrl: URL?, animate: Bool = true, then: ((Bool) -> Void)? = nil) {
-        
-		/* Stash the url we are loading so we can check for a match later when download is completed. */
-		self.fromUrl = url
-        self.fallbackUrl = nil
-        self.processing = true
-		let options: SDWebImageOptions = [.retryFailed, .lowPriority, .avoidAutoSetImage, .delayPlaceholder /* .ProgressiveDownload */]
-
-		self.sd_setImage(with: url, placeholderImage: nil, options: options) { [weak self] image, error, cacheType, url in
-            if error != nil && fallbackUrl != nil {
-
-                self?.fallbackUrl = fallbackUrl
-
-                Log.w("*** Image fetch failed: " + error!.localizedDescription)
-                Log.w("*** Failed url: \(url!.absoluteString)")
-                Log.w("*** Trying fallback url for image: \(fallbackUrl!)")
-                
-                self?.sd_setImage(with: fallbackUrl!, placeholderImage: nil, options: options) { [weak self] image, error, cacheType, url in
-                    if error == nil {
-                        Log.w("*** Success using fallback url for image: \(fallbackUrl!)")
-                    }
-                    DispatchQueue.main.async() {
-                        self?.imageCompletion(image: image, error: error, cacheType: cacheType, url: url, animate: animate)
-                        then?(error == nil)
-                    }
-                }
-            }
-            else {
-                DispatchQueue.main.async() {
-                    self?.imageCompletion(image: image, error: error, cacheType: cacheType, url: url, animate: animate)
-                    then?(error == nil)
-                }
-            }
-        }
-	}
-
-    func imageCompletion(image: UIImage?, error: Error?, cacheType: SDImageCacheType?, url: URL?, animate: Bool = true) -> Void {
-        
-        stopActivity()
-        self.processing = false
-		
-        if error != nil {
-            Log.w("*** Image fetch failed: " + error!.localizedDescription)
-            Log.w("*** Failed url: \(url!.absoluteString)")
-			self.fromUrl = nil
-            self.fallbackUrl = nil
-			return
-        }
-        else {
-            self.contentMode = .scaleAspectFill
-        }
-        
-        /* Image returned is not the one we want anymore */
-        if self.fallbackUrl != nil {
-            if self.fallbackUrl!.absoluteString != url?.absoluteString {
-                return
-            }
-        }
-        else {
-            if self.fromUrl?.absoluteString != url?.absoluteString {
-                return
-            }
-        }
-        
-		if animate /*|| cacheType == SDImageCacheType.None || cacheType == SDImageCacheType.Disk*/ {
-			UIView.transition(with: self, duration: 0.3, options: .transitionCrossDissolve,
-				animations: { self.image = image },
-				completion: nil)
-		}
-		else {
-			self.image = image
-		}
     }
 }

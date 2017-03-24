@@ -9,14 +9,11 @@
 import Foundation
 import UIKit
 import SDWebImage
+import AVFoundation
 
 class ImageUtils {
     
     static let useGoogle = false
-    
-    static func fallbackUrl(prefix: String) -> URL {
-        return URL(string: "https://s3-us-west-2.amazonaws.com/aircandi-images/\(prefix)")!
-    }
     
     static func url(prefix: String?, source: String?, category: String, google: Bool = false) -> URL? {
         
@@ -33,51 +30,35 @@ class ImageUtils {
             quality = 50
         }
         
-        if source == PhotoSource.aircandi_images {
-            let width = (category == SizeCategory.standard) ? 400 : 100
-            if google {
-                let dimension = (category == SizeCategory.profile) ? ResizeDimension.width : ResizeDimension.height
-                let imageUrl = ImageUtils.fallbackUrl(prefix: prefix!).absoluteString
-                path = GooglePlusProxy.convert(uri: imageUrl, size: width, dimension: dimension)
-            }
-            else {
-                if category == SizeCategory.profile {
-                    path = "https://3meters-images.imgix.net/\(prefix!)?w=\(width)&dpr=\(Config.pixelScale)&q=\(quality)&h=\(width)&fit=min&trim=auto"
-                }
-                else {
-                    path = "https://3meters-images.imgix.net/\(prefix!)?w=\(width)&dpr=\(Config.pixelScale)&q=\(quality)"
-                }
-            }
+        let width = (category == SizeCategory.standard) ? 400 : 100
+        if category == SizeCategory.profile {
+            path = "https://3meters-images.imgix.net/\(prefix!)?w=\(width)&dpr=\(Config.pixelScale)&q=\(quality)&h=\(width)&fit=min&trim=auto"
         }
-        else if source == PhotoSource.google {
-            let width: CGFloat = CGFloat(Config.imageDimensionMax) * Config.pixelScale
-            if (prefix!.range(of: "?") != nil) {
-                path = "\(prefix)&maxwidth=\(width)"
-            }
-            else {
-                path = "\(prefix)?maxwidth=\(width)"
-            }
-        }
-        else if source == PhotoSource.gravatar {
-            let width: CGFloat = CGFloat(100) * Config.pixelScale
-            path = "\(prefix)&s=\(width)"
+        else {
+            path = "https://3meters-images.imgix.net/\(prefix!)?w=\(width)&dpr=\(Config.pixelScale)&q=\(quality)"
         }
 		
         return URL(string: path)
     }
     
-    static func imageCached(url: URL) -> Bool {
-        return SDImageCache.shared().diskImageExists(withKey: url.absoluteString)
-    }
-    
-    static func addImageToCache(image: UIImage, url: URL) {
-        SDImageCache.shared().store(image, forKey: url.absoluteString, toDisk: true)
-    }
-    
-    static func imageFromCache(url: URL, then: @escaping (UIImage?) -> ()) {
-        SDImageCache.shared().queryDiskCache(forKey: url.absoluteString) { image, cacheType in
-            then(image)
+    static func imageCached(key: String, then: @escaping (Bool) -> ()) {
+        SDImageCache.shared().diskImageExists(withKey: key) { exists in
+            then(exists)
         }
+    }
+    
+    static func storeImageToCache(image: UIImage, key: String, then: (() -> Void)? = nil) {
+        SDImageCache.shared().store(image, forKey: key, toDisk: true) { then?() }
+    }
+
+    static func storeImageDataToCache(imageData: Data, key: String) {
+        DispatchQueue.global(qos: .userInitiated).async {
+            SDImageCache.shared().storeImageData(toDisk: imageData, forKey: key)    // Synchronous
+        }
+    }
+
+    static func imageFromDiskCache(key: String) -> UIImage? {
+        return SDImageCache.shared().imageFromCache(forKey: key)
     }
     
     static func imageFromColor(color: UIColor) -> UIImage {
@@ -98,12 +79,43 @@ class ImageUtils {
         UIGraphicsEndImageContext()
         return outputImage!
     }
+    
+    static func prepareImage(image inImage: UIImage) -> UIImage {
+        var image = inImage;
+        let scalingNeeded = (image.size.width > Config.imageDimensionMax || image.size.height > Config.imageDimensionMax)
+        if (scalingNeeded) {
+            let rect: CGRect = AVMakeRect(aspectRatio: image.size
+                , insideRect: CGRect(x:0, y:0, width: Config.imageDimensionMax, height: Config.imageDimensionMax))
+            image = image.resizeTo(size: rect.size)
+        }
+        else {
+            image = image.normalizedImage()
+        }
+        return image
+    }
 }
 
 /* Only used for GooglePlusProxy */
 enum ResizeDimension{
     case height
     case width
+}
+
+class Cloudinary {
+    
+    static func url(prefix: String, category: String = SizeCategory.standard) -> URL {
+        let urlString = "https://s3-us-west-2.amazonaws.com/aircandi-images/\(prefix)".stringByAddingPercentEncodingForUrl()
+        let width = (category == SizeCategory.standard) ? 400 : 100
+        let dimen = (category == SizeCategory.profile) ? "w_\(width),h_\(width)" : "w_\(width)"
+        let path = "https://res.cloudinary.com/patchr/image/fetch/\(dimen),dpr_\(Config.pixelScale),q_auto,c_fill/\(urlString!)"        
+        return URL(string: path)!
+    }
+    
+    static func url(prefix: String, params: String) -> URL {
+        let urlString = "https://s3-us-west-2.amazonaws.com/aircandi-images/\(prefix)".stringByAddingPercentEncodingForUrl()
+        let path = "https://res.cloudinary.com/patchr/image/fetch/\(params)/\(urlString!)"
+        return URL(string: path)!
+    }
 }
 
 class GooglePlusProxy {

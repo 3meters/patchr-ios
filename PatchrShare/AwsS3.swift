@@ -14,51 +14,38 @@ public class S3: NSObject {
     public typealias S3UploadCompletionBlock = (AWSTask<AnyObject>) -> Void
 
     internal let imageSource = "aircandi.images"
+    internal let imageBucket = "aircandi-images"
     
     static let instance: S3 = S3()
 
-    func upload(image: UIImage, imageKey: String
+    func upload(imageData: Data, imageKey: String
         , progress: AWSS3TransferUtilityProgressBlock?
         , completionHandler: AWSS3TransferUtilityUploadCompletionHandlerBlock?) {
         
         /* It is expected that this will be called on a background thread. */
         let expression = AWSS3TransferUtilityUploadExpression()
+        expression.progressBlock = progress
         
-        if progress != nil {
-            expression.progressBlock = progress
-        }
-        
-        if let imageData: Data = UIImageJPEGRepresentation(image, /*compressionQuality*/0.70) as Data? {
-            let transferUtility = AWSS3TransferUtility.default()
-            transferUtility.uploadData(imageData as Data
-                , bucket: "aircandi-images"
-                , key: imageKey
-                , contentType: "image/jpeg"
-                , expression: expression
-                , completionHander: completionHandler).continue({ task -> Any! in
-                    if let error = task.error {
-                        Log.w("*** S3 image upload failed with error: \(error.localizedDescription)")
-                    }
-                    else if let exception = task.exception {
-                        Log.w("*** S3 image upload failed with exception: \(exception.description)")
-                    }
-                    else {
-                        Log.d("*** S3 image upload started successfully: \(imageKey)")
-                    }
-                    return nil
-            })
-        }
+        AWSS3TransferUtility.default().uploadData(imageData
+            , bucket: self.imageBucket
+            , key: imageKey
+            , contentType: "image/jpeg"
+            , expression: expression
+            , completionHander: completionHandler).continue({ task -> Any! in
+                Log.w(task.error != nil
+                    ? "*** S3 image upload failed with error: \(task.error!.localizedDescription)"
+                    : task.exception != nil
+                        ? "*** S3 image upload failed with exception: \(task.exception!.description)"
+                        : "*** S3 image upload started successfully: \(imageKey)")
+                return nil
+        })
     }
     
     func exists(imageKey: String, next: @escaping ((Bool) -> Void)) {
-        
-        let s3 = AWSS3.default()
         let request = AWSS3HeadObjectRequest()
-        
-        request?.bucket = "aircandi-images"
+        request?.bucket = self.imageBucket
         request?.key = imageKey
-        
-        s3.headObject(request!).continue({ task -> Any! in
+        AWSS3.default().headObject(request!).continue({ task -> Any! in
             next(task.isCompleted && !task.isFaulted)
         })
     }

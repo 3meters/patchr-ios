@@ -39,6 +39,7 @@ class UserListCell: UITableViewCell {
     
     func reset() {
         self.title?.text = nil
+        self.photoControl?.reset()
         self.subtitle?.text = nil
         self.subtitle?.isHidden = false
         self.roleLabel?.text = nil
@@ -80,7 +81,7 @@ class UserListCell: UITableViewCell {
             self.photoControl?.nameLabel.isHidden = true
         }
         else {
-            self.photoControl?.bind(url: nil, fallbackUrl: nil, name: title, colorSeed: email!)
+            self.photoControl?.bind(url: nil, name: title, colorSeed: email!)
         }
         self.title?.text = title
         self.subtitle?.text = email!
@@ -131,18 +132,11 @@ class UserListCell: UITableViewCell {
         
         let fullName = user.profile?.fullName ?? user.username
         if let photo = user.profile?.photo {
-            if photo.uploading != nil {
-                self.photoControl!.bind(url: URL(string: photo.cacheKey)!, fallbackUrl: nil, name: nil, colorSeed: nil, uploading: true)
-            }
-            else {
-                if let url = ImageUtils.url(prefix: photo.filename, source: photo.source, category: SizeCategory.profile) {
-                    let fallbackUrl = ImageUtils.fallbackUrl(prefix: photo.filename!)
-                    self.photoControl!.bind(url: url, fallbackUrl: fallbackUrl, name: fullName, colorSeed: user.id)
-                }
-            }
+            let url = Cloudinary.url(prefix: photo.filename, category: SizeCategory.profile)
+            self.photoControl!.bind(url: url, name: fullName, colorSeed: user.id)
         }
         else {
-            self.photoControl?.bind(url: nil, fallbackUrl: nil, name: fullName, colorSeed: user.id)
+            self.photoControl?.bind(url: nil, name: fullName, colorSeed: user.id)
         }
     }
 }

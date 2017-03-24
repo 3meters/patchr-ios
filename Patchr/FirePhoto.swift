@@ -10,23 +10,18 @@ import Foundation
 
 class FirePhoto: NSObject {
     
-    var filename: String?
+    var filename: String!
     var height: Int?
-    var source: String?
+    var source: String!
     var takenAt: Int64?
     var uploading: Bool?
     var width: Int?
     
-    /* Local */
-    var cacheKey: String {
-        return "https://\(filename!)"
-    }
-    
     static func from(dict: [String: Any]?) -> FirePhoto? {
         if dict != nil {
             let photo = FirePhoto()
-            photo.filename = dict!["filename"] as? String
-            photo.source = dict!["source"] as? String
+            photo.filename = dict!["filename"] as! String
+            photo.source = dict!["source"] as! String
             photo.width = dict!["width"] as? Int
             photo.height = dict!["height"] as? Int
             photo.takenAt = dict!["taken_at"] as? Int64

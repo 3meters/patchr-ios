@@ -20,6 +20,11 @@ class ThumbnailCollectionViewCell: UICollectionViewCell {
     }
     
     override func prepareForReuse() {
-        thumbnail.image = nil
+        self.thumbnail.reset()
+        self.thumbnail.image = nil
+    }
+    
+    override func layoutSubviews() {
+        self.thumbnail.progressView.anchorInCenter(withWidth: 20, height: 20)
     }
 }

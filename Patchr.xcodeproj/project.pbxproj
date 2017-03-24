@@ -80,7 +80,6 @@
 		E25173C71E09CB9D0030259A /* UIBarButtonItem+Badge.m in Sources */ = {isa = PBXBuildFile; fileRef = E25173C61E09CB9D0030259A /* UIBarButtonItem+Badge.m */; };
 		E25327B21B0FCE9C00990A81 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = E25327B11B0FCE9C00990A81 /* Constants.swift */; };
 		E25327B61B1000C000990A81 /* AirImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E25327B51B1000C000990A81 /* AirImageView.swift */; };
-		E25327B81B103ECA00990A81 /* AirImageButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E25327B71B103ECA00990A81 /* AirImageButton.swift */; };
 		E25327C11B13942D00990A81 /* UIShared.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20C1FB61AFE462500A471E9 /* UIShared.swift */; };
 		E25327CD1B13DB2900990A81 /* notification_activity.aac in Resources */ = {isa = PBXBuildFile; fileRef = E25327C61B13D34100990A81 /* notification_activity.aac */; };
 		E25327CE1B13DB3000990A81 /* notification_candi_discovered_soft.aac in Resources */ = {isa = PBXBuildFile; fileRef = E25327C71B13D34100990A81 /* notification_candi_discovered_soft.aac */; };
@@ -289,7 +288,6 @@
 		E25173C61E09CB9D0030259A /* UIBarButtonItem+Badge.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIBarButtonItem+Badge.m"; sourceTree = "<group>"; };
 		E25327B11B0FCE9C00990A81 /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		E25327B51B1000C000990A81 /* AirImageView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = AirImageView.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
-		E25327B71B103ECA00990A81 /* AirImageButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = AirImageButton.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		E25327C61B13D34100990A81 /* notification_activity.aac */ = {isa = PBXFileReference; lastKnownFileType = file; path = notification_activity.aac; sourceTree = "<group>"; };
 		E25327C71B13D34100990A81 /* notification_candi_discovered_soft.aac */ = {isa = PBXFileReference; lastKnownFileType = file; path = notification_candi_discovered_soft.aac; sourceTree = "<group>"; };
 		E25327C81B13D34200990A81 /* notification_carme.aac */ = {isa = PBXFileReference; lastKnownFileType = file; path = notification_carme.aac; sourceTree = "<group>"; };
@@ -712,10 +710,8 @@
 				E2D12A741C08F85E00DE507E /* AirButton.swift */,
 				E23682841E1BFE3700F9FDFB /* AirButtonBase.swift */,
 				E2FFD38E1DF4817700FD75C7 /* AirCheckBox.swift */,
-				E26A02FE1DF5DC5800EE32D3 /* AirTokenView.swift */,
 				E2D12A761C08F9CE00DE507E /* AirFeaturedButton.swift */,
 				E25327B51B1000C000990A81 /* AirImageView.swift */,
-				E25327B71B103ECA00990A81 /* AirImageButton.swift */,
 				E2C720C61B4EDAFE00714B53 /* AirLabel.swift */,
 				E229CD111C1337A700F5BDAC /* AirLabelBase.swift */,
 				E2D12A821C0A58F000DE507E /* AirLabelTitle.swift */,
@@ -740,6 +736,7 @@
 				E297305B1C13644800B9433B /* AirTextView.swift */,
 				E2A28E6E1B4A602200B3A2FE /* AirToggleButton.swift */,
 				E2DA16DC1DD11B7A0096D86F /* AirToggleImage.swift */,
+				E26A02FE1DF5DC5800EE32D3 /* AirTokenView.swift */,
 				E2DA16D81DD0F7280096D86F /* AirUIView.swift */,
 				E2D10E5B1C87AA760099EA6E /* AirHideShowButton.swift */,
 				E27CE27F1E632E4800149305 /* DropdownButton.swift */,
@@ -1158,7 +1155,6 @@
 				E23C01111CE4F771009C56B2 /* CaptionView.swift in Sources */,
 				E2AC5FAC1E37DC6400C95A60 /* DropdownTransitionManager.swift in Sources */,
 				E27CE2801E632E4800149305 /* DropdownButton.swift in Sources */,
-				E25327B81B103ECA00990A81 /* AirImageButton.swift in Sources */,
 				E26A02FF1DF5DC5800EE32D3 /* AirTokenView.swift in Sources */,
 				E26BBF991DB5734F00038754 /* PHPhotoLibrary+PhotoAsset.swift in Sources */,
 				E2E271291C5D1ED600E36804 /* BranchProvider.swift in Sources */,

@@ -77,7 +77,7 @@ class BaseEditViewController: BaseViewController, UITextFieldDelegate, UITextVie
         , next: ((Any?) -> Void)? = nil) -> [String: Any] {
         
         /* Ensure image is resized/rotated before upload */
-        let preparedImage = Utils.prepareImage(image: image)
+        let preparedImage = ImageUtils.prepareImage(image: image)
         
         /* Generate image key */
         let imageKey = "\(Utils.genImageKey()).jpg"
@@ -106,18 +106,20 @@ class BaseEditViewController: BaseViewController, UITextFieldDelegate, UITextVie
             }
         }
         
+        let imageData = UIImageJPEGRepresentation(image, /*compressionQuality*/ 0.70)!
+        
         /* Prime the cache so offline has something to work with */
-        ImageUtils.addImageToCache(image: image, url: URL(string: "https://\(imageKey)")!)
+        let photoUrlStandard = Cloudinary.url(prefix: imageKey, category: SizeCategory.standard)
+        let photoUrlProfile = Cloudinary.url(prefix: imageKey, category: SizeCategory.profile)
+        ImageUtils.storeImageDataToCache(imageData: imageData, key: photoUrlProfile.absoluteString)
+        ImageUtils.storeImageDataToCache(imageData: imageData, key: photoUrlStandard.absoluteString)
         
         /* Upload */
-        DispatchQueue.global().async {
-            S3.instance.upload(image: preparedImage, imageKey: imageKey, progress: progress) { task, error in
-                if error != nil {
-                    Log.w("*** S3 image upload stopped with error: \(error!.localizedDescription)")
-                }
-                else {
-                    Log.w("*** S3 image upload complete: \(imageKey)")
-                }
+        DispatchQueue.global(qos: .userInitiated).async {
+            S3.instance.upload(imageData: imageData, imageKey: imageKey, progress: progress) { task, error in
+                Log.w(error != nil
+                    ? "*** S3 image upload stopped with error: \(error!.localizedDescription)"
+                    : "*** S3 image upload complete: \(imageKey)")
                 next?(error)
             }
         }

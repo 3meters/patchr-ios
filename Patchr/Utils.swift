@@ -8,7 +8,6 @@
 
 import Foundation
 import ObjectiveC
-import AVFoundation
 import UIKit
 
 var temporaryFileCount = 0
@@ -106,20 +105,6 @@ struct Utils {
 		}
 	}
     
-    static func prepareImage(image inImage: UIImage) -> UIImage {
-		var image = inImage;
-        let scalingNeeded: Bool = (image.size.width > Config.imageDimensionMax || image.size.height > Config.imageDimensionMax)
-        if (scalingNeeded) {
-            let rect: CGRect = AVMakeRect(aspectRatio: image.size
-                , insideRect: CGRect(x:0, y:0, width: Config.imageDimensionMax, height: Config.imageDimensionMax))
-            image = image.resizeTo(size: rect.size)
-        }
-        else {
-            image = image.normalizedImage()
-        }
-        return image
-    }
-	
 	static func clearSearchHistory() {
 		UserDefaults.standard.set(nil, forKey: PerUserKey(key: Prefs.searchHistory))
 	}

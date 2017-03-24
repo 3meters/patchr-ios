@@ -43,7 +43,6 @@ class PhotoEditView: UIView {
 	var setPhotoButton = UIButton()
 	var editPhotoButton = UIButton()
 	var clearPhotoButton = UIButton()
-	var progressView = UIProgressView(progressViewStyle: .default)
 	var progressBlock: AWSS3TransferUtilityProgressBlock?
 
 	var clearButtonAlignment: NSTextAlignment = .left
@@ -75,7 +74,7 @@ class PhotoEditView: UIView {
 
 		self.photoGroup.fillSuperview()
 		self.imageButton.fillSuperview()
-		self.progressView.anchorInCenter(withWidth: self.width() - 32, height: 12)
+        self.imageButton.progressView.anchorInCenter(withWidth: 20, height: 20)
 		self.scrimGroup.anchorBottomCenterFillingWidth(withLeftAndRightPadding: 0, bottomPadding: 0, height: 48)
 
 		if self.editButtonAlignment == .right {
@@ -170,7 +169,7 @@ class PhotoEditView: UIView {
 			 */
 			let dimension = imageResult!.width! >= imageResult!.height! ? ResizeDimension.width : ResizeDimension.height
 			let url = URL(string: GooglePlusProxy.convert(uri: imageResult!.contentUrl!, size: Int(Config.imageDimensionMax), dimension: dimension))
-			self.imageButton.setImageWithUrl(url: url!, fallbackUrl: nil) { [weak self] success in
+			self.imageButton.setImageWithUrl(url: url!) { [weak self] success in
 				if self != nil {
 					if success {
 						NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.PhotoDidChange), object: self)
@@ -193,11 +192,12 @@ class PhotoEditView: UIView {
 
 		self.backgroundColor = Colors.clear
 
-		self.progressView.isHidden = true
 		self.progressBlock = { task, progress in
 			DispatchQueue.main.async {
-				self.progressView.progress = Float(progress.fractionCompleted)
-				self.progressView.isHidden = (progress.fractionCompleted == 1.0)
+				self.imageButton.progressView.progress = CGFloat(progress.fractionCompleted)
+                if progress.fractionCompleted == 1.0 {
+                    self.imageButton.hideProgress()
+                }
 			}
 		}
 
@@ -207,7 +207,6 @@ class PhotoEditView: UIView {
 		self.photoGroup.clipsToBounds = true
 
 		self.imageButton.contentMode = .scaleAspectFill
-		self.imageButton.sizeCategory = SizeCategory.standard
 
 		self.editPhotoButton.setImage(UIImage(named: "imgEdit2Light"), for: .normal)
 		self.editPhotoButton.backgroundColor = Theme.colorScrimLighten
@@ -238,7 +237,6 @@ class PhotoEditView: UIView {
 		self.addSubview(self.photoGroup)
 		self.photoGroup.addSubview(self.imageButton)
 		self.photoGroup.addSubview(self.scrimGroup)
-		self.photoGroup.addSubview(self.progressView)
 		self.scrimGroup.addSubview(self.editPhotoButton)
 		self.scrimGroup.addSubview(self.clearPhotoButton)
 		self.addSubview(self.setPhotoButton)
@@ -248,13 +246,8 @@ class PhotoEditView: UIView {
 		self.setPhotoButton.addTarget(self, action: #selector(setPhotoAction(sender:)), for: .touchUpInside)
 	}
 
-	func bind(url: URL, fallbackUrl: URL?, uploading: Bool = false) {
-		if uploading {
-			self.imageButton.setImageFromCache(url: url, animate: true)
-		}
-		else {
-			self.imageButton.setImageWithUrl(url: url, fallbackUrl: fallbackUrl, animate: true)
-		}
+	func bind(url: URL, uploading: Bool? = false) {
+		self.imageButton.setImageWithUrl(url: url, animate: true)
 		self.usingPhotoDefault = false
 		self.photoActive = true
 	}

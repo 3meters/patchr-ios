@@ -7,6 +7,7 @@
 //
 import MBProgressHUD
 import Photos
+import SlideMenuControllerSwift
 
 extension UITextField {
     var isEmpty: Bool {
@@ -444,6 +445,17 @@ extension UITabBarController {
             return selected.shouldAutorotate
         }
         return super.shouldAutorotate
+    }
+}
+
+extension SlideMenuController {
+    
+    override open var prefersStatusBarHidden: Bool {
+        return mainViewController?.prefersStatusBarHidden ?? false
+    }
+    
+    override open var preferredStatusBarUpdateAnimation: UIStatusBarAnimation {
+        return mainViewController?.preferredStatusBarUpdateAnimation ?? .none
     }
 }
 

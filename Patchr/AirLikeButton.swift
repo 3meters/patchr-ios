@@ -1,7 +1,4 @@
 //
-//  AirImageView.swift
-//  Patchr
-//
 //  Created by Jay Massena on 5/22/15.
 //  Copyright (c) 2015 3meters. All rights reserved.
 //
@@ -13,12 +10,9 @@ import FirebaseDatabase
 class AirLikeButton: AirToggleButton {
     
     var message         : FireMessage?
-	var entityId		: String?
     var messageId       : String?
 	var userLikes		= false
 	var userLikesId		: String?
-    
-	var displayPhoto	: DisplayPhoto?
 
     required init(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)

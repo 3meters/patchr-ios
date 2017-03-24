@@ -18,14 +18,6 @@ class BaseSlackController: SLKTextViewController {
     var controllerIsActive = false
     var authHandle: FIRAuthStateDidChangeListenerHandle!
     
-    var statusBarHidden: Bool = false {
-        didSet {
-            UIView.animate(withDuration: 0.5) { () -> Void in
-                self.setNeedsStatusBarAppearanceUpdate()
-            }
-        }
-    }
-    
     var queryController: DataSourceController!
     var channel: FireChannel!
     var searchResult: [String]?
@@ -72,6 +64,7 @@ class BaseSlackController: SLKTextViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        self.setNeedsStatusBarAppearanceUpdate()
         NotificationCenter.default.addObserver(self.tableView, selector: #selector(UITableView.reloadData), name: NSNotification.Name.UIContentSizeCategoryDidChange, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(textInputbarDidMove(_:)), name: NSNotification.Name.SLKTextInputbarDidMove, object: nil)
     }
@@ -249,18 +242,10 @@ class BaseSlackController: SLKTextViewController {
         }
         
         if let photo = message.attachments?.values.first?.photo {
-            if photo.uploading != nil {
-                self.photoEditView.configureTo(photoMode: .photo)
-                self.photoEditView.bind(url: URL(string: photo.cacheKey)!, fallbackUrl: nil, uploading: true)
-                showPhotoEdit()
-            }
-            else {
-                if let photoUrl = ImageUtils.url(prefix: photo.filename, source: photo.source, category: SizeCategory.standard) {
-                    self.photoEditView.configureTo(photoMode: .photo)
-                    self.photoEditView.bind(url: photoUrl, fallbackUrl: ImageUtils.fallbackUrl(prefix: photo.filename!))
-                    showPhotoEdit()
-                }
-            }
+            let photoUrl = Cloudinary.url(prefix: photo.filename)
+            self.photoEditView.configureTo(photoMode: .photo)
+            self.photoEditView.bind(url: photoUrl, uploading: photo.uploading)
+            showPhotoEdit()
         }
     }
     
@@ -374,7 +359,7 @@ class BaseSlackController: SLKTextViewController {
         , next: ((Any?) -> Void)? = nil) -> [String: Any] {
         
         /* Ensure image is resized/rotated before upload */
-        let preparedImage = Utils.prepareImage(image: image)
+        let preparedImage = ImageUtils.prepareImage(image: image)
         
         /* Generate image key */
         let imageKey = "\(Utils.genImageKey()).jpg"
@@ -403,18 +388,20 @@ class BaseSlackController: SLKTextViewController {
             }
         }
         
+        let imageData = UIImageJPEGRepresentation(image, /*compressionQuality*/ 0.70)!
+        
         /* Prime the cache so offline has something to work with */
-        ImageUtils.addImageToCache(image: image, url: URL(string: "https://\(imageKey)")!)
+        let photoUrlStandard = Cloudinary.url(prefix: imageKey, category: SizeCategory.standard)
+        let photoUrlProfile = Cloudinary.url(prefix: imageKey, category: SizeCategory.profile)
+        ImageUtils.storeImageDataToCache(imageData: imageData, key: photoUrlProfile.absoluteString)
+        ImageUtils.storeImageDataToCache(imageData: imageData, key: photoUrlStandard.absoluteString)
         
         /* Upload */
-        DispatchQueue.global().async {
-            S3.instance.upload(image: preparedImage, imageKey: imageKey, progress: progress) { task, error in
-                if error != nil {
-                    Log.w("*** S3 completion handler: image upload error: \(error!.localizedDescription)")
-                }
-                else {
-                    Log.w("*** S3 completion handler: image upload complete: \(imageKey)")
-                }
+        DispatchQueue.global(qos: .userInitiated).async {
+            S3.instance.upload(imageData: imageData, imageKey: imageKey, progress: progress) { task, error in
+                Log.w(error != nil
+                    ? "*** S3 image upload stopped with error: \(error!.localizedDescription)"
+                    : "*** S3 image upload complete: \(imageKey)")
                 next?(error)
             }
         }
@@ -501,7 +488,7 @@ class BaseSlackController: SLKTextViewController {
     }
     
     override var prefersStatusBarHidden: Bool {
-        return self.statusBarHidden
+        return UserDefaults.standard.bool(forKey: Prefs.statusBarHidden)
     }
 }
 

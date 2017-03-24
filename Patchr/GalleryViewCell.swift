@@ -10,8 +10,8 @@ import UIKit
 
 class GalleryViewCell: UICollectionViewCell {
 	
-	var displayPhoto		: DisplayPhoto?
-	var displayImageView	= AirImageView(frame: CGRect.zero)
+	var displayPhoto: DisplayPhoto?
+	var displayImageView = AirImageView(frame: CGRect.zero)
 	
 	override init(frame: CGRect) {
 		super.init(frame: frame)
@@ -27,6 +27,10 @@ class GalleryViewCell: UICollectionViewCell {
 		self.clipsToBounds = true
 		self.contentView.addSubview(self.displayImageView)
 	}
+    
+    func reset() {
+        self.displayImageView.reset()
+    }
 	
 	override var layoutMargins: UIEdgeInsets {
 		get { return UIEdgeInsets.zero }
@@ -36,6 +40,7 @@ class GalleryViewCell: UICollectionViewCell {
 	override func layoutSubviews() {
 		self.contentView.fillSuperview()
 		self.displayImageView.fillSuperview()
+        self.displayImageView.progressView.anchorInCenter(withWidth: 20, height: 20)
 		self.selectedBackgroundView?.fillSuperview()
 	}
 }
