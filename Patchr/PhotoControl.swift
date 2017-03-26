@@ -69,7 +69,7 @@ class PhotoControl: UIControl {
 		super.layoutSubviews()
         self.layer.cornerRadius = self.rounded ? self.width() * 0.5 : self.radius
 		self.photoView.fillSuperview()
-        self.photoView.progressView.anchorInCenter(withWidth: 20, height: 20)
+        self.photoView.progressView.anchorInCenter(withWidth: 150, height: 20)
 		self.nameLabel.fillSuperview()
 	}
     

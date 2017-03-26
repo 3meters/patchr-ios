@@ -15,6 +15,18 @@ extension UITextField {
     }
 }
 
+//extension UIButton {
+//    override open func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
+//        if !super.point(inside: point, with: event) {
+//            let relativeFrame = self.bounds
+//            let hitTestEdgeInsets = UIEdgeInsetsMake(-44, -44, -44, -44)
+//            let hitFrame = UIEdgeInsetsInsetRect(relativeFrame, hitTestEdgeInsets)
+//            return hitFrame.contains(point)
+//        }
+//        return true
+//    }
+//}
+
 extension UIImage {
     
     func resizeTo(size:CGSize) -> UIImage {

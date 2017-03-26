@@ -95,6 +95,7 @@ PODS:
     - Protobuf (~> 3.1)
   - FirebaseUI/Database (3.1.0):
     - Firebase/Database
+  - FLAnimatedImage (1.0.12)
   - GoogleToolboxForMac/DebugUtils (2.1.1):
     - GoogleToolboxForMac/Defines (= 2.1.1)
   - GoogleToolboxForMac/Defines (2.1.1)
@@ -133,6 +134,9 @@ PODS:
   - SDWebImage (4.0.0):
     - SDWebImage/Core (= 4.0.0)
   - SDWebImage/Core (4.0.0)
+  - SDWebImage/GIF (4.0.0):
+    - FLAnimatedImage (~> 1.0)
+    - SDWebImage/Core
   - SkyFloatingLabelTextField (2.0.0)
   - SlackTextViewController (1.9.5)
   - SlideMenuControllerSwift (3.0.1)
@@ -170,7 +174,7 @@ DEPENDENCIES:
   - pop (~> 1.0)
   - PopupDialog
   - ReachabilitySwift (~> 3)
-  - SDWebImage (~> 4.0)
+  - SDWebImage/GIF (~> 4.0)
   - SkyFloatingLabelTextField (~> 2.0.0)
   - SlackTextViewController (from `~/code/SlackTextViewController`)
   - SlideMenuControllerSwift
@@ -219,6 +223,7 @@ SPEC CHECKSUMS:
   FirebaseMessaging: df8267f378580a24174ce7861233aa11d5c90109
   FirebaseRemoteConfig: af3003f4e8daa2bd1d5cf90d3cccc1fe224f8ed9
   FirebaseUI: d9e83c4c22dd922c661d85f041a771d1953405a9
+  FLAnimatedImage: 4a0b56255d9b05f18b6dd7ee06871be5d3b89e31
   GoogleToolboxForMac: 8e329f1b599f2512c6b10676d45736bcc2cbbeb0
   GTMSessionFetcher: 5c046c76a1f859bc9c187e918f18e4fc7bb57b5e
   IDMPhotoBrowser: bcd6cbc9ccaf7e945c3a5a065ffa1a4dee81b722
@@ -242,6 +247,6 @@ SPEC CHECKSUMS:
   UIDevice-Hardware: ecb52d9a7b223b31f81982358e2b0769ac1a7918
   VTAcknowledgementsViewController: e1de80f2c0ce31cc7e1c6f1c8aaeec2770371f09
 
-PODFILE CHECKSUM: 04af12b74ebc74885dbcbc252b3d3a3fca773da6
+PODFILE CHECKSUM: 88c28cd68190f11914cd9d539228392a46fc3eb1
 
 COCOAPODS: 1.1.0.rc.3

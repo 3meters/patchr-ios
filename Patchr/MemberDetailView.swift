@@ -51,7 +51,7 @@ class MemberDetailView: UIView {
         
         self.contentGroup.fillSuperview()
         self.photoView.fillSuperview(withLeftPadding: -24, rightPadding: -24, topPadding: -36, bottomPadding: -36)
-        self.photoView.progressView.anchorInCenter(withWidth: 20, height: 20)
+        self.photoView.progressView.anchorInCenter(withWidth: 150, height: 20)
 
         self.titleGroup.anchorBottomLeft(withLeftPadding: 16, bottomPadding: 16, width: viewWidth - 32, height: 72)
         self.subtitle.bounds.size.width = self.titleGroup.width()

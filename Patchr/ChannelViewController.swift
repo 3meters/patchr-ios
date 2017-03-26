@@ -25,7 +25,7 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
     var headerView = ChannelDetailView()
     var unreads = [String: Bool]()
     var displayPhotos = [String: DisplayPhoto]()
-    var displayPhotosArray : [DisplayPhoto]!
+    var displayPhotosSorted : [DisplayPhoto]!
 
     var headerHeight: CGFloat!
 
@@ -65,10 +65,10 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
                 if let username = UserController.instance.user?.username {
                     let userId = UserController.instance.userId!
                     if self.localTyping {
-                        self.refTyping.child(userId).setValue(username)
+                        self.refTyping?.child(userId).setValue(username)
                     }
                     else {
-                        self.refTyping.child(userId).removeValue()
+                        self.refTyping?.child(userId).removeValue()
                     }
                 }
             }
@@ -131,7 +131,7 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
             self.joinBarLabel.anchorTopCenterFillingWidth(withLeftAndRightPadding: 8, topPadding: 0, height: 32)
         }
         
-        self.titleView.bounds.size.width = self.view.width() - 160
+        self.titleView?.bounds.size.width = self.view.width() - 160
     }
 
     override func didReceiveMemoryWarning() {
@@ -684,6 +684,9 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
     }
     
     func unbind() {
+        SDWebImagePrefetcher.shared().cancelPrefetching()
+        Log.d("Prefetch cancelled if active")
+
         if self.handleTypingAdd != nil {
             self.refTyping.removeObserver(withHandle: self.handleTypingAdd)
         }
@@ -929,11 +932,11 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
                         }
                         else if mode == .browse {
                             
-                            self.displayPhotosArray = Array(self.displayPhotos.values).sorted(by: { $0.createdDateValue! > $1.createdDateValue! })
+                            self.displayPhotosSorted = Array(self.displayPhotos.values).sorted(by: { $0.createdDateValue! > $1.createdDateValue! })
                             var initialIndex = 0
                             if initialUrl != nil {
                                 var index = 0
-                                for displayPhoto in self.displayPhotosArray {
+                                for displayPhoto in self.displayPhotosSorted {
                                     if initialUrl?.path == displayPhoto.photoURL.path {
                                         initialIndex = index
                                         break
@@ -941,7 +944,7 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
                                     index += 1
                                 }
                             }
-                            let browser = (PhotoBrowser(photos: self.displayPhotosArray as [Any], animatedFrom: fromView))!
+                            let browser = (PhotoBrowser(photos: self.displayPhotosSorted as [Any], animatedFrom: fromView))!
                             
                             browser.mode = .gallery
                             browser.setInitialPageIndex(UInt(initialIndex))
@@ -1071,17 +1074,39 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
 }
 
 extension ChannelViewController: FUICollectionDelegate {
+    
     func array(_ array: FUICollection, didChange object: Any, at index: UInt) {
         if let snap = object as? FIRDataSnapshot {
             self.rowHeights.removeObject(forKey: snap.key)
         }
+    }
+    
+    func arrayDidEndUpdates(_ collection: FUICollection) {
+        var urls = [URL]()
+        for data in self.queryController.items {
+            let snap = data as! FIRDataSnapshot
+            if let message = FireMessage.from(dict: snap.value as? [String: Any], id: snap.key) {
+                if let photo = message.attachments?.values.first?.photo {
+                    let url = Cloudinary.url(prefix: photo.filename!)
+                    urls.append(url)
+                }
+            }
+        }
+        SDWebImagePrefetcher.shared().prefetchURLs(urls)
+        SDWebImagePrefetcher.shared().delegate = self
+    }
+}
+
+extension ChannelViewController: SDWebImagePrefetcherDelegate {
+    func imagePrefetcher(_ imagePrefetcher: SDWebImagePrefetcher, didFinishWithTotalCount totalCount: UInt, skippedCount: UInt) {
+        Log.d("Prefetch complete: total: \(totalCount), skipped: \(skippedCount)")
     }
 }
 
 extension ChannelViewController: IDMPhotoBrowserDelegate {
     
     func photoBrowser(_ photoBrowser: IDMPhotoBrowser!, captionViewForPhotoAt index: UInt) -> IDMCaptionView! {
-        let captionView = CaptionView(displayPhoto: self.displayPhotosArray![Int(index)])
+        let captionView = CaptionView(displayPhoto: self.displayPhotosSorted![Int(index)])
         captionView?.alpha = 0
         return captionView
     }
@@ -1089,7 +1114,7 @@ extension ChannelViewController: IDMPhotoBrowserDelegate {
     func photoBrowser(_ photoBrowser: IDMPhotoBrowser!, didShowPhotoAt index: UInt) {
         let index = Int(index)
         if let browser = photoBrowser as? PhotoBrowser {
-            let displayPhoto = self.displayPhotosArray![index]
+            let displayPhoto = self.displayPhotosSorted![index]
             browser.likeButton.bind(displayPhoto: displayPhoto)
         }
     }

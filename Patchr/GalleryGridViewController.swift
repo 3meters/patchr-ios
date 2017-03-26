@@ -9,11 +9,12 @@
 import UIKit
 import IDMPhotoBrowser
 import NHBalancedFlowLayout
+import SDWebImage
 
 class GalleryGridViewController: UICollectionViewController {
 	
 	var displayPhotos = [String: DisplayPhoto]()
-	var displayPhotosArray: [DisplayPhoto]!
+	var displayPhotosSorted: [DisplayPhoto]!
 	var threshold = 0
 	var processing = false
 	var activity: UIActivityIndicatorView?
@@ -80,14 +81,11 @@ class GalleryGridViewController: UICollectionViewController {
 		let spaceLeftOver = availableWidth! - (numColumns * requestedColumnWidth) - ((numColumns - 1) * 4)
 		self.thumbnailWidth = requestedColumnWidth + (spaceLeftOver / numColumns)
 	}
-
-	override func viewDidLayoutSubviews() {
-		super.viewDidLayoutSubviews()
-	}
-
-	override func viewDidAppear(_ animated: Bool) {
-		super.viewDidAppear(animated)
-	}
+    
+    deinit {
+        SDWebImagePrefetcher.shared().cancelPrefetching()
+        Log.d("Prefetch cancelled if active")
+    }
 
 	/*--------------------------------------------------------------------------------------------
 	 * Events
@@ -105,14 +103,19 @@ class GalleryGridViewController: UICollectionViewController {
 		
 		self.collectionView!.backgroundColor = Theme.colorBackgroundForm
 		self.collectionView!.register(GalleryViewCell.self, forCellWithReuseIdentifier: reuseIdentifier)
-		
+        
 		if let layout = self.collectionViewLayout as? UICollectionViewFlowLayout {
 			layout.minimumLineSpacing = 4
 			layout.minimumInteritemSpacing = 4
 		}
         
 		/* Create sorted array for data binding */
-		self.displayPhotosArray = Array(self.displayPhotos.values).sorted(by: { $0.createdDateValue! > $1.createdDateValue! })
+		self.displayPhotosSorted = Array(self.displayPhotos.values).sorted(by: { $0.createdDateValue! > $1.createdDateValue! })
+        
+        /* Start prefetching photos to the disk cache */
+        let urls = self.displayPhotosSorted.map { $0.photoURL! }
+        SDWebImagePrefetcher.shared().prefetchURLs(urls)
+        SDWebImagePrefetcher.shared().delegate = self
 		
 		/* Simple activity indicator */
 		self.activity = addActivityIndicatorTo(view: self.view)
@@ -123,17 +126,23 @@ class GalleryGridViewController: UICollectionViewController {
 	}
 	
     func imageForIndexPath(indexPath: NSIndexPath) -> DisplayPhoto? {
-		if indexPath.row > self.displayPhotosArray!.count - 1 {
+		if indexPath.row > self.displayPhotosSorted!.count - 1 {
 			return nil
 		}
-        return self.displayPhotosArray![indexPath.row]
+        return self.displayPhotosSorted![indexPath.row]
+    }
+}
+
+extension GalleryGridViewController: SDWebImagePrefetcherDelegate {
+    func imagePrefetcher(_ imagePrefetcher: SDWebImagePrefetcher, didFinishWithTotalCount totalCount: UInt, skippedCount: UInt) {
+        Log.d("Prefetch complete: total: \(totalCount), skipped: \(skippedCount)")
     }
 }
 
 extension GalleryGridViewController: IDMPhotoBrowserDelegate {
 	
 	func photoBrowser(_ photoBrowser: IDMPhotoBrowser!, captionViewForPhotoAt index: UInt) -> IDMCaptionView! {
-		let captionView = CaptionView(displayPhoto: self.displayPhotosArray![Int(index)])
+		let captionView = CaptionView(displayPhoto: self.displayPhotosSorted![Int(index)])
 		captionView?.alpha = 0
 		return captionView
 	}
@@ -141,7 +150,7 @@ extension GalleryGridViewController: IDMPhotoBrowserDelegate {
 	func photoBrowser(_ photoBrowser: IDMPhotoBrowser!, didShowPhotoAt index: UInt) {
 		let index = Int(index)		
 		if let browser = photoBrowser as? PhotoBrowser {
-			let displayPhoto = self.displayPhotosArray![index]
+			let displayPhoto = self.displayPhotosSorted![index]
 			browser.likeButton.bind(displayPhoto: displayPhoto)
 		}
 	}
@@ -156,7 +165,7 @@ extension GalleryGridViewController { /* UICollectionViewDelegate, UICollectionV
 		*/
 		let cell = collectionView.cellForItem(at: indexPath) as! GalleryViewCell
         
-        self.photoBrowser = PhotoBrowser(photos: self.displayPhotosArray! as [Any], animatedFrom: cell)
+        self.photoBrowser = PhotoBrowser(photos: self.displayPhotosSorted! as [Any], animatedFrom: cell)
         self.photoBrowser.mode = .gallery
         self.photoBrowser.useWhiteBackgroundColor = true
         self.photoBrowser.usePopAnimation = true
@@ -170,7 +179,7 @@ extension GalleryGridViewController { /* UICollectionViewDelegate, UICollectionV
 	}
 	
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return self.displayPhotosArray.count
+        return self.displayPhotosSorted.count
     }
     
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -200,7 +209,7 @@ extension GalleryGridViewController : NHBalancedFlowLayoutDelegate {
                         layout collectionViewLayout: NHBalancedFlowLayout!,
                         preferredSizeForItemAt indexPath: IndexPath!) -> CGSize {
 		
-		let displayPhoto = self.displayPhotosArray[indexPath.item]
+		let displayPhoto = self.displayPhotosSorted[indexPath.item]
         return displayPhoto.size ?? CGSize(width:500, height:500)
 	}
 }

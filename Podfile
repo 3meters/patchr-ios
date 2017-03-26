@@ -37,7 +37,7 @@ target 'Patchr' do
     pod 'ReachabilitySwift',        '~> 3'
     pod 'SkyFloatingLabelTextField','~> 2.0.0'
     pod 'SlackTextViewController',  :path => '~/code/SlackTextViewController'
-    pod 'SDWebImage',               '~> 4.0'
+    pod 'SDWebImage/GIF',           '~> 4.0'
     pod 'UIDevice-Hardware',        '~> 0.1.7'		# Convenience for determining system version and model identifier
     pod 'Bugsnag'                                   # Crash reporting
     pod 'BEMCheckBox'

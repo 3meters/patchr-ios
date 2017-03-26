@@ -89,7 +89,6 @@ class BaseSlackController: SLKTextViewController {
     }
     
     override func didPressLeftButton(_ sender: Any!) {
-        super.didPressLeftButton(sender)
         
         if let controller = self as? ChannelViewController {
             controller.isTyping = true
@@ -212,14 +211,16 @@ class BaseSlackController: SLKTextViewController {
         self.shouldScrollToBottomAfterKeyboardShows = false
         self.isInverted = false
         
-        self.leftButton.setImage(#imageLiteral(resourceName: "UIButtonCamera"), for: UIControlState())
+        self.leftButton.setImage(#imageLiteral(resourceName: "imgCameraPadded"), for: UIControlState())
         self.leftButton.imageEdgeInsets = UIEdgeInsetsMake(0, 0, 0, 0)
+        self.leftButton.showsTouchWhenHighlighted = true
         
         self.rightButton.setTitle(NSLocalizedString("Send", comment: ""), for: UIControlState())
         
         self.textInputbar.autoHideRightButton = false
         self.textInputbar.showLeftButtonWhenEditing = true
         self.textInputbar.editorTitle.textColor = UIColor.darkGray
+        self.textInputbar.contentInset = UIEdgeInsetsMake(5, 0, 5, 8)
         
         self.typingIndicatorView!.canResignByTouch = true
         
@@ -263,8 +264,8 @@ class BaseSlackController: SLKTextViewController {
         let ref = FireController.db.child("group-messages/\(groupId)/\(channelId)").childByAutoId()
         
         var photoMap: [String: Any]?
-        if let image = self.photoEditView.imageButton.image {
-            let asset = self.photoEditView.imageButton.asset
+        if let image = self.photoEditView.imageView.image {
+            let asset = self.photoEditView.imageView.asset
             photoMap = postPhoto(image: image, asset: asset, progress: self.photoEditView.progressBlock, next: { error in
                 if error == nil {
                     photoMap!["uploading"] = NSNull()
@@ -328,8 +329,8 @@ class BaseSlackController: SLKTextViewController {
         if self.photoEditView.photoDirty {
             var photoMap: [String: Any]?
             let attachmentId = "at-\(Utils.genRandomId())"
-            if let image = self.photoEditView.imageButton.image {
-                let asset = self.photoEditView.imageButton.asset
+            if let image = self.photoEditView.imageView.image {
+                let asset = self.photoEditView.imageView.asset
                 photoMap = postPhoto(image: image, asset: asset, progress: self.photoEditView.progressBlock, next: { error in
                     if error == nil {
                         photoMap!["uploading"] = NSNull()
@@ -456,7 +457,7 @@ class BaseSlackController: SLKTextViewController {
     func isValid() -> Bool {
         
         if ((self.textView.text == nil || self.textView.text!.isEmpty)
-            && self.photoEditView.imageButton.image == nil) {
+            && self.photoEditView.imageView.image == nil) {
             return false
         }
         return true

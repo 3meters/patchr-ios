@@ -21,7 +21,7 @@ class PhotoBrowser: IDMPhotoBrowser {
     /* UI specialized for previewing photos from the photo picker. */
     var browseDelegate: PhotoBrowseControllerDelegate?  // Used by photo preview feature in photo search
     var imageResult: ImageResult?
-    var image: UIImage?
+    var image: UIImage? // Used to pass through if selected in preview mode
     var asset: Any?
     var target: AnyObject?
 	
@@ -49,6 +49,9 @@ class PhotoBrowser: IDMPhotoBrowser {
     *--------------------------------------------------------------------------------------------*/
     
     func initialize() {
+        
+        self.trackTintColor = Colors.gray90pcntColor
+        self.progressTintColor = Colors.accentColor
         
         if self.mode == .preview {
             /* Configure toolbar */
@@ -104,9 +107,6 @@ class PhotoBrowser: IDMPhotoBrowser {
             if self.mode == .gallery {
                 self.likeButton.isHidden = false
             }
-            
-            self.trackTintColor = Colors.gray90pcntColor
-            self.progressTintColor = Colors.accentColor
         }
     }
     

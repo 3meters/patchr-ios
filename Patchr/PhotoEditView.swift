@@ -39,7 +39,7 @@ class PhotoEditView: UIView {
 
 	var photoGroup = UIView()
 	var scrimGroup = UIView()
-	var imageButton = AirImageView(frame: CGRect.zero)
+	var imageView = AirImageView(frame: CGRect.zero)
 	var setPhotoButton = UIButton()
 	var editPhotoButton = UIButton()
 	var clearPhotoButton = UIButton()
@@ -73,8 +73,8 @@ class PhotoEditView: UIView {
 		super.layoutSubviews()
 
 		self.photoGroup.fillSuperview()
-		self.imageButton.fillSuperview()
-        self.imageButton.progressView.anchorInCenter(withWidth: 20, height: 20)
+		self.imageView.fillSuperview()
+        self.imageView.progressView.anchorInCenter(withWidth: 150, height: 20)
 		self.scrimGroup.anchorBottomCenterFillingWidth(withLeftAndRightPadding: 0, bottomPadding: 0, height: 48)
 
 		if self.editButtonAlignment == .right {
@@ -101,11 +101,11 @@ class PhotoEditView: UIView {
 
 	func imageNotFoundAction(sender: AnyObject) {
 		if self.photoSchema == Schema.entityMessage {
-			self.imageButton.image = nil
+			self.imageView.image = nil
 			configureTo(photoMode: .empty)
 		}
 		else {
-			self.imageButton.image = nil
+			self.imageView.image = nil
 			self.usingPhotoDefault = true
 			configureTo(photoMode: .placeholder)
 		}
@@ -114,7 +114,7 @@ class PhotoEditView: UIView {
 	}
 
 	func editPhotoAction(sender: AnyObject) {
-		if self.controller != nil, let image = self.imageButton.image {
+		if self.controller != nil, let image = self.imageView.image {
 			let controller = AdobeUXImageEditorViewController(image: image)
 			controller.delegate = self
 			self.controller!.present(controller, animated: true, completion: nil)
@@ -123,11 +123,11 @@ class PhotoEditView: UIView {
 
 	func clearPhotoAction(sender: AnyObject) {
 		if self.photoSchema == Schema.entityMessage {
-			self.imageButton.image = nil
+			self.imageView.image = nil
 			configureTo(photoMode: .empty)
 		}
 		else {
-			self.imageButton.image = nil
+			self.imageView.image = nil
 			self.usingPhotoDefault = true
 			configureTo(photoMode: .placeholder)
 		}
@@ -158,8 +158,8 @@ class PhotoEditView: UIView {
 		configureTo(photoMode: .photo)
 
 		if image != nil {
-			self.imageButton.image = image
-			self.imageButton.asset = asset
+			self.imageView.image = image
+			self.imageView.asset = asset
 			NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.PhotoDidChange), object: self)
 		}
 		else if imageResult != nil {
@@ -167,18 +167,30 @@ class PhotoEditView: UIView {
 			 * Request image via resizer so size is capped. We don't use imgix because it only uses
 			 * known image sources that we setup like our buckets on s3.
 			 */
-			let dimension = imageResult!.width! >= imageResult!.height! ? ResizeDimension.width : ResizeDimension.height
-			let url = URL(string: GooglePlusProxy.convert(uri: imageResult!.contentUrl!, size: Int(Config.imageDimensionMax), dimension: dimension))
-			self.imageButton.setImageWithUrl(url: url!) { [weak self] success in
-				if self != nil {
-					if success {
-						NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.PhotoDidChange), object: self)
-					}
-					else {
-						UIShared.toast(message: "Unable to download image")
-					}
-				}
-			}  // Downloads and pushes into photoImage
+            if imageResult!.encodingFormat == "animatedgif" {
+                self.imageView.setImageWithUrl(url: URL(string: imageResult!.contentUrl!)!, imageType: .animatedGif) { [weak self] success in
+                    guard let strongSelf = self else { return }
+                    if !success {
+                        UIShared.toast(message: "Unable to download image")
+                        return
+                    }
+                    NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.PhotoDidChange), object: strongSelf)
+                }
+            }
+            else {
+                let dimension = imageResult!.width! >= imageResult!.height! ? ResizeDimension.width : ResizeDimension.height
+                let url = URL(string: GooglePlusProxy.convert(uri: imageResult!.contentUrl!, size: Int(Config.imageDimensionMax), dimension: dimension))
+                self.imageView.setImageWithUrl(url: url!) { [weak self] success in
+                    if self != nil {
+                        if success {
+                            NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.PhotoDidChange), object: self)
+                        }
+                        else {
+                            UIShared.toast(message: "Unable to download image")
+                        }
+                    }
+                }  // Downloads and pushes into photoImage
+            }
 		}
 	}
 
@@ -188,15 +200,15 @@ class PhotoEditView: UIView {
 
 	func initialize() {
 
-		NotificationCenter.default.addObserver(self, selector: #selector(PhotoEditView.imageNotFoundAction(sender:)), name: NSNotification.Name(rawValue: Events.ImageNotFound), object: self.imageButton)
+		NotificationCenter.default.addObserver(self, selector: #selector(PhotoEditView.imageNotFoundAction(sender:)), name: NSNotification.Name(rawValue: Events.ImageNotFound), object: self.imageView)
 
 		self.backgroundColor = Colors.clear
 
 		self.progressBlock = { task, progress in
 			DispatchQueue.main.async {
-				self.imageButton.progressView.progress = CGFloat(progress.fractionCompleted)
+				self.imageView.progressView.progress = CGFloat(progress.fractionCompleted)
                 if progress.fractionCompleted == 1.0 {
-                    self.imageButton.hideProgress()
+                    self.imageView.hideProgress()
                 }
 			}
 		}
@@ -206,7 +218,7 @@ class PhotoEditView: UIView {
 		self.photoGroup.cornerRadius = 4
 		self.photoGroup.clipsToBounds = true
 
-		self.imageButton.contentMode = .scaleAspectFill
+		self.imageView.contentMode = .scaleAspectFill
 
 		self.editPhotoButton.setImage(UIImage(named: "imgEdit2Light"), for: .normal)
 		self.editPhotoButton.backgroundColor = Theme.colorScrimLighten
@@ -235,7 +247,7 @@ class PhotoEditView: UIView {
 		self.setPhotoButton.alpha = 0
 
 		self.addSubview(self.photoGroup)
-		self.photoGroup.addSubview(self.imageButton)
+		self.photoGroup.addSubview(self.imageView)
 		self.photoGroup.addSubview(self.scrimGroup)
 		self.scrimGroup.addSubview(self.editPhotoButton)
 		self.scrimGroup.addSubview(self.clearPhotoButton)
@@ -247,13 +259,13 @@ class PhotoEditView: UIView {
 	}
 
 	func bind(url: URL, uploading: Bool? = false) {
-		self.imageButton.setImageWithUrl(url: url, animate: true)
+		self.imageView.setImageWithUrl(url: url, animate: true)
 		self.usingPhotoDefault = false
 		self.photoActive = true
 	}
 
 	func reset() {
-		self.imageButton.image = nil
+		self.imageView.image = nil
 		configureTo(photoMode: .empty)
 		self.photoDirty = false
 		self.photoActive = false
@@ -307,7 +319,7 @@ class PhotoEditView: UIView {
 extension PhotoEditView: AdobeUXImageEditorViewControllerDelegate {
 
 	func photoEditor(_ editor: AdobeUXImageEditorViewController, finishedWith image: UIImage?) {
-		self.photoChosen(image: image, imageResult: nil, asset: self.imageButton.asset)
+		self.photoChosen(image: image, imageResult: nil, asset: self.imageView.asset)
 		Reporting.track("Edited Photo")
 		self.controller!.dismiss(animated: true, completion: nil)
 	}

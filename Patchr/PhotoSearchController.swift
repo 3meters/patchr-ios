@@ -1,7 +1,4 @@
 //
-//  MessageDetailViewController.swift
-//  Patchr
-//
 //  Created by Rob MacEachern on 2015-02-23.
 //  Copyright (c) 2015 3meters. All rights reserved.
 //
@@ -9,8 +6,14 @@
 import UIKit
 import IDMPhotoBrowser
 
+public enum ImageType {
+    case photo
+    case animatedGif
+}
+
 class PhotoSearchController: UICollectionViewController, UITableViewDelegate, UITableViewDataSource {
     
+    var inputImageType = ImageType.photo
     var imageResults = [ImageResult]()
     var searchBarActive = false
     var searchBarBoundsY: CGFloat?
@@ -178,6 +181,7 @@ class PhotoSearchController: UICollectionViewController, UITableViewDelegate, UI
 		BingController.instance.backgroundOperationQueue.addOperation {
 			
 			BingController.instance.loadSearchImages(query: self.searchBar!.text!
+                , type: self.inputImageType
                 , count: Int64(self.pageSize)
                 , offset: Int64(self.offset)) { response, error in
                 
@@ -386,20 +390,35 @@ extension PhotoSearchController {
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         
         if let cell = collectionView.cellForItem(at: indexPath) as? ThumbnailCollectionViewCell {
-            let photo = IDMPhoto(image: cell.thumbnail.image!)!
-            let photos = Array([photo])
-            let browser = PhotoBrowser(photos: photos as [AnyObject], animatedFrom: cell.thumbnail)
-            
-            browser?.mode = .preview
-            browser?.usePopAnimation = true
-            browser?.scaleImage = cell.thumbnail.image  // Used because final image might have different aspect ratio than initially
-            browser?.useWhiteBackgroundColor = true
-            browser?.disableVerticalSwipe = false
-            
-            browser?.browseDelegate = self.pickerDelegate  // Pass delegate through
-            browser?.imageResult = self.imageForIndexPath(indexPath: indexPath as NSIndexPath)
-            
-            present(browser!, animated:true, completion:nil)
+            if self.inputImageType == .photo {
+                
+                let photo = DisplayPhoto(image: cell.thumbnail.image!)!
+                let browser = PhotoBrowser(photos: [photo] as [Any], animatedFrom: cell.thumbnail)!
+                
+                browser.mode = .preview
+                browser.usePopAnimation = true
+                browser.scaleImage = cell.thumbnail.image  // Used because final image might have different aspect ratio than initially
+                browser.useWhiteBackgroundColor = true
+                browser.disableVerticalSwipe = false
+                browser.browseDelegate = self.pickerDelegate  // Pass delegate through
+                browser.imageResult = self.imageForIndexPath(indexPath: indexPath as NSIndexPath)
+                
+                present(browser, animated:true, completion:nil)
+            }
+            else if self.inputImageType == .animatedGif {
+                if let imageResult = self.imageForIndexPath(indexPath: indexPath as NSIndexPath) {
+                    let photo = DisplayPhoto(url: URL(string:imageResult.contentUrl!))!
+                    let browser = PhotoBrowser(photos: [photo] as [Any])
+                    
+                    browser?.mode = .preview
+                    browser?.useWhiteBackgroundColor = true
+                    browser?.disableVerticalSwipe = false
+                    browser?.browseDelegate = self.pickerDelegate  // Pass delegate through
+                    browser?.imageResult = self.imageForIndexPath(indexPath: indexPath as NSIndexPath)
+                    
+                    present(browser!, animated:true, completion:nil)
+                }
+            }
         }
     }
 }

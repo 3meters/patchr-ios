@@ -7,10 +7,11 @@ import UIKit
 import SDWebImage
 import Photos
 import DACircularProgress
+import FLAnimatedImage
 
-class AirImageView: UIImageView {
+class AirImageView: FLAnimatedImageView {
 
-    var progressView: DACircularProgressView!
+    var progressView: DALabeledCircularProgressView!
     
     var gradientHeightPcnt = CGFloat(0.35)
     var gradientLayer: CAGradientLayer!
@@ -102,7 +103,7 @@ class AirImageView: UIImageView {
 
     func initialize(){
         self.layer.delegate = self
-        self.progressView = DACircularProgressView()
+        self.progressView = DALabeledCircularProgressView()
         self.progressView.trackTintColor = Colors.white
         self.progressView.progressTintColor = Colors.accentColor
         self.progressView.thicknessRatio = 0.15
@@ -124,7 +125,7 @@ class AirImageView: UIImageView {
         }
     }
 	
-    func setImageWithUrl(url: URL, animate: Bool = true, then: ((Bool) -> Void)? = nil) {
+    func setImageWithUrl(url: URL, imageType: ImageType = .photo, animate: Bool = true, then: ((Bool) -> Void)? = nil) {
         
 		/* Stash the url we are loading so we can check for a match later when download is completed. */
 		self.fromUrl = url
@@ -134,28 +135,29 @@ class AirImageView: UIImageView {
             self.showProgress()
         }
         
-        let progress: SDWebImageDownloaderProgressBlock = { loadedSize, expectedSize, url in
+        let progress: SDWebImageDownloaderProgressBlock = { [weak self] loadedSize, expectedSize, url in
             let progress = CGFloat(loadedSize) / CGFloat(expectedSize)
             DispatchQueue.main.async {
-                self.progressView.setProgress(progress, animated: true)
+                self?.progressView.setProgress(progress, animated: true)
             }
         }
         
-        let completed: SDExternalCompletionBlock = { [weak self] image, error, cacheType, imageUrl in
-            
+        let setImageCompleted: SDExternalCompletionBlock = { [weak self] image, error, cacheType, imageUrl in
             self?.processing = false
-            
             DispatchQueue.main.async() {
-
-                self?.hideProgress()
+                
                 if error != nil {
+                    self?.progressView.progressLabel.textColor = Theme.colorTextSecondary
+                    self?.progressView.progressLabel.text = "Image unavailable"
                     Log.w("*** Image fetch failed: " + error!.localizedDescription)
                     Log.w("*** Failed url: \(url.absoluteString)")
                     self?.fromUrl = nil
                     return
                 }
                 
-                /* Image returned is not the one we want anymore */
+                self?.hideProgress()
+                
+                /* Exit if image returned is not the one we want anymore */
                 if self?.fromUrl?.absoluteString != url.absoluteString {
                     return
                 }
@@ -173,11 +175,59 @@ class AirImageView: UIImageView {
             }
         }
         
-        sd_setImage(with: url
-            , placeholderImage: nil
-            , options: [.retryFailed, .lowPriority, .avoidAutoSetImage]
-            , progress: progress
-            , completed: completed)
+        let loadImageCompleted: SDInternalCompletionBlock = { [weak self] image, imageData, error, cacheType, finished, imageUrl in
+            self?.processing = false
+            if error != nil {
+                Log.w("*** Animated gif fetch failed: " + error!.localizedDescription)
+                Log.w("*** Failed url: \(url.absoluteString)")
+                DispatchQueue.main.async() {
+                    self?.progressView.progressLabel.textColor = Theme.colorTextSecondary
+                    self?.progressView.progressLabel.text = "Image unavailable"
+                }
+                self?.fromUrl = nil
+                return
+            }
+            
+            /* Image returned is not the one we want anymore */
+            if self?.fromUrl?.absoluteString != url.absoluteString {
+                return
+            }
+            
+            if finished && image != nil && imageData != nil {
+                let animatedImage = FLAnimatedImage(animatedGIFData: imageData)
+                DispatchQueue.main.async() {
+                    self?.hideProgress()
+                    if animate {
+                        UIView.transition(with: self!
+                            , duration: 0.3
+                            , options: .transitionCrossDissolve
+                            , animations: {
+                                self?.image = image
+                                self?.animatedImage = animatedImage
+                        })
+                    }
+                    else {
+                        self?.image = image
+                        self?.animatedImage = animatedImage
+                    }
+                    then?(true)
+                }
+            }
+        }
+        
+        if imageType == .photo {
+            sd_setImage(with: url
+                , placeholderImage: nil
+                , options: [.retryFailed, .avoidAutoSetImage]
+                , progress: progress
+                , completed: setImageCompleted)
+        }
+        else if imageType == .animatedGif {
+            SDWebImageManager.shared().loadImage(with: url
+                , options: [.retryFailed]
+                , progress: progress
+                , completed: loadImageCompleted)
+        }
 	}
     
     func associated(withUrl: URL) -> Bool {

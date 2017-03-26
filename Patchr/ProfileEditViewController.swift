@@ -253,8 +253,8 @@ class ProfileEditViewController: BaseEditViewController {
         
         if self.photoEditView.photoDirty {
             if self.photoEditView.photoActive {
-                let image = self.photoEditView.imageButton.image
-                let asset = self.photoEditView.imageButton.asset
+                let image = self.photoEditView.imageView.image
+                let asset = self.photoEditView.imageView.asset
                 var photoMap = [String: Any]()
                 photoMap = postPhoto(image: image!, asset: asset, progress: self.photoEditView.progressBlock, next: { error in
                     if error == nil {

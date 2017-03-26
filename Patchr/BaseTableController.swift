@@ -232,6 +232,10 @@ class DataSourceController: NSObject, FUICollectionDelegate, UITableViewDataSour
         return 1
     }
     
+    func arrayDidBeginUpdates(_ collection: FUICollection) {
+        self.delegate?.arrayDidBeginUpdates?(collection)
+    }
+    
     func arrayDidEndUpdates(_ collection: FUICollection) {
         if self.mapper != nil {
             self.dataScreened.removeAll()
@@ -250,21 +254,25 @@ class DataSourceController: NSObject, FUICollectionDelegate, UITableViewDataSour
                 }
             }
         }
+        self.delegate?.arrayDidEndUpdates?(collection)
     }
 
     func array(_ array: FUICollection, didAdd object: Any, at index: UInt) {
         if self.filterActive || self.mapperActive || self.startEmpty { return }
         self.tableView.insertRows(at: [IndexPath(row: Int(index), section: 0)], with: .automatic)
+        self.delegate?.array?(array, didAdd: object, at: index)
     }
     
     func array(_ array: FUICollection, didMove object: Any, from fromIndex: UInt, to toIndex: UInt) {
         if self.filterActive || self.mapperActive || self.startEmpty { return }
         self.tableView.moveRow(at: IndexPath(row: Int(fromIndex), section: 0), to: IndexPath(row: Int(toIndex), section: 0))
+        self.delegate?.array?(array, didMove: object, from: fromIndex, to: toIndex)
     }
     
     func array(_ array: FUICollection, didRemove object: Any, at index: UInt) {
         if self.filterActive || self.mapperActive || self.startEmpty { return }
         self.tableView.deleteRows(at: [IndexPath(row: Int(index), section: 0)], with: .automatic)
+        self.delegate?.array?(array, didRemove: object, at: index)
     }
     
     func array(_ array: FUICollection, didChange object: Any, at index: UInt) {

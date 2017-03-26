@@ -21,7 +21,7 @@ class BingController: NSObject {
     
     func prepare() {}
     
-    public func loadSearchImages(query: String, count: Int64 = 150, offset: Int64 = 0, completion: @escaping CompletionBlock) {
+    public func loadSearchImages(query: String, type: ImageType, count: Int64 = 150, offset: Int64 = 0, completion: @escaping CompletionBlock) {
         
         Log.d("Image search count: \(count), offset: \(offset) ")
         
@@ -35,6 +35,7 @@ class BingController: NSObject {
         
         let queryEncoded: String = query.addingPercentEncoding(withAllowedCharacters: NSCharacterSet.urlQueryAllowed)!
         let bingUrl = "images/search?q=%27" + queryEncoded + "%27"
+            + (type == .animatedGif ? "&imageType=AnimatedGif" : "")
             + "&mkt=en-us&safeSearch=strict&size=large"
             + "&count=\(count + 1)"
             + "&offset=\(offset)"

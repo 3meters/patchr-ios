@@ -51,10 +51,10 @@ class PhotoChooserUI: NSObject, UINavigationControllerDelegate {
 		let sheet = UIAlertController(title: nil, message: nil, preferredStyle: UIAlertControllerStyle.actionSheet)
 		
 		let search = UIAlertAction(title: "Search for photos", style: .default) { action in
-			self.searchForPhoto()
+            self.searchForPhoto(imageType: .photo)
 		}
 		sheet.addAction(search)
-		
+
 		if photoLibraryAvailable {
 			let library = UIAlertAction(title: "Select a library photo", style: .default) { action in
 				self.choosePhotoFromLibrary()
@@ -122,11 +122,12 @@ class PhotoChooserUI: NSObject, UINavigationControllerDelegate {
 		self.hostViewController?.present(pickerController, animated: true, completion: nil)
 	}
 
-	private func searchForPhoto() {
+    private func searchForPhoto(imageType: ImageType) {
         chosenPhotoFunction = .SearchPhoto
 		let navController = AirNavigationController()
 		let layout = UICollectionViewFlowLayout()
 		let controller = PhotoSearchController(collectionViewLayout: layout)
+        controller.inputImageType = imageType
 		controller.pickerDelegate = self
 		navController.viewControllers = [controller]
 		self.hostViewController?.present(navController, animated: true, completion: nil)
@@ -195,9 +196,8 @@ extension PhotoChooserUI: UIImagePickerControllerDelegate {
                 }
             }
             else {
-                let photo = IDMPhoto(image: image)!
-                let photos = Array([photo])
-                let browser = PhotoBrowser(photos: photos as [AnyObject], animatedFrom: nil)
+                let photo = DisplayPhoto(image: image)!
+                let browser = PhotoBrowser(photos: [photo] as [Any], animatedFrom: nil)
                 
                 browser?.mode = .preview
                 browser?.usePopAnimation = true
@@ -205,7 +205,7 @@ extension PhotoChooserUI: UIImagePickerControllerDelegate {
                 browser?.useWhiteBackgroundColor = true
                 browser?.disableVerticalSwipe = false
                 browser?.browseDelegate = self
-                browser?.image = image
+                browser?.image = image // To pass through if selected
                 browser?.asset = asset
                 
                 picker.present(browser!, animated:true, completion:nil)

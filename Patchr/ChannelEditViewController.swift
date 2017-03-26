@@ -353,8 +353,8 @@ class ChannelEditViewController: BaseEditViewController {
             }
             if self.photoEditView.photoDirty {
                 if self.photoEditView.photoActive {
-                    let image = self.photoEditView.imageButton.image
-                    let asset = self.photoEditView.imageButton.asset
+                    let image = self.photoEditView.imageView.image
+                    let asset = self.photoEditView.imageView.asset
                     let path = self.channel.path
                     var photoMap: [String: Any]?
                     photoMap = postPhoto(image: image!, asset: asset, progress: self.photoEditView.progressBlock, next: { error in
@@ -411,8 +411,8 @@ class ChannelEditViewController: BaseEditViewController {
             let timestamp = FireController.instance.getServerTimestamp()
             
             var photoMap: [String: Any]?
-            if let image = self.photoEditView.imageButton.image {
-                let asset = self.photoEditView.imageButton.asset
+            if let image = self.photoEditView.imageView.image {
+                let asset = self.photoEditView.imageView.asset
                 photoMap = self.postPhoto(image: image, asset: asset, next: { error in
                     if error == nil {
                         photoMap!["uploading"] = NSNull()

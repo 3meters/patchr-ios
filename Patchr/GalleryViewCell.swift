@@ -40,7 +40,7 @@ class GalleryViewCell: UICollectionViewCell {
 	override func layoutSubviews() {
 		self.contentView.fillSuperview()
 		self.displayImageView.fillSuperview()
-        self.displayImageView.progressView.anchorInCenter(withWidth: 20, height: 20)
+        self.displayImageView.progressView.anchorInCenter(withWidth: 150, height: 20)
 		self.selectedBackgroundView?.fillSuperview()
 	}
 }

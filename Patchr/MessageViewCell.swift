@@ -85,11 +85,11 @@ class MessageViewCell: AirUIView {
             self.description_?.sizeToFit()
             self.description_?.alignUnder(self.userName, matchingLeftAndFillingWidthWithRightPadding: 0, topPadding: 2, height: self.description_!.height())
             self.photoView?.alignUnder(self.description_!, matchingLeftAndFillingWidthWithRightPadding: 0, topPadding: 10, height: photoHeight)
-            self.photoView.progressView.anchorInCenter(withWidth: 20, height: 20)
+            self.photoView.progressView.anchorInCenter(withWidth: 150, height: 20)
         }
         else if (self.message.attachments?.first) != nil {
             self.photoView?.alignUnder(self.userName, matchingLeftAndFillingWidthWithRightPadding: 0, topPadding: 10, height: photoHeight)
-            self.photoView.progressView.anchorInCenter(withWidth: 20, height: 20)
+            self.photoView.progressView.anchorInCenter(withWidth: 150, height: 20)
         }
 
         self.edited.alignUnder(bottomView!, matchingLeftWithTopPadding: 2, width: self.edited.width(), height: self.edited.isHidden ? 0 : self.edited.height())

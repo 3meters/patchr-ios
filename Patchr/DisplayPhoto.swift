@@ -1,11 +1,11 @@
 import Foundation
 import IDMPhotoBrowser
 import SDWebImage
+import FLAnimatedImage
 
 class DisplayPhoto: IDMPhoto {
 
-    var message: FireMessage?
-    var image: UIImage?
+    var message: FireMessage? // Supports like button
 
     /* Used to build caption in gallery browsing */
 	
@@ -18,56 +18,15 @@ class DisplayPhoto: IDMPhoto {
     
     var size: CGSize? // Used as hint for grid layout
     
-    override func loadUnderlyingImageAndNotify() {
-        
-        if self.image != nil {
-            DispatchQueue.main.async {
-                NotificationCenter.default.post(name: NSNotification.Name(rawValue: IDMPhoto_LOADING_DID_END_NOTIFICATION), object: self)
-            }
-            return
-        }
-        
-        let progress: SDWebImageDownloaderProgressBlock = { loadedSize, expectedSize, url in
-            let progress = CGFloat(loadedSize) / CGFloat(expectedSize)
-            DispatchQueue.main.async {
-                self.progressUpdateBlock?(progress)
-            }
-        }
-        
-        let completed: SDInternalCompletionBlock = { [weak self] image, data, error, cacheType, finished, imageUrl in
-            if self != nil {
-                if error == nil && finished {
-                    self!.image = image
-                    DispatchQueue.main.async {
-                        NotificationCenter.default.post(name: NSNotification.Name(rawValue: IDMPhoto_LOADING_DID_END_NOTIFICATION), object: self)
-                    }
-                }
-            }
-        }
-        
-        SDWebImageManager.shared().loadImage(with: self.photoURL
-            , options: [.retryFailed, .lowPriority, .avoidAutoSetImage]
-            , progress: progress
-            , completed: completed)
-    }
-    
-    override func underlyingImage() -> UIImage! {
-        return self.image
-    }
-    
-    override func unloadUnderlyingImage() {
-        self.image = nil
-    }
-    
     static func fromMessage(message: FireMessage) -> DisplayPhoto {
         
         let displayPhoto = DisplayPhoto()
         
-        displayPhoto.caption = message.text // Used by photo browser
+        displayPhoto.caption = message.text // Used by photo browser, on base class
         displayPhoto.message = message
         
         if let photo = message.attachments?.values.first?.photo {
-            displayPhoto.photoURL = Cloudinary.url(prefix: photo.filename!)
+            displayPhoto.photoURL = Cloudinary.url(prefix: photo.filename!) // On base class
             if photo.width != nil && photo.height != nil {
                 displayPhoto.size = CGSize(width: CGFloat(photo.width!), height: CGFloat(photo.height!))
             }

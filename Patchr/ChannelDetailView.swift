@@ -64,7 +64,7 @@ class ChannelDetailView: UIView {
         }
 
         self.photoView.fillSuperview(withLeftPadding: -24, rightPadding: -24, topPadding: -36, bottomPadding: -36)
-        self.photoView.progressView.anchorInCenter(withWidth: 20, height: 20)
+        self.photoView.progressView.anchorInCenter(withWidth: 150, height: 20)
         self.titleGroup.anchorBottomLeft(withLeftPadding: 12, bottomPadding: 16, width: viewWidth - 72, height: 72)
         
         let indicatorsWidth = (!self.lockImage.isHidden ? 20 : 0) + (!self.mutedImage.isHidden ? 24 : 0)

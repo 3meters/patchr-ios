@@ -25,6 +25,6 @@ class ThumbnailCollectionViewCell: UICollectionViewCell {
     }
     
     override func layoutSubviews() {
-        self.thumbnail.progressView.anchorInCenter(withWidth: 20, height: 20)
+        self.thumbnail.progressView.anchorInCenter(withWidth: 150, height: 20)
     }
 }

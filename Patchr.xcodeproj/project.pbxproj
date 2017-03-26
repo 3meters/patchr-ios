@@ -488,6 +488,7 @@
 		7DA730701A71ACA5008C25FA /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				E23C010E1CE4D73B009C56B2 /* DisplayPhoto.swift */,
 				E2CA16FE1DB95DDB00F99E1D /* FireAttachment.swift */,
 				9FDCCDE61C162E20DE3909AC /* FireChannel.swift */,
 				9FDCC985C0388C8C96A207CE /* FireMessage.swift */,
@@ -495,7 +496,6 @@
 				E29A921F1DB19A3C00B27093 /* FirePhoto.swift */,
 				E29A921D1DB19A2600B27093 /* FireProfile.swift */,
 				E29A921B1DB1988A00B27093 /* FireUser.swift */,
-				E23C010E1CE4D73B009C56B2 /* DisplayPhoto.swift */,
 				E2C7C5CA1B2CF2F80045038A /* ImageResult.swift */,
 				9FDCCE483C7DF6C69EC46E17 /* ChannelQuery.swift */,
 				9FDCC2AE42A7C32316E95CE2 /* GroupQuery.swift */,
