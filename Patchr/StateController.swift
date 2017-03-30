@@ -70,63 +70,66 @@ class StateController: NSObject {
                 return
             }
             
-            if let groupId = UserDefaults.standard.string(forKey: PerUserKey(key: Prefs.lastGroupId)),
-                let userId = UserController.instance.userId {
-                
-                if let lastChannelIds = UserDefaults.standard.dictionary(forKey: PerUserKey(key: Prefs.lastChannelIds)),
-                    let lastChannelId = lastChannelIds[groupId] as? String {
-                    let channelQuery = ChannelQuery(groupId: groupId, channelId: lastChannelId, userId: userId)
-                    channelQuery.once(with: { error, channel in
-                        if channel == nil {
-                            Log.w("Last channel invalid: \(lastChannelId): trying auto pick channel")
-                            FireController.instance.autoPickChannel(groupId: groupId) { channelId in
-                                if channelId != nil {
-                                    self?.setChannelId(channelId: channelId!, groupId: groupId) { error in
+            if let strongSelf = self {
+                if let groupId = UserDefaults.standard.string(forKey: PerUserKey(key: Prefs.lastGroupId)),
+                    let userId = UserController.instance.userId {
+                    
+                    if let lastChannelIds = UserDefaults.standard.dictionary(forKey: PerUserKey(key: Prefs.lastChannelIds)),
+                        let lastChannelId = lastChannelIds[groupId] as? String {
+                        let channelQuery = ChannelQuery(groupId: groupId, channelId: lastChannelId, userId: userId)
+                        channelQuery.once(with: { error, channel in
+                            if channel == nil {
+                                Log.w("Last channel invalid: \(lastChannelId): trying auto pick channel")
+                                FireController.instance.autoPickChannel(groupId: groupId) { channelId in
+                                    if channelId != nil {
+                                        strongSelf.setChannelId(channelId: channelId!, groupId: groupId) { error in
+                                            next(nil)
+                                        }
+                                    }
+                                    else {
+                                        /* Start from scratch */
+                                        strongSelf.clearGroup()
+                                        strongSelf.clearChannel()
                                         next(nil)
                                     }
                                 }
-                                else {
-                                    /* Start from scratch */
-                                    self?.clearGroup()
-                                    self?.clearChannel()
+                            }
+                            else {
+                                strongSelf.setChannelId(channelId: lastChannelId, groupId: groupId) { error in
                                     next(nil)
                                 }
                             }
-                        }
-                        else {
-                            self?.setChannelId(channelId: lastChannelId, groupId: groupId) { error in
+                        })
+                    }
+                    else {
+                        FireController.instance.autoPickChannel(groupId: groupId) { channelId in
+                            if channelId != nil {
+                                strongSelf.setChannelId(channelId: channelId!, groupId: groupId) { error in
+                                    next(nil)
+                                }
+                            }
+                            else {
+                                /* Start from scratch */
+                                strongSelf.clearGroup()
+                                strongSelf.clearChannel()
                                 next(nil)
                             }
-                        }
-                    })
-                }
-                else {
-                    FireController.instance.autoPickChannel(groupId: groupId) { channelId in
-                        if channelId != nil {
-                            self?.setChannelId(channelId: channelId!, groupId: groupId) { error in
-                                next(nil)
-                            }
-                        }
-                        else {
-                            /* Start from scratch */
-                            self?.clearGroup()
-                            self?.clearChannel()
-                            next(nil)
                         }
                     }
                 }
-            }
-            else {
-                next(nil)
+                else {
+                    next(nil)
+                }
             }
         }
 
         queue.tasks += { [weak self] in
-            self?.stateIntialized = true
-            NotificationCenter.default.post(
-                name: NSNotification.Name(rawValue: Events.StateInitialized),
-                object: self, userInfo: nil)
-            
+            if let strongSelf = self {
+                strongSelf.stateIntialized = true
+                NotificationCenter.default.post(
+                    name: NSNotification.Name(rawValue: Events.StateInitialized),
+                    object: strongSelf, userInfo: nil)
+            }
         }
         
         queue.run()

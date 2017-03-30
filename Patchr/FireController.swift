@@ -65,7 +65,7 @@ class FireController: NSObject {
         let queue = TaskQueue()
         
         /* Add group */
-        queue.tasks += { _, next in
+        queue.tasks += { [weak queue] _, next in
             var groupMap = [String: Any]()
             groupMap["title"] = title
             groupMap["created_at"] = timestamp
@@ -76,7 +76,7 @@ class FireController: NSObject {
             groupMap["default_channels"] = [generalId, chatterId]
             FireController.db.child("groups/\(groupId)").setValue(groupMap) { error, ref in
                 if error != nil {
-                    queue.cancel()
+                    queue?.cancel()
                     then?(false)
                 }
                 next(nil)
@@ -84,10 +84,10 @@ class FireController: NSObject {
         }
         
         /* Add creator as member of group with owner role */
-        queue.tasks += { _, next in
+        queue.tasks += { [weak queue] _, next in
             FireController.db.child("group-members/\(groupId)/\(userId)").setValue(membership) { error, ref in
                 if error != nil {
-                    queue.cancel()
+                    queue?.cancel()
                     then?(false)
                 }
                 next(nil)
@@ -95,10 +95,10 @@ class FireController: NSObject {
         }
         
         /* Add creator as member of group with owner role */
-        queue.tasks += { _, next in
+        queue.tasks += { [weak queue] _, next in
             FireController.db.child("member-groups/\(userId)/\(groupId)").setValue(membership) { error, ref in
                 if error != nil {
-                    queue.cancel()
+                    queue?.cancel()
                     then?(false)
                 }
                 next(nil)
@@ -106,7 +106,7 @@ class FireController: NSObject {
         }
         
         /* Add default general channel */
-        queue.tasks += { [weak self] _, next in
+        queue.tasks += { [weak self, weak queue] _, next in
             
             let generalMap: [String: Any] = [
                 "archived": false,
@@ -122,7 +122,7 @@ class FireController: NSObject {
             
             self?.addChannelToGroup(channelId: generalId, channelMap: generalMap, groupId: groupId) { success in
                 if !success {
-                    queue.cancel()
+                    queue?.cancel()
                     then?(false)
                 }
                 next(nil)
@@ -130,7 +130,7 @@ class FireController: NSObject {
         }
         
         /* Add default chatter channel */
-        queue.tasks += { [weak self] _, next in
+        queue.tasks += { [weak self, weak queue] _, next in
             
             let chatterMap: [String: Any] = [
                 "archived": false,
@@ -146,7 +146,7 @@ class FireController: NSObject {
             
             self?.addChannelToGroup(channelId: chatterId, channelMap: chatterMap, groupId: groupId) { success in
                 if !success {
-                    queue.cancel()
+                    queue?.cancel()
                     then?(false)
                 }
                 next(nil)
@@ -259,10 +259,10 @@ class FireController: NSObject {
         let queue = TaskQueue()
         
         /* Add creator as member of group with owner role */
-        queue.tasks += { _, next in
+        queue.tasks += { [weak queue] _, next in
             FireController.db.child("group-channel-members/\(groupId)/\(channelId)/\(userId)").setValue(membership) { error, ref in
                 if error != nil {
-                    queue.cancel()
+                    queue?.cancel()
                     then?(false)
                 }
                 next(nil)
@@ -270,17 +270,17 @@ class FireController: NSObject {
         }
         
         /* Add creator as member of group with owner role */
-        queue.tasks += { _, next in
+        queue.tasks += { [weak queue] _, next in
             FireController.db.child("member-channels/\(userId)/\(groupId)/\(channelId)").setValue(membership) { error, ref in
                 if error != nil {
-                    queue.cancel()
+                    queue?.cancel()
                     then?(false)
                 }
                 next(nil)
             }
         }
         
-        queue.tasks += { [weak self] _, next in
+        queue.tasks += { [weak self, weak queue] _, next in
             var text = channelName != nil ? "joined #\(channelName!)." : "joined."
             if invite != nil {
                 text = channelName != nil ? "joined #\(channelName!) by invitation from @\(inviterName!)." : "joined by invitation from @\(inviterName!)."
@@ -288,7 +288,7 @@ class FireController: NSObject {
             let adminId = adminId ?? userId
             self?.sendAdminMessage(channelId: channelId, groupId: groupId, userId: adminId, text: text) { success in
                 if !success {
-                    queue.cancel()
+                    queue?.cancel()
                     then?(false)
                 }
                 next(nil)
