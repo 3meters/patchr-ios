@@ -246,10 +246,16 @@ class GroupEditViewController: BaseEditViewController {
     }
 
     func delete() {
-        FireController.instance.deleteGroup(groupId: self.group.id!, then: { updates in
-            if updates != nil {
-                StateController.instance.clearGroup()   // Both group and channel are unset
-                self.close(animated: true)
+        /* Disconnect from group before we delete it */
+        Log.d("Deleting group: \(self.group.id!)")
+        StateController.instance.clearGroup()
+        FireController.instance.deleteGroup(groupId: self.group.id!, then: { [weak self] error, result in
+            if error == nil {
+                MainController.instance.route()
+                self?.close(animated: true)
+            }
+            else {
+                UIShared.toast(message: "Error deleting group: \(error!.message)")
             }
         })
     }

@@ -35,7 +35,7 @@ class FireController: NSObject {
      * MARK: - Create
      *--------------------------------------------------------------------------------------------*/
     
-    func addUser(userId: String, username: String, then: @escaping (([String: Any]?, Any?) -> Void)) {
+    func addUser(userId: String, username: String, then: @escaping ((ServiceError?, Any?) -> Void)) {
         let timestamp = getServerTimestamp()
         let ref = FireController.db.child("queue/create-user").childByAutoId()
         let task: [String: Any] = [
@@ -106,7 +106,7 @@ class FireController: NSObject {
         }
         
         /* Add default general channel */
-        queue.tasks += { _, next in
+        queue.tasks += { [weak self] _, next in
             
             let generalMap: [String: Any] = [
                 "archived": false,
@@ -120,7 +120,7 @@ class FireController: NSObject {
                 "type": "channel",
                 "visibility": "open"]
             
-            self.addChannelToGroup(channelId: generalId, channelMap: generalMap, groupId: groupId) { success in
+            self?.addChannelToGroup(channelId: generalId, channelMap: generalMap, groupId: groupId) { success in
                 if !success {
                     queue.cancel()
                     then?(false)
@@ -130,7 +130,7 @@ class FireController: NSObject {
         }
         
         /* Add default chatter channel */
-        queue.tasks += { _, next in
+        queue.tasks += { [weak self] _, next in
             
             let chatterMap: [String: Any] = [
                 "archived": false,
@@ -144,7 +144,7 @@ class FireController: NSObject {
                 "type": "channel",
                 "visibility": "open"]
             
-            self.addChannelToGroup(channelId: chatterId, channelMap: chatterMap, groupId: groupId) { success in
+            self?.addChannelToGroup(channelId: chatterId, channelMap: chatterMap, groupId: groupId) { success in
                 if !success {
                     queue.cancel()
                     then?(false)
@@ -179,10 +179,10 @@ class FireController: NSObject {
                     return
                 }
                 /* Add creator as first member of channel (open or private) */
-                self.addUserToChannel(userId: userId, groupId: groupId, channelId: channelId, channelName: channelName, role: "owner") { success in
+                self.addUserToChannel(userId: userId, groupId: groupId, channelId: channelId, channelName: channelName, role: "owner") { [weak self] success in
                     if visibility == "open", let generalId = StateController.instance.groupGeneralId { // If guest then generalId is nil
                         let text = "created the #\(channelName) channel."
-                        self.sendAdminMessage(channelId: generalId, groupId: groupId, userId: userId, text: text)
+                        self?.sendAdminMessage(channelId: generalId, groupId: groupId, userId: userId, text: text)
                     }
                     then?(success)
                 }
@@ -194,7 +194,7 @@ class FireController: NSObject {
      * MARK: - Update
      *--------------------------------------------------------------------------------------------*/
     
-    func updateUsername(userId: String, username: String, then: @escaping (([String: Any]?, Any?) -> Void)) {
+    func updateUsername(userId: String, username: String, then: @escaping ((ServiceError?, Any?) -> Void)) {
         let userId = UserController.instance.userId!
         let timestamp = getServerTimestamp()
         let ref = FireController.db.child("queue/update-username").childByAutoId()
@@ -280,13 +280,13 @@ class FireController: NSObject {
             }
         }
         
-        queue.tasks += { _, next in
+        queue.tasks += { [weak self] _, next in
             var text = channelName != nil ? "joined #\(channelName!)." : "joined."
             if invite != nil {
                 text = channelName != nil ? "joined #\(channelName!) by invitation from @\(inviterName!)." : "joined by invitation from @\(inviterName!)."
             }
             let adminId = adminId ?? userId
-            self.sendAdminMessage(channelId: channelId, groupId: groupId, userId: adminId, text: text) { success in
+            self?.sendAdminMessage(channelId: channelId, groupId: groupId, userId: adminId, text: text) { success in
                 if !success {
                     queue.cancel()
                     then?(false)
@@ -300,26 +300,8 @@ class FireController: NSObject {
         }
     }
     
-    func addUserToChannels(userId: String, groupId: String, channels: [String: Any],
-                           invite: [String: Any]? = nil, inviterName: String? = nil,
-                           then: ((Bool) -> Void)? = nil) {
-        /* Fires and doesn't wait to check success for each channel */
-        let dispGroup = DispatchGroup()
-        for channelId in channels.keys {
-            dispGroup.enter()
-            let channelName = channels[channelId] as! String
-            addUserToChannel(userId: userId, groupId: groupId, channelId: channelId, channelName: channelName,
-                             invite: invite, inviterName: inviterName) { success in
-                                dispGroup.leave()
-            }
-        }
-        dispGroup.notify(queue: DispatchQueue.main) {
-            then?(true)
-        }
-    }
-    
     func addUserToGroup(groupId: String, channels: [String: Any]?, role: String,
-                        inviteId: String?, invitedBy: String?, then: @escaping ([String: Any]?, Any?) -> Void) {
+                        inviteId: String?, invitedBy: String?, then: @escaping (ServiceError?, Any?) -> Void) {
         let userId = UserController.instance.userId!
         let timestamp = getServerTimestamp()
         let ref = FireController.db.child("queue/join-group").childByAutoId()
@@ -485,21 +467,20 @@ class FireController: NSObject {
      * MARK: - Delete
      *--------------------------------------------------------------------------------------------*/
 
-    func deleteGroup(groupId: String, then: (([String: Any]?) -> Void)? = nil) {
+    func deleteGroup(groupId: String, then: @escaping ((ServiceError?, Any?) -> Void)) {
         let userId = UserController.instance.userId!
         let ref = FireController.db.child("queue/deletes").childByAutoId()
         let timestamp = getServerTimestamp()
         let task: [String: Any] = [
             "created_at": timestamp,
             "created_by": userId,
-            "target": "group",
             "group_id": groupId,
             "id": ref.key,
-            "state": "waiting"
+            "retain": true,
+            "state": "waiting",
+            "target": "group"
         ]
-        ref.setValue(task) { error, ref in
-            then?([:])
-        }
+        submitTask(task: task, ref: ref, then: then)
     }
     
     func deleteChannel(channelId: String, groupId: String, then: (([String: Any]?) -> Void)? = nil) {
@@ -745,31 +726,44 @@ class FireController: NSObject {
      * MARK: - Utility
      *--------------------------------------------------------------------------------------------*/
     
-    func submitTask(task: [String: Any], ref: FIRDatabaseReference, then: @escaping (([String: Any]?, Any?) -> Void)) {
+    func submitTask(task: [String: Any], ref: FIRDatabaseReference, then: @escaping ((ServiceError?, Any?) -> Void)) {
         var handle: UInt = 0
         ref.setValue(task) { error, ref in
             if error == nil {
                 handle = ref.observe(.value, with: { snap in
                     if let task = snap.value as? [String: Any], let state = task["state"] as? String {
                         Log.d("Task state: \(state)")
+                        
+                        if state == TaskState.finished {
+                            ref.removeObserver(withHandle: handle)
+                            ref.removeValue()
+                        }
+                        
                         let error = task["error"] as? [String: Any]
                         let result = task["result"] as Any?
-                        if error != nil || result != nil {
-                            FireController.db.removeObserver(withHandle: handle)
-                            ref.removeValue()
-                            if error != nil {
-                                let code = error!["code"] as! Int
-                                let message = error!["message"] as! String
-                                Log.d("Error code: \(code): \(message)")
-                            }
-                            then(error, result)
+                        
+                        if error != nil {
+                            let code = error!["code"] as! Float
+                            let message = error!["message"] as! String
+                            let serviceError = ServiceError(code: code, message: message)
+                            Log.d("Error code: \(code): \(message)")
+                            then(serviceError, result)
+                            return
+                        }
+                        
+                        if result != nil {
+                            then(nil, result)
                         }
                     }
+                }
+                , withCancel: { error in
+                    Log.w("Permission denied observing task: \(ref.url)")
+                    then(ServiceError(code: 403, message: "Permission denied"), nil)  // permission denied
                 })
                 return
             }
             Log.w("Permission denied submitting task: \(ref.url)")
-            then([:], nil)  // permission denied
+            then(ServiceError(code: 403, message: "Permission denied"), nil)  // permission denied
         }
     }
     
@@ -956,9 +950,24 @@ class FirebaseArray: NSObject {
     }
 }
 
+class ServiceError: Error {
+    var code: Float!
+    var message: String!
+    init(code: Float, message: String) {
+        self.code = code
+        self.message = message
+    }
+}
+
 enum Trigger: Int {
     case object
     case link
+}
+
+struct TaskState {
+    static let waiting = "waiting"
+    static let processing = "processing"
+    static let finished = "finished"
 }
 
 /* FIRAuthErrorCode enum

@@ -35,45 +35,44 @@ class GroupQuery: NSObject {
             }
         }
 
-        self.groupHandle = FireController.db.child(self.groupPath).observe(.value, with: { snap in
+        self.groupHandle = FireController.db.child(self.groupPath).observe(.value, with: { [weak self] snap in
             if !(snap.value is NSNull) {
-                self.group = FireGroup.from(dict: snap.value as? [String: Any], id: snap.key)
-                if self.linkPath == nil || self.linkMapMiss {
-                    block(nil, .object, self.group)
+                self?.group = FireGroup(dict: snap.value as! [String: Any], id: snap.key)
+                if self?.linkPath == nil || (self?.linkMapMiss)! {
+                    block(nil, .object, self?.group)
                 }
-                else if self.linkMap != nil {
-                    self.group!.membershipFrom(dict: self.linkMap)
-                    block(nil, .object, self.group)
+                else if self?.linkMap != nil {
+                    self?.group!.membershipFrom(dict: (self?.linkMap)!)
+                    block(nil, .object, self?.group)
                 }
             }
             else {
-                Log.w("Group snapshot is null")
                 block(nil, nil, nil)
             }
         }, withCancel: { error in
-            Log.w("Permission denied trying to read group: \(self.groupPath!)")
+            Log.v("Permission denied trying to read group: \(self.groupPath!)")
             block(error, nil, nil)
         })
         
         if self.linkPath != nil {
-            self.linkHandle = FireController.db.child(self.linkPath).observe(.value, with: { snap in
+            self.linkHandle = FireController.db.child(self.linkPath).observe(.value, with: { [weak self] snap in
                 if !(snap.value is NSNull) {
-                    self.linkMap = snap.value as! [String: Any]
-                    if self.group != nil {
-                        self.group!.membershipFrom(dict: self.linkMap)
-                        block(nil, .link, self.group)
+                    self?.linkMap = snap.value as! [String: Any]
+                    if self?.group != nil {
+                        self?.group!.membershipFrom(dict: (self?.linkMap)!)
+                        block(nil, .link, self?.group)
                     }
                 }
                 else {
                     /* Group might be fine but user is not member of group anymore */
-                    self.linkMapMiss = true
-                    if self.group != nil {
-                        self.group!.membershipClear()
-                        block(nil, .link, self.group)
+                    self?.linkMapMiss = true
+                    if self?.group != nil {
+                        self?.group!.membershipClear()
+                        block(nil, .link, self?.group)
                     }
                 }
             }, withCancel: { error in
-                Log.w("Permission denied trying to read group membership: \(self.linkPath!)")
+                Log.v("Permission denied trying to read group membership: \(self.linkPath!)")
                 block(error, nil, nil)
             })
         }
@@ -83,52 +82,51 @@ class GroupQuery: NSObject {
         
         var fired = false
 
-        FireController.db.child(self.groupPath).observeSingleEvent(of: .value, with: { snap in
+        FireController.db.child(self.groupPath).observeSingleEvent(of: .value, with: { [weak self] snap in
             if !fired {
                 if !(snap.value is NSNull) {
-                    self.group = FireGroup.from(dict: snap.value as? [String: Any], id: snap.key)
-                    if self.linkPath == nil || self.linkMapMiss {
+                    self?.group = FireGroup(dict: snap.value as! [String: Any], id: snap.key)
+                    if self?.linkPath == nil || (self?.linkMapMiss)! {
                         fired = true
-                        block(nil, self.group)
+                        block(nil, self?.group)
                     }
-                    else if self.linkMap != nil {
+                    else if self?.linkMap != nil {
                         fired = true
-                        self.group!.membershipFrom(dict: self.linkMap)
-                        block(nil, self.group)  // May or may not have link info
+                        self?.group!.membershipFrom(dict: (self?.linkMap)!)
+                        block(nil, self?.group)  // May or may not have link info
                     }
                 }
                 else {
                     fired = true
-                    Log.w("Group snapshot is null")
                     block(nil, nil)
                 }
             }
         }, withCancel: { error in
-            Log.w("Permission denied trying to read group: \(self.groupPath!)")
+            Log.v("Permission denied trying to read group: \(self.groupPath!)")
             block(error, nil)
         })
 
         if self.linkPath != nil {
-            FireController.db.child(self.linkPath).observeSingleEvent(of: .value, with: { snap in
+            FireController.db.child(self.linkPath).observeSingleEvent(of: .value, with: { [weak self] snap in
                 if !fired {
                     if !(snap.value is NSNull) {
-                        self.linkMap = snap.value as! [String: Any]
-                        if self.group != nil {
+                        self?.linkMap = snap.value as! [String: Any]
+                        if self?.group != nil {
                             fired = true
-                            self.group!.membershipFrom(dict: self.linkMap)
-                            block(nil, self.group)
+                            self?.group!.membershipFrom(dict: (self?.linkMap)!)
+                            block(nil, self?.group)
                         }
                     }
                     else {
-                        self.linkMapMiss = true
-                        if self.group != nil {
+                        self?.linkMapMiss = true
+                        if self?.group != nil {
                             fired = true
-                            block(nil, self.group)
+                            block(nil, self?.group)
                         }
                     }
                 }
             }, withCancel: { error in
-                Log.w("Permission denied trying to read group membership: \(self.linkPath!)")
+                Log.v("Permission denied trying to read group membership: \(self.linkPath!)")
                 block(error, nil)
             })
         }

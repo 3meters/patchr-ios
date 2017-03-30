@@ -23,8 +23,7 @@ class MainController: NSObject, iRateDelegate {
     var link: [AnyHashable: Any]?
     var introPlayed = false
     var bootstrapping = true
-    static let channelPicker = ChannelSwitcherController()
-    static let groupPicker = GroupSwitcherController()
+    var containerController: ContainerController!
 
     private override init() { }
 
@@ -104,10 +103,10 @@ class MainController: NSObject, iRateDelegate {
         SlideMenuOptions.animationDuration = CGFloat(0.2)
         SlideMenuOptions.simultaneousGestureRecognizers = false
         
-        MainController.groupPicker.simplePicker = true
-
         /* We always begin with the empty controller */
-        self.window?.setRootViewController(rootViewController: EmptyViewController(), animated: true) // While we wait for state to initialize
+        self.containerController = ContainerController()
+        self.containerController.setViewController(EmptyViewController())
+        self.window?.setRootViewController(rootViewController: self.containerController) // While we wait for state to initialize
         self.window?.makeKeyAndVisible()
         
         /* Initialize Branch: The deepLinkHandler gets called every time the app opens. */
@@ -152,10 +151,23 @@ class MainController: NSObject, iRateDelegate {
             }
         }
         else if groupId == nil || channelId == nil {
-            showLobby(controller: GroupSwitcherController()) {
-                self.bootstrapping = false
-                if let link = MainController.instance.link {
-                    MainController.instance.routeDeepLink(link: link, error: nil)
+            let userId = UserController.instance.userId!
+            FireController.instance.findFirstGroup(userId: userId) { groupId in
+                if groupId == nil {
+                    self.showUserLobby() {
+                        self.bootstrapping = false
+                        if let link = MainController.instance.link {
+                            MainController.instance.routeDeepLink(link: link, error: nil)
+                        }
+                    }
+                }
+                else {
+                    self.showGroupSwitcher() {
+                        self.bootstrapping = false
+                        if let link = MainController.instance.link {
+                            MainController.instance.routeDeepLink(link: link, error: nil)
+                        }
+                    }
                 }
             }
         }
@@ -165,8 +177,10 @@ class MainController: NSObject, iRateDelegate {
             }
         }
     }
-    
+
     func showLobby(controller: UIViewController? = nil, then: (() -> Void)? = nil) {
+        
+        /* If onboarding via invite, passed in controller is email form */
         
         if StateController.instance.groupId != nil {
             StateController.instance.clearGroup()   // Make sure group and channel are both unset
@@ -175,23 +189,51 @@ class MainController: NSObject, iRateDelegate {
         let controller = controller ?? LobbyViewController()
         let wrapper = AirNavigationController(rootViewController: controller)
         
-        if let emptyController = self.window?.rootViewController as? EmptyViewController {
+        if let emptyController = self.containerController.controller as? EmptyViewController {
             if !(controller is LobbyViewController) {
                 emptyController.startScene() {
-                    self.window?.setRootViewController(rootViewController: wrapper, animated: true) // Fade in
+                    self.containerController.changeController(controller: wrapper)
                     then?()
                 }
                 return
             }
         }
         
-        self.window?.setRootViewController(rootViewController: wrapper, animated: true) // Fade in
+        self.containerController.changeController(controller: wrapper)
+        then?()
+    }
+    
+    func showUserLobby(then: (() -> Void)? = nil) {
+        
+        if StateController.instance.groupId != nil {
+            StateController.instance.clearGroup()   // Make sure group and channel are both unset
+        }
+        
+        let controller = UserLobbyController()
+        let wrapper = AirNavigationController(rootViewController: controller)
+        
+        if let emptyController = self.containerController.controller as? EmptyViewController {
+            emptyController.startScene() {
+                self.containerController.changeController(controller: wrapper)
+                then?()
+            }
+            return
+        }
+        
+        self.containerController.changeController(controller: wrapper)
+        then?()
+    }
+    
+    func showGroupSwitcher(then: (() -> Void)? = nil) {
+        let controller = GroupSwitcherController()
+        let wrapper = AirNavigationController(rootViewController: controller)
+        self.containerController.changeController(controller: wrapper)
         then?()
     }
     
     func showMain(then: (() -> Void)? = nil) {
         
-        if self.window?.rootViewController is SlideMenuController {
+        if self.containerController.controller is SlideViewController {
             then?()
             return
         }
@@ -201,50 +243,48 @@ class MainController: NSObject, iRateDelegate {
         let menuController = SideMenuViewController()
         let drawerWrapper = AirNavigationController(navigationBarClass: AirNavigationBar.self, toolbarClass: nil)
         let drawerBar = drawerWrapper.navigationBar as! AirNavigationBar
+        let channelSwitcher = ChannelSwitcherController()
         
         mainBar.navigationBarHeight = 54
         drawerBar.navigationBarHeight = UserDefaults.standard.bool(forKey: Prefs.statusBarHidden) ? 74 : 54
 
-        let slideController = SlideMenuController(mainViewController: mainWrapper
+        let slideController = SlideViewController(mainViewController: mainWrapper
             , leftMenuViewController: drawerWrapper
             , rightMenuViewController: menuController)
         
-        drawerWrapper.viewControllers = [MainController.channelPicker]
+        drawerWrapper.viewControllers = [channelSwitcher]
         drawerWrapper.view.backgroundColor = Theme.colorBackgroundTable
         
-        if let emptyController = self.window?.rootViewController as? EmptyViewController,
+        if let emptyController = self.containerController.controller as? EmptyViewController,
             !emptyController.scenePlayed {
             emptyController.startScene() {
-                self.window?.setRootViewController(rootViewController: slideController, animated: true)
+                self.containerController.changeController(controller: slideController)
                 then?()
             }
+            return
         }
-        else {
-            if let wrapper = self.window?.rootViewController as? AirNavigationController {
-                wrapper.viewControllers = []
-            }
-            self.window?.setRootViewController(rootViewController: slideController, animated: true)
-            then?()
-        }
+        
+        self.containerController.changeController(controller: slideController)
+        then?()
     }
 
     func showChannel(groupId: String, channelId: String, then: (() -> Void)? = nil) {
-        
         showMain {
-            if let wrapper = self.window?.rootViewController?.slideMenuController()?.mainViewController as? AirNavigationController {
-                let controller = ChannelViewController()
-                controller.inputGroupId = groupId
-                controller.inputChannelId = channelId
-                wrapper.setViewControllers([controller], animated: true)
+            if let slide = self.containerController.controller as? SlideViewController {
+                if let wrapper = slide.mainViewController as? AirNavigationController {
+                    let controller = ChannelViewController()
+                    controller.inputGroupId = groupId
+                    controller.inputChannelId = channelId
+                    wrapper.setViewControllers([controller], animated: true)
+                }
             }
             then?()
         }
     }
 
     func showEmpty(then: (() -> Void)? = nil) {
-        
         showMain {
-            if let wrapper = self.window?.rootViewController?.slideMenuController()?.mainViewController as? AirNavigationController {
+            if let wrapper = self.containerController.controller as? AirNavigationController {
                 let controller = EmptyViewController()
                 wrapper.setViewControllers([controller], animated: true)
             }
@@ -265,13 +305,16 @@ class MainController: NSObject, iRateDelegate {
             /* Must be group member or we get permission denied */
             FireController.db.child("group-members/\(groupId)/\(userId)").observeSingleEvent(of: .value, with: { snap in
                 if let membership = snap.value as? [String: Any] {
+                    /* Already a member */
                     let role = membership["role"] as? String
                     self.processInvite(link: link, member: true, memberRole: role, flow: flow)
                 }
                 else {
+                    /* Not a group member yet */
                     self.processInvite(link: link, member: false, memberRole: nil, flow: flow)
                 }
             }, withCancel: { error in
+                /* Not a member yet */
                 self.processInvite(link: link, member: false, memberRole: nil, flow: flow)  // permission denied means not group member
             })
         }
@@ -337,22 +380,24 @@ class MainController: NSObject, iRateDelegate {
             }
             
             let joinButton = DefaultButton(title: "Join".uppercased(), height: 48) {
-                FireController.instance.addUserToGroup(groupId: groupId, channels: channels, role: role, inviteId: inviteId, invitedBy: inviterId) { error, result in
+                FireController.instance.addUserToGroup(groupId: groupId, channels: channels, role: role, inviteId: inviteId, invitedBy: inviterId) { [weak self] error, result in
                     if error == nil {
                         if channels != nil {
-                            self.afterChannelInvite(groupId: groupId, groupTitle: groupTitle, channels: channels)
+                            self?.afterChannelInvite(groupId: groupId, groupTitle: groupTitle, channels: channels)
                         } else {
-                            self.afterGroupInvite(groupId: groupId, groupTitle: groupTitle)
+                            self?.afterGroupInvite(groupId: groupId, groupTitle: groupTitle)
                         }
                     }
                     else {
                         if let topController = UIViewController.topMostViewController() {
-                            let popup = PopupDialog(title: "Expired Invitation", message: "Your invitation has expired or been revoked.")
+                            let title = (error!.code == 404.2) ? "Used Invitation" : "Expired Invitation"
+                            let message = (error!.code == 404.2) ? "The invitation has already been used." : "The invitation has expired or been revoked."
+                            let popup = PopupDialog(title: title, message: message)
                             let button = DefaultButton(title: "OK") {
                                 if flow == .onboardInvite {
                                     // If we don't have a currrent group|channel then we are in the lobby
                                     if StateController.instance.groupId == nil || StateController.instance.channelId == nil {
-                                        self.route()
+                                        self?.route()
                                     }
                                 }
                             }
@@ -381,7 +426,7 @@ class MainController: NSObject, iRateDelegate {
                         let popup = PopupDialog(title: "Welcome!", message: "You are now a member of the \(groupTitle) Patchr group. Use the navigation drawer to discover and join channels.")
                         popup.buttonAlignment = .horizontal
                         let showButton = DefaultButton(title: "Show Me".uppercased(), height: 48) {
-                            if let slideController = self.window?.rootViewController as? SlideMenuController {
+                            if let slideController = self.window?.rootViewController as? SlideViewController {
                                 slideController.openLeft()
                             }
                         }
@@ -410,7 +455,7 @@ class MainController: NSObject, iRateDelegate {
                 let popup = PopupDialog(title: "Welcome!", message: message)
                 popup.buttonAlignment = .horizontal
                 let showButton = DefaultButton(title: "Show Me".uppercased(), height: 48) {
-                    if let slideController = self.window?.rootViewController as? SlideMenuController,
+                    if let slideController = self.window?.rootViewController as? SlideViewController,
                         let wrapper = slideController.mainViewController as? AirNavigationController,
                         let channelController = wrapper.topViewController as? ChannelViewController {
                         channelController.textInputbar.textView.becomeFirstResponder()

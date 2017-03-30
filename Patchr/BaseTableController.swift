@@ -37,6 +37,10 @@ class BaseTableController: UIViewController {
         let viewWidth = min(Config.contentWidthMax, self.view.width())
         self.view.anchorTopCenter(withTopPadding: 0, width: viewWidth, height: self.view.height())
     }
+    
+    deinit {
+        Log.v("\(self.className) released")
+    }
 	
 	/*--------------------------------------------------------------------------------------------
 	* Notifications
@@ -57,9 +61,9 @@ class BaseTableController: UIViewController {
 	*--------------------------------------------------------------------------------------------*/
 	
 	func initialize() {
-        self.handleAuth = FIRAuth.auth()?.addStateDidChangeListener() { auth, user in
-            if user == nil && self.queryController != nil {
-                self.queryController.unbind()
+        self.handleAuth = FIRAuth.auth()?.addStateDidChangeListener() { [weak self] auth, user in
+            if user == nil && self?.queryController != nil {
+                self?.queryController.unbind()
             }
         }
         self.view.backgroundColor = Theme.colorBackgroundForm
@@ -181,8 +185,7 @@ class DataSourceController: NSObject, FUICollectionDelegate, UITableViewDataSour
     }
     
     func unbind() {
-        self.tableView.dataSource = nil
-        self.tableView = nil
+        self.tableView?.dataSource = nil
         self.snapshots?.invalidate()
     }
     

@@ -85,20 +85,20 @@ struct UIShared {
          */
         let photo = IDMPhoto(image: image)!
         let photos = Array([photo])
-        let browser = PhotoBrowser(photos:photos as [AnyObject], animatedFrom: animateFromView)
+        let browser = (PhotoBrowser(photos: photos as [AnyObject], animatedFrom: animateFromView))!
         
-        browser?.usePopAnimation = true
-        browser?.scaleImage = image  // Used because final image might have different aspect ratio than initially
-        browser?.useWhiteBackgroundColor = true
-        browser?.disableVerticalSwipe = false
+        browser.usePopAnimation = true
+        browser.scaleImage = image  // Used because final image might have different aspect ratio than initially
+        browser.useWhiteBackgroundColor = true
+        browser.disableVerticalSwipe = false
         
         if message != nil {
-            browser?.bind(message: message)
+            browser.bind(message: message)
         }
         
-        viewController.navigationController!.present(browser!, animated:true, completion:nil)
+        viewController.navigationController!.present(browser, animated:true, completion:nil)
         
-        return browser!
+        return browser
     }
     
     @discardableResult static func showPhotos(photos: [String: DisplayPhoto]

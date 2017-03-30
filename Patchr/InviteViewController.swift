@@ -25,6 +25,7 @@ class InviteViewController: BaseEditViewController {
     var channels: [String: Any] = [:]
     var inputGroupId: String?
     var inputGroupTitle: String?
+    var inputRole: String?
     
     var validateFor = "member"
 	
@@ -77,7 +78,7 @@ class InviteViewController: BaseEditViewController {
     
     func doneAction(sender: AnyObject?) {
         let groupId = self.inputGroupId!
-        FireController.instance.autoPickChannel(groupId: groupId) { channelId in
+        FireController.instance.findGeneralChannel(groupId: groupId) { channelId in
             if channelId != nil {
                 StateController.instance.setChannelId(channelId: channelId!, groupId: groupId)
                 MainController.instance.showChannel(groupId: groupId, channelId: channelId!)
@@ -96,8 +97,8 @@ class InviteViewController: BaseEditViewController {
 		
 		Reporting.screen("PatchInvite")
         
-        let groupTitle = self.flow != .onboardCreate ? StateController.instance.group.title! : self.inputGroupTitle!
-        self.heading.text = "Invite people to \(groupTitle)."
+        let groupTitle = self.inputGroupTitle ?? StateController.instance.group?.title!
+        self.heading.text = "Invite people to \(groupTitle!)."
 		self.heading.textAlignment = NSTextAlignment.center
 		self.heading.numberOfLines = 0
         
@@ -181,6 +182,7 @@ class InviteViewController: BaseEditViewController {
     func inviteMembers() {
         let controller = ContactPickerController()
         controller.flow = self.flow
+        controller.inputRole = self.inputRole
         controller.inputGroupId = self.inputGroupId
         controller.inputGroupTitle = self.inputGroupTitle
         self.navigationController?.pushViewController(controller, animated: true)

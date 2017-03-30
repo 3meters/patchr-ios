@@ -117,28 +117,29 @@ class GroupCreateController: BaseEditViewController {
         let groupId = "gr-\(Utils.genRandomId())"
         let title = self.groupTitleField.text!
 
-        FireController.instance.addGroup(groupId: groupId, title: title, then: { success in
+        FireController.instance.addGroup(groupId: groupId, title: title, then: { [weak self] success in
             
-            self.progress?.hide(true)
-            self.processing = false
+            self?.progress?.hide(true)
+            self?.processing = false
 
             if success {
                 if CNContactStore.authorizationStatus(for: .contacts) == .authorized {
                     /* Straight to contact picker */
                     let controller = ContactPickerController()
-                    controller.flow = self.flow
+                    controller.flow = (self?.flow)!
                     controller.inputRole = "members"
                     controller.inputGroupId = groupId
-                    controller.inputGroupTitle = self.groupTitleField.text!
-                    self.navigationController?.setViewControllers([controller], animated: true)
+                    controller.inputGroupTitle = self?.groupTitleField.text!
+                    self?.navigationController?.setViewControllers([controller], animated: true)
                 }
                 else {
                     /* Show invite doorstep so they know why contacts are needed. */
                     let controller = InviteViewController()
-                    controller.flow = self.flow
+                    controller.flow = (self?.flow)!
+                    controller.inputRole = "members"
                     controller.inputGroupId = groupId
-                    controller.inputGroupTitle = self.groupTitleField.text!
-                    self.navigationController?.setViewControllers([controller], animated: true)
+                    controller.inputGroupTitle = self?.groupTitleField.text!
+                    self?.navigationController?.setViewControllers([controller], animated: true)
                 }
             }
         })

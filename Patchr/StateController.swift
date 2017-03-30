@@ -63,7 +63,7 @@ class StateController: NSObject {
         }
         
         /* Init state */
-        queue.tasks += { _, next in
+        queue.tasks += { [weak self] _, next in
             
             guard UserController.instance.authenticated else {
                 next(nil)
@@ -81,20 +81,20 @@ class StateController: NSObject {
                             Log.w("Last channel invalid: \(lastChannelId): trying auto pick channel")
                             FireController.instance.autoPickChannel(groupId: groupId) { channelId in
                                 if channelId != nil {
-                                    self.setChannelId(channelId: channelId!, groupId: groupId) { error in
+                                    self?.setChannelId(channelId: channelId!, groupId: groupId) { error in
                                         next(nil)
                                     }
                                 }
                                 else {
                                     /* Start from scratch */
-                                    self.clearGroup()
-                                    self.clearChannel()
+                                    self?.clearGroup()
+                                    self?.clearChannel()
                                     next(nil)
                                 }
                             }
                         }
                         else {
-                            self.setChannelId(channelId: lastChannelId, groupId: groupId) { error in
+                            self?.setChannelId(channelId: lastChannelId, groupId: groupId) { error in
                                 next(nil)
                             }
                         }
@@ -103,14 +103,14 @@ class StateController: NSObject {
                 else {
                     FireController.instance.autoPickChannel(groupId: groupId) { channelId in
                         if channelId != nil {
-                            self.setChannelId(channelId: channelId!, groupId: groupId) { error in
+                            self?.setChannelId(channelId: channelId!, groupId: groupId) { error in
                                 next(nil)
                             }
                         }
                         else {
                             /* Start from scratch */
-                            self.clearGroup()
-                            self.clearChannel()
+                            self?.clearGroup()
+                            self?.clearChannel()
                             next(nil)
                         }
                     }
@@ -121,8 +121,8 @@ class StateController: NSObject {
             }
         }
 
-        queue.tasks += {
-            self.stateIntialized = true
+        queue.tasks += { [weak self] in
+            self?.stateIntialized = true
             NotificationCenter.default.post(
                 name: NSNotification.Name(rawValue: Events.StateInitialized),
                 object: self, userInfo: nil)
@@ -177,13 +177,8 @@ class StateController: NSObject {
                         next?(error)
                     }
                     else {
-                        /* Group has been deleted from under us. Try to switch to something reasonable. */
-                        FireController.instance.autoPickGroupAndChannel(userId: userId) { groupId, channelId in
-                            if groupId != nil && channelId != nil {
-                                StateController.instance.setChannelId(channelId: channelId!, groupId: groupId!)
-                                MainController.instance.showChannel(groupId: groupId!, channelId: channelId!)
-                            }
-                        }
+                        /* Group has been deleted from under us. */
+                        MainController.instance.route()
                     }
                     return
                 }
@@ -196,10 +191,12 @@ class StateController: NSObject {
                         Log.d("Group membership updated: \(group!.id!)")
                     }
                 }
-                else if let role = group?.role, role != "guest" {
-                    /* Stash channelId for general channel if not guest */
-                    FireController.instance.findGeneralChannel(groupId: groupId) { channelId in
-                        self.groupGeneralId = channelId
+                else { // First callback
+                    if let role = group?.role, role != "guest" {
+                        /* Stash channelId for general channel if not guest */
+                        FireController.instance.findGeneralChannel(groupId: groupId) { channelId in
+                            self.groupGeneralId = channelId
+                        }
                     }
                 }
                 
@@ -238,12 +235,23 @@ class StateController: NSObject {
     
     func clearGroup() {
         Log.d("Current group: nothing")
+        let userId = UserController.instance.userId!
+        if self.groupId != nil {
+            var userInfo: [String: Any] = [:]
+            userInfo["groupId"] = self.groupId!
+            NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.GroupDisconnected), object: self, userInfo: userInfo)
+            FireController.db.child("group-members/\(self.groupId!)").keepSynced(false)
+            FireController.db.child("channel-names/\(self.groupId!)").keepSynced(false)
+            FireController.db.child("invites/\(self.groupId!)/\(userId)").keepSynced(false)
+            if self.channelId != nil {
+                FireController.db.child("group-channel-members/\(self.groupId!)/\(self.channelId!)").keepSynced(false)
+            }
+        }
         clearChannel()
         self.queryGroup?.remove() // Clear active observer if one
         self.groupId = nil
         self.group = nil
         self.queryGroup = nil
-        //UserDefaults.standard.removeObject(forKey: PerUserKey(key: Prefs.lastGroupId))
     }
     
     func clearChannel() {

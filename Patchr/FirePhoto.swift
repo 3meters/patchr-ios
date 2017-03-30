@@ -17,17 +17,12 @@ class FirePhoto: NSObject {
     var uploading: Bool?
     var width: Int?
     
-    static func from(dict: [String: Any]?) -> FirePhoto? {
-        if dict != nil {
-            let photo = FirePhoto()
-            photo.filename = dict!["filename"] as! String
-            photo.source = dict!["source"] as! String
-            photo.width = dict!["width"] as? Int
-            photo.height = dict!["height"] as? Int
-            photo.takenAt = dict!["taken_at"] as? Int64
-            photo.uploading = dict!["uploading"] as? Bool
-            return photo
-        }
-        return nil
+    init(dict: [String: Any]) {
+        self.filename = dict["filename"] as! String
+        self.source = dict["source"] as! String
+        self.width = dict["width"] as? Int
+        self.height = dict["height"] as? Int
+        self.takenAt = dict["taken_at"] as? Int64
+        self.uploading = dict["uploading"] as? Bool
     }
 }

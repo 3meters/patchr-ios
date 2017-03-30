@@ -200,15 +200,18 @@ class PhotoEditView: UIView {
 
 	func initialize() {
 
-		NotificationCenter.default.addObserver(self, selector: #selector(PhotoEditView.imageNotFoundAction(sender:)), name: NSNotification.Name(rawValue: Events.ImageNotFound), object: self.imageView)
+		NotificationCenter.default.addObserver(self
+            , selector: #selector(self.imageNotFoundAction(sender:))
+            , name: NSNotification.Name(rawValue: Events.ImageNotFound)
+            , object: self.imageView)
 
 		self.backgroundColor = Colors.clear
 
-		self.progressBlock = { task, progress in
+		self.progressBlock = { [weak self] task, progress in
 			DispatchQueue.main.async {
-				self.imageView.progressView.progress = CGFloat(progress.fractionCompleted)
+				self?.imageView.progressView.progress = CGFloat(progress.fractionCompleted)
                 if progress.fractionCompleted == 1.0 {
-                    self.imageView.hideProgress()
+                    self?.imageView.hideProgress()
                 }
 			}
 		}
@@ -272,9 +275,9 @@ class PhotoEditView: UIView {
 		self.photoChosen = false
 	}
 
-	func setHost(controller: UIViewController, view: UIView?) {
+	func setHost(controller: UIViewController?, view: UIView?) {
 		self.controller = controller
-		self.photoChooser = PhotoChooserUI(hostViewController: controller, hostView: view)
+		self.photoChooser = PhotoChooserUI(hostViewController: self.controller, hostView: view)
 	}
 
 	func configureTo(photoMode: PhotoMode) {

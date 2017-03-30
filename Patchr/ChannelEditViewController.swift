@@ -438,7 +438,7 @@ class ChannelEditViewController: BaseEditViewController {
             channelMap["type"] = "channel"
             channelMap["visibility"] = self.visibilityValue
             
-            FireController.instance.addChannelToGroup(channelId: channelId, channelMap: channelMap, groupId: groupId) { success in
+            FireController.instance.addChannelToGroup(channelId: channelId, channelMap: channelMap, groupId: groupId) { [weak self] success in
                 if !success {
                     Log.w("Error creating channel")
                     return
@@ -449,7 +449,7 @@ class ChannelEditViewController: BaseEditViewController {
                 controller.inputAsOwner = true
                 controller.inputChannelId = channelId
                 controller.inputChannelName = channelName
-                self.navigationController?.setViewControllers([controller], animated: true)
+                self?.navigationController?.setViewControllers([controller], animated: true)
             }
         }
     }

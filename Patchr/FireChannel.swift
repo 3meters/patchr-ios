@@ -39,24 +39,21 @@ class FireChannel: NSObject {
     var role: String?
     var joinedAt: Int?
     
-    static func from(dict: [String: Any]?, id: String?) -> FireChannel? {
-        if dict != nil {
-            let channel = FireChannel()
-            channel.archived = dict!["archived"] as? Bool
-            channel.createdAt = dict!["created_at"] as? Int64
-            channel.createdBy = dict!["created_by"] as? String
-            channel.general = dict!["general"] as? Bool
-            channel.groupId = dict!["group_id"] as? String
-            channel.id = id
-            channel.name = dict!["name"] as? String
-            channel.ownedBy = dict!["owned_by"] as? String
-            channel.photo = FirePhoto.from(dict: dict!["photo"] as! [String : Any]?)
-            channel.purpose = dict!["purpose"] as? String
-            channel.type = dict!["type"] as? String
-            channel.visibility = dict!["visibility"] as? String
-            return channel
+    init(dict: [String: Any], id: String?) {
+        self.archived = dict["archived"] as? Bool
+        self.createdAt = dict["created_at"] as? Int64
+        self.createdBy = dict["created_by"] as? String
+        self.general = dict["general"] as? Bool
+        self.groupId = dict["group_id"] as? String
+        self.id = id
+        self.name = dict["name"] as? String
+        self.ownedBy = dict["owned_by"] as? String
+        if (dict["photo"] as? [String : Any]) != nil {
+            self.photo = FirePhoto(dict: dict["photo"] as! [String : Any])
         }
-        return nil
+        self.purpose = dict["purpose"] as? String
+        self.type = dict["type"] as? String
+        self.visibility = dict["visibility"] as? String
     }
     
     func membershipClear() {

@@ -36,6 +36,10 @@ class BaseViewController: UIViewController {
         self.scrollView.fillSuperview()
         self.contentHolder.anchorTopCenterFillingWidth(withLeftAndRightPadding: 16, topPadding: 16, height: self.contentHolder.frame.size.height)
     }
+    
+    deinit {
+        Log.v("\(self.className) released")
+    }
 	
 	/*--------------------------------------------------------------------------------------------
 	* Notifications

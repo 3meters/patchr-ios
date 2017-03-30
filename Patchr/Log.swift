@@ -26,7 +26,9 @@ class Log {
     
 	static func v(_ message: String, breadcrumb: Bool = false) {
         #if DEBUG
-            DDLogVerbose("Verbose")
+            if Config.logLevel == LogLevel.verbose {
+                DDLogVerbose(message)
+            }
         #endif
 		if breadcrumb {
 			Log.breadcrumb(message: message);
@@ -35,7 +37,9 @@ class Log {
 	
     static func d(_ message: String, breadcrumb: Bool = false) {
         #if DEBUG
-            DDLogDebug(message)
+            if Config.logLevel <= LogLevel.debug {
+                DDLogDebug(message)
+            }
         #endif
 		if breadcrumb {
 			Log.breadcrumb(message: message);
@@ -43,21 +47,27 @@ class Log {
     }
 	
     static func i(_ message: String, breadcrumb: Bool = false) {
-        DDLogInfo(message)
+        if Config.logLevel <= LogLevel.info {
+            DDLogInfo(message)
+        }
 		if breadcrumb {
 			Log.breadcrumb(message: message);
 		}
     }
 	
     static func w(_ message: String, breadcrumb: Bool = false) {
-        DDLogWarn(message)
+        if Config.logLevel <= LogLevel.warning {
+            DDLogWarn(message)
+        }
 		if breadcrumb {
 			Log.breadcrumb(message: message);
 		}
     }
 	
 	static func e(_ message: String, breadcrumb: Bool = false) {
-        DDLogError(message)
+        if Config.logLevel <= LogLevel.error {
+            DDLogError(message)
+        }
 		if breadcrumb {
 			Log.breadcrumb(message: message);
 		}

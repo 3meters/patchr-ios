@@ -107,7 +107,7 @@ class UserController: NSObject {
         }
     }
 
-    func setUserId(userId: String, then: ((Any?) -> Void)? = nil) {
+    func setUserId(userId: String, then: ((Any?) -> Swift.Void)? = nil) {
         
         var calledBack = false
         

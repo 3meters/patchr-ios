@@ -51,6 +51,10 @@ class EmptyViewController: UIViewController {
         self.setNeedsStatusBarAppearanceUpdate()
     }
 
+    deinit {
+        Log.v("\(self.className) released")
+    }
+
     /*--------------------------------------------------------------------------------------------
      * Methods
      *--------------------------------------------------------------------------------------------*/
@@ -75,19 +79,41 @@ class EmptyViewController: UIViewController {
     
     func startScene(then: (() -> Void)? = nil) {
         
-        Animation.bounce(view: self.imageLogo) {
-            let spring = POPSpringAnimation(propertyNamed: kPOPViewFrame)!
-            spring.toValue = NSValue(cgRect: self.imageLogo.frame.offsetBy(dx: 0, dy: -156))
-            spring.springBounciness = 10
-            spring.springSpeed = 8
-            spring.completionBlock = { animation, finished in
-                self.appName.fadeIn(duration: 0.5) { finished in
-                    self.scenePlayed = true
-                    then?()
-                }
+        UIView.animate(withDuration: 0.3
+            , delay: 0
+            , animations: { [weak self] in
+                self?.imageLogo.transform = CGAffineTransform(scaleX: 0.5, y: 0.5)
             }
-            self.imageLogo.pop_add(spring, forKey: "moveUp")
-        }
+            , completion: { finished in
+                
+                UIView.animate(withDuration: 1.0
+                    , delay: 0
+                    , usingSpringWithDamping: 0.2
+                    , initialSpringVelocity: 6.0
+                    , options: []
+                    , animations: { [weak self] in
+                        self?.imageLogo.transform = .identity
+                    }
+                    , completion: { finished in
+                        
+                        UIView.animate(withDuration: 1.0
+                            , delay: 0
+                            , usingSpringWithDamping: 0.5
+                            , initialSpringVelocity: 6.0
+                            , options: [.curveEaseIn]
+                            , animations: { [weak self] in
+                                self?.imageLogo.transform = CGAffineTransform(translationX: 0, y: -156)
+                            }
+                            , completion: { finished in
+                                if finished {
+                                    self.appName.fadeIn(duration: 0.5) { finished in
+                                        self.scenePlayed = true
+                                        then?()
+                                    }
+                                }
+                        })
+                })
+        })
     }
     
     override var preferredStatusBarUpdateAnimation: UIStatusBarAnimation {

@@ -51,7 +51,8 @@ target 'Patchr' do
     pod 'Firebase/Messaging'
     pod 'FirebaseUI/Database'
     pod 'PopupDialog'
-    pod 'SlideMenuControllerSwift'
+    pod 'Reveal-SDK',               :configurations => ['Debug']
+    pod 'SlideMenuControllerSwift', :path => '~/code/SlideMenuControllerSwift'
     pod 'TwicketSegmentedControl'
     pod 'TTTAttributedLabel'
     pod 'VTAcknowledgementsViewController'

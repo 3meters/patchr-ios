@@ -25,31 +25,25 @@ class MessageQuery: NSObject {
                 self?.remove()
             }
         }
-        self.messageHandle = FireController.db.child(self.messagePath).observe(.value, with: { snap in
+        self.messageHandle = FireController.db.child(self.messagePath).observe(.value, with: { [weak self] snap in
             if !(snap.value is NSNull) {
-                self.message = FireMessage.from(dict: snap.value as? [String: Any], id: snap.key)
-                block(nil, self.message)
-            }
-            else {
-                Log.w("Message snapshot is null")
+                self?.message = FireMessage(dict: snap.value as! [String: Any], id: snap.key)
+                block(nil, self?.message)
             }
         }, withCancel: { error in
-            Log.w("Permission denied trying to read message: \(self.messagePath!)")
+            Log.v("Permission denied trying to read message: \(self.messagePath!)")
             block(error, nil)
         })
     }
     
     func once(with block: @escaping (Error?, FireMessage?) -> Swift.Void) {
-        FireController.db.child(self.messagePath).observeSingleEvent(of: .value, with: { snap in
+        FireController.db.child(self.messagePath).observeSingleEvent(of: .value, with: { [weak self] snap in
             if !(snap.value is NSNull) {
-                self.message = FireMessage.from(dict: snap.value as? [String: Any], id: snap.key)
-                block(nil, self.message)
-            }
-            else {
-                Log.w("Message snapshot is null")
+                self?.message = FireMessage(dict: snap.value as! [String: Any], id: snap.key)
+                block(nil, self?.message)
             }
         }, withCancel: { error in
-            Log.w("Permission denied trying to read message: \(self.messagePath!)")
+            Log.v("Permission denied trying to read message: \(self.messagePath!)")
             block(error, nil)
         })
     }

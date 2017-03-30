@@ -135,7 +135,7 @@ class GroupSwitcherController: BaseTableController {
         NotificationCenter.default.addObserver(self, selector: #selector(userDidSwitch(notification:)), name: NSNotification.Name(rawValue: Events.UserDidSwitch), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(groupDidSwitch(notification:)), name: NSNotification.Name(rawValue: Events.GroupDidSwitch), object: nil)        
         
-        if self.simplePicker {
+        if self.simplePicker { // Shown in navigation drawer
             
             self.tableView.backgroundColor = Theme.colorBackgroundTable
             self.tableView.delegate = self
@@ -186,9 +186,12 @@ class GroupSwitcherController: BaseTableController {
         
         FireController.instance.findFirstGroup(userId: userId, next: { group in
             
-            /* User is a member of at least one group */
-            if group != nil {
-                
+            if group == nil { /* User is not a member of any group */
+                MainController.instance.showUserLobby()
+                self.close(animated: false)
+            }
+            
+            else { /* User is a member of at least one group */
                 self.groupAvailable = true
                 
                 self.headingLabel = AirLabelTitle()
@@ -219,40 +222,6 @@ class GroupSwitcherController: BaseTableController {
                     self.navigationItem.rightBarButtonItems = [closeButton]
                 }
             }
-                
-            /* User is not a member of any group */
-            else {
-                
-                self.headingLabel = AirLabelTitle()
-                self.headingLabel.textAlignment = NSTextAlignment.center
-                self.headingLabel.numberOfLines = 0
-                self.headingLabel.text = "You are currently not a member of any Patchr group."
-
-                self.rule = UIView()
-                self.rule.backgroundColor = Theme.colorSeparator
-                
-                self.buttonLogin = AirButton()
-                self.buttonLogin.setTitle("Log in with another email", for: .normal)
-                self.buttonLogin.addTarget(self, action: #selector(self.switchLoginAction(sender:)), for: .touchUpInside)
-                self.buttonSignup = AirButton()
-                self.buttonSignup.setTitle("Create a new Patchr group", for: .normal)
-                self.buttonSignup.addTarget(self, action: #selector(self.addAction(sender:)), for: .touchUpInside)
-                
-                self.buttonGroup = UIView()
-                self.buttonGroup.addSubview(self.buttonLogin)
-                self.buttonGroup.addSubview(self.buttonSignup)
-                
-                self.view.addSubview(self.headingLabel)
-                self.view.addSubview(self.rule)
-                self.view.addSubview(self.buttonGroup)
-                
-                /* Navigation bar buttons */
-                self.navigationController?.setToolbarHidden(true, animated: true)
-                self.tableView.contentInset = UIEdgeInsets(top: 74, left: 0, bottom: 44, right: 0)
-
-                let logoutButton = UIBarButtonItem(title: "Log out", style: UIBarButtonItemStyle.plain, target: self, action: #selector(self.logoutAction(sender:)))
-                self.navigationItem.rightBarButtonItems = [logoutButton]
-            }
         })
     }
     
@@ -278,17 +247,12 @@ class GroupSwitcherController: BaseTableController {
                     cell.reset()
                     FireController.db.child("groups/\(groupId)").observeSingleEvent(of: .value, with: { snapGroup in
                         if !(snapGroup.value is NSNull) {
-                            if let group = FireGroup.from(dict: snapGroup.value as? [String: Any], id: snapGroup.key) {
-                                group.membershipFrom(dict: snapMember.value as! [String : Any])
-                                cell.bind(group: group)
-                                if group.id! == StateController.instance.groupId {
-                                    cell.selected(on: true)
-                                }
+                            let group = FireGroup(dict: snapGroup.value as! [String: Any], id: snapGroup.key)
+                            group.membershipFrom(dict: snapMember.value as! [String : Any])
+                            cell.bind(group: group)
+                            if group.id! == StateController.instance.groupId {
+                                cell.selected(on: true)
                             }
-                        }
-                        else {
-                            Log.w("Fatal: User is member of group that does not exist")
-                            fatalError("User is member of group that does not exist")
                         }
                     })
                 }

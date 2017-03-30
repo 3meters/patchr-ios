@@ -14,14 +14,11 @@ class FireAttachment: NSObject {
     var photo: FirePhoto?
     var title: String?
     
-    static func from(dict: [String: Any]?, id: String?) -> FireAttachment? {
-        if dict != nil {
-            let attachment = FireAttachment()
-            attachment.id = id
-            attachment.title = dict!["title"] as? String
-            attachment.photo = FirePhoto.from(dict: dict!["photo"] as! [String : Any]?)
-            return attachment
+    init(dict: [String: Any], id: String?) {
+        self.id = id!
+        self.title = dict["title"] as? String
+        if (dict["photo"] as? [String : Any]) != nil {
+            self.photo = FirePhoto(dict: dict["photo"] as! [String : Any])
         }
-        return nil
     }
 }

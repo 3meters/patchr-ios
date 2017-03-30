@@ -24,54 +24,53 @@ class PhotoChooserUI: NSObject, UINavigationControllerDelegate {
 	 * Map from button indices to functions because some buttons aren't there all the
 	 * time (for example, the camera is not available on the simulator).
 	 */
-    typealias CompletionHandler = (_ success:Bool) -> Void
-    
     weak var hostViewController: UIViewController?
     weak var hostView: UIView?
     var chosenPhotoFunction: PhotoButtonFunction?
     
-    fileprivate var finishedChoosing: ((UIImage?, ImageResult?, Any?, Bool) -> Void)? = nil
+    fileprivate var completion: ((UIImage?, ImageResult?, Any?, Bool) -> Void)!
 
-	fileprivate lazy var imagePickerController: UIImagePickerController = {
+	fileprivate lazy var imagePickerController: UIImagePickerController = { [unowned self] in
 		return UIImagePickerController(rootViewController: self.hostViewController!)
 	}()
 
-    init(hostViewController: UIViewController, hostView: UIView?) {
+    init(hostViewController: UIViewController?, hostView: UIView?) {
 		self.hostViewController = hostViewController
         self.hostView = hostView
 		super.init()
 	}
 
-	func choosePhoto(sender: AnyObject, finishedChoosing: @escaping (UIImage?, ImageResult?, Any?, Bool) -> Void) {
+	func choosePhoto(sender: AnyObject, completion: @escaping (UIImage?, ImageResult?, Any?, Bool) -> Void) {
 		
-		self.finishedChoosing = finishedChoosing
+		self.completion = completion
+        
 		let cameraAvailable       = UIImagePickerController.isSourceTypeAvailable(.camera)
 		let photoLibraryAvailable = UIImagePickerController.isSourceTypeAvailable(.photoLibrary)
 		
 		let sheet = UIAlertController(title: nil, message: nil, preferredStyle: UIAlertControllerStyle.actionSheet)
 		
-		let search = UIAlertAction(title: "Search for photos", style: .default) { action in
-            self.searchForPhoto(imageType: .photo)
+		let search = UIAlertAction(title: "Search for photos", style: .default) { [weak self] action in
+            self?.searchForPhoto(imageType: .photo)
 		}
 		sheet.addAction(search)
 
 		if photoLibraryAvailable {
-			let library = UIAlertAction(title: "Select a library photo", style: .default) { action in
-				self.choosePhotoFromLibrary()
+			let library = UIAlertAction(title: "Select a library photo", style: .default) { [weak self] action in
+				self?.choosePhotoFromLibrary()
 			}
 			sheet.addAction(library)
 		}
 		
 		if cameraAvailable {
-			let camera = UIAlertAction(title: "Take a new photo", style: .default) { action in
-				self.takePhotoWithCamera()
+			let camera = UIAlertAction(title: "Take a new photo", style: .default) { [weak self] action in
+				self?.takePhotoWithCamera()
 			}
 			sheet.addAction(camera)
 		}
 		
-		let cancel = UIAlertAction(title: "Cancel", style: .cancel) { action in
+		let cancel = UIAlertAction(title: "Cancel", style: .cancel) { [weak self] action in
 			sheet.dismiss(animated: true, completion: nil)
-			self.finishedChoosing!(nil, nil, nil, true)
+			self?.completion!(nil, nil, nil, true)
 		}
 		
 		sheet.addAction(cancel)
@@ -133,7 +132,7 @@ class PhotoChooserUI: NSObject, UINavigationControllerDelegate {
 		self.hostViewController?.present(navController, animated: true, completion: nil)
 	}
 
-	fileprivate func addPhotoToAlbum(image: UIImage, toAlbum albumName: String, handler: @escaping CompletionHandler) {
+	fileprivate func addPhotoToAlbum(image: UIImage, toAlbum albumName: String, handler: @escaping (_ success: Bool) -> Void) {
         PHPhotoLibrary.saveImage(image: image, albumName: albumName) { asset in
             handler(asset != nil)
         }
@@ -156,14 +155,14 @@ extension PhotoChooserUI: PhotoBrowseControllerDelegate {
     
     func photoBrowseController(didFinishPickingPhoto image: UIImage?, imageResult: ImageResult?, asset: Any?) -> Void {
         hostViewController?.dismiss(animated: true, completion: nil)
-        self.finishedChoosing!(image, imageResult, asset, false)
+        self.completion!(image, imageResult, asset, false)
     }
     
     func photoBrowseController(didLikePhoto liked: Bool) { }
     
     func photoBrowseControllerDidCancel() {
         hostViewController?.dismiss(animated: true, completion: nil)
-		self.finishedChoosing!(nil, nil, nil, true)
+		self.completion!(nil, nil, nil, true)
     }
 }
 
@@ -188,11 +187,11 @@ extension PhotoChooserUI: UIImagePickerControllerDelegate {
                 if PHPhotoLibrary.authorizationStatus() == .authorized {
                     self.addPhotoToAlbum(image: image, toAlbum: "Patchr") { success in
                         print("Image added to Patchr album: \(success)");
-                        self.finishedChoosing!(image, nil, asset, false)
+                        self.completion!(image, nil, asset, false)
                     }
                 }
                 else {
-                    self.finishedChoosing!(image, nil, asset, false)
+                    self.completion!(image, nil, asset, false)
                 }
             }
             else {

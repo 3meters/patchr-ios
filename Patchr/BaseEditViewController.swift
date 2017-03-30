@@ -46,7 +46,7 @@ class BaseEditViewController: BaseViewController, UITextFieldDelegate, UITextVie
         NotificationCenter.default.removeObserver(self, name: NSNotification.Name.UIKeyboardWillShow, object: nil)
         NotificationCenter.default.removeObserver(self, name: NSNotification.Name.UIKeyboardWillHide, object: nil)
 	}
-
+    
 	/*--------------------------------------------------------------------------------------------
 	* Events
 	*--------------------------------------------------------------------------------------------*/

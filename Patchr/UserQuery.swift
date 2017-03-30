@@ -15,6 +15,7 @@ class UserQuery: NSObject {
 
     var userPath: String!
     var userHandle: UInt!
+    var userId: String!
     var user: FireUser!
 
     var linkPath: String!
@@ -26,6 +27,7 @@ class UserQuery: NSObject {
 
     init(userId: String, groupId: String?, channelId: String? = nil, trackPresence: Bool = false) {
         super.init()
+        self.userId = userId
         self.userPath = "users/\(userId)"
         if channelId != nil {
             self.linkPath = "group-channel-members/\(groupId!)/\(channelId!)/\(userId)"
@@ -35,11 +37,11 @@ class UserQuery: NSObject {
         }
         
         if trackPresence {
-            self.onlineHandle = FireController.db.child(".info/connected").observe(.value, with: { snap in
+            self.onlineHandle = FireController.db.child(".info/connected").observe(.value, with: { [weak self] snap in
                 if !(snap.value is NSNull) {
                     let timestamp = FireController.instance.getServerTimestamp()
-                    FireController.db.child(self.userPath).onDisconnectUpdateChildValues(["presence": timestamp])
-                    FireController.db.child(self.userPath).updateChildValues(["presence": true])
+                    FireController.db.child((self?.userPath)!).onDisconnectUpdateChildValues(["presence": timestamp])
+                    FireController.db.child((self?.userPath)!).updateChildValues(["presence": true])
                 }
             })
         }
@@ -54,45 +56,44 @@ class UserQuery: NSObject {
         }
         
         self.block = block
-        self.userHandle = FireController.db.child(self.userPath).observe(.value, with: { snap in
+        self.userHandle = FireController.db.child(self.userPath).observe(.value, with: { [weak self] snap in
             if !(snap.value is NSNull) {
-                self.user = FireUser.from(dict: snap.value as? [String: Any], id: snap.key)
-                if self.linkPath == nil || self.linkMapMiss {
-                    self.block?(nil, self.user)  // May or may not have link info
+                self?.user = FireUser(dict: snap.value as! [String: Any], id: snap.key)
+                if self?.linkPath == nil || (self?.linkMapMiss)! {
+                    self?.block?(nil, self?.user)  // May or may not have link info
                 }
-                else if self.linkMap != nil {
-                    self.user!.membershipFrom(dict: (self.linkMap)!)
-                    self.block?(nil, self.user)  // May or may not have link info
+                else if self?.linkMap != nil {
+                    self?.user!.membershipFrom(dict: (self?.linkMap)!)
+                    self?.block?(nil, self?.user)  // May or may not have link info
                 }
             }
             else {
-                Log.w("User snapshot is null")
-                self.block?(nil, nil)
+                self?.block?(nil, nil)
             }
         }, withCancel: { error in
-            Log.w("Permission denied trying to read user: \(self.userPath!)")
+            Log.v("Permission denied trying to read user: \(self.userPath!)")
             block(error, nil)
         })
         
         if self.linkPath != nil {
-            self.linkHandle = FireController.db.child(self.linkPath).observe(.value, with: { snap in
+            self.linkHandle = FireController.db.child(self.linkPath).observe(.value, with: { [weak self] snap in
                 if !(snap.value is NSNull) {
-                    self.linkMap = snap.value as! [String: Any]
-                    if self.user != nil {
-                        self.user!.membershipFrom(dict: (self.linkMap)!)
-                        self.block?(nil, self.user)
+                    self?.linkMap = snap.value as! [String: Any]
+                    if self?.user != nil {
+                        self?.user!.membershipFrom(dict: (self?.linkMap)!)
+                        self?.block?(nil, self?.user)
                     }
                 }
                 else {
                     /* User might be fine but group was deleted */
-                    self.linkMapMiss = true
-                    if self.user != nil {
-                        self.user!.membershipClear()
-                        self.block?(nil, self.user)
+                    self?.linkMapMiss = true
+                    if self?.user != nil {
+                        self?.user!.membershipClear()
+                        self?.block?(nil, self?.user)
                     }
                 }
             }, withCancel: { error in
-                Log.w("Permission denied trying to read user membership: \(self.linkPath!)")
+                Log.v("Permission denied trying to read user membership: \(self.linkPath!)")
                 block(error, nil)
             })
         }
@@ -103,58 +104,60 @@ class UserQuery: NSObject {
         self.block = block
         var fired = false
         
-        FireController.db.child(self.userPath).observeSingleEvent(of: .value, with: { snap in
+        FireController.db.child(self.userPath).observeSingleEvent(of: .value, with: { [weak self] snap in
             if !fired {
                 if !(snap.value is NSNull) {
-                    self.user = FireUser.from(dict: snap.value as? [String: Any], id: snap.key)
-                    if self.linkPath == nil || self.linkMapMiss {
+                    self?.user = FireUser(dict: snap.value as! [String: Any], id: snap.key)
+                    if self?.linkPath == nil || (self?.linkMapMiss)! {
                         fired = true
-                        self.block?(nil, self.user)  // May or may not have link info
+                        self?.block?(nil, self?.user)  // May or may not have link info
                     }
-                    else if self.linkMap != nil {
+                    else if self?.linkMap != nil {
                         fired = true
-                        self.user!.membershipFrom(dict: (self.linkMap)!)
-                        self.block?(nil, self.user)  // May or may not have link info
+                        self?.user!.membershipFrom(dict: (self?.linkMap)!)
+                        self?.block?(nil, self?.user)  // May or may not have link info
                     }
                 }
                 else {
                     fired = true
-                    Log.w("User snapshot is null")
-                    self.block?(nil, nil)
+                    self?.block?(nil, nil)
                 }
             }
         }, withCancel: { error in
-            Log.w("Permission denied trying to read user: \(self.userPath!)")
+            Log.v("Permission denied trying to read user: \(self.userPath!)")
             block(error, nil)
         })
         
         if self.linkPath != nil {
-            FireController.db.child(self.linkPath).observeSingleEvent(of: .value, with: { snap in
+            FireController.db.child(self.linkPath).observeSingleEvent(of: .value, with: { [weak self] snap in
                 if !fired {
                     if !(snap.value is NSNull) {
-                        self.linkMap = snap.value as! [String: Any]
-                        if self.user != nil {
+                        self?.linkMap = snap.value as! [String: Any]
+                        if self?.user != nil {
                             fired = true
-                            self.user!.membershipFrom(dict: (self.linkMap)!)
-                            self.block?(nil, self.user)
+                            self?.user!.membershipFrom(dict: (self?.linkMap)!)
+                            self?.block?(nil, self?.user)
                         }
                     }
                     else {
-                        self.linkMapMiss = true
-                        if self.user != nil {
+                        self?.linkMapMiss = true
+                        if self?.user != nil {
                             fired = true
-                            self.block?(nil, self.user)
+                            self?.block?(nil, self?.user)
                         }
                     }
                 }
             }, withCancel: { error in
-                Log.w("Permission denied trying to read user membership: \(self.linkPath!)")
+                Log.v("Permission denied trying to read user membership: \(self.linkPath!)")
                 block(error, nil)
             })
         }
     }
 
     func remove() {
+        self.user?.profile?.photo = nil
+        self.user?.profile = nil
+        self.user = nil
         if self.authHandle != nil {
             FIRAuth.auth()?.removeStateDidChangeListener(self.authHandle)
         }

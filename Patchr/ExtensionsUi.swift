@@ -242,18 +242,20 @@ public extension UIView {
 
 extension UIWindow {
     
-    func setRootViewController(rootViewController: UIViewController, animated: Bool, then: ((Bool) -> Void)? = nil) {
+    func setRootViewController(rootViewController: UIViewController, animated: Bool = false, then: ((Bool) -> Void)? = nil) {
 		
+        self.rootViewController = nil
+        
         if !animated {
             self.rootViewController = rootViewController
             then?(true)
             return
         }
         
-        UIView.transition(with: self,
-            duration: 0.65,
-            options: UIViewAnimationOptions.transitionCrossDissolve,
-            animations: {				
+        UIView.transition(with: self
+            , duration: 0.65
+            , options: [.transitionCrossDissolve]
+            , animations: {
                 /*
 				 * The animation enabling/disabling are to address a status bar issue 
 				 * on the destination view controller: http://stackoverflow.com/a/8505364/2247399
@@ -262,11 +264,18 @@ extension UIWindow {
                 UIView.setAnimationsEnabled(false)
                 self.rootViewController = rootViewController
                 UIView.setAnimationsEnabled(oldState)
-            }, completion: then)
+            }
+            , completion: { finished in
+                then?(true)
+            })
     }
 }
 
 extension UIViewController {
+    
+    var className: String {
+        return NSStringFromClass(self.classForCoder).components(separatedBy: ".").last!
+    }
     
     // Returns the most recently presented UIViewController (visible)
     class func topMostViewController() -> UIViewController? {

@@ -16,16 +16,13 @@ class FireProfile: NSObject {
     var phone: String?
     var photo: FirePhoto?
     
-    static func from(dict: [String: Any]?) -> FireProfile? {
-        if dict != nil {
-            let profile = FireProfile()
-            profile.firstName = dict!["first_name"] as? String
-            profile.lastName = dict!["last_name"] as? String
-            profile.fullName = dict!["full_name"] as? String
-            profile.phone = dict!["phone"] as? String
-            profile.photo = FirePhoto.from(dict: dict!["photo"] as! [String : Any]?)
-            return profile
+    init(dict: [String: Any]) {
+        self.firstName = dict["first_name"] as? String
+        self.lastName = dict["last_name"] as? String
+        self.fullName = dict["full_name"] as? String
+        self.phone = dict["phone"] as? String
+        if (dict["photo"] as? [String : Any]) != nil {
+            self.photo = FirePhoto(dict: dict["photo"] as! [String : Any])
         }
-        return nil
     }
 }

@@ -103,7 +103,7 @@ class AirImageView: FLAnimatedImageView {
 
     func initialize(){
         self.layer.delegate = self
-        self.progressView = DALabeledCircularProgressView()
+        self.progressView = DALabeledCircularProgressView(frame: CGRect.zero)
         self.progressView.trackTintColor = Colors.white
         self.progressView.progressTintColor = Colors.accentColor
         self.progressView.thicknessRatio = 0.15
@@ -147,8 +147,8 @@ class AirImageView: FLAnimatedImageView {
             DispatchQueue.main.async() {
                 
                 if error != nil {
+                    self?.progressView.progressLabel.text = "Image missing"
                     self?.progressView.progressLabel.textColor = Theme.colorTextSecondary
-                    self?.progressView.progressLabel.text = "Image unavailable"
                     Log.w("*** Image fetch failed: " + error!.localizedDescription)
                     Log.w("*** Failed url: \(url.absoluteString)")
                     self?.fromUrl = nil

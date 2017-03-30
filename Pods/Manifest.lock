@@ -131,6 +131,7 @@ PODS:
   - PopupDialog (0.5.3)
   - Protobuf (3.2.0)
   - ReachabilitySwift (3)
+  - Reveal-SDK (7)
   - SDWebImage (4.0.0):
     - SDWebImage/Core (= 4.0.0)
   - SDWebImage/Core (4.0.0)
@@ -174,10 +175,11 @@ DEPENDENCIES:
   - pop (~> 1.0)
   - PopupDialog
   - ReachabilitySwift (~> 3)
+  - Reveal-SDK
   - SDWebImage/GIF (~> 4.0)
   - SkyFloatingLabelTextField (~> 2.0.0)
   - SlackTextViewController (from `~/code/SlackTextViewController`)
-  - SlideMenuControllerSwift
+  - SlideMenuControllerSwift (from `~/code/SlideMenuControllerSwift`)
   - TTTAttributedLabel
   - TwicketSegmentedControl
   - UIDevice-Hardware (~> 0.1.7)
@@ -193,6 +195,8 @@ EXTERNAL SOURCES:
     :path: Pods/CocoaPodsKeys
   SlackTextViewController:
     :path: ~/code/SlackTextViewController
+  SlideMenuControllerSwift:
+    :path: ~/code/SlideMenuControllerSwift
 
 CHECKOUT OPTIONS:
   DateTools:
@@ -238,15 +242,16 @@ SPEC CHECKSUMS:
   PopupDialog: 533dd564f8781633375505b9fbd406f8f146ccc9
   Protobuf: 745f59e122e5de98d4d7ef291e264a0eef80f58e
   ReachabilitySwift: f5b9bb30a0777fac8f09ce8b067e32faeb29bb64
+  Reveal-SDK: 564657bc66c93d2718b1c0121cdebe99d354ddab
   SDWebImage: 76a6348bdc74eb5a55dd08a091ef298e56b55e41
   SkyFloatingLabelTextField: a81a0eaed2785d1599f11484c6ebc1c4eb5d1228
   SlackTextViewController: fbcdadbb8090673f604484ff5b6eb8d77baed42a
-  SlideMenuControllerSwift: 9a163b16d54afab734add42858cba7ef7c307755
+  SlideMenuControllerSwift: 08e93da4735d78038057ec636028d35ba24f0983
   TTTAttributedLabel: 8cffe8e127e4e82ff3af1e5386d4cd0ad000b656
   TwicketSegmentedControl: bbb2d155792dbfcee7fea995a614d0c0a3de4a16
   UIDevice-Hardware: ecb52d9a7b223b31f81982358e2b0769ac1a7918
   VTAcknowledgementsViewController: e1de80f2c0ce31cc7e1c6f1c8aaeec2770371f09
 
-PODFILE CHECKSUM: 88c28cd68190f11914cd9d539228392a46fc3eb1
+PODFILE CHECKSUM: 3f23a33dcf6ee221388480f828020083a2edfa0c
 
 COCOAPODS: 1.1.0.rc.3

@@ -87,9 +87,9 @@ class SettingsTableViewController: UITableViewController {
                     
                     if let group = StateController.instance.group {
                         let userId = UserController.instance.userId!
-                        FireController.instance.removeUserFromGroup(userId: userId, groupId: group.id!, then: { success in
-                            self.progress?.hide(true)
-                            self.dismiss(animated: true)
+                        FireController.instance.removeUserFromGroup(userId: userId, groupId: group.id!, then: { [weak self] success in
+                            self?.progress?.hide(true)
+                            self?.dismiss(animated: true)
                             StateController.instance.clearGroup()   // Make sure group and channel are both unset
                             let controller = GroupSwitcherController()
                             let wrapper = AirNavigationController()

@@ -23,7 +23,7 @@ import FirebaseRemoteConfig
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate, FIRMessagingDelegate {
 
-    var window: UIWindow?
+    var window: UIWindow? // Photo browser expects this to be here
     var firstLaunch: Bool = false
     var pendingNotification: [AnyHashable: Any]?
     
@@ -94,6 +94,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FIRMessagingDelegate {
             UserDefaults.standard.removePersistentDomain(forName: appDomain)    // Clear old prefs
             UserDefaults.standard.set(true, forKey: Prefs.firstLaunch)
             self.firstLaunch = true
+            try! FIRAuth.auth()!.signOut()  // Triggers cleanup by canned queries
             Reporting.track("Launched for First Time")
         }
         

@@ -19,7 +19,6 @@ class MemberPickerController: BaseTableController, CLTokenInputViewDelegate {
     var inputChannelName: String!
     var inputAsOwner = false
     
-    var heading	= AirLabelTitle()
     var tokenView: AirTokenView!
     var doneButton: UIBarButtonItem!
 
@@ -39,15 +38,21 @@ class MemberPickerController: BaseTableController, CLTokenInputViewDelegate {
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
         
-        let headingSize = self.heading.sizeThatFits(CGSize(width:288, height:CGFloat.greatestFiniteMagnitude))
         let navHeight = self.navigationController?.navigationBar.height() ?? 0
         let statusHeight = UIApplication.shared.statusBarFrame.size.height
         
-        self.heading.anchorTopCenter(withTopPadding: (navHeight + statusHeight + 24), width: 288, height: headingSize.height)
-        self.tokenView.alignUnder(self.heading, centeredFillingWidthWithLeftAndRightPadding: 0, topPadding: 16, height: tokenView.height())
+        self.tokenView.anchorTopCenterFillingWidth(withLeftAndRightPadding: 0, topPadding: (navHeight + statusHeight), height: tokenView.height())
         self.tableView.alignUnder(self.tokenView, matchingLeftAndRightFillingHeightWithTopPadding: 0, bottomPadding: 0)
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        self.navigationController?.setToolbarHidden(false, animated: true)
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        self.navigationController?.setToolbarHidden(true, animated: true)
+    }
+
     /*--------------------------------------------------------------------------------------------
      * Events
      *--------------------------------------------------------------------------------------------*/
@@ -64,6 +69,10 @@ class MemberPickerController: BaseTableController, CLTokenInputViewDelegate {
             MainController.instance.showChannel(groupId: groupId, channelId: channelId)
         }
         self.close(animated: true)
+    }
+    
+    func inviteListAction(sender: AnyObject?) {
+        inviteList()
     }
 
     /*--------------------------------------------------------------------------------------------
@@ -94,9 +103,7 @@ class MemberPickerController: BaseTableController, CLTokenInputViewDelegate {
         
         self.automaticallyAdjustsScrollViewInsets = false
         
-        self.heading.text = "Invite group members to #\(self.inputChannelName!)."
-        self.heading.textAlignment = .center
-        self.heading.numberOfLines = 0
+        self.navigationItem.title = "Group members"
         
         self.tokenView = AirTokenView(frame: CGRect(x: 0, y: 0, width: self.view.width(), height: 44))
         self.tokenView.placeholder.text = "Search"
@@ -113,9 +120,9 @@ class MemberPickerController: BaseTableController, CLTokenInputViewDelegate {
         self.tableView.estimatedRowHeight = 64
         self.tableView.allowsMultipleSelection = true
         self.tableView.separatorInset = UIEdgeInsets.zero
+        self.tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 44, right: 0)
         self.tableView.tableFooterView = UIView()
         
-        self.view.addSubview(self.heading)
         self.view.addSubview(self.tokenView)
         self.view.addSubview(self.tableView)
         
@@ -124,7 +131,22 @@ class MemberPickerController: BaseTableController, CLTokenInputViewDelegate {
         self.doneButton = UIBarButtonItem(title: doneTitle, style: .plain, target: self, action: #selector(inviteMembersAction(sender:)))
         self.doneButton.isEnabled = (self.flow == .internalCreate) ? true : false
         self.navigationItem.rightBarButtonItems = [self.doneButton]
-        self.navigationItem.leftBarButtonItems = [closeButton]
+        
+        if self.presented {
+            self.navigationItem.leftBarButtonItems = [closeButton]
+        }
+        
+        let button = UIButton(type: .custom)
+        button.frame = CGRect(x:0, y:0, width:36, height:36)
+        button.addTarget(self, action: #selector(inviteListAction(sender:)), for: .touchUpInside)
+        button.showsTouchWhenHighlighted = true
+        button.setImage(UIImage(named: "imgEnvelopeLight"), for: .normal)
+        button.imageEdgeInsets = UIEdgeInsetsMake(4, 4, 4, 4)
+
+        let invitesButton = UIBarButtonItem(title: "Pending invites", style: .plain, target: self, action: #selector(inviteListAction(sender:)))
+        let invitesIconButton = UIBarButtonItem(customView: button)
+        invitesButton.tintColor = Colors.brandColor
+        self.toolbarItems = [Ui.spacerFlex, invitesIconButton, invitesButton,  Ui.spacerFlex]
     }
 
     func bind() {
@@ -180,7 +202,7 @@ class MemberPickerController: BaseTableController, CLTokenInputViewDelegate {
                     if result == nil { return }
                     if result! {
                         cell.roleLabel?.isHidden = false
-                        cell.roleLabel?.text = "already a member"
+                        cell.roleLabel?.text = "channel member"
                         cell.roleLabel?.textColor = MaterialColor.lightGreen.base
                         cell.checkBox?.isHidden = true
                         cell.allowSelection = false
@@ -225,6 +247,11 @@ class MemberPickerController: BaseTableController, CLTokenInputViewDelegate {
             
             return cell
         }
+    }
+    
+    func inviteList() {
+        let controller = InviteListController()
+        self.navigationController?.pushViewController(controller, animated: true)
     }
     
     func inviteMembers() {

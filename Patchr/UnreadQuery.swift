@@ -35,15 +35,15 @@ class UnreadQuery: NSObject {
             }
         }
 
-        self.handle = FireController.db.child(self.path).observe(.value, with: { snap in
+        self.handle = FireController.db.child(self.path).observe(.value, with: { [weak self] snap in
             var total = 0
             if !(snap.value is NSNull) {
-                if self.level == .channel  {
+                if self?.level == .channel  {
                     if let messages = snap.value as? [String: Any] {
                         total = messages.count
                     }
                 }
-                else if self.level == .group {
+                else if self?.level == .group {
                     let channels = snap.value as! [String: Any]
                     for channelId in channels.keys {
                         if let messages = channels[channelId] as? [String: Any] {
@@ -51,7 +51,7 @@ class UnreadQuery: NSObject {
                         }
                     }
                 }
-                else if self.level == .user {
+                else if self?.level == .user {
                     let groups = snap.value as! [String: Any]
                     for groupId in groups.keys {
                         let channels = groups[groupId] as! [String: Any]
@@ -62,11 +62,11 @@ class UnreadQuery: NSObject {
                         }
                     }
                 }
-                self.total = total
+                self?.total = total
             }
             block(nil, total)
         }, withCancel: { error in
-            Log.w("Permission denied trying to read unreads: \(self.path!)")
+            Log.v("Permission denied trying to read unreads: \(self.path!)")
             block(error, nil)
         })
     }

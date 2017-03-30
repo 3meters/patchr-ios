@@ -189,20 +189,20 @@ class PasswordViewController: BaseEditViewController {
                     let username = self.userNameField.text!
                     let email = authUser.email!
                     UserDefaults.standard.set(email, forKey: Prefs.lastUserEmail)
-                    FireController.instance.addUser(userId: authUser.uid, username: username, then: { error, result in
+                    FireController.instance.addUser(userId: authUser.uid, username: username, then: { [weak self] error, result in
                         if error == nil {
                             authUser.sendEmailVerification()
                             Reporting.track("Account Created")
                             UserController.instance.setUserId(userId: authUser.uid) { result in
-                                if self.flow == .onboardCreate {
+                                if self?.flow == .onboardCreate {
                                     let controller = GroupCreateController()
-                                    controller.flow = self.flow
-                                    self.navigationController?.pushViewController(controller, animated: true)
+                                    controller.flow = (self?.flow)!
+                                    self?.navigationController?.pushViewController(controller, animated: true)
                                 }
-                                else if self.flow == .onboardInvite {
+                                else if self?.flow == .onboardInvite {
                                     let controller = EmptyViewController()
-                                    self.navigationController?.setViewControllers([controller], animated: true)
-                                    MainController.instance.routeDeepLink(link: self.inputInviteLink, flow: self.flow, error: nil)
+                                    self?.navigationController?.setViewControllers([controller], animated: true)
+                                    MainController.instance.routeDeepLink(link: (self?.inputInviteLink)!, flow: (self?.flow)!, error: nil)
                                 }
                             }
                         }

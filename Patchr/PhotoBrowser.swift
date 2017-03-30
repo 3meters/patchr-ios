@@ -14,7 +14,7 @@ import Photos
 class PhotoBrowser: IDMPhotoBrowser {
     
     var likes : Bool = false
-    var likeButton = AirLikeButton()
+    var likeButton : AirLikeButton?
     var message	: FireMessage?  // Needed to make the like button work
     var mode: PhotoBrowserMode = .browse
     
@@ -86,13 +86,13 @@ class PhotoBrowser: IDMPhotoBrowser {
             let fixedSpacer = UIBarButtonItem(barButtonSystemItem: .fixedSpace, target: self, action: nil)
             let shareButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.action, target: self, action: #selector(IDMPhotoBrowser.actionButtonPressed(_:)))    // Handled by IDMPhotoBrowser
             
-            self.likeButton.frame = CGRect(x:0, y:0, width:44, height:44)
-            self.likeButton.imageEdgeInsets = UIEdgeInsets(top: 10, left: 8, bottom: 10, right:8)
-            self.likeButton.isHidden = (self.message == nil)
+            self.likeButton = AirLikeButton(frame: CGRect(x:0, y:0, width:44, height:44))
+            self.likeButton!.imageEdgeInsets = UIEdgeInsets(top: 10, left: 8, bottom: 10, right:8)
+            self.likeButton!.isHidden = (self.message == nil)
             
             fixedSpacer.width = 16
             
-            let barLikeButton = UIBarButtonItem(customView: self.likeButton)
+            let barLikeButton = UIBarButtonItem(customView: self.likeButton!)
             
             var items = [UIBarButtonItem]()
             items.append(flexSpacer)
@@ -105,7 +105,7 @@ class PhotoBrowser: IDMPhotoBrowser {
             toolbar.items = items
             
             if self.mode == .gallery {
-                self.likeButton.isHidden = false
+                self.likeButton!.isHidden = false
             }
         }
     }
@@ -124,8 +124,8 @@ class PhotoBrowser: IDMPhotoBrowser {
     
 	func bind(message: FireMessage!) {
 		self.message = message
-        self.likeButton.bind(message: message)
-		self.likeButton.isHidden = (message == nil)
+        self.likeButton!.bind(message: message)
+		self.likeButton!.isHidden = (message == nil)
 	}
 }
 

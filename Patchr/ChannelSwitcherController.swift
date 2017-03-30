@@ -111,8 +111,9 @@ class ChannelSwitcherController: BaseTableController {
 	}
 
 	func showGroupsAction(sender: AnyObject?) {
-		let controller = MainController.groupPicker
-		controller.view.setNeedsLayout()
+		let controller = GroupSwitcherController()
+        controller.simplePicker = true
+        controller.view.setNeedsLayout()
 		let _ = self.navigationController?.pushViewController(controller, animated: true)
 	}
 
@@ -157,11 +158,11 @@ class ChannelSwitcherController: BaseTableController {
 	override func initialize() {
 		super.initialize()
         
-        self.handleAuthState = FIRAuth.auth()?.addStateDidChangeListener() { auth, user in
+        self.handleAuthState = FIRAuth.auth()?.addStateDidChangeListener() { [weak self] auth, user in
             if user == nil {
-                self.queryGroup?.remove()
-                self.queryUnreadsGroup?.remove()
-                self.queryUnreadsTotal?.remove()
+                self?.queryGroup?.remove()
+                self?.queryUnreadsGroup?.remove()
+                self?.queryUnreadsTotal?.remove()
             }
         }
         
@@ -293,19 +294,19 @@ class ChannelSwitcherController: BaseTableController {
 
 			self.queryUnreadsTotal?.remove()
 			self.queryUnreadsTotal = UnreadQuery(level: .user, userId: userId)
-			self.queryUnreadsTotal!.observe(with: { error, total in
-				if total != self.unreadTotal {
-					self.unreadTotal = total ?? 0
-					self.unreadOther = self.unreadTotal - self.unreadGroup
+			self.queryUnreadsTotal!.observe(with: { [weak self] error, total in
+				if total != self?.unreadTotal {
+					self?.unreadTotal = total ?? 0
+					self?.unreadOther = (self?.unreadTotal)! - (self?.unreadGroup)!
 				}
 			})
 
 			self.queryUnreadsGroup?.remove()
 			self.queryUnreadsGroup = UnreadQuery(level: .group, userId: userId, groupId: groupId)
-			self.queryUnreadsGroup!.observe(with: { error, total in
-				if total != self.unreadGroup {
-					self.unreadGroup = total ?? 0
-					self.unreadOther = self.unreadTotal - self.unreadGroup
+			self.queryUnreadsGroup!.observe(with: { [weak self] error, total in
+				if total != self?.unreadGroup {
+					self?.unreadGroup = total ?? 0
+					self?.unreadOther = (self?.unreadTotal)! - (self?.unreadGroup)!
 				}
 			})
 
@@ -343,9 +344,6 @@ class ChannelSwitcherController: BaseTableController {
                                     cell.accessoryType = cell.selectedOn ? .checkmark : .none
                                 }
                             })
-                        }
-                        else {
-                            Log.w("Ouch! User is member of channel that does not exist")
                         }
                     })
                 }
@@ -493,22 +491,21 @@ class SearchController: NSObject {
         }
         
         self.queryController.mapper = { (snap, then) in
-            if let channel = FireChannel.from(dict: snap.value as? [String: Any], id: snap.key) {
-                if channel.visibility == "open" {
-                    then(snap)
-                }
-                else { // Only add if user is currently a member
-                    let channelId = channel.id!
-                    let path = "member-channels/\(userId)/\(groupId)/\(channelId)"
-                    FireController.db.child(path).observeSingleEvent(of: .value, with: { snapMember in
-                        if !(snapMember.value is NSNull) {
-                            then(snap)
-                        }
-                        else {
-                            then(nil)
-                        }
-                    })
-                }
+            let channel = FireChannel(dict: snap.value as! [String: Any], id: snap.key)
+            if channel.visibility == "open" {
+                then(snap)
+            }
+            else { // Only add if user is currently a member
+                let channelId = channel.id!
+                let path = "member-channels/\(userId)/\(groupId)/\(channelId)"
+                FireController.db.child(path).observeSingleEvent(of: .value, with: { snapMember in
+                    if !(snapMember.value is NSNull) {
+                        then(snap)
+                    }
+                    else {
+                        then(nil)
+                    }
+                })
             }
         }
         
@@ -516,10 +513,9 @@ class SearchController: NSObject {
             let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! ChannelListCell
             if self != nil {
                 let snap = data as! FIRDataSnapshot
-                if let channel = FireChannel.from(dict: snap.value as? [String: Any], id: snap.key) {
-                    cell.reset()
-                    cell.bind(channel: channel, searching: true)
-                }
+                let channel = FireChannel(dict: snap.value as! [String: Any], id: snap.key)
+                cell.reset()
+                cell.bind(channel: channel, searching: true)
             }
             return cell
         }

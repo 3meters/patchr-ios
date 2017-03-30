@@ -36,21 +36,18 @@ class FireGroup: NSObject {
     var notifications: String?
     var role: String?
     
-    static func from(dict: [String: Any]?, id: String?) -> FireGroup? {
-        if dict != nil {
-            let group = FireGroup()
-            group.createdAt = dict!["created_at"] as? Int64
-            group.createdBy = dict!["created_by"] as? String
-            group.defaultChannels = dict!["default_channels"] as? [String]
-            group.id = id
-            group.modifiedAt = dict!["modified_at"] as? Int64
-            group.modifiedBy = dict!["modified_by"] as? String
-            group.ownedBy = dict!["owned_by"] as? String
-            group.photo = FirePhoto.from(dict: dict!["photo"] as! [String : Any]?)
-            group.title = dict!["title"] as? String
-            return group
+    init(dict: [String: Any], id: String?) {
+        self.createdAt = dict["created_at"] as? Int64
+        self.createdBy = dict["created_by"] as? String
+        self.defaultChannels = dict["default_channels"] as? [String]
+        self.id = id
+        self.modifiedAt = dict["modified_at"] as? Int64
+        self.modifiedBy = dict["modified_by"] as? String
+        self.ownedBy = dict["owned_by"] as? String
+        if (dict["photo"] as? [String : Any]) != nil {
+            self.photo = FirePhoto(dict: dict["photo"] as! [String : Any])
         }
-        return nil
+        self.title = dict["title"] as? String
     }
     
     func membershipClear() {

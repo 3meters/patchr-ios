@@ -286,10 +286,10 @@ class MemberSettingsController: UITableViewController {
                 let userId = self.inputUser.id!
                 let groupId = StateController.instance.groupId!
                 if self.target == .group {
-                    FireController.instance.removeUserFromGroup(userId: userId, groupId: groupId) { success in
-                        self.progress?.hide(true)
+                    FireController.instance.removeUserFromGroup(userId: userId, groupId: groupId) { [weak self] success in
+                        self?.progress?.hide(true)
                         if success {
-                            self.closeAction(sender: nil)
+                            self?.closeAction(sender: nil)
                         }
                     }
                 }

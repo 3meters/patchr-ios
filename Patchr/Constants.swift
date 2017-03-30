@@ -33,6 +33,7 @@ func PerUserKey(key: String) -> String {
 
 struct Config {
 
+    static let logLevel: Int = LogLevel.debug
     static let device = UIDevice.current
     static let iosVersion = NSString(string: device.systemVersion).doubleValue
     static let iOS9 = iosVersion >= 9
@@ -123,8 +124,12 @@ public struct Prefs {
 public struct Events {
     static let ChannelDidSwitch = "ChannelDidSwitch"
     static let ChannelDidUpdate = "ChannelDidUpdate"
+    static let ChannelConnected = "ChannelConnected"
+    static let ChannelDisconnected = "ChannelDisconnected"
     static let GroupDidSwitch = "GroupDidSwitch"
     static let GroupDidUpdate = "GroupDidUpdate"
+    static let GroupConnected = "GroupConnected"
+    static let GroupDisconnected = "GroupDisconnected"
     static let MessageDidUpdate = "MessageDidUpdate"
     static let PhotoDidChange = "PhotoDidChange"
     static let PhotoRemoved = "PhotoRemoved"
@@ -170,7 +175,15 @@ public struct SizeCategory {
     static let standard = "standard"
 }
 
-enum AppConfiguration {
+public struct LogLevel {
+    static let verbose = 1
+    static let debug = 2
+    static let info = 3
+    static let warning = 4
+    static let error = 5
+}
+
+public enum AppConfiguration {
     case debug
     case testFlight
     case appStore

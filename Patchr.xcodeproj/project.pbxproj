@@ -59,6 +59,7 @@
 		E22489721E5C92B900A96F27 /* Date.swift in Sources */ = {isa = PBXBuildFile; fileRef = E22489711E5C92B900A96F27 /* Date.swift */; };
 		E227294B1CEA743600913041 /* GalleryGridViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E227294A1CEA743600913041 /* GalleryGridViewController.swift */; };
 		E227294D1CEA7D0600913041 /* GalleryViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E227294C1CEA7D0600913041 /* GalleryViewCell.swift */; };
+		E2274B011E8D53FB005F4CF7 /* ContainerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2274B001E8D53FB005F4CF7 /* ContainerController.swift */; };
 		E227708D1C46C01800866733 /* MBProgressHUD+MBProgressHudAccessible.m in Sources */ = {isa = PBXBuildFile; fileRef = E227708C1C46C01800866733 /* MBProgressHUD+MBProgressHudAccessible.m */; };
 		E229CD121C1337A700F5BDAC /* AirLabelBase.swift in Sources */ = {isa = PBXBuildFile; fileRef = E229CD111C1337A700F5BDAC /* AirLabelBase.swift */; };
 		E23682851E1BFE3700F9FDFB /* AirButtonBase.swift in Sources */ = {isa = PBXBuildFile; fileRef = E23682841E1BFE3700F9FDFB /* AirButtonBase.swift */; };
@@ -76,6 +77,9 @@
 		E24A87261B2DC0AB00E6F96B /* ThumbnailCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E24A87251B2DC0AB00E6F96B /* ThumbnailCollectionViewCell.swift */; };
 		E24D74521BB865F50061F339 /* AwsS3.swift in Sources */ = {isa = PBXBuildFile; fileRef = E28177751B5C39E200D65AC1 /* AwsS3.swift */; };
 		E24D74541BBAED5F0061F339 /* TaskQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = E24D74531BBAED5F0061F339 /* TaskQueue.swift */; };
+		E24D84D11E89E16300BFE408 /* UserLobbyController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E24D84D01E89E16300BFE408 /* UserLobbyController.swift */; };
+		E24D84D31E8AF1D300BFE408 /* AirNavigationBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = E24D84D21E8AF1D300BFE408 /* AirNavigationBar.swift */; };
+		E24D84D51E8B0F1400BFE408 /* SlideViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E24D84D41E8B0F1400BFE408 /* SlideViewController.swift */; };
 		E25173C41E0982450030259A /* DrawerHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E25173C31E0982450030259A /* DrawerHeaderView.swift */; };
 		E25173C71E09CB9D0030259A /* UIBarButtonItem+Badge.m in Sources */ = {isa = PBXBuildFile; fileRef = E25173C61E09CB9D0030259A /* UIBarButtonItem+Badge.m */; };
 		E25327B21B0FCE9C00990A81 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = E25327B11B0FCE9C00990A81 /* Constants.swift */; };
@@ -262,6 +266,7 @@
 		E22489711E5C92B900A96F27 /* Date.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Date.swift; sourceTree = "<group>"; };
 		E227294A1CEA743600913041 /* GalleryGridViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GalleryGridViewController.swift; sourceTree = "<group>"; };
 		E227294C1CEA7D0600913041 /* GalleryViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = GalleryViewCell.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
+		E2274B001E8D53FB005F4CF7 /* ContainerController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContainerController.swift; sourceTree = "<group>"; };
 		E227708B1C46C01800866733 /* MBProgressHUD+MBProgressHudAccessible.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MBProgressHUD+MBProgressHudAccessible.h"; sourceTree = "<group>"; };
 		E227708C1C46C01800866733 /* MBProgressHUD+MBProgressHudAccessible.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "MBProgressHUD+MBProgressHudAccessible.m"; sourceTree = "<group>"; };
 		E229CD111C1337A700F5BDAC /* AirLabelBase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirLabelBase.swift; sourceTree = "<group>"; };
@@ -283,6 +288,9 @@
 		E24773441DCA254F00EFB46F /* FloatPhoneField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FloatPhoneField.swift; sourceTree = "<group>"; };
 		E24A87251B2DC0AB00E6F96B /* ThumbnailCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ThumbnailCollectionViewCell.swift; sourceTree = "<group>"; };
 		E24D74531BBAED5F0061F339 /* TaskQueue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TaskQueue.swift; sourceTree = "<group>"; };
+		E24D84D01E89E16300BFE408 /* UserLobbyController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserLobbyController.swift; sourceTree = "<group>"; };
+		E24D84D21E8AF1D300BFE408 /* AirNavigationBar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirNavigationBar.swift; sourceTree = "<group>"; };
+		E24D84D41E8B0F1400BFE408 /* SlideViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SlideViewController.swift; sourceTree = "<group>"; };
 		E25173C31E0982450030259A /* DrawerHeaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = DrawerHeaderView.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		E25173C51E09CB9D0030259A /* UIBarButtonItem+Badge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIBarButtonItem+Badge.h"; sourceTree = "<group>"; };
 		E25173C61E09CB9D0030259A /* UIBarButtonItem+Badge.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIBarButtonItem+Badge.m"; sourceTree = "<group>"; };
@@ -721,7 +729,7 @@
 				E2A28E6C1B49D88800B3A2FE /* AirLikeButton.swift */,
 				E2D12A781C08FA0E00DE507E /* AirLinkButton.swift */,
 				E2064BF01BBF3C26009C7B6A /* AirMuteView.swift */,
-				E2E9AAA61CEF86470057698F /* AirNavigationController.swift */,
+				E24D84D21E8AF1D300BFE408 /* AirNavigationBar.swift */,
 				E2064BF41BC18A66009C7B6A /* AirProgress.swift */,
 				E2B8A4B51CE7875400A28D3A /* AirRadialMenu.swift */,
 				E297305D1C136E8300B9433B /* AirRadioButton.swift */,
@@ -754,6 +762,7 @@
 		E2D25DC61B22164300E51461 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				E2E9AAA61CEF86470057698F /* AirNavigationController.swift */,
 				E2D12A7A1C091C4D00DE507E /* BaseViewController.swift */,
 				E28A481E1DE72E0400A01B46 /* BaseTableController.swift */,
 				E26B0B301DEF7C130086FDAD /* BaseSlackController.swift */,
@@ -762,6 +771,7 @@
 				E2F5C5731E086AB900FCA59C /* ChannelSwitcherController.swift */,
 				9FDCC7D2BF8341DCBB416DC4 /* ChannelViewController.swift */,
 				E26A02FC1DF5BE0D00EE32D3 /* ContactPickerController.swift */,
+				E2274B001E8D53FB005F4CF7 /* ContainerController.swift */,
 				E2999EE21DC25AAE005C69D8 /* EmptyViewController.swift */,
 				E2B756A41D84565F00C102EC /* GroupSwitcherController.swift */,
 				E2539EA31E269E45000FFE40 /* InviteListController.swift */,
@@ -771,6 +781,8 @@
 				E266A1BF1DEB4E8900C71C28 /* MemberPickerController.swift */,
 				E259082D1DC69BBE00CB6C3F /* MemberViewController.swift */,
 				E21B408D1E60A59E00C9143B /* SideMenuViewController.swift */,
+				E24D84D41E8B0F1400BFE408 /* SlideViewController.swift */,
+				E24D84D01E89E16300BFE408 /* UserLobbyController.swift */,
 				E2F618DE1B02667A0055D09C /* Edit */,
 				E200E62C1DDD261B00E3457F /* Photos */,
 				9FDCC1ACB8C2807530D788EA /* Settings */,
@@ -1073,6 +1085,7 @@
 				E2064BF51BC18A66009C7B6A /* AirProgress.swift in Sources */,
 				E241D15A1B1B3FCE00702E01 /* UIView+BorderLayer.m in Sources */,
 				E2810BA61DC8E6930013AEA0 /* PresenceView.swift in Sources */,
+				E24D84D31E8AF1D300BFE408 /* AirNavigationBar.swift in Sources */,
 				E2D12A7F1C0A090200DE507E /* Theming.swift in Sources */,
 				E2B2CAB21C553A8900CAE183 /* BaseEditViewController.swift in Sources */,
 				E2FA133E1D8220DD0057F287 /* MenuItemView.swift in Sources */,
@@ -1117,6 +1130,7 @@
 				E21B40921E60A65600C9143B /* GroupMiniHeaderView.swift in Sources */,
 				E2B756A51D84566000C102EC /* GroupSwitcherController.swift in Sources */,
 				E227708D1C46C01800866733 /* MBProgressHUD+MBProgressHudAccessible.m in Sources */,
+				E24D84D51E8B0F1400BFE408 /* SlideViewController.swift in Sources */,
 				E2D12A791C08FA0E00DE507E /* AirLinkButton.swift in Sources */,
 				E24773451DCA254F00EFB46F /* FloatPhoneField.swift in Sources */,
 				E2C7C5CB1B2CF2F80045038A /* ImageResult.swift in Sources */,
@@ -1176,6 +1190,7 @@
 				9FDCC8F9EEEF77DEBE173AFA /* PhotoSearchController.swift in Sources */,
 				E2BC53391DE5DE5600C97A2C /* UserController.swift in Sources */,
 				E2DA16DF1DD142E00096D86F /* Emoji.swift in Sources */,
+				E24D84D11E89E16300BFE408 /* UserLobbyController.swift in Sources */,
 				E227294D1CEA7D0600913041 /* GalleryViewCell.swift in Sources */,
 				9FDCC8FD0E124B99BA23D71A /* FireGroup.swift in Sources */,
 				E259082E1DC69BBE00CB6C3F /* MemberViewController.swift in Sources */,
@@ -1188,6 +1203,7 @@
 				9FDCCE62CE764FDC39D41C5F /* ProfileEditViewController.swift in Sources */,
 				9FDCCFD4969C57E5231CF509 /* AccountEditViewController.swift in Sources */,
 				E2BC53371DE5DE4500C97A2C /* StateController.swift in Sources */,
+				E2274B011E8D53FB005F4CF7 /* ContainerController.swift in Sources */,
 				E2DA16D91DD0F7280096D86F /* AirUIView.swift in Sources */,
 				9FDCC7933CB73AE451A0EF96 /* SlideAnimationController.swift in Sources */,
 				9FDCC2C0E1041D54A7D10BD2 /* SlideBounceAnimationController.swift in Sources */,

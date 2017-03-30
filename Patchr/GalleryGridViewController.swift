@@ -21,7 +21,6 @@ class GalleryGridViewController: UICollectionViewController {
 	var footerView: UIView!
 	var loadMoreMessage: String = "LOAD MORE"
 	var morePhotos = false
-    var photoBrowser: PhotoBrowser!
 	
     var largePhotoIndexPath : IndexPath? {
 		
@@ -84,7 +83,7 @@ class GalleryGridViewController: UICollectionViewController {
     
     deinit {
         SDWebImagePrefetcher.shared().cancelPrefetching()
-        Log.d("Prefetch cancelled if active")
+        Log.v("Grid prefetch cancelled if active")
     }
 
 	/*--------------------------------------------------------------------------------------------
@@ -135,7 +134,7 @@ class GalleryGridViewController: UICollectionViewController {
 
 extension GalleryGridViewController: SDWebImagePrefetcherDelegate {
     func imagePrefetcher(_ imagePrefetcher: SDWebImagePrefetcher, didFinishWithTotalCount totalCount: UInt, skippedCount: UInt) {
-        Log.d("Prefetch complete: total: \(totalCount), skipped: \(skippedCount)")
+        Log.v("Grid prefetch complete: total: \(totalCount), skipped: \(skippedCount)")
     }
 }
 
@@ -151,7 +150,7 @@ extension GalleryGridViewController: IDMPhotoBrowserDelegate {
 		let index = Int(index)		
 		if let browser = photoBrowser as? PhotoBrowser {
 			let displayPhoto = self.displayPhotosSorted![index]
-			browser.likeButton.bind(displayPhoto: displayPhoto)
+			browser.likeButton?.bind(displayPhoto: displayPhoto)
 		}
 	}
 }
@@ -165,17 +164,17 @@ extension GalleryGridViewController { /* UICollectionViewDelegate, UICollectionV
 		*/
 		let cell = collectionView.cellForItem(at: indexPath) as! GalleryViewCell
         
-        self.photoBrowser = PhotoBrowser(photos: self.displayPhotosSorted! as [Any], animatedFrom: cell)
-        self.photoBrowser.mode = .gallery
-        self.photoBrowser.useWhiteBackgroundColor = true
-        self.photoBrowser.usePopAnimation = true
-        self.photoBrowser.disableVerticalSwipe = false
-        self.photoBrowser.autoHideInterface = false
-        self.photoBrowser.delegate = self
+        let photoBrowser = PhotoBrowser(photos: self.displayPhotosSorted! as [Any], animatedFrom: cell)
+        photoBrowser!.mode = .gallery
+        photoBrowser!.useWhiteBackgroundColor = true
+        photoBrowser!.usePopAnimation = true
+        photoBrowser!.disableVerticalSwipe = false
+        photoBrowser!.autoHideInterface = false
+        photoBrowser!.delegate = self
         
-		self.photoBrowser.setInitialPageIndex(UInt(indexPath.row))
-		self.photoBrowser.scaleImage = cell.displayImageView.image  // Used because final image might have different aspect ratio than initially
-		self.navigationController!.present(self.photoBrowser, animated: true, completion: nil)
+		photoBrowser!.setInitialPageIndex(UInt(indexPath.row))
+		photoBrowser!.scaleImage = cell.displayImageView.image  // Used because final image might have different aspect ratio than initially
+		self.navigationController!.present(photoBrowser!, animated: true, completion: nil)
 	}
 	
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
