@@ -12,7 +12,6 @@ import Contacts
 class InviteListCell: UITableViewCell {
     
     @IBOutlet weak var iconImage: UIImageView?
-    @IBOutlet weak var photoControl: PhotoControl?
     @IBOutlet weak var title: UILabel?
     @IBOutlet weak var subtitle: UILabel?
     @IBOutlet weak var invitedAs: UILabel?
@@ -21,23 +20,19 @@ class InviteListCell: UITableViewCell {
     @IBOutlet weak var resendButton: AirButton?
     @IBOutlet weak var revokeButton: AirButton?
     
+    var data: AnyObject?
     var allowSelection = true
     
     override func setSelected(_ selected: Bool, animated: Bool) {
-        let color = self.photoControl?.backgroundColor
         super.setSelected(selected, animated: animated)
-        self.photoControl?.backgroundColor = color
     }
     
     override func setHighlighted(_ highlighted: Bool, animated: Bool) {
-        let color = self.photoControl?.backgroundColor
         super.setHighlighted(highlighted, animated: animated)
-        self.photoControl?.backgroundColor = color
     }
     
     func reset() {
         self.title?.text = nil
-        self.photoControl?.reset()
         self.subtitle?.text = nil
         self.subtitle?.isHidden = false
         self.resendButton?.isHidden = true
@@ -59,8 +54,11 @@ class InviteListCell: UITableViewCell {
                 if user.email != nil {
                     self.subtitle?.text = "@\(user.username!) • \(user.email!)"
                 }
-                else {
+                else if user.role != nil {
                     self.subtitle?.text = "@\(user.username!) • (email hidden)"
+                }
+                else {
+                    self.subtitle?.text = "@\(user.username!)"
                 }
             }
             
@@ -82,16 +80,6 @@ class InviteListCell: UITableViewCell {
             self.invitedBy?.text = "Invited by \(username)"
             self.actionAt?.text = "Accepted \(DateUtils.dateMediumString(timestamp: acceptedAt))"
             self.actionAt?.textColor = MaterialColor.lightGreen.darken1
-            
-            let userId = user.id!
-            let fullName = user.fullName
-            if let photo = user.profile?.photo {
-                let url = Cloudinary.url(prefix: photo.filename, category: SizeCategory.profile)
-                self.photoControl!.bind(url: url, name: fullName, colorSeed: userId)
-            }
-            else {
-                self.photoControl?.bind(url: nil, name: fullName, colorSeed: user.id)
-            }
         }
     }
     

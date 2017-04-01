@@ -149,10 +149,4 @@ struct UIShared {
         
         return progress
     }
-	
-    static func hasConnectivity() -> Bool {
-        let reachability: Reachability? = Reachability()
-        let networkStatus: Reachability.NetworkStatus = (reachability?.currentReachabilityStatus)!
-        return (networkStatus != .notReachable)
-    }
 }

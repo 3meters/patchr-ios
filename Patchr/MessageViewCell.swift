@@ -229,9 +229,9 @@ class MessageViewCell: AirUIView {
         self.userName.text = message.creator?.username
         let fullName = message.creator?.fullName
         
-        if let photo = message.creator?.profile?.photo {
+        if let profilePhoto = message.creator?.profile?.photo {
             if !self.template {
-                let url = Cloudinary.url(prefix: photo.filename, category: SizeCategory.profile)
+                let url = Cloudinary.url(prefix: profilePhoto.filename, category: SizeCategory.profile)
                 self.userPhotoControl.bind(url: url, name: fullName, colorSeed: message.creator?.id)
             }
         }

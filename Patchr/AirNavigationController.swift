@@ -10,14 +10,6 @@ import UIKit
 
 class AirNavigationController: UINavigationController {
     
-    override var preferredStatusBarUpdateAnimation: UIStatusBarAnimation {
-        return .slide
-    }
-    
-    override var prefersStatusBarHidden: Bool {
-        return UserDefaults.standard.bool(forKey: Prefs.statusBarHidden)
-    }
-    
     deinit {
         Log.v("\(self.className) released")
     }

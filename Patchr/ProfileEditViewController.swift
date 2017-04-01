@@ -55,9 +55,11 @@ class ProfileEditViewController: BaseEditViewController {
         let userId = UserController.instance.userId!
         let userQuery = UserQuery(userId: userId, groupId: nil)
         userQuery.once(with: { [weak self] error, user in
-            if (user != nil) {
-                self?.user = user
-                self?.bind()
+            if let strongSelf = self {
+                if (user != nil) {
+                    strongSelf.user = user
+                    strongSelf.bind()
+                }
             }
         })
     }
@@ -279,6 +281,7 @@ class ProfileEditViewController: BaseEditViewController {
 
         if updates.keys.count > 0 {
             FireController.db.child("users/\(userId)/profile").updateChildValues(updates)
+            NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.UserDidUpdate), object: self, userInfo: ["user_id": userId])
         }
         self.close(animated: true)
     }

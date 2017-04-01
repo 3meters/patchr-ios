@@ -272,6 +272,7 @@ extension GroupSwitcherController: UITableViewDelegate {
         /* User last channel if available */
         let groupId = cell.group.id!
         let userId = UserController.instance.userId!
+        let role = cell.group.role!
         
         if let lastChannelIds = UserDefaults.standard.dictionary(forKey: PerUserKey(key: Prefs.lastChannelIds)),
             let lastChannelId = lastChannelIds[groupId] as? String {
@@ -279,7 +280,7 @@ extension GroupSwitcherController: UITableViewDelegate {
             validateQuery.once(with: { error, channel in
                 if channel == nil {
                     Log.w("Last channel invalid: \(lastChannelId): trying auto pick channel")
-                    FireController.instance.autoPickChannel(groupId: groupId) { channelId in
+                    FireController.instance.autoPickChannel(groupId: groupId, role: role) { channelId in
                         if channelId != nil {
                             self.showChannel(channelId: channelId!, groupId: groupId)
                         }
@@ -291,7 +292,7 @@ extension GroupSwitcherController: UITableViewDelegate {
             })
         }
         else {
-            FireController.instance.autoPickChannel(groupId: groupId) { channelId in
+            FireController.instance.autoPickChannel(groupId: groupId, role: role) { channelId in
                 if channelId != nil {
                     self.showChannel(channelId: channelId!, groupId: groupId)
                 }

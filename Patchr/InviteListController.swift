@@ -84,6 +84,41 @@ class InviteListController: BaseTableController, UITableViewDelegate {
         }
     }
     
+    func longPressAction(sender: UILongPressGestureRecognizer) {
+        if sender.state == UIGestureRecognizerState.began {
+            let point = sender.location(in: self.tableView)
+            if let indexPath = self.tableView.indexPathForRow(at: point) {
+                let cell = self.tableView.cellForRow(at: indexPath) as! InviteListCell
+                let snap = self.queryController.snapshot(at: indexPath.row)
+                var invite = snap.value as! [String: Any]
+                invite["id"] = snap.key
+                showInviteActions(invite: invite, sourceView: cell.contentView)
+            }
+        }
+    }
+    
+    func deleteInviteAction(invite: [String: Any]) {
+        DeleteConfirmationAlert(
+            title: "Confirm Delete",
+            message: "Are you sure you want to delete this? Deleting an accepted invite only clears it from list.",
+            actionTitle: "Delete", cancelTitle: "Cancel", delegate: self) {
+                doIt in
+                if doIt {
+                    if let inviteId = invite["id"] as? String,
+                        let inviter = invite["inviter"] as? [String: Any],
+                        let inviterId = inviter["id"] as? String,
+                        let group = invite["group"] as? [String: Any],
+                        let groupId = group["id"] as? String {
+                        FireController.instance.deleteInvite(groupId: groupId, inviterId: inviterId, inviteId: inviteId) { success in
+                            if success {
+                                UIShared.toast(message: "Invite deleted")
+                            }
+                        }
+                    }
+                }
+        }
+    }
+    
     /*--------------------------------------------------------------------------------------------
      * Notifications
      *--------------------------------------------------------------------------------------------*/
@@ -148,9 +183,15 @@ class InviteListController: BaseTableController, UITableViewDelegate {
                 if status == "accepted" {
                     let userId = invite["accepted_by"] as! String
                     let userQuery = UserQuery(userId: userId, groupId: groupId)
-                    userQuery.once(with: { error, user in
-                        if user != nil {
-                            cell.bind(user: user!, invite: invite)
+                    userQuery.once(with: { [weak self] error, user in
+                        if let strongSelf = self {
+                            if user != nil {
+                                let recognizer = UILongPressGestureRecognizer(target: strongSelf, action: #selector(strongSelf.longPressAction(sender:)))
+                                recognizer.minimumPressDuration = TimeInterval(0.2)
+                                cell.addGestureRecognizer(recognizer)
+                                cell.data = invite as AnyObject?
+                                cell.bind(user: user!, invite: invite)
+                            }
                         }
                     })
                 }
@@ -195,6 +236,29 @@ class InviteListController: BaseTableController, UITableViewDelegate {
         ref.setValue(task)
         UIShared.toast(message: "Invite re-sent")
     }
+    
+    func showInviteActions(invite: [String: Any], sourceView: UIView?) {
+        
+        let sheet = UIAlertController(title: nil, message: nil, preferredStyle: UIAlertControllerStyle.actionSheet)
+        
+        let delete = UIAlertAction(title: "Delete invite", style: .destructive) { action in
+            self.deleteInviteAction(invite: invite)
+        }
+        let cancel = UIAlertAction(title: "Cancel", style: .cancel) { action in
+            sheet.dismiss(animated: true, completion: nil)
+        }
+        
+        sheet.addAction(delete)
+        sheet.addAction(cancel)
+        
+        if let presenter = sheet.popoverPresentationController, let sourceView = sourceView {
+            presenter.sourceView = sourceView
+            presenter.sourceRect = sourceView.bounds
+        }
+        
+        present(sheet, animated: true, completion: nil)
+    }
+
 }
 
 extension InviteListController: TwicketSegmentedControlDelegate {

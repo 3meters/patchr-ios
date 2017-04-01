@@ -44,7 +44,6 @@ class LobbyViewController: UIViewController {
 		
 		self.view.endEditing(true)
 		self.navigationController?.setNavigationBarHidden(true, animated: animated)
-		self.setNeedsStatusBarAppearanceUpdate()
 		if self.firstLaunch {
 			self.imageLogo.anchorInCenter(withWidth: 72, height: 72)
 		}
@@ -73,16 +72,16 @@ class LobbyViewController: UIViewController {
                             
                             UIView.animate(withDuration: 1.0
                                 , delay: 0
-                                , usingSpringWithDamping: 0.5
-                                , initialSpringVelocity: 6.0
+                                , usingSpringWithDamping: 0.4
+                                , initialSpringVelocity: 4.0
                                 , options: [.curveEaseIn]
                                 , animations: { [weak self] in
                                     self?.imageLogo.transform = CGAffineTransform(translationX: 0, y: -156)
                                 }
                                 , completion: { finished in
                                     if finished {
-                                        self.appName.fadeIn(duration: 0.5)
-                                        self.buttonGroup.fadeIn(duration: 1.0)
+                                        self.appName.fadeIn(duration: 0.3)
+                                        self.buttonGroup.fadeIn(duration: 0.7)
                                     }
                             })
                     })
@@ -94,7 +93,6 @@ class LobbyViewController: UIViewController {
 	override func viewWillDisappear(_ animated: Bool) {
 		super.viewWillDisappear(animated)
 		self.navigationController?.setNavigationBarHidden(false, animated: animated)
-		self.setNeedsStatusBarAppearanceUpdate()
 	}
 	
     /*--------------------------------------------------------------------------------------------
@@ -137,7 +135,7 @@ class LobbyViewController: UIViewController {
     *--------------------------------------------------------------------------------------------*/
 	
 	func initialize() {
-		
+        
 		self.imageBackground.image = UIImage(named: "imgLobbyBackground")
 		self.imageBackground.contentMode = UIViewContentMode.scaleToFill
 		self.view.addSubview(self.imageBackground)
@@ -176,14 +174,6 @@ class LobbyViewController: UIViewController {
 			self.buttonGroup.alpha = 0.0
 		}
 	}
-    
-    override var preferredStatusBarUpdateAnimation: UIStatusBarAnimation {
-        return UIStatusBarAnimation.slide
-    }
-    
-    override var prefersStatusBarHidden: Bool {
-        return UserDefaults.standard.bool(forKey: Prefs.statusBarHidden)
-    }
     
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return UIStatusBarStyle.lightContent

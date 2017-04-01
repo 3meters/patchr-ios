@@ -15,6 +15,8 @@ class SideMenuViewController: BaseTableController, UITableViewDelegate, UITableV
 
     var user: FireUser?
     var group: FireGroup?
+    
+    var userQuery: UserQuery!
  
     var userHeader: UserMiniHeaderView!
     var groupHeader: GroupMiniHeaderView!
@@ -115,10 +117,14 @@ class SideMenuViewController: BaseTableController, UITableViewDelegate, UITableV
     func bind() {
         if let userId = UserController.instance.userId,
             let groupId = StateController.instance.groupId {
-            UserQuery(userId: userId, groupId: groupId).once(with: { [weak self] error, user in
-                if user != nil {
-                    self?.user = user
-                    self?.userHeader.bind(user: self?.user)
+            self.userQuery?.remove()
+            self.userQuery = UserQuery(userId: userId, groupId: groupId)
+            self.userQuery.observe(with: { [weak self] error, user in
+                if let strongSelf = self {
+                    if user != nil {
+                        strongSelf.user = user
+                        strongSelf.userHeader.bind(user: strongSelf.user)
+                    }
                 }
             })
             GroupQuery(groupId: groupId, userId: userId).once(with: { [weak self] error, group in
@@ -150,13 +156,18 @@ extension SideMenuViewController {
         }
         if selectedCell == self.inviteCell {
             
-            let controller = ContactPickerController()
-            controller.flow = .none
-            controller.inputRole = "members"
-            controller.inputGroupId = StateController.instance.groupId!
-            controller.inputGroupTitle = StateController.instance.group.title
-            let wrapper = AirNavigationController(rootViewController: controller)
-            UIViewController.topMostViewController()?.present(wrapper, animated: true, completion: nil)
+            if StateController.instance.group?.role == "guest" {
+                UIShared.toast(message: "Guests can\'t send group invites")
+            }
+            else {
+                let controller = ContactPickerController()
+                controller.flow = .none
+                controller.inputRole = "members"
+                controller.inputGroupId = StateController.instance.groupId!
+                controller.inputGroupTitle = StateController.instance.group.title
+                let wrapper = AirNavigationController(rootViewController: controller)
+                UIViewController.topMostViewController()?.present(wrapper, animated: true, completion: nil)
+            }
         }
         if selectedCell == self.profileCell {
             

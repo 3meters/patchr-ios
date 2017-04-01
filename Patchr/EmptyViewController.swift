@@ -37,7 +37,6 @@ class EmptyViewController: UIViewController {
         
         self.view.endEditing(true)
         self.navigationController?.setNavigationBarHidden(true, animated: animated)
-        self.setNeedsStatusBarAppearanceUpdate()
         self.imageLogo.anchorInCenter(withWidth: 72, height: 72)
     }
     
@@ -48,7 +47,6 @@ class EmptyViewController: UIViewController {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         self.navigationController?.setNavigationBarHidden(false, animated: animated)
-        self.setNeedsStatusBarAppearanceUpdate()
     }
 
     deinit {
@@ -114,14 +112,6 @@ class EmptyViewController: UIViewController {
                         })
                 })
         })
-    }
-    
-    override var preferredStatusBarUpdateAnimation: UIStatusBarAnimation {
-        return UIStatusBarAnimation.slide
-    }
-    
-    override var prefersStatusBarHidden: Bool {
-        return UserDefaults.standard.bool(forKey: Prefs.statusBarHidden)
     }
     
     override var preferredStatusBarStyle: UIStatusBarStyle {

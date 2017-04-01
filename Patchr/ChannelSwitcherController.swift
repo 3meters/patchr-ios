@@ -264,31 +264,29 @@ class ChannelSwitcherController: BaseTableController {
 
 		if let userId = UserController.instance.userId,
 		   let groupId = StateController.instance.groupId {
-
-			self.navigationItem.setRightBarButtonItems([self.showGroupsButton], animated: true)
-
-			let path = "member-groups/\(userId)/\(groupId)/role"
-			FireController.db.child(path).observeSingleEvent(of: .value, with: { [weak self] snap in
-                if let role = snap.value as? String, self != nil {
-                    self!.role = role
-                    if role != "guest" {
-                        self!.navigationItem.setRightBarButtonItems([self!.showGroupsButton, self!.searchButton], animated: true)
-                        self!.searchController.load()
-                    }
-
-                    let addButton = UIBarButtonItem(title: "New Channel", style: .plain, target: self, action: #selector(self?.addAction(sender:)))
-                    addButton.tintColor = Colors.brandColor
-                    self?.toolbarItems = [Ui.spacerFlex, addButton, Ui.spacerFlex]
-                }
-            }, withCancel: { error in
-                Log.w("Permission denied: \(path)")
-            })
+            
+            self.navigationItem.setRightBarButtonItems([self.showGroupsButton], animated: true)
             
             self.queryGroup?.remove()
-            self.queryGroup = GroupQuery(groupId: groupId, userId: nil)
+            self.queryGroup = GroupQuery(groupId: groupId, userId: userId)
             self.queryGroup!.observe(with: { [weak self] error, trigger, group in
-                if self?.titleButton != nil && group != nil {
-                    self?.titleView.text = group!.title
+                if let strongSelf = self {
+                    if strongSelf.titleButton != nil && group != nil {
+                        strongSelf.titleView.text = group!.title
+                    }
+                    if let role = group?.role {
+                        strongSelf.role = role
+                        if role != "guest" {
+                            strongSelf.navigationItem.setRightBarButtonItems([strongSelf.showGroupsButton, strongSelf.searchButton], animated: false)
+                            strongSelf.searchController.load()
+                        }
+                        else {
+                            strongSelf.navigationItem.setRightBarButtonItems([strongSelf.showGroupsButton], animated: false)
+                        }
+                    }
+                    let addButton = UIBarButtonItem(title: "New Channel", style: .plain, target: strongSelf, action: #selector(strongSelf.addAction(sender:)))
+                    addButton.tintColor = Colors.brandColor
+                    strongSelf.toolbarItems = [Ui.spacerFlex, addButton, Ui.spacerFlex]
                 }
             })
 

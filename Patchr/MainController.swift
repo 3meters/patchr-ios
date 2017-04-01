@@ -146,6 +146,7 @@ class MainController: NSObject, iRateDelegate {
             showLobby() {
                 self.bootstrapping = false
                 if let link = MainController.instance.link {
+                    MainController.instance.link = nil
                     MainController.instance.routeDeepLink(link: link, error: nil)
                 }
             }
@@ -157,6 +158,7 @@ class MainController: NSObject, iRateDelegate {
                     self.showUserLobby() {
                         self.bootstrapping = false
                         if let link = MainController.instance.link {
+                            MainController.instance.link = nil
                             MainController.instance.routeDeepLink(link: link, error: nil)
                         }
                     }
@@ -165,6 +167,7 @@ class MainController: NSObject, iRateDelegate {
                     self.showGroupSwitcher() {
                         self.bootstrapping = false
                         if let link = MainController.instance.link {
+                            MainController.instance.link = nil
                             MainController.instance.routeDeepLink(link: link, error: nil)
                         }
                     }
@@ -297,13 +300,16 @@ class MainController: NSObject, iRateDelegate {
          * Logged in: open in channel
          * Not logged in: email -> username|password -> open channel
          */
-        MainController.instance.link = nil
         if UserController.instance.authenticated {
             let groupId = (link["group_id"] as! String)
             let userId = UserController.instance.userId!
             
-            /* Must be group member or we get permission denied */
+            /* Must be group member or we get permission denied. Weirdly, we can get callbacks on with and withCancel
+               when there is no membership record. So we have to use a flag to prevent double handling. */
+            var inviteProcessing = false
             FireController.db.child("group-members/\(groupId)/\(userId)").observeSingleEvent(of: .value, with: { snap in
+                guard !inviteProcessing else { return }
+                inviteProcessing = true
                 if let membership = snap.value as? [String: Any] {
                     /* Already a member */
                     let role = membership["role"] as? String
@@ -315,6 +321,8 @@ class MainController: NSObject, iRateDelegate {
                 }
             }, withCancel: { error in
                 /* Not a member yet */
+                guard !inviteProcessing else { return }
+                inviteProcessing = true
                 self.processInvite(link: link, member: false, memberRole: nil, flow: flow)  // permission denied means not group member
             })
         }
@@ -336,10 +344,15 @@ class MainController: NSObject, iRateDelegate {
             let inviteId = (link["invite_id"] as! String)
             let inviterId = (link["invited_by"] as! String)
             let channels = link["channels"] as? [String: String]
-            let role = link["role"] as! String
+            var role = link["role"] as! String
+            
+            let isGroupMember = (memberRole != nil && memberRole! != "guest")
+            if isGroupMember { // Retain full group member status even if invite role is guest.
+                role = "member"
+            }
             
             /* Check if already a member and not a channel invite */
-            if memberRole != nil && memberRole! != "guest" && (channels == nil || channels!.count == 0) {
+            if isGroupMember && (channels == nil || channels!.count == 0) {
                 if let topController = UIViewController.topMostViewController() {
                     let groupTitle = link["groupTitle"] as! String
                     let popup = PopupDialog(title: "Already a Member", message: "You are currently a member of the \(groupTitle) Patchr group!")
@@ -390,12 +403,12 @@ class MainController: NSObject, iRateDelegate {
                     }
                     else {
                         if let topController = UIViewController.topMostViewController() {
-                            let title = (error!.code == 404.2) ? "Used Invitation" : "Expired Invitation"
-                            let message = (error!.code == 404.2) ? "The invitation has already been used." : "The invitation has expired or been revoked."
+                            let title = (error!.code == 404.2) ? "Used Invitation" : "Unusable Invitation"
+                            let message = (error!.code == 404.2) ? "The invitation has already been used." : "The invitation has been used or revoked."
                             let popup = PopupDialog(title: title, message: message)
                             let button = DefaultButton(title: "OK") {
                                 if flow == .onboardInvite {
-                                    // If we don't have a currrent group|channel then we are in the lobby
+                                    // If we don't have a current group|channel then we are in the lobby
                                     if StateController.instance.groupId == nil || StateController.instance.channelId == nil {
                                         self?.route()
                                     }
@@ -417,7 +430,7 @@ class MainController: NSObject, iRateDelegate {
     
     func afterGroupInvite(groupId: String, groupTitle: String) {
         
-        FireController.instance.autoPickChannel(groupId: groupId) { channelId in
+        FireController.instance.autoPickChannel(groupId: groupId, role: "member") { channelId in
             if channelId != nil {
                 StateController.instance.setChannelId(channelId: channelId!, groupId: groupId)
                 self.showChannel(groupId: groupId, channelId: channelId!)

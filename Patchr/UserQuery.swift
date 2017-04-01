@@ -155,9 +155,9 @@ class UserQuery: NSObject {
     }
 
     func remove() {
-        self.user?.profile?.photo = nil
-        self.user?.profile = nil
-        self.user = nil
+//        self.user?.profile?.photo = nil
+//        self.user?.profile = nil
+//        self.user = nil
         if self.authHandle != nil {
             FIRAuth.auth()?.removeStateDidChangeListener(self.authHandle)
         }

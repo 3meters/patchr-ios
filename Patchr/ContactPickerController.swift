@@ -115,6 +115,12 @@ class ContactPickerController: BaseTableController, CLTokenInputViewDelegate {
         }
     }
     
+    func beginEditingAction(sender: AnyObject?) {
+        if !self.tokenView.isEditing {
+            self.tokenView.beginEditing()
+        }
+    }
+    
     func inviteListAction(sender: AnyObject?) {
         inviteList()
     }
@@ -149,14 +155,14 @@ class ContactPickerController: BaseTableController, CLTokenInputViewDelegate {
     override func initialize() {
         super.initialize()
         
-        let tap = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard(sender:)));
+        var tap = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard(sender:)));
         tap.cancelsTouchesInView = false
         tap.delegate = self
         self.view.addGestureRecognizer(tap)
         
         self.automaticallyAdjustsScrollViewInsets = false
         
-        self.navigationItem.title = "Contacts"
+        self.navigationItem.title = "Invite Contacts"
 
         self.tokenView = AirTokenView(frame: CGRect(x: 0, y: 0, width: self.view.width(), height: 44))
         self.tokenView.placeholder.text = "Search"
@@ -166,6 +172,11 @@ class ContactPickerController: BaseTableController, CLTokenInputViewDelegate {
         self.tokenView.tokenizationCharacters = [",", " ", ";"]
         self.tokenView.delegate = self
         self.tokenView.autoresizingMask = [UIViewAutoresizing.flexibleBottomMargin, UIViewAutoresizing.flexibleWidth]
+        
+        tap = UITapGestureRecognizer(target: self, action: #selector(beginEditingAction(sender:)));
+        tap.cancelsTouchesInView = false
+        tap.delegate = self
+        self.tokenView.addGestureRecognizer(tap)
         
         self.tableView.register(UINib(nibName: "UserListCell", bundle: nil), forCellReuseIdentifier: "cell")
         self.tableView.backgroundColor = Colors.white

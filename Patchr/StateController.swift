@@ -80,7 +80,7 @@ class StateController: NSObject {
                         channelQuery.once(with: { error, channel in
                             if channel == nil {
                                 Log.w("Last channel invalid: \(lastChannelId): trying auto pick channel")
-                                FireController.instance.autoPickChannel(groupId: groupId) { channelId in
+                                FireController.instance.autoPickChannel(groupId: groupId, role: "guest") { channelId in
                                     if channelId != nil {
                                         strongSelf.setChannelId(channelId: channelId!, groupId: groupId) { error in
                                             next(nil)
@@ -102,7 +102,7 @@ class StateController: NSObject {
                         })
                     }
                     else {
-                        FireController.instance.autoPickChannel(groupId: groupId) { channelId in
+                        FireController.instance.autoPickChannel(groupId: groupId, role: "guest") { channelId in
                             if channelId != nil {
                                 strongSelf.setChannelId(channelId: channelId!, groupId: groupId) { error in
                                     next(nil)

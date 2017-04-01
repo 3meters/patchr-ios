@@ -380,6 +380,9 @@ class FireController: NSObject {
 
     func removeUserFromChannel(userId: String, groupId: String, channelId: String, channelName: String?, then: ((Bool) -> Void)? = nil) {
         
+        let text = channelName != nil ? "left #\(channelName!)." : "left."
+        self.sendAdminMessage(channelId: channelId, groupId: groupId, userId: userId, text: text)
+        
         var updates: [String: Any] = [:]
         updates["member-channels/\(userId)/\(groupId)/\(channelId)"] = NSNull()         // delete requires creator or owner (channel or group)
         updates["group-channel-members/\(groupId)/\(channelId)/\(userId)"] = NSNull()   // delete requires creator or owner (channel or group)
@@ -399,9 +402,6 @@ class FireController: NSObject {
                 task["target"] = "channel"
                 
                 ref.setValue(task)
-                
-                let text = channelName != nil ? "left #\(channelName!)." : "left."
-                self.sendAdminMessage(channelId: channelId, groupId: groupId, userId: userId, text: text)
                 
                 then?(true)
             }
@@ -529,8 +529,13 @@ class FireController: NSObject {
         }
     }
     
-    func deleteInvite(groupId: String, inviterId: String, inviteId: String) {
-        FireController.db.child("invites/\(groupId)/\(inviterId)/\(inviteId)").removeValue()
+    func deleteInvite(groupId: String, inviterId: String, inviteId: String, then: ((Bool) -> Void)? = nil) {
+        FireController.db.child("invites/\(groupId)/\(inviterId)/\(inviteId)").removeValue() { error, ref in
+            if error != nil {
+                Log.w("Error deleting invite; \(error!.localizedDescription)")
+            }
+            then?(error == nil)
+        }
     }
     
     /*--------------------------------------------------------------------------------------------
@@ -557,18 +562,20 @@ class FireController: NSObject {
      * MARK: - Lookups
      *--------------------------------------------------------------------------------------------*/
     
-    func autoPickChannel(groupId: String, next: @escaping (String?) -> Void) {
-        FireController.instance.findFirstChannel(groupId: groupId) { channelId in
-            if channelId != nil {
+    func autoPickChannel(groupId: String, role: String, next: @escaping (String?) -> Void) {
+        if role != "guest" {
+            FireController.instance.findGeneralChannel(groupId: groupId) { channelId in
                 next(channelId)
             }
-            else if let group = StateController.instance.group, let role = group.role, role != "guest" {
-                FireController.instance.findGeneralChannel(groupId: groupId) { channelId in
+        }
+        else {
+            FireController.instance.findFirstChannel(groupId: groupId) { channelId in
+                if channelId != nil {
                     next(channelId)
                 }
-            }
-            else {
-                next(nil)
+                else {
+                    next(nil)
+                }
             }
         }
     }
@@ -625,35 +632,6 @@ class FireController: NSObject {
         })
     }
     
-    func autoPickGroupAndChannel(userId: String, next: @escaping (String?, String?) -> Void) {
-        self.findFirstGroup(userId: userId) { groupId in
-            if groupId == nil {
-                next(nil, nil)
-                return
-            }
-            if let lastChannelIds = UserDefaults.standard.dictionary(forKey: PerUserKey(key: Prefs.lastChannelIds)),
-                let lastChannelId = lastChannelIds[groupId!] as? String {
-                let validateQuery = ChannelQuery(groupId: groupId!, channelId: lastChannelId, userId: userId)
-                validateQuery.once(with: { error, channel in
-                    if channel == nil {
-                        Log.w("Last channel invalid: \(lastChannelId): trying auto pick")
-                        FireController.instance.autoPickChannel(groupId: groupId!) { channelId in
-                            next(groupId, channelId)
-                        }
-                    }
-                    else {
-                        next(groupId, lastChannelId)
-                    }
-                })
-            }
-            else {
-                FireController.instance.autoPickChannel(groupId: groupId!) { channelId in
-                    next(groupId, channelId)
-                }
-            }
-        }
-    }
-
     func channelRoleCount(groupId: String, channelId: String, role: String, then: @escaping ((Int?) -> Void)) {
         let path = "group-channel-members/\(groupId)/\(channelId)"
         FireController.db.child(path)
@@ -762,12 +740,17 @@ class FireController: NSObject {
                 })
                 return
             }
+            /* This can be triggered by an already used invite since the rules check
+               if invite status == "pending". Could also be triggered if invite has 
+               been revoked (deleted). */
             Log.w("Permission denied submitting task: \(ref.url)")
             then(ServiceError(code: 403, message: "Permission denied"), nil)  // permission denied
         }
     }
     
     func sendAdminMessage(channelId: String, groupId: String, userId: String, text: String, then: ((Bool) -> Void)? = nil) {
+        
+        /* Security rules prevent this if the user is no longer a group member */
         
         let ref = FireController.db.child("group-messages/\(groupId)/\(channelId)").childByAutoId()
         let timestamp = getServerTimestamp()

@@ -111,10 +111,12 @@ class GalleryGridViewController: UICollectionViewController {
 		/* Create sorted array for data binding */
 		self.displayPhotosSorted = Array(self.displayPhotos.values).sorted(by: { $0.createdDateValue! > $1.createdDateValue! })
         
-        /* Start prefetching photos to the disk cache */
+        /* Start prefetching photos to the disk cache if on wifi network */
         let urls = self.displayPhotosSorted.map { $0.photoURL! }
-        SDWebImagePrefetcher.shared().prefetchURLs(urls)
-        SDWebImagePrefetcher.shared().delegate = self
+        if  ReachabilityManager.instance.isReachableViaWiFi() {
+            SDWebImagePrefetcher.shared().prefetchURLs(urls)
+            SDWebImagePrefetcher.shared().delegate = self
+        }
 		
 		/* Simple activity indicator */
 		self.activity = addActivityIndicatorTo(view: self.view)

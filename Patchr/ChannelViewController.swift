@@ -96,6 +96,7 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
         iRate.sharedInstance().promptIfAllCriteriaMet()
         reachabilityChanged()
         if let link = MainController.instance.link {
+            MainController.instance.link = nil
             MainController.instance.routeDeepLink(link: link, error: nil)
         }
     }
@@ -216,39 +217,62 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
 
     func leaveChannelAction(sender: AnyObject?) {
         
-        if self.channel.visibility == "private" {
-            DeleteConfirmationAlert(
-                title: "Confirm",
-                message: "Are you sure you want to leave this private channel? A new invitation is required to rejoin.",
-                actionTitle: "Leave", cancelTitle: "Cancel", delegate: self) { doIt in
-                    if doIt {
-                        if let group = StateController.instance.group {
-                            let userId = UserController.instance.userId!
-                            let channelName = self.channel.name!
-                            FireController.instance.removeUserFromChannel(userId: userId, groupId: group.id!, channelId: self.channel.id!, channelName: channelName, then: { [weak self] success in
-                                if success {
-                                    /* Close and switch to accessible channel */
-                                    self?.dismiss(animated: true, completion: nil)
-                                    UIShared.toast(message: "You have left this channel.")
-                                    StateController.instance.clearChannel()
-                                }
-                            })
-                        }
-                    }
-            }
-        }
-        else {
-            if let group = StateController.instance.group {
+        if let group = StateController.instance.group,
+            let role = group.role {
+            if self.channel.visibility != "private" && role != "guest" {
                 let userId = UserController.instance.userId!
                 let channelName = self.channel.name!
                 FireController.instance.removeUserFromChannel(userId: userId, groupId: group.id!, channelId: self.channel.id!, channelName: channelName, then: { success in
                     if success {
                         UIShared.toast(message: "You have left this channel.")
+                        StateController.instance.clearChannel() // Only clears last channel default
                         if UserDefaults.standard.bool(forKey: PerUserKey(key: Prefs.soundEffects)) {
                             AudioController.instance.play(sound: Sound.pop.rawValue)
                         }
                     }
                 })
+            }
+            else {
+                var message = "Are you sure you want to leave this private channel? A new invitation may be required to rejoin."
+                if role == "guest" {
+                    message = (self.channel.visibility == "private")
+                        ? "Are you sure you want to leave as a guest of this private channel? A new invitation may be required to rejoin."
+                        : "Are you sure you want to leave as a guest of this channel? A new invitation may be required to rejoin."
+                }
+                DeleteConfirmationAlert(
+                    title: "Confirm",
+                    message: message,
+                    actionTitle: "Leave", cancelTitle: "Cancel", delegate: self) { doIt in
+                        if doIt {
+                            let userId = UserController.instance.userId!
+                            let groupId = group.id!
+                            let channelName = self.channel.name!
+                            FireController.instance.removeUserFromChannel(userId: userId, groupId: group.id!, channelId: self.channel.id!, channelName: channelName, then: { [weak self] success in
+                                if let _ = self {
+                                    if success {
+                                        UIShared.toast(message: "You have left this channel.")
+                                        StateController.instance.clearChannel()
+                                        if UserDefaults.standard.bool(forKey: PerUserKey(key: Prefs.soundEffects)) {
+                                            AudioController.instance.play(sound: Sound.pop.rawValue)
+                                        }
+                                        FireController.instance.autoPickChannel(groupId: groupId, role: role) { channelId in
+                                            if channelId != nil {
+                                                StateController.instance.setChannelId(channelId: channelId!, groupId: groupId)
+                                                MainController.instance.showChannel(groupId: groupId, channelId: StateController.instance.channelId!)
+                                            }
+                                            else {
+                                                FireController.instance.removeUserFromGroup(userId: userId, groupId: groupId) { success in
+                                                    if success {
+                                                        MainController.instance.showGroupSwitcher()
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            })
+                        }
+                }
             }
         }
     }
@@ -358,6 +382,10 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
             }
             self.tableView.reloadData()
         }
+    }
+    
+    func userDidUpdate(notification: NSNotification) {
+        self.tableView.reloadData()
     }
 
     func reachabilityChanged() {
@@ -483,6 +511,7 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
         NotificationCenter.default.addObserver(self, selector: #selector(reachabilityChanged), name: ReachabilityChangedNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(messageDidChange(notification:)), name: NSNotification.Name(rawValue: Events.MessageDidUpdate), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(unreadChange(notification:)), name: NSNotification.Name(rawValue: Events.UnreadChange), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(userDidUpdate(notification:)), name: NSNotification.Name(rawValue: Events.UserDidUpdate), object: nil)
     }
     
     fileprivate func bind(groupId: String, channelId: String) {
@@ -583,12 +612,12 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
                     if error == nil {
                         /* The channel has been deleted from under us. */
                         strongSelf.queryChannel?.remove()
-                        //                    FireController.instance.autoPickChannel(groupId: groupId) { channelId in
-                        //                        if channelId != nil {
-                        //                            StateController.instance.setChannelId(channelId: channelId!, groupId: groupId)
-                        //                            MainController.instance.showChannel(groupId: groupId, channelId: StateController.instance.channelId!)
-                        //                        }
-                        //                    }
+                        FireController.instance.autoPickChannel(groupId: groupId, role: channel!.role!) { channelId in
+                            if channelId != nil {
+                                StateController.instance.setChannelId(channelId: channelId!, groupId: groupId)
+                                MainController.instance.showChannel(groupId: groupId, channelId: StateController.instance.channelId!)
+                            }
+                        }
                     }
                     return
                 }
@@ -613,9 +642,13 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
                     })
                 }
                 else {
-                    strongSelf.showJoinBar()
-                    strongSelf.joinBarLabel.text = "This is a preview of #\(strongSelf.channel.name!)"
-                    strongSelf.setTextInputbarHidden(true, animated: true)
+                    if let group = StateController.instance.group, let role = group.role {
+                        if role != "guest" {
+                            strongSelf.showJoinBar()
+                            strongSelf.joinBarLabel.text = "This is a preview of #\(strongSelf.channel.name!)"
+                            strongSelf.setTextInputbarHidden(true, animated: true)                            
+                        }
+                    }
                 }
                 
                 /* We do this here so we have tableView sizing */
@@ -626,15 +659,22 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
                 let tap = UITapGestureRecognizer(target: self, action: #selector(strongSelf.showChannelActions(sender:)))
                 strongSelf.headerView.addGestureRecognizer(tap)
                 
-                if self != nil && self!.channel.purpose != nil {
-                    let viewWidth = min(Config.contentWidthMax, self!.view.width())
-                    self!.headerView.purpose.bounds.size.width = viewWidth - 32
-                    self!.headerView.purpose.sizeToFit()
-                    let infoHeight = self!.headerView.purpose.height() + 24
-                    self!.headerHeight = (viewWidth * 0.625) + infoHeight
-                    self!.tableView.contentInset = UIEdgeInsets(top: self!.headerHeight + 74, left: 0, bottom: 0, right: 0)
-                    self!.tableView.contentOffset = CGPoint(x: 0, y: -(self!.headerHeight + 74))
-                    self!.updateHeaderView()
+                if strongSelf.channel.purpose != nil {
+                    
+                    let viewWidth = min(Config.contentWidthMax, strongSelf.view.width())
+                    strongSelf.headerView.purposeLabel.bounds.size.width = viewWidth - 32
+                    strongSelf.headerView.purposeLabel.sizeToFit()
+                    strongSelf.headerView.purposeLabel.anchorTopLeft(withLeftPadding: 12
+                        , topPadding: 12
+                        , width: strongSelf.headerView.purposeLabel.width()
+                        , height: strongSelf.headerView.purposeLabel.height())
+
+                    let infoHeight = strongSelf.headerView.purposeLabel.height() + 24
+                    strongSelf.headerHeight = (viewWidth * 0.625) + infoHeight
+                    
+                    strongSelf.tableView.contentInset = UIEdgeInsets(top: strongSelf.headerHeight + 74, left: 0, bottom: 0, right: 0)
+                    strongSelf.tableView.contentOffset = CGPoint(x: 0, y: -(strongSelf.headerHeight + 74))
+                    strongSelf.updateHeaderView()
                 }
             }
         })
@@ -1088,8 +1128,10 @@ extension ChannelViewController: FUICollectionDelegate {
                 urls.append(url)
             }
         }
-        SDWebImagePrefetcher.shared().prefetchURLs(urls)
-        SDWebImagePrefetcher.shared().delegate = self
+        if  ReachabilityManager.instance.isReachableViaWiFi() {
+            SDWebImagePrefetcher.shared().prefetchURLs(urls)
+            SDWebImagePrefetcher.shared().delegate = self
+        }
     }
 }
 

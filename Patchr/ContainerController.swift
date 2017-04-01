@@ -28,6 +28,7 @@ class ContainerController: UIViewController {
     open func changeController(controller: UIViewController) {
         removeController(self.controller)
         self.controller = controller
+        self.setNeedsStatusBarAppearanceUpdate()
         
         UIView.transition(with: self.containerView
             , duration: 0.65
@@ -64,5 +65,17 @@ class ContainerController: UIViewController {
             controller.view.removeFromSuperview()
             controller.removeFromParentViewController()
         }
+    }
+    
+    override var preferredStatusBarUpdateAnimation: UIStatusBarAnimation {        
+        return UIStatusBarAnimation.slide
+    }
+    
+    override var prefersStatusBarHidden: Bool {
+        return UserDefaults.standard.bool(forKey: Prefs.statusBarHidden)
+    }
+    
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return self.controller.preferredStatusBarStyle
     }
 }

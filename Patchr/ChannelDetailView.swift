@@ -17,7 +17,7 @@ class ChannelDetailView: UIView {
     var mutedImage = AirMuteView(frame: CGRect.zero)
     var starButton = AirStarButton(frame: CGRect.zero)
     var optionsButton = UIButton(frame: CGRect.zero)
-    var purpose = AirLabelDisplay(frame: CGRect.zero)
+    var purposeLabel = AirLabelDisplay(frame: CGRect.zero)
     
     var photo: FirePhoto!
     var needsPhoto = false
@@ -53,11 +53,10 @@ class ChannelDetailView: UIView {
 
         let viewWidth = self.bounds.size.width
         
-        if !self.purpose.isHidden {
-            self.infoGroup.isHidden = false
-            self.purpose.bounds.size.width = viewWidth - 32
-            self.purpose.sizeToFit()
-            self.contentGroup.fillSuperview(withLeftPadding: 0, rightPadding: 0, topPadding: 0, bottomPadding: self.purpose.height() + 24)
+        if self.infoGroup.superview != nil {
+            self.purposeLabel.bounds.size.width = viewWidth - 32
+            self.purposeLabel.sizeToFit()
+            self.contentGroup.fillSuperview(withLeftPadding: 0, rightPadding: 0, topPadding: 0, bottomPadding: self.purposeLabel.height() + 24)
         }
         else {
             self.contentGroup.fillSuperview()
@@ -79,13 +78,9 @@ class ChannelDetailView: UIView {
         self.optionsButton.anchorBottomRight(withRightPadding: 12, bottomPadding: 20, width: 24, height: 24)
 
         /* Purpose */
-        if !self.purpose.isHidden {
-            self.purpose.anchorTopLeft(withLeftPadding: 12, topPadding: 12, width: self.purpose.width(), height: self.purpose.height())
-            self.infoGroup.alignUnder(self.contentGroup, matchingLeftAndRightWithTopPadding: 0, height: self.purpose.height() + 24)
-        }
-        else {
-            self.infoGroup.isHidden = true
-            self.infoGroup.alignUnder(self.contentGroup, matchingLeftAndRightWithTopPadding: 0, height: 0)
+        if self.infoGroup.superview != nil {
+            self.purposeLabel.anchorTopLeft(withLeftPadding: 12, topPadding: 12, width: self.purposeLabel.width(), height: self.purposeLabel.height())
+            self.infoGroup.alignUnder(self.contentGroup, matchingLeftAndRightWithTopPadding: 0, height: self.purposeLabel.height() + 24)
         }
     }
 
@@ -95,20 +90,11 @@ class ChannelDetailView: UIView {
     
     func initialize() {
         
-        self.titleGroup.addSubview(self.name)
-        self.titleGroup.addSubview(self.lockImage)
-        self.titleGroup.addSubview(self.mutedImage)
-        self.titleGroup.addSubview(self.starButton)
-        
-        self.contentGroup.addSubview(self.photoView)
-        self.contentGroup.addSubview(self.titleGroup)
-        self.contentGroup.addSubview(self.optionsButton)
-        
-        self.infoGroup.backgroundColor = Theme.colorBackgroundTile
-        self.infoGroup.addSubview(self.purpose)
-        
         self.clipsToBounds = false
         self.backgroundColor = Theme.colorBackgroundForm
+        
+        self.infoGroup.backgroundColor = Theme.colorBackgroundTile
+        self.infoGroup.addSubview(self.purposeLabel)
         
         self.photoView.parallaxIntensity = -40
         self.photoView.clipsToBounds = true
@@ -121,7 +107,7 @@ class ChannelDetailView: UIView {
         self.name.textColor = Colors.white
         self.name.numberOfLines = 2
         
-        self.purpose.numberOfLines = 0
+        self.purposeLabel.numberOfLines = 0
         
         self.optionsButton.setImage(UIImage(named: "imgOverflowVerticalLight"), for: .normal)
         self.optionsButton.showsTouchWhenHighlighted = true
@@ -131,30 +117,35 @@ class ChannelDetailView: UIView {
         self.mutedImage.image = Utils.imageMuted
         self.mutedImage.tintColor = Colors.white
         
+        self.contentGroup.addSubview(self.photoView)
         self.addSubview(contentGroup)
-        self.addSubview(infoGroup)
         
         self.contentGroup.clipsToBounds = true
     }
     
-    func reset() {
-        self.name.text = nil
-        self.purpose.text = nil
-        self.mutedImage.isHidden = true
-        self.starButton.isHidden = true
-        self.lockImage.isHidden = true        
-    }
-    
     func bind(channel: FireChannel!) {
+        
+        if self.titleGroup.superview == nil {
+            self.titleGroup.addSubview(self.name)
+            self.titleGroup.addSubview(self.lockImage)
+            self.titleGroup.addSubview(self.mutedImage)
+            self.titleGroup.addSubview(self.starButton)
+            self.contentGroup.addSubview(self.titleGroup)
+            self.contentGroup.addSubview(self.optionsButton)
+        }
         
         /* Name, type and photo */
         
         self.name.text = "#\(channel.name!)"
-        self.purpose.isHidden = true
         
         if channel.purpose != nil && !channel.purpose!.isEmpty {
-            self.purpose.text = channel.purpose!
-            self.purpose.isHidden = false
+            self.addSubview(self.infoGroup)
+            self.purposeLabel.text = channel.purpose!
+        }
+        else {
+            if self.infoGroup.superview != nil {
+                self.infoGroup.removeFromSuperview()
+            }
         }
         
         if let photo = channel.photo {
