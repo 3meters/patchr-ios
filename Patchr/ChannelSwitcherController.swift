@@ -16,9 +16,9 @@ class ChannelSwitcherController: BaseTableController {
     
     var handleAuthState: FIRAuthStateDidChangeListenerHandle!
     
-    var queryGroup: GroupQuery!
-	var queryUnreadsTotal: UnreadQuery?
-	var queryUnreadsGroup: UnreadQuery?
+    var groupQuery: GroupQuery!
+	var totalUnreadsQuery: UnreadQuery?
+	var groupUnreadsQuery: UnreadQuery?
 
 	var searchBar: UISearchBar!
 	var searchBarHolder = UIView()
@@ -160,9 +160,9 @@ class ChannelSwitcherController: BaseTableController {
         
         self.handleAuthState = FIRAuth.auth()?.addStateDidChangeListener() { [weak self] auth, user in
             if user == nil {
-                self?.queryGroup?.remove()
-                self?.queryUnreadsGroup?.remove()
-                self?.queryUnreadsTotal?.remove()
+                self?.groupQuery?.remove()
+                self?.groupUnreadsQuery?.remove()
+                self?.totalUnreadsQuery?.remove()
             }
         }
         
@@ -267,9 +267,9 @@ class ChannelSwitcherController: BaseTableController {
             
             self.navigationItem.setRightBarButtonItems([self.showGroupsButton], animated: true)
             
-            self.queryGroup?.remove()
-            self.queryGroup = GroupQuery(groupId: groupId, userId: userId)
-            self.queryGroup!.observe(with: { [weak self] error, trigger, group in
+            self.groupQuery?.remove()
+            self.groupQuery = GroupQuery(groupId: groupId, userId: userId)
+            self.groupQuery!.observe(with: { [weak self] error, trigger, group in
                 if let strongSelf = self {
                     if strongSelf.titleButton != nil && group != nil {
                         strongSelf.titleView.text = group!.title
@@ -290,18 +290,18 @@ class ChannelSwitcherController: BaseTableController {
                 }
             })
 
-			self.queryUnreadsTotal?.remove()
-			self.queryUnreadsTotal = UnreadQuery(level: .user, userId: userId)
-			self.queryUnreadsTotal!.observe(with: { [weak self] error, total in
+			self.totalUnreadsQuery?.remove()
+			self.totalUnreadsQuery = UnreadQuery(level: .user, userId: userId)
+			self.totalUnreadsQuery!.observe(with: { [weak self] error, total in
 				if total != self?.unreadTotal {
 					self?.unreadTotal = total ?? 0
 					self?.unreadOther = (self?.unreadTotal)! - (self?.unreadGroup)!
 				}
 			})
 
-			self.queryUnreadsGroup?.remove()
-			self.queryUnreadsGroup = UnreadQuery(level: .group, userId: userId, groupId: groupId)
-			self.queryUnreadsGroup!.observe(with: { [weak self] error, total in
+			self.groupUnreadsQuery?.remove()
+			self.groupUnreadsQuery = UnreadQuery(level: .group, userId: userId, groupId: groupId)
+			self.groupUnreadsQuery!.observe(with: { [weak self] error, total in
 				if total != self?.unreadGroup {
 					self?.unreadGroup = total ?? 0
 					self?.unreadOther = (self?.unreadTotal)! - (self?.unreadGroup)!
@@ -376,7 +376,7 @@ class ChannelSwitcherController: BaseTableController {
 
 	func updateDropdownButton() {
 		let unreadOther = (self.unreadTotal - self.unreadGroup)
-		self.dropdownButton.badgeLabel.text = unreadOther > 0 ? "\(unreadOther)" : nil
+		self.dropdownButton.badgeLabel.text = self.unreadTotal > 0 ? "\(self.unreadTotal)" : nil
 		self.dropdownButton.setNeedsLayout()
 		self.dropdownButton.layoutIfNeeded()
 		if unreadOther > 0 {

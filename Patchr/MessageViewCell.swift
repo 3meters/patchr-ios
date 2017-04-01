@@ -160,7 +160,7 @@ class MessageViewCell: AirUIView {
         self.unread.text = "new"
         self.unread.font = Theme.fontText
         self.unread.numberOfLines = 1
-        self.unread.textColor = Colors.accentColorDark
+        self.unread.textColor = Theme.colorBackgroundBadge
         self.unread.textAlignment = .left
         self.unread.isHidden = true
         

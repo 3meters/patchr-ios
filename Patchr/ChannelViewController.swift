@@ -18,9 +18,9 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
     var inputChannelId: String?
     var inputGroupId: String?
     
-    var queryGroup: GroupQuery?
-    var queryChannel: ChannelQuery?
-    var queryUnread: UnreadQuery?   // Used to know when channel unreads == 0 and should fix sort priority
+    var groupQuery: GroupQuery?
+    var channelQuery: ChannelQuery?
+    var unreadQuery: UnreadQuery?   // Used to know when channel unreads == 0 and should fix sort priority
     
     var headerView = ChannelDetailView()
     var unreads = [String: Bool]()
@@ -49,9 +49,9 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
     /* Observes typers for channel. If we see typers (but not this user), we
        pass them to the typing indicator. Each user passed to the typing
        indicator has an attached timer that removes it after 8 seconds. */
-    var refTyping: FIRDatabaseReference!
-    var handleTypingAdd: FIRDatabaseHandle!
-    var handleTypingRemove: FIRDatabaseHandle!
+    var typingRef: FIRDatabaseReference!
+    var typingAddHandle: FIRDatabaseHandle!
+    var typingRemoveHandle: FIRDatabaseHandle!
     
     var typingTask: DispatchWorkItem?
     var localTyping = false // Setting add/removes this user from channel typers
@@ -65,10 +65,10 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
                 if let username = UserController.instance.user?.username {
                     let userId = UserController.instance.userId!
                     if self.localTyping {
-                        self.refTyping?.child(userId).setValue(username)
+                        self.typingRef?.child(userId).setValue(username)
                     }
                     else {
-                        self.refTyping?.child(userId).removeValue()
+                        self.typingRef?.child(userId).removeValue()
                     }
                 }
             }
@@ -305,6 +305,9 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
             if wrapper.topViewController is GroupSwitcherController {
                 wrapper.popViewController(animated: false)
             }
+        }
+        if self.viewIsVisible && self.unreads.count > 0 {
+            self.tableView.reloadData()
         }
     }
     
@@ -579,18 +582,24 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
                         
                         let messageId = message.id!
                         if strongSelf.unreads[messageId] != nil {
+                            /* We cached the unread flag for the message so now use it and remove it. */
                             messageView.unread.isHidden = false
                             strongSelf.unreads.removeValue(forKey: messageId)
+                            FireController.instance.clearMessageUnread(messageId: messageId, channelId: channelId, groupId: groupId)
                         }
                         else {
+                            /* Initial bind and might not be visible to the user yet. If not then
+                               cache the unread flag to use when we are user visible. */
                             let unreadPath = "unreads/\(userId)/\(groupId)/\(channelId)/\(messageId)"
                             FireController.db.child(unreadPath).observeSingleEvent(of: .value, with: { snap in
                                 if !(snap.value is NSNull) {
                                     if !strongSelf.viewIsVisible {
-                                        strongSelf.unreads[messageId] = true
+                                        strongSelf.unreads[messageId] = true // Cache it
                                     }
-                                    messageView.unread.isHidden = false
-                                    FireController.instance.clearMessageUnread(messageId: messageId, channelId: channelId, groupId: groupId)
+                                    else {
+                                        messageView.unread.isHidden = false
+                                        FireController.instance.clearMessageUnread(messageId: messageId, channelId: channelId, groupId: groupId)
+                                    }
                                 }
                             })
                         }
@@ -604,14 +613,14 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
         
         /* Header */
         
-        self.queryChannel = ChannelQuery(groupId: groupId, channelId: channelId, userId: userId)
-        self.queryChannel!.observe(with: { [weak self] error, channel in
+        self.channelQuery = ChannelQuery(groupId: groupId, channelId: channelId, userId: userId)
+        self.channelQuery!.observe(with: { [weak self] error, channel in
             
             if let strongSelf = self {
                 guard channel != nil else {
                     if error == nil {
                         /* The channel has been deleted from under us. */
-                        strongSelf.queryChannel?.remove()
+                        strongSelf.channelQuery?.remove()
                         FireController.instance.autoPickChannel(groupId: groupId, role: channel!.role!) { channelId in
                             if channelId != nil {
                                 StateController.instance.setChannelId(channelId: channelId!, groupId: groupId)
@@ -631,8 +640,8 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
                     strongSelf.setTextInputbarHidden(false, animated: true)
                     strongSelf.textView.placeholder = "Message #\(strongSelf.channel.name!)"
                     
-                    strongSelf.queryUnread = UnreadQuery(level: .channel, userId: userId, groupId: groupId, channelId: channelId)
-                    strongSelf.queryUnread!.observe(with: { [weak self] error, total in
+                    strongSelf.unreadQuery = UnreadQuery(level: .channel, userId: userId, groupId: groupId, channelId: channelId)
+                    strongSelf.unreadQuery!.observe(with: { [weak self] error, total in
                         if self != nil, error == nil {
                             let total = total ?? 0
                             if total == 0 && self!.channel?.priority == 0 {
@@ -681,8 +690,8 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
 
         /* Typing */
         
-        self.refTyping = FireController.db.child("typing/\(groupId)/\(channelId)")
-        self.handleTypingAdd = self.refTyping.observe(.childAdded, with: { [weak self] snap in
+        self.typingRef = FireController.db.child("typing/\(groupId)/\(channelId)")
+        self.typingAddHandle = self.typingRef.observe(.childAdded, with: { [weak self] snap in
             if self != nil {
                 if let typerName = snap.value as? String {
                     if typerName != username {
@@ -691,7 +700,7 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
                 }
             }
         })
-        self.handleTypingRemove = self.refTyping.observe(.childRemoved, with: { [weak self] snap in
+        self.typingRemoveHandle = self.typingRef.observe(.childRemoved, with: { [weak self] snap in
             if self != nil {
                 if let typerName = snap.value as? String {
                     if typerName != username {
@@ -700,12 +709,12 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
                 }
             }
         })
-        self.refTyping.child(userId).onDisconnectRemoveValue()
+        self.typingRef.child(userId).onDisconnectRemoveValue()
         
         /* Title */
-        self.queryGroup?.remove()
-        self.queryGroup = GroupQuery(groupId: groupId, userId: nil)
-        self.queryGroup!.observe(with: { [weak self] error, trigger, group in
+        self.groupQuery?.remove()
+        self.groupQuery = GroupQuery(groupId: groupId, userId: nil)
+        self.groupQuery!.observe(with: { [weak self] error, trigger, group in
             if group != nil {
                 self?.titleView.title?.text = group!.title
                 self?.navigationController?.navigationBar.setNeedsLayout()
@@ -723,21 +732,22 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
     }
     
     func unbind() {
+        
         SDWebImagePrefetcher.shared().cancelPrefetching()
         Log.v("Channel view prefetch cancelled if active")
 
-        if self.handleTypingAdd != nil {
-            self.refTyping.removeObserver(withHandle: self.handleTypingAdd)
+        if self.typingAddHandle != nil {
+            self.typingRef.removeObserver(withHandle: self.typingAddHandle)
         }
-        if self.handleTypingRemove != nil {
-            self.refTyping.removeObserver(withHandle: self.handleTypingRemove)
+        if self.typingRemoveHandle != nil {
+            self.typingRef.removeObserver(withHandle: self.typingRemoveHandle)
         }
         if self.queryController != nil {
             self.queryController.unbind()
         }
-        self.queryChannel?.remove()
-        self.queryUnread?.remove()
-        self.queryGroup?.remove()
+        self.channelQuery?.remove()
+        self.unreadQuery?.remove()
+        self.groupQuery?.remove()
     }
     
     func updateHeaderView() {

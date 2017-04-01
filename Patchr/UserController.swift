@@ -12,15 +12,14 @@ class UserController: NSObject {
     
     static let instance = UserController()
 
-    fileprivate var queryUser: UserQuery?
-    fileprivate var queryUnread: UnreadQuery?
+    fileprivate var userQuery: UserQuery?
 
     fileprivate(set) internal var userId: String?
     fileprivate(set) internal var user: FireUser?
     fileprivate(set) internal var unreads = 0
 
-    fileprivate var refCounter: FIRDatabaseReference?
-    fileprivate var handleCounter: UInt?
+    fileprivate var counterRef: FIRDatabaseReference?
+    fileprivate var counterHandle: UInt?
 
     var authenticated: Bool {
         return (self.userId != nil)
@@ -131,10 +130,10 @@ class UserController: NSObject {
             if UserDefaults.standard.string(forKey: PerUserKey(key: Prefs.soundEffects)) == nil {
                 UserDefaults.standard.setValue(true, forKey: PerUserKey(key: Prefs.soundEffects))
             }
-            
-            self.queryUser?.remove()
-            self.queryUser = UserQuery(userId: userId, groupId: nil, trackPresence: true)
-            self.queryUser!.observe(with: { error, user in
+
+            /* Remove is handled in userQuery when user logs out */
+            self.userQuery = UserQuery(userId: userId, groupId: nil, trackPresence: true)
+            self.userQuery!.observe(with: { error, user in
                 
                 guard user != nil && error == nil else {
                     assertionFailure("User not found, no longer exists or permission denied")
@@ -154,9 +153,10 @@ class UserController: NSObject {
                 }
                 
             })
-            
-            self.refCounter = FireController.db.child("counters/\(userId)")
-            self.handleCounter = self.refCounter!.observe(.value, with: { [weak self] snap in
+
+            self.counterRef?.removeObserver(withHandle: self.counterHandle!)
+            self.counterRef = FireController.db.child("counters/\(userId)")
+            self.counterHandle = self.counterRef!.observe(.value, with: { [weak self] snap in
                 var count = 0
                 if let unreads = snap.value as? [String: Any] {
                     count = unreads["unreads"] as! Int
@@ -180,9 +180,9 @@ class UserController: NSObject {
             FireController.db.child("installs/\(userId)/\(token)").removeValue()
         }
         
-        self.refCounter?.removeObserver(withHandle: self.handleCounter!)
+        self.counterRef?.removeObserver(withHandle: self.counterHandle!)
         
-        try! FIRAuth.auth()!.signOut()  // Triggers cleanup by canned queries
+        try! FIRAuth.auth()!.signOut()  // Triggers cleanup by canned queries including self.userQuery
         
         Reporting.updateUser(user: nil)
         StateController.instance.clearGroup() // Also clears channel
