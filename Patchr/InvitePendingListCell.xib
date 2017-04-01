@@ -14,7 +14,7 @@
             <rect key="frame" x="0.0" y="0.0" width="413" height="153"/>
             <autoresizingMask key="autoresizingMask"/>
             <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="LTM-Mi-qV7" id="f05-yI-zfl">
-                <rect key="frame" x="0.0" y="0.0" width="413" height="152.5"/>
+                <rect key="frame" x="0.0" y="0.0" width="413" height="152"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="imgEnvelopeLight" translatesAutoresizingMaskIntoConstraints="NO" id="8pN-Wc-MOG">
@@ -26,7 +26,7 @@
                         </constraints>
                     </imageView>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="larissa@massena.com" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="meX-Hb-lPU">
-                        <rect key="frame" x="64" y="16" width="172.5" height="20"/>
+                        <rect key="frame" x="64" y="16" width="173" height="20"/>
                         <constraints>
                             <constraint firstAttribute="height" constant="20" id="K45-sW-jLW"/>
                         </constraints>
@@ -35,7 +35,7 @@
                         <nil key="highlightedColor"/>
                     </label>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="TopLeft" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Invited as guest of channels: #massena-austin-2016, #party-planning" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="LDQ-Nf-NuY" userLabel="InvitedAs">
-                        <rect key="frame" x="64" y="40" width="252.5" height="48.5"/>
+                        <rect key="frame" x="64" y="40" width="253" height="49"/>
                         <constraints>
                             <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="20" id="jrL-W9-vQe"/>
                         </constraints>
@@ -44,7 +44,7 @@
                         <nil key="highlightedColor"/>
                     </label>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Invited by jaymassena" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="NLS-Er-vuL" userLabel="InvitedBy">
-                        <rect key="frame" x="64" y="96.5" width="139" height="20"/>
+                        <rect key="frame" x="64" y="97" width="139" height="20"/>
                         <constraints>
                             <constraint firstAttribute="height" constant="20" id="m7S-Vc-nhc"/>
                         </constraints>
@@ -53,7 +53,7 @@
                         <nil key="highlightedColor"/>
                     </label>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Invited on Sept 5, 2016" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="73x-zE-UQh" userLabel="ActionAt">
-                        <rect key="frame" x="64" y="116.5" width="145.5" height="20"/>
+                        <rect key="frame" x="64" y="117" width="146" height="20"/>
                         <constraints>
                             <constraint firstAttribute="height" constant="20" id="01E-z8-oEY"/>
                         </constraints>

@@ -14,7 +14,7 @@
             <rect key="frame" x="0.0" y="0.0" width="394" height="165"/>
             <autoresizingMask key="autoresizingMask"/>
             <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="LTM-Mi-qV7" id="f05-yI-zfl">
-                <rect key="frame" x="0.0" y="0.0" width="394" height="164.5"/>
+                <rect key="frame" x="0.0" y="0.0" width="394" height="164"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="imgInviteAcceptedLight" translatesAutoresizingMaskIntoConstraints="NO" id="6fq-kU-LBW">
@@ -44,7 +44,7 @@
                         <nil key="highlightedColor"/>
                     </label>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="TopLeft" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Invited as guest of channels: #massena-austin-2016, #party-planning" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="IBy-kl-ZzX" userLabel="InvitedAs">
-                        <rect key="frame" x="64" y="64" width="314" height="36.5"/>
+                        <rect key="frame" x="64" y="64" width="314" height="37"/>
                         <constraints>
                             <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="20" id="Woo-lk-EFA"/>
                         </constraints>
@@ -53,7 +53,7 @@
                         <nil key="highlightedColor"/>
                     </label>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Invited by larissam" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="XRx-ob-AHa" userLabel="InvitedBy">
-                        <rect key="frame" x="64" y="108.5" width="117" height="20"/>
+                        <rect key="frame" x="64" y="109" width="117" height="20"/>
                         <constraints>
                             <constraint firstAttribute="height" constant="20" id="flm-Sw-6IY"/>
                         </constraints>
@@ -62,7 +62,7 @@
                         <nil key="highlightedColor"/>
                     </label>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Accepted on Sep 5, 2016" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="aA8-4e-aaN" userLabel="ActionAt">
-                        <rect key="frame" x="64" y="128.5" width="159.5" height="20"/>
+                        <rect key="frame" x="64" y="129" width="160" height="20"/>
                         <constraints>
                             <constraint firstAttribute="height" constant="20" id="MNQ-qk-0P2"/>
                         </constraints>
