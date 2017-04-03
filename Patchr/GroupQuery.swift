@@ -46,9 +46,6 @@ class GroupQuery: NSObject {
                     block(nil, .object, self?.group)
                 }
             }
-            else {
-                block(nil, nil, nil)
-            }
         }, withCancel: { error in
             Log.v("Permission denied trying to read group: \(self.groupPath!)")
             block(error, nil, nil)

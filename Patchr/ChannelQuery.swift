@@ -46,9 +46,6 @@ class ChannelQuery: NSObject {
                     block(nil, self?.channel)  // May or may not have link info
                 }
             }
-            else {
-                block(nil, nil)
-            }
         }, withCancel: { error in
             Log.v("Permission denied trying to read channel: \(self.channelPath!)")
             block(error, nil)

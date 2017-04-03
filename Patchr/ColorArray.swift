@@ -18,30 +18,29 @@ struct ColorArray {
         4: MaterialColor.indigo.base,
         5: MaterialColor.lightBlue.base,
         6: MaterialColor.cyan.base,
-        7: MaterialColor.green.base,
-        8: MaterialColor.lightGreen.base,
-        9: MaterialColor.lime.base,
-        10: MaterialColor.amber.base,
-        11: MaterialColor.orange.base,
-        12: MaterialColor.deepOrange.base,
-        13: MaterialColor.red.lighten1,
-        14: MaterialColor.pink.lighten1,
-        15: MaterialColor.purple.lighten1,
-        16: MaterialColor.deepPurple.lighten1,
-        17: MaterialColor.indigo.lighten1,
-        18: MaterialColor.lightBlue.lighten1,
-        19: MaterialColor.cyan.lighten1,
-        20: MaterialColor.green.lighten1,
-        21: MaterialColor.lightGreen.lighten1,
-        22: MaterialColor.lime.lighten1,
-        23: MaterialColor.yellow.darken1,
-        24: MaterialColor.amber.lighten1,
-        25: MaterialColor.orange.lighten1,
-        26: MaterialColor.deepOrange.lighten1
+        7: MaterialColor.lightGreen.base,
+        8: MaterialColor.lime.base,
+        9: MaterialColor.amber.base,
+        10: MaterialColor.orange.base,
+        11: MaterialColor.deepOrange.base,
+        
+        12: MaterialColor.red.lighten1,
+        13: MaterialColor.pink.lighten1,
+        14: MaterialColor.purple.lighten1,
+        15: MaterialColor.deepPurple.lighten1,
+        16: MaterialColor.indigo.lighten1,
+        17: MaterialColor.lightBlue.lighten1,
+        18: MaterialColor.cyan.lighten1,
+        19: MaterialColor.lightGreen.lighten1,
+        20: MaterialColor.lime.lighten1,
+        21: MaterialColor.yellow.darken1,
+        22: MaterialColor.amber.lighten1,
+        23: MaterialColor.orange.lighten1,
+        24: MaterialColor.deepOrange.lighten1
     ]
     
     static func randomColor(seed: Int) -> UIColor {
-        let index = seed % 27
+        let index = seed % 25
         return ColorArray.colors[index]!
     }
 }

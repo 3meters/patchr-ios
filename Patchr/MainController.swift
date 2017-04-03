@@ -395,11 +395,12 @@ class MainController: NSObject, iRateDelegate {
             
             let joinButton = DefaultButton(title: "Join".uppercased(), height: 48) {
                 FireController.instance.addUserToGroup(groupId: groupId, channels: channels, role: role, inviteId: inviteId, invitedBy: inviterId) { [weak self] error, result in
+                    guard let strongSelf = self else { return }
                     if error == nil {
                         if channels != nil {
-                            self?.afterChannelInvite(groupId: groupId, groupTitle: groupTitle, channels: channels)
+                            strongSelf.afterChannelInvite(groupId: groupId, groupTitle: groupTitle, channels: channels)
                         } else {
-                            self?.afterGroupInvite(groupId: groupId, groupTitle: groupTitle)
+                            strongSelf.afterGroupInvite(groupId: groupId, groupTitle: groupTitle)
                         }
                     }
                     else {
@@ -411,7 +412,7 @@ class MainController: NSObject, iRateDelegate {
                                 if flow == .onboardInvite {
                                     // If we don't have a current group|channel then we are in the lobby
                                     if StateController.instance.groupId == nil || StateController.instance.channelId == nil {
-                                        self?.route()
+                                        strongSelf.route()
                                     }
                                 }
                             }
@@ -458,26 +459,26 @@ class MainController: NSObject, iRateDelegate {
         let channelId = channels!.first!.key
         let channelName = channels!.first!.value as! String
         StateController.instance.setChannelId(channelId: channelId, groupId: groupId)
-        self.showChannel(groupId: groupId, channelId: channelId)
-        
-        Utils.delay(1.0) {
-            if let topController = UIViewController.topMostViewController() {
-                var message = "You have joined the #\(channelName) channel in the \(groupTitle) Patchr group. Use the message bar to send your first message."
-                if channels!.count > 1 {
-                    message = "You have joined multiple channels in the \(groupTitle) Patchr group. Use the message bar to send your first message."
-                }
-                let popup = PopupDialog(title: "Welcome!", message: message)
-                popup.buttonAlignment = .horizontal
-                let showButton = DefaultButton(title: "Show Me".uppercased(), height: 48) {
-                    if let slideController = self.window?.rootViewController as? SlideViewController,
-                        let wrapper = slideController.mainViewController as? AirNavigationController,
-                        let channelController = wrapper.topViewController as? ChannelViewController {
-                        channelController.textInputbar.textView.becomeFirstResponder()
+        self.showChannel(groupId: groupId, channelId: channelId) { // User permissions are in place
+            Utils.delay(0.5) {
+                if let topController = UIViewController.topMostViewController() {
+                    var message = "You have joined the #\(channelName) channel in the \(groupTitle) Patchr group. Use the message bar to send your first message."
+                    if channels!.count > 1 {
+                        message = "You have joined multiple channels in the \(groupTitle) Patchr group. Use the message bar to send your first message."
                     }
+                    let popup = PopupDialog(title: "Welcome!", message: message)
+                    popup.buttonAlignment = .horizontal
+                    let showButton = DefaultButton(title: "Show Me".uppercased(), height: 48) {
+                        if let slideController = self.window?.rootViewController as? SlideViewController,
+                            let wrapper = slideController.mainViewController as? AirNavigationController,
+                            let channelController = wrapper.topViewController as? ChannelViewController {
+                            channelController.textInputbar.textView.becomeFirstResponder()
+                        }
+                    }
+                    let doneButton = DefaultButton(title: "Carry On".uppercased(), height: 48) {}
+                    popup.addButtons([showButton, doneButton])
+                    topController.present(popup, animated: true)
                 }
-                let doneButton = DefaultButton(title: "Carry On".uppercased(), height: 48) {}
-                popup.addButtons([showButton, doneButton])
-                topController.present(popup, animated: true)
             }
         }
     }

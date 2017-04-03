@@ -67,9 +67,6 @@ class UserQuery: NSObject {
                     self?.block?(nil, self?.user)  // May or may not have link info
                 }
             }
-            else {
-                self?.block?(nil, nil)
-            }
         }, withCancel: { error in
             Log.v("Permission denied trying to read user: \(self.userPath!)")
             block(error, nil)

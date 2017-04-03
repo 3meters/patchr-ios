@@ -537,75 +537,74 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
             
             let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! WrapperTableViewCell
             
-            if let strongSelf = self {
-                
-                let snap = data as! FIRDataSnapshot
-                let userId = UserController.instance.userId!
-                let message = FireMessage(dict: snap.value as! [String: Any], id: snap.key)
-                
-                if let messageView = cell.view as? MessageViewCell {
-                    messageView.reset()
-                }
-                
-                guard message.createdBy != nil else {
-                    return cell
-                }
-                
-                UserQuery(userId: message.createdBy!, groupId: groupId).once(with: { error, user in
-                    message.creator = user
-                    
-                    if cell.view == nil {
-                        let recognizer = UILongPressGestureRecognizer(target: strongSelf, action: #selector(strongSelf.longPressAction(sender:)))
-                        recognizer.minimumPressDuration = TimeInterval(0.2)
-                        cell.addGestureRecognizer(recognizer)
-                        
-                        let view = MessageViewCell(frame: CGRect(x: 0, y: 0, width: strongSelf.view.width(), height: 40))
-                        if view.description_ != nil && (view.description_ is TTTAttributedLabel) {
-                            let label = view.description_ as! TTTAttributedLabel
-                            label.delegate = strongSelf
-                        }
-                        
-                        view.photoView?.isUserInteractionEnabled = true
-                        view.photoView?.addGestureRecognizer(UITapGestureRecognizer(target: strongSelf, action: #selector(strongSelf.browsePhotoAction(sender:))))
-                        cell.injectView(view: view, padding: strongSelf.itemPadding)
-                        cell.layoutSubviews()   // Make sure padding has been applied
-                    }
-                    
-                    if let messageView = cell.view! as? MessageViewCell {
-                        
-                        messageView.bind(message: message)
-                        
-                        if message.creator != nil {
-                            messageView.userPhotoControl.target = message.creator
-                            messageView.userPhotoControl.addTarget(strongSelf, action: #selector(strongSelf.browseMemberAction(sender:)), for: .touchUpInside)
-                        }
-                        
-                        let messageId = message.id!
-                        if strongSelf.unreads[messageId] != nil {
-                            /* We cached the unread flag for the message so now use it and remove it. */
-                            messageView.unread.isHidden = false
-                            strongSelf.unreads.removeValue(forKey: messageId)
-                            FireController.instance.clearMessageUnread(messageId: messageId, channelId: channelId, groupId: groupId)
-                        }
-                        else {
-                            /* Initial bind and might not be visible to the user yet. If not then
-                               cache the unread flag to use when we are user visible. */
-                            let unreadPath = "unreads/\(userId)/\(groupId)/\(channelId)/\(messageId)"
-                            FireController.db.child(unreadPath).observeSingleEvent(of: .value, with: { snap in
-                                if !(snap.value is NSNull) {
-                                    if !strongSelf.viewIsVisible {
-                                        strongSelf.unreads[messageId] = true // Cache it
-                                    }
-                                    else {
-                                        messageView.unread.isHidden = false
-                                        FireController.instance.clearMessageUnread(messageId: messageId, channelId: channelId, groupId: groupId)
-                                    }
-                                }
-                            })
-                        }
-                    }
-                })
+            guard let strongSelf = self else { return cell }
+            
+            let snap = data as! FIRDataSnapshot
+            let userId = UserController.instance.userId!
+            let message = FireMessage(dict: snap.value as! [String: Any], id: snap.key)
+            
+            if let messageView = cell.view as? MessageViewCell {
+                messageView.reset()
             }
+            
+            guard message.createdBy != nil else {
+                return cell
+            }
+            
+            UserQuery(userId: message.createdBy!, groupId: groupId).once(with: { error, user in
+                message.creator = user
+                
+                if cell.view == nil {
+                    let recognizer = UILongPressGestureRecognizer(target: strongSelf, action: #selector(strongSelf.longPressAction(sender:)))
+                    recognizer.minimumPressDuration = TimeInterval(0.2)
+                    cell.addGestureRecognizer(recognizer)
+                    
+                    let view = MessageViewCell(frame: CGRect(x: 0, y: 0, width: strongSelf.view.width(), height: 40))
+                    if view.description_ != nil && (view.description_ is TTTAttributedLabel) {
+                        let label = view.description_ as! TTTAttributedLabel
+                        label.delegate = strongSelf
+                    }
+                    
+                    view.photoView?.isUserInteractionEnabled = true
+                    view.photoView?.addGestureRecognizer(UITapGestureRecognizer(target: strongSelf, action: #selector(strongSelf.browsePhotoAction(sender:))))
+                    cell.injectView(view: view, padding: strongSelf.itemPadding)
+                    cell.layoutSubviews()   // Make sure padding has been applied
+                }
+                
+                if let messageView = cell.view! as? MessageViewCell {
+                    
+                    messageView.bind(message: message)
+                    
+                    if message.creator != nil {
+                        messageView.userPhotoControl.target = message.creator
+                        messageView.userPhotoControl.addTarget(strongSelf, action: #selector(strongSelf.browseMemberAction(sender:)), for: .touchUpInside)
+                    }
+                    
+                    let messageId = message.id!
+                    if strongSelf.unreads[messageId] != nil {
+                        /* We cached the unread flag for the message so now use it and remove it. */
+                        messageView.unread.isHidden = false
+                        strongSelf.unreads.removeValue(forKey: messageId)
+                        FireController.instance.clearMessageUnread(messageId: messageId, channelId: channelId, groupId: groupId)
+                    }
+                    else {
+                        /* Initial bind and might not be visible to the user yet. If not then
+                           cache the unread flag to use when we are user visible. */
+                        let unreadPath = "unreads/\(userId)/\(groupId)/\(channelId)/\(messageId)"
+                        FireController.db.child(unreadPath).observeSingleEvent(of: .value, with: { snap in
+                            if !(snap.value is NSNull) {
+                                if !strongSelf.viewIsVisible {
+                                    strongSelf.unreads[messageId] = true // Cache it
+                                }
+                                else {
+                                    messageView.unread.isHidden = false
+                                    FireController.instance.clearMessageUnread(messageId: messageId, channelId: channelId, groupId: groupId)
+                                }
+                            }
+                        })
+                    }
+                }
+            })
             return cell
         }
         
@@ -616,75 +615,88 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
         self.channelQuery = ChannelQuery(groupId: groupId, channelId: channelId, userId: userId)
         self.channelQuery!.observe(with: { [weak self] error, channel in
             
-            if let strongSelf = self {
-                guard channel != nil else {
-                    if error == nil {
-                        /* The channel has been deleted from under us. */
+            guard let strongSelf = self else { return }
+            
+            guard channel != nil else {
+                if error != nil {
+                    /* The channel has been deleted from under us. */
+                    if let group = StateController.instance.group {
+                        let role = group.role!
                         strongSelf.channelQuery?.remove()
-                        FireController.instance.autoPickChannel(groupId: groupId, role: channel!.role!) { channelId in
+                        FireController.instance.autoPickChannel(groupId: groupId, role: role) { channelId in
                             if channelId != nil {
                                 StateController.instance.setChannelId(channelId: channelId!, groupId: groupId)
                                 MainController.instance.showChannel(groupId: groupId, channelId: StateController.instance.channelId!)
                             }
-                        }
-                    }
-                    return
-                }
-                
-                strongSelf.channel = channel
-                strongSelf.titleView.subtitle?.text = "#\(strongSelf.channel.name!)"
-                strongSelf.navigationController?.navigationBar.setNeedsLayout()
-                
-                if channel?.joinedAt != nil {
-                    strongSelf.hideJoinBar()
-                    strongSelf.setTextInputbarHidden(false, animated: true)
-                    strongSelf.textView.placeholder = "Message #\(strongSelf.channel.name!)"
-                    
-                    strongSelf.unreadQuery = UnreadQuery(level: .channel, userId: userId, groupId: groupId, channelId: channelId)
-                    strongSelf.unreadQuery!.observe(with: { [weak self] error, total in
-                        if self != nil, error == nil {
-                            let total = total ?? 0
-                            if total == 0 && self!.channel?.priority == 0 {
-                                self!.channel?.clearUnreadSorting()
+                            else {
+                                FireController.instance.removeUserFromGroup(userId: userId, groupId: groupId) { success in
+                                    if success {
+                                        MainController.instance.showGroupSwitcher()
+                                    }
+                                }
                             }
                         }
-                    })
-                }
-                else {
-                    if let group = StateController.instance.group, let role = group.role {
-                        if role != "guest" {
-                            strongSelf.showJoinBar()
-                            strongSelf.joinBarLabel.text = "This is a preview of #\(strongSelf.channel.name!)"
-                            strongSelf.setTextInputbarHidden(true, animated: true)                            
-                        }
+                    }
+                    else {
+                        MainController.instance.showGroupSwitcher()
                     }
                 }
+                return
+            }
+            
+            strongSelf.channel = channel
+            strongSelf.titleView.subtitle?.text = "#\(strongSelf.channel.name!)"
+            strongSelf.navigationController?.navigationBar.setNeedsLayout()
+            
+            if channel?.joinedAt != nil {
+                strongSelf.hideJoinBar()
+                strongSelf.setTextInputbarHidden(false, animated: true)
+                strongSelf.textView.placeholder = "Message #\(strongSelf.channel.name!)"
                 
-                /* We do this here so we have tableView sizing */
-                Log.v("Bind channel header")
-                
-                strongSelf.headerView.bind(channel: strongSelf.channel)
-                strongSelf.headerView.gestureRecognizers?.removeAll()
-                let tap = UITapGestureRecognizer(target: self, action: #selector(strongSelf.showChannelActions(sender:)))
-                strongSelf.headerView.addGestureRecognizer(tap)
-                
-                if strongSelf.channel.purpose != nil {
-                    
-                    let viewWidth = min(Config.contentWidthMax, strongSelf.view.width())
-                    strongSelf.headerView.purposeLabel.bounds.size.width = viewWidth - 32
-                    strongSelf.headerView.purposeLabel.sizeToFit()
-                    strongSelf.headerView.purposeLabel.anchorTopLeft(withLeftPadding: 12
-                        , topPadding: 12
-                        , width: strongSelf.headerView.purposeLabel.width()
-                        , height: strongSelf.headerView.purposeLabel.height())
-
-                    let infoHeight = strongSelf.headerView.purposeLabel.height() + 24
-                    strongSelf.headerHeight = (viewWidth * 0.625) + infoHeight
-                    
-                    strongSelf.tableView.contentInset = UIEdgeInsets(top: strongSelf.headerHeight + 74, left: 0, bottom: 0, right: 0)
-                    strongSelf.tableView.contentOffset = CGPoint(x: 0, y: -(strongSelf.headerHeight + 74))
-                    strongSelf.updateHeaderView()
+                strongSelf.unreadQuery = UnreadQuery(level: .channel, userId: userId, groupId: groupId, channelId: channelId)
+                strongSelf.unreadQuery!.observe(with: { [weak self] error, total in
+                    if self != nil, error == nil {
+                        let total = total ?? 0
+                        if total == 0 && self!.channel?.priority == 0 {
+                            self!.channel?.clearUnreadSorting()
+                        }
+                    }
+                })
+            }
+            else {
+                if let group = StateController.instance.group, let role = group.role {
+                    if role != "guest" {
+                        strongSelf.showJoinBar()
+                        strongSelf.joinBarLabel.text = "This is a preview of #\(strongSelf.channel.name!)"
+                        strongSelf.setTextInputbarHidden(true, animated: true)                            
+                    }
                 }
+            }
+            
+            /* We do this here so we have tableView sizing */
+            Log.v("Bind channel header")
+            
+            strongSelf.headerView.bind(channel: strongSelf.channel)
+            strongSelf.headerView.gestureRecognizers?.removeAll()
+            let tap = UITapGestureRecognizer(target: self, action: #selector(strongSelf.showChannelActions(sender:)))
+            strongSelf.headerView.addGestureRecognizer(tap)
+            
+            if strongSelf.channel.purpose != nil {
+                
+                let viewWidth = min(Config.contentWidthMax, strongSelf.view.width())
+                strongSelf.headerView.purposeLabel.bounds.size.width = viewWidth - 32
+                strongSelf.headerView.purposeLabel.sizeToFit()
+                strongSelf.headerView.purposeLabel.anchorTopLeft(withLeftPadding: 12
+                    , topPadding: 12
+                    , width: strongSelf.headerView.purposeLabel.width()
+                    , height: strongSelf.headerView.purposeLabel.height())
+
+                let infoHeight = strongSelf.headerView.purposeLabel.height() + 24
+                strongSelf.headerHeight = (viewWidth * 0.625) + infoHeight
+                
+                strongSelf.tableView.contentInset = UIEdgeInsets(top: strongSelf.headerHeight + 74, left: 0, bottom: 0, right: 0)
+                strongSelf.tableView.contentOffset = CGPoint(x: 0, y: -(strongSelf.headerHeight + 74))
+                strongSelf.updateHeaderView()
             }
         })
 
