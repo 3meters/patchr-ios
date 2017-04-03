@@ -60,7 +60,8 @@ class MainController: NSObject, iRateDelegate {
         self.window = (UIApplication.shared.delegate?.window)!
 
         /* Initialize Creative sdk: 25% of method time */
-        AdobeUXAuthManager.shared().setAuthenticationParametersWithClientID(PatchrKeys().creativeSdkClientId(), clientSecret: PatchrKeys().creativeSdkClientSecret(), enableSignUp: false)
+        AdobeUXAuthManager.shared().setAuthenticationParametersWithClientID(Ids.creativeClientId
+            , clientSecret: PatchrKeys().creativeSdkClientSecret, enableSignUp: false)
 
         /* Global UI tweaks */
         UIBarButtonItem.appearance().setTitleTextAttributes([NSFontAttributeName: Theme.fontBarText], for: UIControlState.normal)

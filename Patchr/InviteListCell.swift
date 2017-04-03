@@ -34,6 +34,9 @@ class InviteListCell: UITableViewCell {
     func reset() {
         self.title?.text = nil
         self.subtitle?.text = nil
+        self.invitedAs?.text = nil
+        self.invitedBy?.text = nil
+        self.actionAt?.text = nil
         self.subtitle?.isHidden = false
         self.resendButton?.isHidden = true
         self.revokeButton?.isHidden = true

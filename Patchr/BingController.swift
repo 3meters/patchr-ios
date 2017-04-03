@@ -3,6 +3,7 @@
  */
 
 import AFNetworking
+import Keys
 
 class BingController: NSObject {
 
@@ -29,7 +30,7 @@ class BingController: NSObject {
         let bingSessionManager: AFHTTPSessionManager = AFHTTPSessionManager(baseURL: NSURL(string: urlString) as URL?)
         let requestSerializer: AFJSONRequestSerializer = AFJSONRequestSerializer()
         
-        requestSerializer.setValue(Ids.bingKey, forHTTPHeaderField: "Ocp-Apim-Subscription-Key")
+        requestSerializer.setValue(PatchrKeys().bingSubscriptionKey, forHTTPHeaderField: "Ocp-Apim-Subscription-Key")
         bingSessionManager.requestSerializer = requestSerializer
         bingSessionManager.responseSerializer = JSONResponseSerializerWithData()
         

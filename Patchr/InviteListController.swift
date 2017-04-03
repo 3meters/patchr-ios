@@ -176,22 +176,20 @@ class InviteListController: BaseTableController, UITableViewDelegate {
             invite["id"] = snap.key
             
             let cell = tableView.dequeueReusableCell(withIdentifier: status, for: indexPath) as! InviteListCell
+            cell.reset()    // Releases previous data observers
             
-            if self != nil {
-                cell.reset()    // Releases previous data observers
+            if let strongSelf = self {
                 
                 if status == "accepted" {
                     let userId = invite["accepted_by"] as! String
                     let userQuery = UserQuery(userId: userId, groupId: groupId)
-                    userQuery.once(with: { [weak self] error, user in
-                        if let strongSelf = self {
-                            if user != nil {
-                                let recognizer = UILongPressGestureRecognizer(target: strongSelf, action: #selector(strongSelf.longPressAction(sender:)))
-                                recognizer.minimumPressDuration = TimeInterval(0.2)
-                                cell.addGestureRecognizer(recognizer)
-                                cell.data = invite as AnyObject?
-                                cell.bind(user: user!, invite: invite)
-                            }
+                    userQuery.once(with: { error, user in
+                        if user != nil {
+                            let recognizer = UILongPressGestureRecognizer(target: strongSelf, action: #selector(strongSelf.longPressAction(sender:)))
+                            recognizer.minimumPressDuration = TimeInterval(0.2)
+                            cell.addGestureRecognizer(recognizer)
+                            cell.data = invite as AnyObject?
+                            cell.bind(user: user!, invite: invite)
                         }
                     })
                 }
@@ -199,10 +197,10 @@ class InviteListController: BaseTableController, UITableViewDelegate {
                     cell.bind(invite: invite)
                     cell.resendButton?.isHidden = false
                     cell.resendButton?.data = invite as AnyObject?
-                    cell.resendButton?.addTarget(self, action: #selector(self?.resendInviteAction(sender:)), for: .touchUpInside)
+                    cell.resendButton?.addTarget(self, action: #selector(strongSelf.resendInviteAction(sender:)), for: .touchUpInside)
                     cell.revokeButton?.isHidden = false
                     cell.revokeButton?.data = invite as AnyObject?
-                    cell.revokeButton?.addTarget(self, action: #selector(self?.revokeInviteAction(sender:)), for: .touchUpInside)
+                    cell.revokeButton?.addTarget(self, action: #selector(strongSelf.revokeInviteAction(sender:)), for: .touchUpInside)
                 }
             }
             return cell

@@ -12,10 +12,10 @@ import MessageUI
 typealias CompletionBlock = (_ response: Any?, _ error: NSError?) -> Void
 
 struct Ids {
-    static let bingKey = "3ca600480b5341ebba4b61d405427ae3"
     static let appleAppId = "983436323"
+    static let awsAccessKey = "AKIAIYU2FPHC2AOUG3CA"
+    static let creativeClientId = "924463f8481c4941a773fc9610fac9dd"
     static let keychainGroup = "7542324V6B.com.3meters.patchr.ios"// Team id + bundle id
-    static let bugsnagKey = "d1313b8d5fc14d937419406f33fd4c01"
 }
 
 struct Ui {

@@ -59,29 +59,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FIRMessagingDelegate {
 
         application.registerForRemoteNotifications() // Initiate the registration process with Apple Push Notification service.
         
-        /* Remote config */
-        FIRRemoteConfig.remoteConfig().fetch { status, error in
-            if (status == FIRRemoteConfigFetchStatus.success) {
-                
-                if FIRRemoteConfig.remoteConfig().activateFetched() {
-                    Log.d("Remote config activated", breadcrumb: true)
-                }
-                
-                /* Default config and credentials for AWS */
-                let access = FIRRemoteConfig.remoteConfig().configValue(forKey: "aws_access_key").stringValue!
-                let secret = FIRRemoteConfig.remoteConfig().configValue(forKey: "aws_secret_key").stringValue!
-                let credProvider = AWSStaticCredentialsProvider(accessKey: access, secretKey: secret)
-                let serviceConfig = AWSServiceConfiguration(region: AWSRegionType(rawValue: 3/*'us-west-2'*/)!, credentialsProvider: credProvider)
-                AWSServiceManager.default().defaultServiceConfiguration = serviceConfig
-            }
-            else {
-                Log.d("Remote config not fetched", breadcrumb: true)
-                Log.d("Error \(error!.localizedDescription)", breadcrumb: true)
-            }
-        }
+        /* Default config and credentials for AWS */
+        let credProvider = AWSStaticCredentialsProvider(accessKey: Ids.awsAccessKey, secretKey: PatchrKeys().awsS3Secret)
+        let serviceConfig = AWSServiceConfiguration(region: AWSRegionType(rawValue: 3/*'us-west-2'*/)!, credentialsProvider: credProvider)
+        AWSServiceManager.default().defaultServiceConfiguration = serviceConfig
         
         /* Initialize Bugsnag */
-        Bugsnag.start(withApiKey: Ids.bugsnagKey)
+        Bugsnag.start(withApiKey: PatchrKeys().bugsnagKey)
         
         #if DEBUG
         AFNetworkActivityLogger.shared().startLogging()
