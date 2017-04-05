@@ -324,22 +324,24 @@ class ChannelSwitcherController: BaseTableController {
                     
                     let channelId = snap.key
                     
-                    cell.query = ChannelQuery(groupId: groupId, channelId: channelId, userId: userId)    // Just channel lookup
-                    cell.query!.observe(with: { error, channel in
+                    cell.channelQuery = ChannelQuery(groupId: groupId, channelId: channelId, userId: userId)    // Just channel lookup
+                    cell.channelQuery!.observe(with: { [weak cell] error, channel in
+                        
+                        guard let strongCell = cell else { return }
                         
                         if channel != nil {
-                            cell.selected(on: (channelId == StateController.instance.channelId), style: .prominent)
-                            cell.bind(channel: channel!)
-                            cell.unreadQuery = UnreadQuery(level: .channel, userId: userId, groupId: groupId, channelId: channelId)
-                            cell.unreadQuery!.observe(with: { error, total in
+                            strongCell.selected(on: (channelId == StateController.instance.channelId), style: .prominent)
+                            strongCell.bind(channel: channel!)
+                            strongCell.unreadQuery = UnreadQuery(level: .channel, userId: userId, groupId: groupId, channelId: channelId)
+                            strongCell.unreadQuery!.observe(with: { [weak strongCell] error, total in
                                 if total != nil && total! > 0 {
-                                    cell.badge?.text = "\(total!)"
-                                    cell.badge?.isHidden = false
-                                    cell.accessoryType = .none
+                                    strongCell?.badge?.text = "\(total!)"
+                                    strongCell?.badge?.isHidden = false
+                                    strongCell?.accessoryType = .none
                                 }
                                 else {
-                                    cell.badge?.isHidden = true
-                                    cell.accessoryType = cell.selectedOn ? .checkmark : .none
+                                    strongCell?.badge?.isHidden = true
+                                    strongCell?.accessoryType = (strongCell?.selectedOn)! ? .checkmark : .none
                                 }
                             })
                         }

@@ -115,6 +115,7 @@ class GroupQuery: NSObject {
                         }
                     }
                     else {
+                        /* User might not be a member so send the channel without link info */
                         self?.linkMapMiss = true
                         if self?.group != nil {
                             fired = true

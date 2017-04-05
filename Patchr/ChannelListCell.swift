@@ -19,7 +19,7 @@ class ChannelListCell: UITableViewCell {
     
     var channel: FireChannel!
     var unreadQuery: UnreadQuery?   // Passed in by table data source
-    var query: ChannelQuery?
+    var channelQuery: ChannelQuery?
     var selectedOn = false
     
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
@@ -63,8 +63,8 @@ class ChannelListCell: UITableViewCell {
         self.badge?.text = nil
         self.badge?.isHidden = true
         self.channel = nil
-        self.query?.remove()
-        self.query = nil
+        self.channelQuery?.remove()
+        self.channelQuery = nil
         self.unreadQuery?.remove()
         self.unreadQuery = nil
     }

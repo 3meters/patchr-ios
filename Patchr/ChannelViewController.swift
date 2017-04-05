@@ -654,11 +654,11 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
                 strongSelf.textView.placeholder = "Message #\(strongSelf.channel.name!)"
                 
                 strongSelf.unreadQuery = UnreadQuery(level: .channel, userId: userId, groupId: groupId, channelId: channelId)
-                strongSelf.unreadQuery!.observe(with: { [weak self] error, total in
+                strongSelf.unreadQuery!.observe(with: { [weak strongSelf] error, total in
                     if self != nil, error == nil {
                         let total = total ?? 0
-                        if total == 0 && self!.channel?.priority == 0 {
-                            self!.channel?.clearUnreadSorting()
+                        if total == 0 && strongSelf?.channel?.priority == 0 {
+                            strongSelf?.channel?.clearUnreadSorting()
                         }
                     }
                 })
@@ -704,33 +704,31 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
         
         self.typingRef = FireController.db.child("typing/\(groupId)/\(channelId)")
         self.typingAddHandle = self.typingRef.observe(.childAdded, with: { [weak self] snap in
-            if self != nil {
-                if let typerName = snap.value as? String {
-                    if typerName != username {
-                        self!.typingIndicatorView?.insertUsername(typerName)    // Auto removed in 8 secs
-                    }
+            guard let strongSelf = self else { return }
+            if let typerName = snap.value as? String {
+                if typerName != username {
+                    strongSelf.typingIndicatorView?.insertUsername(typerName)    // Auto removed in 8 secs
                 }
             }
         })
         self.typingRemoveHandle = self.typingRef.observe(.childRemoved, with: { [weak self] snap in
-            if self != nil {
-                if let typerName = snap.value as? String {
-                    if typerName != username {
-                        self!.typingIndicatorView?.removeUsername(typerName)
-                    }
+            guard let strongSelf = self else { return }
+            if let typerName = snap.value as? String {
+                if typerName != username {
+                    strongSelf.typingIndicatorView?.removeUsername(typerName)
                 }
             }
         })
+        
         self.typingRef.child(userId).onDisconnectRemoveValue()
         
         /* Title */
         self.groupQuery?.remove()
         self.groupQuery = GroupQuery(groupId: groupId, userId: nil)
         self.groupQuery!.observe(with: { [weak self] error, trigger, group in
-            if group != nil {
-                self?.titleView.title?.text = group!.title
-                self?.navigationController?.navigationBar.setNeedsLayout()
-            }
+            guard let strongSelf = self else { return }
+            strongSelf.titleView.title?.text = group!.title
+            strongSelf.navigationController?.navigationBar.setNeedsLayout()
         })
         
         Log.v("Observe query triggered for channel messages")
