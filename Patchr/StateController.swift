@@ -53,6 +53,7 @@ class StateController: NSObject {
     func prepare() {
 
         let queue = TaskQueue()
+        var channelQuery: ChannelQuery! // released when queue is released
         
         /* Init user */
         queue.tasks += { _, next in
@@ -65,71 +66,71 @@ class StateController: NSObject {
         /* Init state */
         queue.tasks += { [weak self] _, next in
             
+            guard let strongSelf = self else { return }
+            
             guard UserController.instance.authenticated else {
                 next(nil)
                 return
             }
             
-            if let strongSelf = self {
-                if let groupId = UserDefaults.standard.string(forKey: PerUserKey(key: Prefs.lastGroupId)),
-                    let userId = UserController.instance.userId {
-                    
-                    if let lastChannelIds = UserDefaults.standard.dictionary(forKey: PerUserKey(key: Prefs.lastChannelIds)),
-                        let lastChannelId = lastChannelIds[groupId] as? String {
-                        let channelQuery = ChannelQuery(groupId: groupId, channelId: lastChannelId, userId: userId)
-                        channelQuery.once(with: { error, channel in
-                            if channel == nil {
-                                Log.w("Last channel invalid: \(lastChannelId): trying auto pick channel")
-                                FireController.instance.autoPickChannel(groupId: groupId, role: "guest") { channelId in
-                                    if channelId != nil {
-                                        strongSelf.setChannelId(channelId: channelId!, groupId: groupId) { error in
-                                            next(nil)
-                                        }
-                                    }
-                                    else {
-                                        /* Start from scratch */
-                                        strongSelf.clearGroup()
-                                        strongSelf.clearChannel()
+            if let groupId = UserDefaults.standard.string(forKey: PerUserKey(key: Prefs.lastGroupId)),
+                let userId = UserController.instance.userId {
+                
+                if let lastChannelIds = UserDefaults.standard.dictionary(forKey: PerUserKey(key: Prefs.lastChannelIds)),
+                    let lastChannelId = lastChannelIds[groupId] as? String {
+                    channelQuery = ChannelQuery(groupId: groupId, channelId: lastChannelId, userId: userId)
+                    channelQuery.once(with: { [weak strongSelf] error, channel in
+                        guard let strongSelf = strongSelf else { return }
+                        if channel == nil {
+                            Log.w("Last channel invalid: \(lastChannelId): trying auto pick channel")
+                            FireController.instance.autoPickChannel(groupId: groupId, role: "guest") { channelId in
+                                if channelId != nil {
+                                    strongSelf.setChannelId(channelId: channelId!, groupId: groupId) { error in
                                         next(nil)
                                     }
                                 }
-                            }
-                            else {
-                                strongSelf.setChannelId(channelId: lastChannelId, groupId: groupId) { error in
+                                else {
+                                    /* Start from scratch */
+                                    strongSelf.clearGroup()
+                                    strongSelf.clearChannel()
                                     next(nil)
                                 }
                             }
-                        })
-                    }
-                    else {
-                        FireController.instance.autoPickChannel(groupId: groupId, role: "guest") { channelId in
-                            if channelId != nil {
-                                strongSelf.setChannelId(channelId: channelId!, groupId: groupId) { error in
-                                    next(nil)
-                                }
-                            }
-                            else {
-                                /* Start from scratch */
-                                strongSelf.clearGroup()
-                                strongSelf.clearChannel()
+                        }
+                        else {
+                            strongSelf.setChannelId(channelId: lastChannelId, groupId: groupId) { error in
                                 next(nil)
                             }
                         }
-                    }
+                    })
                 }
                 else {
-                    next(nil)
+                    FireController.instance.autoPickChannel(groupId: groupId, role: "guest") { channelId in
+                        if channelId != nil {
+                            strongSelf.setChannelId(channelId: channelId!, groupId: groupId) { error in
+                                next(nil)
+                            }
+                        }
+                        else {
+                            /* Start from scratch */
+                            strongSelf.clearGroup()
+                            strongSelf.clearChannel()
+                            next(nil)
+                        }
+                    }
                 }
+            }
+            else {
+                next(nil)
             }
         }
 
         queue.tasks += { [weak self] in
-            if let strongSelf = self {
-                strongSelf.stateIntialized = true
-                NotificationCenter.default.post(
-                    name: NSNotification.Name(rawValue: Events.StateInitialized),
-                    object: strongSelf, userInfo: nil)
-            }
+            guard let strongSelf = self else { return }
+            strongSelf.stateIntialized = true
+            NotificationCenter.default.post(
+                name: NSNotification.Name(rawValue: Events.StateInitialized),
+                object: strongSelf, userInfo: nil)
         }
         
         queue.run()
@@ -171,11 +172,13 @@ class StateController: NSObject {
             /* Convenience for other parts of the code that need quick access to the group object */
             self.queryGroup?.remove()
             self.queryGroup = GroupQuery(groupId: groupId, userId: userId)
-            self.queryGroup!.observe(with: { error, trigger, group in
+            self.queryGroup!.observe(with: { [weak self] error, trigger, group in
+                
+                guard let strongSelf = self else { return }
                 
                 guard group != nil && error == nil else {
                     Log.w("Requested group invalid: \(groupId)")
-                    self.clearGroup()
+                    strongSelf.clearGroup()
                     if next != nil {
                         next?(error)
                     }
@@ -186,7 +189,7 @@ class StateController: NSObject {
                     return
                 }
                 
-                if self.group != nil {
+                if strongSelf.group != nil {
                     if trigger == .object {
                         Log.d("Group updated: \(group!.id!)")
                     }
@@ -198,13 +201,13 @@ class StateController: NSObject {
                     if let role = group?.role, role != "guest" {
                         /* Stash channelId for general channel if not guest */
                         FireController.instance.findGeneralChannel(groupId: groupId) { channelId in
-                            self.groupGeneralId = channelId
+                            strongSelf.groupGeneralId = channelId
                         }
                     }
                 }
                 
-                self.group = group
-                NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.GroupDidUpdate), object: self, userInfo: ["group_id": groupId])
+                strongSelf.group = group
+                NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.GroupDidUpdate), object: strongSelf, userInfo: ["group_id": groupId])
             })
         }
         else {

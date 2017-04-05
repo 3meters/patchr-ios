@@ -12,6 +12,7 @@ import FirebaseDatabaseUI
 class MemberListController: BaseTableController {
     
     var channel: FireChannel!
+    var channelQuery: ChannelQuery!
     var scope: ListScope = .group
     var target: MemberTarget = .group
     var manage = false
@@ -28,11 +29,12 @@ class MemberListController: BaseTableController {
             let groupId = StateController.instance.groupId!
             let channelId = StateController.instance.channelId!
             let userId = UserController.instance.userId!
-            let channelQuery = ChannelQuery(groupId: groupId, channelId: channelId, userId: userId)
-            channelQuery.once(with: { error, channel in
+            self.channelQuery = ChannelQuery(groupId: groupId, channelId: channelId, userId: userId)
+            self.channelQuery.once(with: { [weak self] error, channel in
+                guard let strongSelf = self else { return }
                 if channel != nil {
-                    self.channel = channel
-                    self.bind()
+                    strongSelf.channel = channel
+                    strongSelf.bind()
                 }
             })
         }
@@ -147,50 +149,49 @@ class MemberListController: BaseTableController {
         self.queryController.bind(to: self.tableView, query: query) { [weak self] tableView, indexPath, data in
             
             let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! UserListCell
+            cell.reset()
+            guard let strongSelf = self else { return cell }
             
-            if self != nil {
-                
-                cell.reset()
-                let snap = data as! FIRDataSnapshot
-                let userId = snap.key
-                let groupId = StateController.instance.groupId!
-                
-                var userQuery: UserQuery!
-                if self!.target == .group {
-                    userQuery = UserQuery(userId: userId, groupId: groupId)
-                }
-                else {
-                    let channelId = self!.channel.id!
-                    userQuery = UserQuery(userId: userId, groupId: groupId, channelId: channelId)
-                }
-                
-                userQuery.once(with: { error, user in
-                    if user != nil {
-                        let target = (self!.target == .group) ? "group" : "channel"
-                        cell.bind(user: user!, target: target)
-                        if self!.manage {
-                            if self!.scope == .group {
-                                if let role = StateController.instance.group!.role, role == "owner" {
-                                    cell.actionButton?.isHidden = false
-                                    cell.actionButton?.setTitle("Manage", for: .normal)
-                                    cell.actionButton?.data = user
-                                    cell.actionButton?.addTarget(self!, action: #selector(self!.manageUserAction(sender:)), for: .touchUpInside)
-                                }
-                            }
-                            else if self!.scope == .channel {
-                                if let role = self!.channel.role, role == "owner" {
-                                    cell.actionButton?.isHidden = false
-                                    cell.actionButton?.setTitle("Manage", for: .normal)
-                                    cell.actionButton?.data = user
-                                    cell.actionButton?.addTarget(self!, action: #selector(self!.manageUserAction(sender:)), for: .touchUpInside)
-                                }
+            let snap = data as! FIRDataSnapshot
+            let userId = snap.key
+            let groupId = StateController.instance.groupId!
+            
+            if strongSelf.target == .group {
+                cell.userQuery = UserQuery(userId: userId, groupId: groupId)
+            }
+            else {
+                let channelId = strongSelf.channel.id!
+                cell.userQuery = UserQuery(userId: userId, groupId: groupId, channelId: channelId)
+            }
+            
+            cell.userQuery.once(with: { [weak self, weak cell] error, user in
+                guard let strongSelf = self else { return }
+                guard let strongCell = cell else { return }
+                if user != nil {
+                    let target = (strongSelf.target == .group) ? "group" : "channel"
+                    strongCell.bind(user: user!, target: target)
+                    if strongSelf.manage {
+                        if strongSelf.scope == .group {
+                            if let role = StateController.instance.group!.role, role == "owner" {
+                                strongCell.actionButton?.isHidden = false
+                                strongCell.actionButton?.setTitle("Manage", for: .normal)
+                                strongCell.actionButton?.data = user
+                                strongCell.actionButton?.addTarget(strongSelf, action: #selector(strongSelf.manageUserAction(sender:)), for: .touchUpInside)
                             }
                         }
-                    } else {
-                        fatalError("User is missing for group or channel member")
+                        else if strongSelf.scope == .channel {
+                            if let role = self!.channel.role, role == "owner" {
+                                strongCell.actionButton?.isHidden = false
+                                strongCell.actionButton?.setTitle("Manage", for: .normal)
+                                strongCell.actionButton?.data = user
+                                strongCell.actionButton?.addTarget(strongSelf, action: #selector(strongSelf.manageUserAction(sender:)), for: .touchUpInside)
+                            }
+                        }
                     }
-                })
-            }
+                } else {
+                    fatalError("User is missing for group or channel member")
+                }
+            })
             return cell
         }
     }

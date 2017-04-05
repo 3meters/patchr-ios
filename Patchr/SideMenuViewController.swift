@@ -17,6 +17,7 @@ class SideMenuViewController: BaseTableController, UITableViewDelegate, UITableV
     var group: FireGroup?
     
     var userQuery: UserQuery!
+    var groupQuery: GroupQuery!
  
     var userHeader: UserMiniHeaderView!
     var groupHeader: GroupMiniHeaderView!
@@ -120,17 +121,19 @@ class SideMenuViewController: BaseTableController, UITableViewDelegate, UITableV
             self.userQuery?.remove()
             self.userQuery = UserQuery(userId: userId, groupId: groupId)
             self.userQuery.observe(with: { [weak self] error, user in
-                if let strongSelf = self {
-                    if user != nil {
-                        strongSelf.user = user
-                        strongSelf.userHeader.bind(user: strongSelf.user)
-                    }
+                guard let strongSelf = self else { return }
+                if user != nil {
+                    strongSelf.user = user
+                    strongSelf.userHeader.bind(user: strongSelf.user)
                 }
             })
-            GroupQuery(groupId: groupId, userId: userId).once(with: { [weak self] error, group in
+            self.groupQuery?.remove()
+            self.groupQuery = GroupQuery(groupId: groupId, userId: userId)
+            self.groupQuery.once(with: { [weak self] error, group in
+                guard let strongSelf = self else { return }
                 if group != nil {
-                    self?.group = group
-                    self?.groupHeader.bind(group: self?.group)
+                    strongSelf.group = group
+                    strongSelf.groupHeader.bind(group: self?.group)
                 }
             })
         }

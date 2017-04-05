@@ -158,7 +158,9 @@ class InviteListController: BaseTableController, UITableViewDelegate {
         let groupId = StateController.instance.groupId!
         let userId = UserController.instance.userId!
         let group = StateController.instance.group!
-        let query = FireController.db.child("invites/\(groupId)/\(userId)").queryOrdered(byChild: "status").queryEqual(toValue: self.currentStatus)
+        let query = FireController.db.child("invites/\(groupId)/\(userId)")
+            .queryOrdered(byChild: "status")
+            .queryEqual(toValue: self.currentStatus)
         
         self.navigationItem.title = "Invites: \(group.title!)"
         
@@ -177,19 +179,20 @@ class InviteListController: BaseTableController, UITableViewDelegate {
             
             let cell = tableView.dequeueReusableCell(withIdentifier: status, for: indexPath) as! InviteListCell
             cell.reset()    // Releases previous data observers
-            
             guard let strongSelf = self else { return cell }
             
             if status == "accepted" {
                 let userId = invite["accepted_by"] as! String
-                let userQuery = UserQuery(userId: userId, groupId: groupId)
-                userQuery.once(with: { error, user in
+                cell.userQuery = UserQuery(userId: userId, groupId: groupId)
+                cell.userQuery.once(with: { [weak strongSelf, weak cell] error, user in
+                    guard let strongSelf = strongSelf else { return }
+                    guard let strongCell = cell else { return }
                     if user != nil {
                         let recognizer = UILongPressGestureRecognizer(target: strongSelf, action: #selector(strongSelf.longPressAction(sender:)))
                         recognizer.minimumPressDuration = TimeInterval(0.2)
-                        cell.addGestureRecognizer(recognizer)
-                        cell.data = invite as AnyObject?
-                        cell.bind(user: user!, invite: invite)
+                        strongCell.addGestureRecognizer(recognizer)
+                        strongCell.data = invite as AnyObject?
+                        strongCell.bind(user: user!, invite: invite)
                     }
                 })
             }

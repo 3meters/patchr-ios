@@ -218,7 +218,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FIRMessagingDelegate {
         if notification != nil {
             if let channelId = notification!["channel_id"] as? String, let groupId = notification!["group_id"] as? String {
                 StateController.instance.setChannelId(channelId: channelId, groupId: groupId)
-                MainController.instance.showChannel(groupId: groupId, channelId: channelId)
+                MainController.instance.showChannel(channelId: channelId, groupId: groupId)
             }
         }
     }

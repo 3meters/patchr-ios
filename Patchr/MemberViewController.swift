@@ -44,8 +44,9 @@ class MemberViewController: BaseViewController, UIScrollViewDelegate, UITextFiel
         let groupId = StateController.instance.groupId!
         self.queryUser = UserQuery(userId: self.inputUserId, groupId: groupId)
         self.queryUser?.observe(with: { [weak self] error, user in
-            self?.user = user
-            self?.bind()
+            guard let strongSelf = self else { return }
+            strongSelf.user = user
+            strongSelf.bind()
         })
     }
     

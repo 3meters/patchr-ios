@@ -258,7 +258,7 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
                                         FireController.instance.autoPickChannel(groupId: groupId, role: role) { channelId in
                                             if channelId != nil {
                                                 StateController.instance.setChannelId(channelId: channelId!, groupId: groupId)
-                                                MainController.instance.showChannel(groupId: groupId, channelId: StateController.instance.channelId!)
+                                                MainController.instance.showChannel(channelId: channelId!, groupId: groupId)
                                             }
                                             else {
                                                 FireController.instance.removeUserFromGroup(userId: userId, groupId: groupId) { success in
@@ -619,14 +619,14 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
             
             guard channel != nil else {
                 if error != nil {
-                    /* The channel has been deleted from under us. */
+                    /* The channel has been deleted from under us and the group might be gone too. */
                     if let group = StateController.instance.group {
                         let role = group.role!
                         strongSelf.channelQuery?.remove()
                         FireController.instance.autoPickChannel(groupId: groupId, role: role) { channelId in
                             if channelId != nil {
                                 StateController.instance.setChannelId(channelId: channelId!, groupId: groupId)
-                                MainController.instance.showChannel(groupId: groupId, channelId: StateController.instance.channelId!)
+                                MainController.instance.showChannel(channelId: channelId!, groupId: groupId)
                             }
                             else {
                                 FireController.instance.removeUserFromGroup(userId: userId, groupId: groupId) { success in
@@ -637,7 +637,7 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
                             }
                         }
                     }
-                    else {
+                    else { // We don't have a current group
                         MainController.instance.showGroupSwitcher()
                     }
                 }
@@ -655,10 +655,11 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
                 
                 strongSelf.unreadQuery = UnreadQuery(level: .channel, userId: userId, groupId: groupId, channelId: channelId)
                 strongSelf.unreadQuery!.observe(with: { [weak strongSelf] error, total in
-                    if self != nil, error == nil {
+                    guard let strongSelf = strongSelf else { return }
+                    if error == nil {
                         let total = total ?? 0
-                        if total == 0 && strongSelf?.channel?.priority == 0 {
-                            strongSelf?.channel?.clearUnreadSorting()
+                        if total == 0 && strongSelf.channel?.priority == 0 {
+                            strongSelf.channel?.clearUnreadSorting()
                         }
                     }
                 })
@@ -727,8 +728,10 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
         self.groupQuery = GroupQuery(groupId: groupId, userId: nil)
         self.groupQuery!.observe(with: { [weak self] error, trigger, group in
             guard let strongSelf = self else { return }
-            strongSelf.titleView.title?.text = group!.title
-            strongSelf.navigationController?.navigationBar.setNeedsLayout()
+            if group != nil {
+                strongSelf.titleView.title?.text = group!.title
+                strongSelf.navigationController?.navigationBar.setNeedsLayout()
+            }
         })
         
         Log.v("Observe query triggered for channel messages")

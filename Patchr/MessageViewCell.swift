@@ -12,6 +12,7 @@ import TTTAttributedLabel
 class MessageViewCell: AirUIView {
 
     var message: FireMessage!
+    var userQuery: UserQuery!
 
     var description_: UILabel!
     var photoView: AirImageView!
@@ -204,6 +205,8 @@ class MessageViewCell: AirUIView {
         self.likeButton.isHidden = true
         self.likesLabel.isHidden = true
         self.edited.isHidden = true
+        self.userQuery?.remove()
+        self.userQuery = nil
     }
 
     func bind(message: FireMessage) {

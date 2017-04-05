@@ -24,6 +24,7 @@ class UserListCell: UITableViewCell {
     
     var user: FireUser!
     var contact: CNContact!
+    var userQuery: UserQuery!
     
     override func setSelected(_ selected: Bool, animated: Bool) {
         let color = self.photoControl?.backgroundColor
@@ -48,6 +49,8 @@ class UserListCell: UITableViewCell {
         self.agoLabel.isHidden = true
         self.actionButton?.isHidden = true
         self.allowSelection = true
+        self.userQuery?.remove()
+        self.userQuery = nil
     }
     
     func bind(contact: CNContact, status: String) {

@@ -270,24 +270,23 @@ class ChannelSwitcherController: BaseTableController {
             self.groupQuery?.remove()
             self.groupQuery = GroupQuery(groupId: groupId, userId: userId)
             self.groupQuery!.observe(with: { [weak self] error, trigger, group in
-                if let strongSelf = self {
-                    if strongSelf.titleButton != nil && group != nil {
-                        strongSelf.titleView.text = group!.title
-                    }
-                    if let role = group?.role {
-                        strongSelf.role = role
-                        if role != "guest" {
-                            strongSelf.navigationItem.setRightBarButtonItems([strongSelf.showGroupsButton, strongSelf.searchButton], animated: false)
-                            strongSelf.searchController.load()
-                        }
-                        else {
-                            strongSelf.navigationItem.setRightBarButtonItems([strongSelf.showGroupsButton], animated: false)
-                        }
-                    }
-                    let addButton = UIBarButtonItem(title: "New Channel", style: .plain, target: strongSelf, action: #selector(strongSelf.addAction(sender:)))
-                    addButton.tintColor = Colors.brandColor
-                    strongSelf.toolbarItems = [Ui.spacerFlex, addButton, Ui.spacerFlex]
+                guard let strongSelf = self else { return }
+                if strongSelf.titleButton != nil && group != nil {
+                    strongSelf.titleView.text = group!.title
                 }
+                if let role = group?.role {
+                    strongSelf.role = role
+                    if role != "guest" {
+                        strongSelf.navigationItem.setRightBarButtonItems([strongSelf.showGroupsButton, strongSelf.searchButton], animated: false)
+                        strongSelf.searchController.load()
+                    }
+                    else {
+                        strongSelf.navigationItem.setRightBarButtonItems([strongSelf.showGroupsButton], animated: false)
+                    }
+                }
+                let addButton = UIBarButtonItem(title: "New Channel", style: .plain, target: strongSelf, action: #selector(strongSelf.addAction(sender:)))
+                addButton.tintColor = Colors.brandColor
+                strongSelf.toolbarItems = [Ui.spacerFlex, addButton, Ui.spacerFlex]
             })
 
 			self.totalUnreadsQuery?.remove()
@@ -404,7 +403,7 @@ extension ChannelSwitcherController: UITableViewDelegate {
 		if let currentChannelId = StateController.instance.channelId {
 			if channelId != currentChannelId {
 				StateController.instance.setChannelId(channelId: channelId, groupId: groupId)
-				MainController.instance.showChannel(groupId: groupId, channelId: channelId)
+				MainController.instance.showChannel(channelId: channelId, groupId: groupId)
 			}
 		}
 

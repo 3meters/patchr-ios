@@ -133,19 +133,20 @@ class UserController: NSObject {
 
             /* Remove is handled in userQuery when user logs out */
             self.userQuery = UserQuery(userId: userId, groupId: nil, trackPresence: true)
-            self.userQuery!.observe(with: { error, user in
+            self.userQuery!.observe(with: { [weak self] error, user in
                 
+                guard let strongSelf = self else { return }
                 guard user != nil && error == nil else {
                     assertionFailure("User not found, no longer exists or permission denied")
                     then?(nil)
                     return
                 }
                 
-                if self.user != nil {
+                if strongSelf.user != nil {
                     Log.d("User updated: \(user!.id!)")
                 }
                 
-                self.user = user
+                strongSelf.user = user
                 
                 if !calledBack {
                     then?(nil)
@@ -157,13 +158,14 @@ class UserController: NSObject {
             self.counterRef?.removeObserver(withHandle: self.counterHandle!)
             self.counterRef = FireController.db.child("counters/\(userId)")
             self.counterHandle = self.counterRef!.observe(.value, with: { [weak self] snap in
+                guard let strongSelf = self else { return }
                 var count = 0
                 if let unreads = snap.value as? [String: Any] {
                     count = unreads["unreads"] as! Int
                 }
-                self?.unreads = count
+                strongSelf.unreads = count
                 UIApplication.shared.applicationIconBadgeNumber = count
-                NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.UnreadChange), object: self, userInfo: nil)
+                NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.UnreadChange), object: strongSelf, userInfo: nil)
             })
         }
         else {

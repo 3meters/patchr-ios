@@ -176,7 +176,7 @@ class MainController: NSObject, iRateDelegate {
             }
         }
         else {
-            showChannel(groupId: groupId!, channelId: channelId!) {
+            showChannel(channelId: channelId!, groupId: groupId!) {
                 self.bootstrapping = false
             }
         }
@@ -272,7 +272,7 @@ class MainController: NSObject, iRateDelegate {
         then?()
     }
 
-    func showChannel(groupId: String, channelId: String, then: (() -> Void)? = nil) {
+    func showChannel(channelId: String, groupId: String, then: (() -> Void)? = nil) {
         showMain {
             if let slide = self.containerController.controller as? SlideViewController {
                 if let wrapper = slide.mainViewController as? AirNavigationController {
@@ -435,7 +435,7 @@ class MainController: NSObject, iRateDelegate {
         FireController.instance.autoPickChannel(groupId: groupId, role: "member") { channelId in
             if channelId != nil {
                 StateController.instance.setChannelId(channelId: channelId!, groupId: groupId)
-                self.showChannel(groupId: groupId, channelId: channelId!)
+                self.showChannel(channelId: channelId!, groupId: groupId)
                 Utils.delay(1.0) {
                     if let topController = UIViewController.topMostViewController() {
                         let popup = PopupDialog(title: "Welcome!", message: "You are now a member of the \(groupTitle) Patchr group. Use the navigation drawer to discover and join channels.")
@@ -459,7 +459,7 @@ class MainController: NSObject, iRateDelegate {
         let channelId = channels!.first!.key
         let channelName = channels!.first!.value as! String
         StateController.instance.setChannelId(channelId: channelId, groupId: groupId)
-        self.showChannel(groupId: groupId, channelId: channelId) { // User permissions are in place
+        self.showChannel(channelId: channelId, groupId: groupId) { // User permissions are in place
             Utils.delay(0.5) {
                 if let topController = UIViewController.topMostViewController() {
                     var message = "You have joined the #\(channelName) channel in the \(groupTitle) Patchr group. Use the message bar to send your first message."

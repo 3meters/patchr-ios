@@ -20,6 +20,7 @@ class InviteListCell: UITableViewCell {
     @IBOutlet weak var resendButton: AirButton?
     @IBOutlet weak var revokeButton: AirButton?
     
+    var userQuery: UserQuery!
     var data: AnyObject?
     var allowSelection = true
     
@@ -41,6 +42,8 @@ class InviteListCell: UITableViewCell {
         self.resendButton?.isHidden = true
         self.revokeButton?.isHidden = true
         self.allowSelection = true
+        self.userQuery?.remove()
+        self.userQuery = nil
     }
     
     func bind(user: FireUser, invite: [String: Any]) {

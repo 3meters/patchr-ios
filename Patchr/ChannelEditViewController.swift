@@ -17,6 +17,7 @@ class ChannelEditViewController: BaseEditViewController {
     var inputGroupId: String!
     var inputChannelId: String!
     var channel: FireChannel!
+    var channelQuery: ChannelQuery!
 
     var banner = AirLabelTitle()
     var photoEditView = PhotoEditView()
@@ -39,14 +40,15 @@ class ChannelEditViewController: BaseEditViewController {
         initialize()
         
         if self.mode == .update {
-            let channelQuery = ChannelQuery(groupId: self.inputGroupId, channelId: self.inputChannelId, userId: nil)
-            channelQuery.once(with: { error, channel in
+            self.channelQuery = ChannelQuery(groupId: self.inputGroupId, channelId: self.inputChannelId, userId: nil)
+            self.channelQuery.once(with: { [weak self] error, channel in
+                guard let strongSelf = self else { return }
                 guard channel != nil else {
                     assertionFailure("Channel not found or no longer exists")
                     return
                 }
-                self.channel = channel
-                self.bind()
+                strongSelf.channel = channel
+                strongSelf.bind()
             })
         }
     }
@@ -123,9 +125,21 @@ class ChannelEditViewController: BaseEditViewController {
         
         if self.mode == .update {
             self.activeTextField?.resignFirstResponder()
-            isValid() { valid in
-                if valid {
-                    self.post()
+            if isValid() {
+                self.progress = AirProgress.showAdded(to: self.view.window!, animated: true)
+                self.progress?.mode = MBProgressHUDMode.indeterminate
+                self.progress?.styleAs(progressStyle: .activityWithText)
+                self.progress?.minShowTime = 0.5
+                self.progress?.labelText = "Updating..."
+                self.progress?.removeFromSuperViewOnHide = true
+                self.progress?.show(true)
+                isValidChannelName() { valid in
+                    if valid {
+                        self.post()
+                    }
+                    else {
+                        self.progress?.hide(true)
+                    }
                 }
             }
         }
@@ -136,9 +150,21 @@ class ChannelEditViewController: BaseEditViewController {
                     self.alert(title: "Not connected", message: message, cancelButtonTitle: "OK")
                 }
                 else {
-                    self.isValid() { valid in
-                        if valid {
-                            self.post()
+                    if self.isValid() {
+                        self.progress = AirProgress.showAdded(to: self.view.window!, animated: true)
+                        self.progress?.mode = MBProgressHUDMode.indeterminate
+                        self.progress?.styleAs(progressStyle: .activityWithText)
+                        self.progress?.minShowTime = 0.5
+                        self.progress?.labelText = "Creating..."
+                        self.progress?.removeFromSuperViewOnHide = true
+                        self.progress?.show(true)
+                        self.isValidChannelName() { valid in
+                            if valid {
+                                self.post()
+                            }
+                            else {
+                                self.progress?.hide(true)
+                            }
                         }
                     }
                 }
@@ -375,6 +401,7 @@ class ChannelEditViewController: BaseEditViewController {
                 updates["modified_at"] = timestamp
                 FireController.db.child(self.channel.path).updateChildValues(updates) { error, ref in
                     if error != nil {
+                        self.progress?.hide(true)
                         Log.w("Error updating channel: \(error!.localizedDescription)")
                         return
                     }
@@ -389,15 +416,18 @@ class ChannelEditViewController: BaseEditViewController {
                                 Log.w("Error updating channel: \(error!.localizedDescription)")
                                 return
                             }
+                            self.progress?.hide(true)
                             self.close(animated: true)
                         }
                     }
                     else {
+                        self.progress?.hide(true)
                         self.close(animated: true)
                     }
                 }
             }
             else {
+                self.progress?.hide(true)
                 self.close(animated: true)
                 return
             }
@@ -439,6 +469,9 @@ class ChannelEditViewController: BaseEditViewController {
             channelMap["visibility"] = self.visibilityValue
             
             FireController.instance.addChannelToGroup(channelId: channelId, channelMap: channelMap, groupId: groupId) { [weak self] success in
+                
+                guard let strongSelf = self else { return }
+                strongSelf.progress?.hide(true)
                 if !success {
                     Log.w("Error creating channel")
                     return
@@ -449,7 +482,7 @@ class ChannelEditViewController: BaseEditViewController {
                 controller.inputAsOwner = true
                 controller.inputChannelId = channelId
                 controller.inputChannelName = channelName
-                self?.navigationController?.setViewControllers([controller], animated: true)
+                strongSelf.navigationController?.setViewControllers([controller], animated: true)
             }
         }
     }
@@ -487,35 +520,35 @@ class ChannelEditViewController: BaseEditViewController {
         return false
     }
 
-    func isValid(then: @escaping (Bool) -> Void) {
+    func isValid() -> Bool {
         
         if self.nameField.isEmpty {
             self.nameField.errorMessage = "Name your channel"
-            then(false)
-            return
+            return false
         }
         
         let channelName = nameField.text!
         let characterSet: NSCharacterSet = NSCharacterSet(charactersIn: "abcdefghijklmnopqrstuvwxyz0123456789_-")
         if channelName.rangeOfCharacter(from: characterSet.inverted) != nil {
             self.nameField.errorMessage = "Lower case and no spaces or periods."
-            then(false)
-            return
+            return false
         }
         
         if (nameField.text!.utf16.count > 50) {
             self.nameField.errorMessage = "Channel name must be 50 characters or less."
-            then(false)
-            return
+            return false
         }
 
         if (nameField.text!.utf16.count < 3) {
             self.nameField.errorMessage = "Channel name must be at least 3 characters."
-            then(false)
-            return
+            return false
         }
-        
+        return true
+    }
+    
+    func isValidChannelName(then: @escaping (Bool) -> Void) {
         if self.mode == .insert || !stringsAreEqual(string1: self.nameField.text, string2: self.channel.name) {
+            let channelName = nameField.text!
             let groupId = self.inputGroupId!
             FireController.instance.channelNameExists(groupId: groupId, channelName: channelName) { error, exists in
                 if error != nil {

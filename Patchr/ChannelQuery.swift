@@ -9,6 +9,9 @@ import FirebaseAuth
 class ChannelQuery: NSObject {
     
     var authHandle: FIRAuthStateDidChangeListenerHandle!
+    
+    var block: ((Error?, FireChannel?) -> Swift.Void)!
+    var fired = false
 
     var channelPath: String!
     var channelHandle: UInt!
@@ -29,111 +32,118 @@ class ChannelQuery: NSObject {
 
     func observe(with block: @escaping (Error?, FireChannel?) -> Swift.Void) {
         
+        self.block = block
+        
         self.authHandle = FIRAuth.auth()?.addStateDidChangeListener() { [weak self] auth, user in
+            guard let strongSelf = self else { return }
             if auth.currentUser == nil {
-                self?.remove()
+                strongSelf.remove()
             }
         }
 
         self.channelHandle = FireController.db.child(self.channelPath).observe(.value, with: { [weak self] snap in
-            if !(snap.value is NSNull) {
-                self?.channel = FireChannel(dict: snap.value as! [String: Any], id: snap.key)
-                if self?.linkPath == nil || (self?.linkMapMiss)! {
-                    block(nil, self?.channel)  // May or may not have link info
+            guard let strongSelf = self else { return }
+            if let dict = snap.value as? [String: Any] {
+                strongSelf.channel = FireChannel(dict: dict, id: snap.key)
+                if strongSelf.linkPath == nil || strongSelf.linkMapMiss {
+                    strongSelf.block(nil, strongSelf.channel)  // May or may not have link info
                 }
-                else if self?.linkMap != nil {
-                    self?.channel!.membershipFrom(dict: (self?.linkMap)!)
-                    block(nil, self?.channel)  // May or may not have link info
+                else if strongSelf.linkMap != nil {
+                    strongSelf.channel!.membershipFrom(dict: (strongSelf.linkMap)!)
+                    strongSelf.block(nil, strongSelf.channel)  // May or may not have link info
                 }
             }
-        }, withCancel: { error in
-            Log.v("Permission denied trying to read channel: \(self.channelPath!)")
-            block(error, nil)
+        }, withCancel: { [weak self] error in
+            guard let strongSelf = self else { return }
+            Log.v("Permission denied trying to read channel: \(strongSelf.channelPath!)")
+            strongSelf.block(error, nil)
         })
 
         if self.linkPath != nil {
             self.linkHandle = FireController.db.child(self.linkPath).observe(.value, with: { [weak self] snap in
-                if !(snap.value is NSNull) {
-                    self?.linkMap = snap.value as! [String: Any]
-                    if self?.channel != nil {
-                        self?.channel!.membershipFrom(dict: (self?.linkMap)!)
-                        block(nil, self?.channel)
+                guard let strongSelf = self else { return }
+                if let dict = snap.value as? [String: Any] {
+                    strongSelf.linkMap = dict
+                    if strongSelf.channel != nil {
+                        strongSelf.channel!.membershipFrom(dict: dict)
+                        strongSelf.block(nil, strongSelf.channel)
                     }
                 }
                 else {
-                    /* User might not be a member so send the channel without link info */
-                    self?.linkMapMiss = true
-                    if self?.channel != nil {
-                        self?.channel!.membershipClear()
-                        block(nil, self?.channel)
+                    strongSelf.linkMapMiss = true
+                    if strongSelf.channel != nil {
+                        strongSelf.channel!.membershipClear()
+                        strongSelf.block(nil, strongSelf.channel)
                     }
                 }
-            }, withCancel: { error in
-                Log.v("Permission denied trying to read channel membership: \(self.linkPath!)")
-                block(error, nil)
+            }, withCancel: { [weak self] error in
+                guard let strongSelf = self else { return }
+                Log.v("Permission denied trying to read channel membership: \(strongSelf.linkPath!)")
+                strongSelf.block(error, nil)
             })
         }
     }
 
     func once(with block: @escaping (Error?, FireChannel?) -> Swift.Void) {
         
-        var fired = false
+        self.block = block
 
         FireController.db.child(self.channelPath).observeSingleEvent(of: .value, with: { [weak self] snap in
-            if !fired {
-                if !(snap.value is NSNull) {
-                    self?.channel = FireChannel(dict: snap.value as! [String: Any], id: snap.key)
-                    if self?.linkPath == nil || (self?.linkMapMiss)! {
-                        fired = true
-                        block(nil, self?.channel)  // May or may not have link info
+            guard let strongSelf = self else { return }
+            if !strongSelf.fired {
+                if let dict = snap.value as? [String: Any] {
+                    strongSelf.channel = FireChannel(dict: dict, id: snap.key)
+                    if strongSelf.linkPath == nil || strongSelf.linkMapMiss {
+                        strongSelf.fired = true
+                        strongSelf.block(nil, strongSelf.channel)  // May or may not have link info
                     }
-                    else if self?.linkMap != nil {
-                        fired = true
-                        self?.channel!.membershipFrom(dict: (self?.linkMap)!)
-                        block(nil, self?.channel)  // May or may not have link info
+                    else if strongSelf.linkMap != nil {
+                        strongSelf.fired = true
+                        strongSelf.channel!.membershipFrom(dict: (strongSelf.linkMap)!)
+                        strongSelf.block(nil, strongSelf.channel)  // May or may not have link info
                     }
                 }
                 else {
-                    fired = true
-                    block(nil, nil)
+                    strongSelf.fired = true
+                    strongSelf.block(nil, nil)
                 }
             }
-        }, withCancel: { error in
-            Log.v("Permission denied trying to read channel: \(self.channelPath!)")
-            block(error, nil)
+        }, withCancel: { [weak self] error in
+            guard let strongSelf = self else { return }
+            Log.v("Permission denied trying to read channel: \(strongSelf.channelPath!)")
+            strongSelf.block(error, nil)
         })
         
         if self.linkPath != nil {
             FireController.db.child(self.linkPath).observeSingleEvent(of: .value, with: { [weak self] snap in
-                if !fired {
-                    if !(snap.value is NSNull) {
-                        self?.linkMap = snap.value as! [String: Any]
-                        if self?.channel != nil {
-                            fired = true
-                            self?.channel!.membershipFrom(dict: (self?.linkMap)!)
-                            block(nil, self?.channel)
+                guard let strongSelf = self else { return }
+                if !strongSelf.fired {
+                    if let dict = snap.value as? [String: Any] {
+                        strongSelf.linkMap = dict
+                        if strongSelf.channel != nil {
+                            strongSelf.fired = true
+                            strongSelf.channel!.membershipFrom(dict: dict)
+                            strongSelf.block(nil, strongSelf.channel)
                         }
                     }
                     else {
                         /* User might not be a member so send the channel without link info */
-                        self?.linkMapMiss = true
-                        if self?.channel != nil {
-                            fired = true
-                            block(nil, self?.channel)
+                        strongSelf.linkMapMiss = true
+                        if strongSelf.channel != nil {
+                            strongSelf.fired = true
+                            strongSelf.block(nil, strongSelf.channel)
                         }
                     }
-                    
                 }
-            }, withCancel: { error in
-                Log.v("Permission denied trying to read channel membership: \(self.linkPath!)")
-                block(error, nil)
+            }, withCancel: { [weak self] error in
+                guard let strongSelf = self else { return }
+                Log.v("Permission denied trying to read channel membership: \(strongSelf.linkPath!)")
+                strongSelf.block(error, nil)
             })
         }
     }
 
     func remove() {
-        self.channel?.photo = nil
-        self.channel = nil
         if self.authHandle != nil {
             FIRAuth.auth()?.removeStateDidChangeListener(self.authHandle)
         }

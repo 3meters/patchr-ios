@@ -22,6 +22,7 @@ class InviteViewController: BaseEditViewController {
     var inviteGuestsComment = AirLabelDisplay()
     var inviteListButton = AirLinkButton()
 
+    var channelQuery: ChannelQuery!
     var channels: [String: Any] = [:]
     var inputGroupId: String?
     var inputGroupTitle: String?
@@ -81,7 +82,7 @@ class InviteViewController: BaseEditViewController {
         FireController.instance.findGeneralChannel(groupId: groupId) { channelId in
             if channelId != nil {
                 StateController.instance.setChannelId(channelId: channelId!, groupId: groupId)
-                MainController.instance.showChannel(groupId: groupId, channelId: channelId!)
+                MainController.instance.showChannel(channelId: channelId!, groupId: groupId)
                 let _ = self.navigationController?.popToRootViewController(animated: false)
                 self.close()
             }
@@ -153,11 +154,12 @@ class InviteViewController: BaseEditViewController {
             
             if let groupId = StateController.instance.groupId,
                 let channelId = StateController.instance.channelId {
-                let channelQuery = ChannelQuery(groupId: groupId, channelId: channelId, userId: nil)
-                channelQuery.once(with: { error, channel in
+                self.channelQuery = ChannelQuery(groupId: groupId, channelId: channelId, userId: nil)
+                self.channelQuery.once(with: { [weak self] error, channel in
+                    guard let strongSelf = self else { return }
                     if channel != nil {
                         let channelName = channel!.name!
-                        self.channels[channelId] = channelName
+                        strongSelf.channels[channelId] = channelName
                     }
                 })
             }

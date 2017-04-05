@@ -14,6 +14,7 @@ import Firebase
 class ProfileEditViewController: BaseEditViewController {
     
     var user: FireUser!
+    var userQuery: UserQuery!
 
     var message = AirLabelTitle()
     var photoEditView = PhotoEditView()
@@ -53,13 +54,12 @@ class ProfileEditViewController: BaseEditViewController {
         initialize()
         
         let userId = UserController.instance.userId!
-        let userQuery = UserQuery(userId: userId, groupId: nil)
-        userQuery.once(with: { [weak self] error, user in
-            if let strongSelf = self {
-                if (user != nil) {
-                    strongSelf.user = user
-                    strongSelf.bind()
-                }
+        self.userQuery = UserQuery(userId: userId, groupId: nil)
+        self.userQuery.once(with: { [weak self] error, user in
+            guard let strongSelf = self else { return }
+            if (user != nil) {
+                strongSelf.user = user
+                strongSelf.bind()
             }
         })
     }

@@ -273,7 +273,7 @@ class ContactPickerController: BaseTableController, CLTokenInputViewDelegate {
         FireController.instance.findGeneralChannel(groupId: groupId) { channelId in
             if channelId != nil {
                 StateController.instance.setChannelId(channelId: channelId!, groupId: groupId)
-                MainController.instance.showChannel(groupId: groupId, channelId: channelId!)
+                MainController.instance.showChannel(channelId: channelId!, groupId: groupId)
                 self.navigationController?.close()
             }
         }
@@ -283,7 +283,7 @@ class ContactPickerController: BaseTableController, CLTokenInputViewDelegate {
         let groupId = self.inputGroupId!
         let channelId = self.inputChannelId!
         StateController.instance.setChannelId(channelId: channelId, groupId: groupId)
-        MainController.instance.showChannel(groupId: groupId, channelId: channelId)
+        MainController.instance.showChannel(channelId: channelId, groupId: groupId)
         self.navigationController?.close()
     }
 

@@ -21,6 +21,7 @@ class GroupSwitcherController: BaseTableController {
     
     var message: String = "Select from groups you are a member of. You can switch groups at anytime."
 
+    var validateQuery: ChannelQuery!
     var groupAvailable = false
     var simplePicker = false
     
@@ -276,18 +277,19 @@ extension GroupSwitcherController: UITableViewDelegate {
         
         if let lastChannelIds = UserDefaults.standard.dictionary(forKey: PerUserKey(key: Prefs.lastChannelIds)),
             let lastChannelId = lastChannelIds[groupId] as? String {
-            let validateQuery = ChannelQuery(groupId: groupId, channelId: lastChannelId, userId: userId)
-            validateQuery.once(with: { error, channel in
+            self.validateQuery = ChannelQuery(groupId: groupId, channelId: lastChannelId, userId: userId)
+            self.validateQuery.once(with: { [weak self] error, channel in
+                guard let strongSelf = self else { return }
                 if channel == nil {
                     Log.w("Last channel invalid: \(lastChannelId): trying auto pick channel")
                     FireController.instance.autoPickChannel(groupId: groupId, role: role) { channelId in
                         if channelId != nil {
-                            self.showChannel(channelId: channelId!, groupId: groupId)
+                            strongSelf.showChannel(channelId: channelId!, groupId: groupId)
                         }
                     }
                 }
                 else {
-                    self.showChannel(channelId: lastChannelId, groupId: groupId)
+                    strongSelf.showChannel(channelId: lastChannelId, groupId: groupId)
                 }
             })
         }
@@ -309,12 +311,12 @@ extension GroupSwitcherController: UITableViewDelegate {
     func showChannel(channelId: String, groupId: String) {
         if self.simplePicker {
             StateController.instance.setChannelId(channelId: channelId, groupId: groupId)
-            MainController.instance.showChannel(groupId: groupId, channelId: channelId)
+            MainController.instance.showChannel(channelId: channelId, groupId: groupId)
             let _ = self.navigationController?.popViewController(animated: true)
         }
         else {
             StateController.instance.setChannelId(channelId: channelId, groupId: groupId)
-            MainController.instance.showChannel(groupId: groupId, channelId: channelId)
+            MainController.instance.showChannel(channelId: channelId, groupId: groupId)
             let _ = self.navigationController?.popViewController(animated: true)
             self.closeAction(sender: nil)
         }

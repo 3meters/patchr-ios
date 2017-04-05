@@ -82,7 +82,7 @@ class ChannelInviteController: BaseEditViewController {
         let groupId = StateController.instance.groupId!
         let channelId = self.inputChannelId!
         StateController.instance.setChannelId(channelId: channelId, groupId: groupId) // We know it's good
-        MainController.instance.showChannel(groupId: groupId, channelId: channelId)
+        MainController.instance.showChannel(channelId: channelId, groupId: groupId)
         self.close(animated: true)
     }
 	

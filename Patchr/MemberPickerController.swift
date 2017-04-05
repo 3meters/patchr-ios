@@ -66,7 +66,7 @@ class MemberPickerController: BaseTableController, CLTokenInputViewDelegate {
             let groupId = StateController.instance.groupId!
             let channelId = self.inputChannelId!
             StateController.instance.setChannelId(channelId: channelId, groupId: groupId) // We know it's good
-            MainController.instance.showChannel(groupId: groupId, channelId: channelId)
+            MainController.instance.showChannel(channelId: channelId, groupId: groupId)
         }
         self.close(animated: true)
     }
@@ -187,66 +187,70 @@ class MemberPickerController: BaseTableController, CLTokenInputViewDelegate {
         self.queryController.bind(to: self.tableView, query: query) { [weak self] tableView, indexPath, data in
             
             let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! UserListCell
+            cell.reset()
+            guard let strongSelf = self else { return cell }
             
-            func bindCell(user: FireUser) {
-                
-                let userId = user.id!
-                let channelId = self!.inputChannelId!
-                
-                cell.selectionStyle = .none
-                cell.accessoryType = .none
-                cell.roleLabel?.isHidden = true
-                
-                FireController.instance.isChannelMember(userId: userId, channelId: channelId, groupId: groupId, next: { result in
-                    cell.bind(user: user)
-                    if result == nil { return }
-                    if result! {
-                        cell.roleLabel?.isHidden = false
-                        cell.roleLabel?.text = "channel member"
-                        cell.roleLabel?.textColor = MaterialColor.lightGreen.base
-                        cell.checkBox?.isHidden = true
-                        cell.allowSelection = false
+            if let user = data as? FireUser {
+                strongSelf.bindCell(user: user, cell: cell)
+            }
+            else {
+                let snap = data as! FIRDataSnapshot
+                let userId = snap.key
+                cell.userQuery = UserQuery(userId: userId, groupId: nil)
+                cell.userQuery.once(with: { [weak strongSelf, weak cell] error, user in
+                    guard let strongSelf = strongSelf else { return }
+                    guard let strongCell = cell else { return }
+                    if error != nil {
+                        Log.w("Permission denied")
+                        return
                     }
-                    else {
-                        if user.email != nil {
-                            cell.roleLabel?.isHidden = true
-                            cell.checkBox?.isHidden = false
-                            cell.checkBox?.on = cell.isSelected
-                        }
-                        else if !(self?.inputAsOwner)! {
-                            cell.roleLabel?.isHidden = false
-                            cell.roleLabel?.text = "email unavailable"
-                            cell.roleLabel?.textColor = MaterialColor.lightGreen.base
-                            cell.checkBox?.isHidden = true
-                            cell.allowSelection = false
-                        }
+                    if user != nil {
+                        user!.membershipFrom(dict: snap.value as! [String : Any])
+                        strongSelf.bindCell(user: user!, cell: strongCell)
                     }
                 })
             }
             
-            if self != nil {
-                cell.reset()
-                if let user = data as? FireUser {
-                    bindCell(user: user)
-                }
-                else {
-                    let snap = data as! FIRDataSnapshot
-                    let userId = snap.key
-                    UserQuery(userId: userId, groupId: nil).once(with: { error, user in
-                        if error != nil {
-                            Log.w("Permission denied")
-                            return
-                        }
-                        if user != nil {
-                            user!.membershipFrom(dict: snap.value as! [String : Any])
-                            bindCell(user: user!)
-                        }
-                    })
-                }
-            }
-            
             return cell
         }
+    }
+    
+    func bindCell(user: FireUser, cell: UserListCell) {
+        
+        let userId = user.id!
+        let channelId = self.inputChannelId!
+        let groupId = StateController.instance.groupId!
+        let asOwner = self.inputAsOwner
+        
+        cell.selectionStyle = .none
+        cell.accessoryType = .none
+        cell.roleLabel?.isHidden = true
+        
+        FireController.instance.isChannelMember(userId: userId, channelId: channelId, groupId: groupId, next: { result in
+            cell.bind(user: user)
+            if result == nil { return }
+            if result! {
+                cell.roleLabel?.isHidden = false
+                cell.roleLabel?.text = "channel member"
+                cell.roleLabel?.textColor = MaterialColor.lightGreen.base
+                cell.checkBox?.isHidden = true
+                cell.allowSelection = false
+            }
+            else {
+                if user.email != nil {
+                    cell.roleLabel?.isHidden = true
+                    cell.checkBox?.isHidden = false
+                    cell.checkBox?.on = cell.isSelected
+                }
+                else if !asOwner {
+                    cell.roleLabel?.isHidden = false
+                    cell.roleLabel?.text = "email unavailable"
+                    cell.roleLabel?.textColor = MaterialColor.lightGreen.base
+                    cell.checkBox?.isHidden = true
+                    cell.allowSelection = false
+                }
+            }
+        })
     }
     
     func inviteList() {
@@ -267,7 +271,7 @@ class MemberPickerController: BaseTableController, CLTokenInputViewDelegate {
                     FireController.instance.addUserToChannel(userId: userId, groupId: groupId, channelId: channelId, channelName: channelName)
                 }
                 StateController.instance.setChannelId(channelId: channelId, groupId: groupId) // We know it's good
-                MainController.instance.showChannel(groupId: groupId, channelId: channelId)
+                MainController.instance.showChannel(channelId: channelId, groupId: groupId)
                 self.close(animated: true)
             }
             else {
