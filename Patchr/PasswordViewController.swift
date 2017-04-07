@@ -225,6 +225,9 @@ class PasswordViewController: BaseEditViewController {
                 if self != nil {
                     if self!.flow == .onboardLogin {
                         let controller = GroupSwitcherController()
+                        controller.flow = self!.flow
+                        controller.navigationItem.backBarButtonItem = nil
+                        controller.navigationItem.hidesBackButton = true
                         self!.navigationController?.pushViewController(controller, animated: true)
                     }
                     else if self!.flow == .onboardCreate {

@@ -5,7 +5,7 @@ import FLAnimatedImage
 
 class DisplayPhoto: IDMPhoto {
 
-    var message: FireMessage? // Supports like button
+    weak var message: FireMessage? // Supports like button
 
     /* Used to build caption in gallery browsing */
 	
@@ -18,37 +18,33 @@ class DisplayPhoto: IDMPhoto {
     
     var size: CGSize? // Used as hint for grid layout
     
-    static func fromMessage(message: FireMessage) -> DisplayPhoto {
-        
-        let displayPhoto = DisplayPhoto()
-        
-        displayPhoto.caption = message.text // Used by photo browser, on base class
-        displayPhoto.message = message
+    convenience init(from message: FireMessage) {
+        self.init()
+        self.caption = message.text // Used by photo browser, on base class
+        self.message = message
         
         if let photo = message.attachments?.values.first?.photo {
-            displayPhoto.photoURL = Cloudinary.url(prefix: photo.filename!) // On base class
+            self.photoURL = Cloudinary.url(prefix: photo.filename!) // On base class
             if photo.width != nil && photo.height != nil {
-                displayPhoto.size = CGSize(width: CGFloat(photo.width!), height: CGFloat(photo.height!))
+                self.size = CGSize(width: CGFloat(photo.width!), height: CGFloat(photo.height!))
             }
         }
         
         let createdDate = DateUtils.from(timestamp: message.createdAt!)
-        displayPhoto.createdDateValue = createdDate
-        displayPhoto.createdDateLabel = DateUtils.timeAgoShort(date: createdDate)
+        self.createdDateValue = createdDate
+        self.createdDateLabel = DateUtils.timeAgoShort(date: createdDate)
         
         if let creator = message.creator {
-            displayPhoto.creatorName = creator.username
+            self.creatorName = creator.username
             if let userPhoto = creator.profile?.photo {
-                displayPhoto.creatorUrl = Cloudinary.url(prefix: userPhoto.filename!, category: SizeCategory.profile)
+                self.creatorUrl = Cloudinary.url(prefix: userPhoto.filename!, category: SizeCategory.profile)
             }
         }
         
         let userId = UserController.instance.userId!
         if message.getReaction(emoji: .thumbsup, userId: userId) {
-            displayPhoto.userLikes = true
-            displayPhoto.userLikesId = userId
+            self.userLikes = true
+            self.userLikesId = userId
         }
-        
-        return displayPhoto
     }
 }

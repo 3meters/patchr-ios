@@ -31,10 +31,10 @@ class MemberListController: BaseTableController {
             let userId = UserController.instance.userId!
             self.channelQuery = ChannelQuery(groupId: groupId, channelId: channelId, userId: userId)
             self.channelQuery.once(with: { [weak self] error, channel in
-                guard let strongSelf = self else { return }
+                guard let this = self else { return }
                 if channel != nil {
-                    strongSelf.channel = channel
-                    strongSelf.bind()
+                    this.channel = channel
+                    this.bind()
                 }
             })
         }
@@ -150,41 +150,41 @@ class MemberListController: BaseTableController {
             
             let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! UserListCell
             cell.reset()
-            guard let strongSelf = self else { return cell }
+            guard let this = self else { return cell }
             
             let snap = data as! FIRDataSnapshot
             let userId = snap.key
             let groupId = StateController.instance.groupId!
             
-            if strongSelf.target == .group {
+            if this.target == .group {
                 cell.userQuery = UserQuery(userId: userId, groupId: groupId)
             }
             else {
-                let channelId = strongSelf.channel.id!
+                let channelId = this.channel.id!
                 cell.userQuery = UserQuery(userId: userId, groupId: groupId, channelId: channelId)
             }
             
             cell.userQuery.once(with: { [weak self, weak cell] error, user in
-                guard let strongSelf = self else { return }
+                guard let this = self else { return }
                 guard let strongCell = cell else { return }
                 if user != nil {
-                    let target = (strongSelf.target == .group) ? "group" : "channel"
+                    let target = (this.target == .group) ? "group" : "channel"
                     strongCell.bind(user: user!, target: target)
-                    if strongSelf.manage {
-                        if strongSelf.scope == .group {
+                    if this.manage {
+                        if this.scope == .group {
                             if let role = StateController.instance.group!.role, role == "owner" {
                                 strongCell.actionButton?.isHidden = false
                                 strongCell.actionButton?.setTitle("Manage", for: .normal)
                                 strongCell.actionButton?.data = user
-                                strongCell.actionButton?.addTarget(strongSelf, action: #selector(strongSelf.manageUserAction(sender:)), for: .touchUpInside)
+                                strongCell.actionButton?.addTarget(this, action: #selector(this.manageUserAction(sender:)), for: .touchUpInside)
                             }
                         }
-                        else if strongSelf.scope == .channel {
+                        else if this.scope == .channel {
                             if let role = self!.channel.role, role == "owner" {
                                 strongCell.actionButton?.isHidden = false
                                 strongCell.actionButton?.setTitle("Manage", for: .normal)
                                 strongCell.actionButton?.data = user
-                                strongCell.actionButton?.addTarget(strongSelf, action: #selector(strongSelf.manageUserAction(sender:)), for: .touchUpInside)
+                                strongCell.actionButton?.addTarget(this, action: #selector(this.manageUserAction(sender:)), for: .touchUpInside)
                             }
                         }
                     }

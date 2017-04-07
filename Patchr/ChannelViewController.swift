@@ -43,8 +43,7 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
 
     /* Only used for row sizing */
     var rowHeights: NSMutableDictionary = [:]
-    var itemTemplate = MessageViewCell()
-    var itemPadding	= UIEdgeInsetsMake(12, 12, 12, 12)
+    var itemTemplate = MessageListCell()
     
     /* Observes typers for channel. If we see typers (but not this user), we
        pass them to the typing indicator. Each user passed to the typing
@@ -82,6 +81,7 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         initialize()
+        self.setTextInputbarHidden(true, animated: false)
         bind(groupId: self.inputGroupId!, channelId: self.inputChannelId!)
     }
     
@@ -217,9 +217,8 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
 
     func leaveChannelAction(sender: AnyObject?) {
         
-        if let group = StateController.instance.group,
-            let role = group.role {
-            if self.channel.visibility != "private" && role != "guest" {
+        if let group = StateController.instance.group, let role = group.role {
+            if self.channel.visibility == "open" && role != "guest" {
                 let userId = UserController.instance.userId!
                 let channelName = self.channel.name!
                 FireController.instance.removeUserFromChannel(userId: userId, groupId: group.id!, channelId: self.channel.id!, channelName: channelName, then: { success in
@@ -232,7 +231,7 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
                     }
                 })
             }
-            else {
+            else { // Either private channel or guest member
                 var message = "Are you sure you want to leave this private channel? A new invitation may be required to rejoin."
                 if role == "guest" {
                     message = (self.channel.visibility == "private")
@@ -246,28 +245,16 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
                         if doIt {
                             let userId = UserController.instance.userId!
                             let groupId = group.id!
+                            let channelId = self.channel.id!
                             let channelName = self.channel.name!
-                            FireController.instance.removeUserFromChannel(userId: userId, groupId: group.id!, channelId: self.channel.id!, channelName: channelName, then: { [weak self] success in
-                                if let _ = self {
-                                    if success {
-                                        UIShared.toast(message: "You have left this channel.")
-                                        StateController.instance.clearChannel()
-                                        if UserDefaults.standard.bool(forKey: PerUserKey(key: Prefs.soundEffects)) {
-                                            AudioController.instance.play(sound: Sound.pop.rawValue)
-                                        }
-                                        FireController.instance.autoPickChannel(groupId: groupId, role: role) { channelId in
-                                            if channelId != nil {
-                                                StateController.instance.setChannelId(channelId: channelId!, groupId: groupId)
-                                                MainController.instance.showChannel(channelId: channelId!, groupId: groupId)
-                                            }
-                                            else {
-                                                FireController.instance.removeUserFromGroup(userId: userId, groupId: groupId) { success in
-                                                    if success {
-                                                        MainController.instance.showGroupSwitcher()
-                                                    }
-                                                }
-                                            }
-                                        }
+                            FireController.instance.removeUserFromChannel(userId: userId, groupId: groupId, channelId: channelId, channelName: channelName, then: { [weak self] success in
+                                guard self != nil else { return }
+                                if success {
+                                    /* Channel query handles fixup when channel is deleted. */
+                                    UIShared.toast(message: "You have left this channel.")
+                                    StateController.instance.clearChannel()
+                                    if UserDefaults.standard.bool(forKey: PerUserKey(key: Prefs.soundEffects)) {
+                                        AudioController.instance.play(sound: Sound.pop.rawValue)
                                     }
                                 }
                             })
@@ -282,10 +269,10 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
             let point = sender.location(in: self.tableView)
             if let indexPath = self.tableView.indexPathForRow(at: point) {
                 dismissKeyboard(true)
-                let cell = self.tableView.cellForRow(at: indexPath) as! WrapperTableViewCell
+                let cell = self.tableView.cellForRow(at: indexPath) as! MessageListCell
                 let snap = self.queryController.snapshot(at: indexPath.row)
                 let message = FireMessage(dict: snap.value as! [String: Any], id: snap.key)
-                showMessageActions(message: message, sourceView: cell.view)
+                showMessageActions(message: message, sourceView: cell.contentView)
             }
         }
     }
@@ -432,13 +419,13 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
         self.tableView.estimatedRowHeight = 100						// Zero turns off estimates
         self.tableView.rowHeight = UITableViewAutomaticDimension	// Actual height is handled in heightForRowAtIndexPath
         self.tableView.backgroundColor = Theme.colorBackgroundTable
-        self.tableView.separatorStyle = .none
         self.tableView.separatorInset = UIEdgeInsets.zero
+        self.tableView.tableFooterView = UIView()
         self.tableView.allowsSelection = false
         self.tableView.delegate = self
         self.tableView.contentInset = UIEdgeInsets(top: self.headerHeight + chromeHeight, left: 0, bottom: 0, right: 0)
         self.tableView.contentOffset = CGPoint(x: 0, y: -(self.headerHeight + chromeHeight))
-        self.tableView.register(WrapperTableViewCell.self, forCellReuseIdentifier: "cell")
+        self.tableView.register(MessageListCell.self, forCellReuseIdentifier: "cell")
         
         self.itemTemplate.template = true
         
@@ -535,74 +522,69 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
         
         self.queryController.bind(to: self.tableView, query: query) { [weak self] tableView, indexPath, data in
             
-            let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! WrapperTableViewCell
-            
-            guard let strongSelf = self else { return cell }
+            let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! MessageListCell
+            cell.reset() // Removes all gesture recognizers
+            guard let this = self else { return cell }
             
             let snap = data as! FIRDataSnapshot
             let userId = UserController.instance.userId!
             let message = FireMessage(dict: snap.value as! [String: Any], id: snap.key)
             
-            if let messageView = cell.view as? MessageViewCell {
-                messageView.reset()
-            }
-            
             guard message.createdBy != nil else {
                 return cell
             }
             
-            UserQuery(userId: message.createdBy!, groupId: groupId).once(with: { error, user in
+            cell.userQuery = UserQuery(userId: message.createdBy!, groupId: groupId)
+            cell.userQuery.once(with: { [weak this, weak cell] error, user in
+                
+                guard let this = this else { return }
+                guard let cell = cell else { return }
+                
                 message.creator = user
                 
-                if cell.view == nil {
-                    let recognizer = UILongPressGestureRecognizer(target: strongSelf, action: #selector(strongSelf.longPressAction(sender:)))
+                if !cell.decorated {
+                    let recognizer = UILongPressGestureRecognizer(target: this, action: #selector(this.longPressAction(sender:)))
                     recognizer.minimumPressDuration = TimeInterval(0.2)
                     cell.addGestureRecognizer(recognizer)
                     
-                    let view = MessageViewCell(frame: CGRect(x: 0, y: 0, width: strongSelf.view.width(), height: 40))
-                    if view.description_ != nil && (view.description_ is TTTAttributedLabel) {
-                        let label = view.description_ as! TTTAttributedLabel
-                        label.delegate = strongSelf
+                    if let label = cell.description_ as? TTTAttributedLabel {
+                        label.delegate = this
                     }
-                    
-                    view.photoView?.isUserInteractionEnabled = true
-                    view.photoView?.addGestureRecognizer(UITapGestureRecognizer(target: strongSelf, action: #selector(strongSelf.browsePhotoAction(sender:))))
-                    cell.injectView(view: view, padding: strongSelf.itemPadding)
+                    cell.photoView?.isUserInteractionEnabled = true
+                    cell.photoView?.addGestureRecognizer(UITapGestureRecognizer(target: this, action: #selector(this.browsePhotoAction(sender:))))
                     cell.layoutSubviews()   // Make sure padding has been applied
+                    cell.decorated = true
                 }
                 
-                if let messageView = cell.view! as? MessageViewCell {
-                    
-                    messageView.bind(message: message)
-                    
-                    if message.creator != nil {
-                        messageView.userPhotoControl.target = message.creator
-                        messageView.userPhotoControl.addTarget(strongSelf, action: #selector(strongSelf.browseMemberAction(sender:)), for: .touchUpInside)
-                    }
-                    
-                    let messageId = message.id!
-                    if strongSelf.unreads[messageId] != nil {
-                        /* We cached the unread flag for the message so now use it and remove it. */
-                        messageView.unread.isHidden = false
-                        strongSelf.unreads.removeValue(forKey: messageId)
-                        FireController.instance.clearMessageUnread(messageId: messageId, channelId: channelId, groupId: groupId)
-                    }
-                    else {
-                        /* Initial bind and might not be visible to the user yet. If not then
-                           cache the unread flag to use when we are user visible. */
-                        let unreadPath = "unreads/\(userId)/\(groupId)/\(channelId)/\(messageId)"
-                        FireController.db.child(unreadPath).observeSingleEvent(of: .value, with: { snap in
-                            if !(snap.value is NSNull) {
-                                if !strongSelf.viewIsVisible {
-                                    strongSelf.unreads[messageId] = true // Cache it
-                                }
-                                else {
-                                    messageView.unread.isHidden = false
-                                    FireController.instance.clearMessageUnread(messageId: messageId, channelId: channelId, groupId: groupId)
-                                }
+                cell.bind(message: message)
+                
+                if message.creator != nil {
+                    cell.userPhotoControl.target = message.creator
+                    cell.userPhotoControl.addTarget(this, action: #selector(this.browseMemberAction(sender:)), for: .touchUpInside)
+                }
+                
+                let messageId = message.id!
+                if this.unreads[messageId] != nil {
+                    /* We cached the unread flag for the message so now use it and remove it. */
+                    cell.unread.isHidden = false
+                    this.unreads.removeValue(forKey: messageId)
+                    FireController.instance.clearMessageUnread(messageId: messageId, channelId: channelId, groupId: groupId)
+                }
+                else {
+                    /* Initial bind and might not be visible to the user yet. If not then
+                       cache the unread flag to use when we are user visible. */
+                    let unreadPath = "unreads/\(userId)/\(groupId)/\(channelId)/\(messageId)"
+                    FireController.db.child(unreadPath).observeSingleEvent(of: .value, with: { snap in
+                        if !(snap.value is NSNull) {
+                            if !this.viewIsVisible {
+                                this.unreads[messageId] = true // Cache it
                             }
-                        })
-                    }
+                            else {
+                                cell.unread.isHidden = false
+                                FireController.instance.clearMessageUnread(messageId: messageId, channelId: channelId, groupId: groupId)
+                            }
+                        }
+                    })
                 }
             })
             return cell
@@ -615,21 +597,21 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
         self.channelQuery = ChannelQuery(groupId: groupId, channelId: channelId, userId: userId)
         self.channelQuery!.observe(with: { [weak self] error, channel in
             
-            guard let strongSelf = self else { return }
-            
+            guard let this = self else { return }
             guard channel != nil else {
                 if error != nil {
                     /* The channel has been deleted from under us and the group might be gone too. */
                     if let group = StateController.instance.group {
                         let role = group.role!
-                        strongSelf.channelQuery?.remove()
+                        this.channelQuery?.remove()
                         FireController.instance.autoPickChannel(groupId: groupId, role: role) { channelId in
                             if channelId != nil {
                                 StateController.instance.setChannelId(channelId: channelId!, groupId: groupId)
                                 MainController.instance.showChannel(channelId: channelId!, groupId: groupId)
                             }
-                            else {
-                                FireController.instance.removeUserFromGroup(userId: userId, groupId: groupId) { success in
+                            else { // User is member of group but not any of the group channels.
+                                FireController.instance.removeUserFromGroup(userId: userId, groupId: groupId) { [weak this] success in
+                                    guard this != nil else { return }
                                     if success {
                                         MainController.instance.showGroupSwitcher()
                                     }
@@ -644,22 +626,26 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
                 return
             }
             
-            strongSelf.channel = channel
-            strongSelf.titleView.subtitle?.text = "#\(strongSelf.channel.name!)"
-            strongSelf.navigationController?.navigationBar.setNeedsLayout()
+            this.channel = channel
+            this.titleView.subtitle?.text = "#\(this.channel.name!)"
+            this.navigationController?.navigationBar.setNeedsLayout()
+            
             
             if channel?.joinedAt != nil {
-                strongSelf.hideJoinBar()
-                strongSelf.setTextInputbarHidden(false, animated: true)
-                strongSelf.textView.placeholder = "Message #\(strongSelf.channel.name!)"
+                this.hideJoinBar()
                 
-                strongSelf.unreadQuery = UnreadQuery(level: .channel, userId: userId, groupId: groupId, channelId: channelId)
-                strongSelf.unreadQuery!.observe(with: { [weak strongSelf] error, total in
-                    guard let strongSelf = strongSelf else { return }
+                if channel!.role != "visitor" {
+                    this.setTextInputbarHidden(false, animated: true)
+                    this.textView.placeholder = "Message #\(this.channel.name!)"
+                }
+                
+                this.unreadQuery = UnreadQuery(level: .channel, userId: userId, groupId: groupId, channelId: channelId)
+                this.unreadQuery!.observe(with: { [weak this] error, total in
+                    guard let this = this else { return }
                     if error == nil {
                         let total = total ?? 0
-                        if total == 0 && strongSelf.channel?.priority == 0 {
-                            strongSelf.channel?.clearUnreadSorting()
+                        if total == 0 && this.channel?.priority == 0 {
+                            this.channel?.clearUnreadSorting()
                         }
                     }
                 })
@@ -667,9 +653,9 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
             else {
                 if let group = StateController.instance.group, let role = group.role {
                     if role != "guest" {
-                        strongSelf.showJoinBar()
-                        strongSelf.joinBarLabel.text = "This is a preview of #\(strongSelf.channel.name!)"
-                        strongSelf.setTextInputbarHidden(true, animated: true)                            
+                        this.showJoinBar()
+                        this.joinBarLabel.text = "This is a preview of #\(this.channel.name!)"
+                        this.setTextInputbarHidden(true, animated: true)
                     }
                 }
             }
@@ -677,27 +663,27 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
             /* We do this here so we have tableView sizing */
             Log.v("Bind channel header")
             
-            strongSelf.headerView.bind(channel: strongSelf.channel)
-            strongSelf.headerView.gestureRecognizers?.removeAll()
-            let tap = UITapGestureRecognizer(target: self, action: #selector(strongSelf.showChannelActions(sender:)))
-            strongSelf.headerView.addGestureRecognizer(tap)
+            this.headerView.bind(channel: this.channel)
+            this.headerView.gestureRecognizers?.removeAll()
+            let tap = UITapGestureRecognizer(target: self, action: #selector(this.showChannelActions(sender:)))
+            this.headerView.addGestureRecognizer(tap)
             
-            if strongSelf.channel.purpose != nil {
+            if this.channel.purpose != nil {
                 
-                let viewWidth = min(Config.contentWidthMax, strongSelf.view.width())
-                strongSelf.headerView.purposeLabel.bounds.size.width = viewWidth - 32
-                strongSelf.headerView.purposeLabel.sizeToFit()
-                strongSelf.headerView.purposeLabel.anchorTopLeft(withLeftPadding: 12
+                let viewWidth = min(Config.contentWidthMax, this.view.width())
+                this.headerView.purposeLabel.bounds.size.width = viewWidth - 32
+                this.headerView.purposeLabel.sizeToFit()
+                this.headerView.purposeLabel.anchorTopLeft(withLeftPadding: 12
                     , topPadding: 12
-                    , width: strongSelf.headerView.purposeLabel.width()
-                    , height: strongSelf.headerView.purposeLabel.height())
+                    , width: this.headerView.purposeLabel.width()
+                    , height: this.headerView.purposeLabel.height())
 
-                let infoHeight = strongSelf.headerView.purposeLabel.height() + 24
-                strongSelf.headerHeight = (viewWidth * 0.625) + infoHeight
+                let infoHeight = this.headerView.purposeLabel.height() + 24
+                this.headerHeight = (viewWidth * 0.625) + infoHeight
                 
-                strongSelf.tableView.contentInset = UIEdgeInsets(top: strongSelf.headerHeight + 74, left: 0, bottom: 0, right: 0)
-                strongSelf.tableView.contentOffset = CGPoint(x: 0, y: -(strongSelf.headerHeight + 74))
-                strongSelf.updateHeaderView()
+                this.tableView.contentInset = UIEdgeInsets(top: this.headerHeight + 74, left: 0, bottom: 0, right: 0)
+                this.tableView.contentOffset = CGPoint(x: 0, y: -(this.headerHeight + 74))
+                this.updateHeaderView()
             }
         })
 
@@ -705,18 +691,18 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
         
         self.typingRef = FireController.db.child("typing/\(groupId)/\(channelId)")
         self.typingAddHandle = self.typingRef.observe(.childAdded, with: { [weak self] snap in
-            guard let strongSelf = self else { return }
+            guard let this = self else { return }
             if let typerName = snap.value as? String {
                 if typerName != username {
-                    strongSelf.typingIndicatorView?.insertUsername(typerName)    // Auto removed in 8 secs
+                    this.typingIndicatorView?.insertUsername(typerName)    // Auto removed in 8 secs
                 }
             }
         })
         self.typingRemoveHandle = self.typingRef.observe(.childRemoved, with: { [weak self] snap in
-            guard let strongSelf = self else { return }
+            guard let this = self else { return }
             if let typerName = snap.value as? String {
                 if typerName != username {
-                    strongSelf.typingIndicatorView?.removeUsername(typerName)
+                    this.typingIndicatorView?.removeUsername(typerName)
                 }
             }
         })
@@ -727,10 +713,10 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
         self.groupQuery?.remove()
         self.groupQuery = GroupQuery(groupId: groupId, userId: nil)
         self.groupQuery!.observe(with: { [weak self] error, trigger, group in
-            guard let strongSelf = self else { return }
+            guard let this = self else { return }
             if group != nil {
-                strongSelf.titleView.title?.text = group!.title
-                strongSelf.navigationController?.navigationBar.setNeedsLayout()
+                this.titleView.title?.text = group!.title
+                this.navigationController?.navigationBar.setNeedsLayout()
             }
         })
         
@@ -921,10 +907,10 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
                 }
                 sheet.addAction(browseMembersAction)
                 sheet.addAction(inviteAction)
-                if !self.channel!.general! {
+                if !self.channel!.general! { // Can't leave the general channel
                     sheet.addAction(statusAction)
                 }
-                sheet.addAction(editAction)         // Owners only
+                sheet.addAction(editAction) // Owners only
                 sheet.addAction(cancel)
             }
             else if isMember {
@@ -936,14 +922,14 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
                 }
                 sheet.addAction(browseMembersAction)
                 sheet.addAction(inviteAction)
-                if !self.channel!.general! {
+                if !self.channel!.general! { // Can't leave the general channel
                     sheet.addAction(statusAction)
                 }
                 sheet.addAction(cancel)
             }
             else {
                 sheet.addAction(browseMembersAction)
-                if !self.channel!.general! {
+                if !self.channel!.general! { // Can't leave the general channel
                     sheet.addAction(statusAction)
                 }
                 sheet.addAction(cancel)
@@ -973,7 +959,7 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
                 remaining -= 1
                 if (message.attachments?.values.first?.photo) != nil {
                     message.creator = user
-                    let displayPhoto = DisplayPhoto.fromMessage(message: message)
+                    let displayPhoto = DisplayPhoto(from: message)
                     self?.displayPhotos[message.id!] = displayPhoto
                 }
                 
@@ -1107,10 +1093,9 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
          * Note: Called once only for each row in fetchResultController when FRC is making a data pass in
          * response to managedContext.save.
          */
-        let viewWidth = min(Config.contentWidthMax, self.tableView.width())
         var viewHeight = CGFloat(100)
+        let viewWidth = min(Config.contentWidthMax, self.tableView.width())
         let snap = self.queryController.snapshots.snapshot(at: indexPath.row)
-        
         let message = FireMessage(dict: snap.value as! [String: Any], id: snap.key)
             
         if message.id != nil {
@@ -1120,10 +1105,11 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
         }
 
         self.itemTemplate.bind(message: message)
-        self.itemTemplate.bounds.size.width = viewWidth - (self.itemPadding.left + self.itemPadding.right)
-        self.itemTemplate.sizeToFit()
+        self.itemTemplate.bounds.size.width = viewWidth
+        self.itemTemplate.setNeedsLayout()
+        self.itemTemplate.layoutIfNeeded()
         
-        viewHeight = self.itemTemplate.height() + (self.itemPadding.top + self.itemPadding.bottom + 1)
+        viewHeight = self.itemTemplate.height() + 1
 
         if message.id != nil {
             self.rowHeights[message.id!] = viewHeight

@@ -17,7 +17,7 @@ class ChannelPickerController: BaseTableController, CLTokenInputViewDelegate {
     var inputGroupId: String?
     var inputGroupTitle: String?
 
-    var heading	= AirLabelTitle()
+    var headingLabel	= AirLabelTitle()
     var tokenView: AirTokenView!
     var doneButton: UIBarButtonItem!
 
@@ -47,12 +47,10 @@ class ChannelPickerController: BaseTableController, CLTokenInputViewDelegate {
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
         
-        let headingSize = self.heading.sizeThatFits(CGSize(width:288, height:CGFloat.greatestFiniteMagnitude))
-        let navHeight = self.navigationController?.navigationBar.height() ?? 0
-        let statusHeight = UIApplication.shared.statusBarFrame.size.height
+        let headingSize = self.headingLabel.sizeThatFits(CGSize(width:288, height:CGFloat.greatestFiniteMagnitude))
         
-        self.heading.anchorTopCenter(withTopPadding: (navHeight + statusHeight), width: 288, height: headingSize.height)
-        self.tokenView.alignUnder(self.heading, centeredFillingWidthWithLeftAndRightPadding: 0, topPadding: 16, height: tokenView.height())
+        self.headingLabel.anchorTopCenter(withTopPadding: 74, width: 288, height: headingSize.height)
+        self.tokenView.alignUnder(self.headingLabel, centeredFillingWidthWithLeftAndRightPadding: 0, topPadding: 16, height: tokenView.height())
         self.tableView.alignUnder(self.tokenView, centeredFillingWidthAndHeightWithLeftAndRightPadding: 0, topAndBottomPadding: 0)
     }
 
@@ -109,9 +107,9 @@ class ChannelPickerController: BaseTableController, CLTokenInputViewDelegate {
         self.automaticallyAdjustsScrollViewInsets = false
         self.view.backgroundColor = Colors.white
         
-        self.heading.text = "Select channels"
-        self.heading.textAlignment = NSTextAlignment.center
-        self.heading.numberOfLines = 0
+        self.headingLabel.text = "Select channels"
+        self.headingLabel.textAlignment = NSTextAlignment.center
+        self.headingLabel.numberOfLines = 0
 
         self.tokenView = AirTokenView(frame: CGRect(x: 0, y: 0, width: self.view.width(), height: 44))
         self.tokenView.placeholder.text = "Search"
@@ -129,7 +127,7 @@ class ChannelPickerController: BaseTableController, CLTokenInputViewDelegate {
         self.tableView.estimatedRowHeight = 36
         self.tableView.separatorInset = UIEdgeInsets.zero
         
-        self.view.addSubview(self.heading)
+        self.view.addSubview(self.headingLabel)
         self.view.addSubview(self.tokenView)
         self.view.addSubview(self.tableView)
         

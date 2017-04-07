@@ -179,16 +179,16 @@ class InviteListController: BaseTableController, UITableViewDelegate {
             
             let cell = tableView.dequeueReusableCell(withIdentifier: status, for: indexPath) as! InviteListCell
             cell.reset()    // Releases previous data observers
-            guard let strongSelf = self else { return cell }
+            guard let this = self else { return cell }
             
             if status == "accepted" {
                 let userId = invite["accepted_by"] as! String
                 cell.userQuery = UserQuery(userId: userId, groupId: groupId)
-                cell.userQuery.once(with: { [weak strongSelf, weak cell] error, user in
-                    guard let strongSelf = strongSelf else { return }
+                cell.userQuery.once(with: { [weak this, weak cell] error, user in
+                    guard let this = this else { return }
                     guard let strongCell = cell else { return }
                     if user != nil {
-                        let recognizer = UILongPressGestureRecognizer(target: strongSelf, action: #selector(strongSelf.longPressAction(sender:)))
+                        let recognizer = UILongPressGestureRecognizer(target: this, action: #selector(this.longPressAction(sender:)))
                         recognizer.minimumPressDuration = TimeInterval(0.2)
                         strongCell.addGestureRecognizer(recognizer)
                         strongCell.data = invite as AnyObject?
@@ -200,10 +200,10 @@ class InviteListController: BaseTableController, UITableViewDelegate {
                 cell.bind(invite: invite)
                 cell.resendButton?.isHidden = false
                 cell.resendButton?.data = invite as AnyObject?
-                cell.resendButton?.addTarget(self, action: #selector(strongSelf.resendInviteAction(sender:)), for: .touchUpInside)
+                cell.resendButton?.addTarget(self, action: #selector(this.resendInviteAction(sender:)), for: .touchUpInside)
                 cell.revokeButton?.isHidden = false
                 cell.revokeButton?.data = invite as AnyObject?
-                cell.revokeButton?.addTarget(self, action: #selector(strongSelf.revokeInviteAction(sender:)), for: .touchUpInside)
+                cell.revokeButton?.addTarget(self, action: #selector(this.revokeInviteAction(sender:)), for: .touchUpInside)
             }
             return cell
         }

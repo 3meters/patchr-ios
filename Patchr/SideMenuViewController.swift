@@ -119,21 +119,21 @@ class SideMenuViewController: BaseTableController, UITableViewDelegate, UITableV
         if let userId = UserController.instance.userId,
             let groupId = StateController.instance.groupId {
             self.userQuery?.remove()
-            self.userQuery = UserQuery(userId: userId, groupId: groupId)
+            self.userQuery = UserQuery(userId: userId)
             self.userQuery.observe(with: { [weak self] error, user in
-                guard let strongSelf = self else { return }
+                guard let this = self else { return }
                 if user != nil {
-                    strongSelf.user = user
-                    strongSelf.userHeader.bind(user: strongSelf.user)
+                    this.user = user
+                    this.userHeader.bind(user: user)
                 }
             })
             self.groupQuery?.remove()
             self.groupQuery = GroupQuery(groupId: groupId, userId: userId)
-            self.groupQuery.once(with: { [weak self] error, group in
-                guard let strongSelf = self else { return }
+            self.groupQuery.once(with: { [weak self] error, trigger, group in
+                guard let this = self else { return }
                 if group != nil {
-                    strongSelf.group = group
-                    strongSelf.groupHeader.bind(group: self?.group)
+                    this.group = group
+                    this.groupHeader.bind(group: group)
                 }
             })
         }

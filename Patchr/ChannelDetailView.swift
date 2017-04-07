@@ -12,7 +12,8 @@ class ChannelDetailView: UIView {
     var infoGroup = AirRuleView()
     
     var photoView = AirImageView(frame: CGRect.zero)
-    var name = AirLabelDisplay()
+    var nameLabel = AirLabelDisplay()
+    var roleLabel = AirLabelDisplay()
     var lockImage = UIImageView(frame: CGRect.zero)
     var mutedImage = AirMuteView(frame: CGRect.zero)
     var starButton = AirStarButton(frame: CGRect.zero)
@@ -65,13 +66,17 @@ class ChannelDetailView: UIView {
         self.photoView.fillSuperview(withLeftPadding: -24, rightPadding: -24, topPadding: -36, bottomPadding: -36)
         self.photoView.progressView.anchorInCenter(withWidth: 150, height: 20)
         self.titleGroup.anchorBottomLeft(withLeftPadding: 12, bottomPadding: 16, width: viewWidth - 72, height: 72)
-        
+
+        self.roleLabel.bounds.size.width = self.titleGroup.width()
+        self.roleLabel.sizeToFit()
+        self.roleLabel.anchorBottomLeft(withLeftPadding: 14, bottomPadding: 0, width: self.roleLabel.width(), height: self.roleLabel.height())
+
         let indicatorsWidth = (!self.lockImage.isHidden ? 20 : 0) + (!self.mutedImage.isHidden ? 24 : 0)
-        self.name.bounds.size.width = self.titleGroup.width() - CGFloat(indicatorsWidth + 28)
-        self.name.sizeToFit()
-        self.name.anchorBottomLeft(withLeftPadding: 0, bottomPadding: 0, width: self.name.width(), height: self.name.height())
+        self.nameLabel.bounds.size.width = self.titleGroup.width() - CGFloat(indicatorsWidth + 28)
+        self.nameLabel.sizeToFit()
+        self.nameLabel.align(above: self.roleLabel, withLeftPadding: 0, bottomPadding: 0, width: self.nameLabel.width(), height: self.nameLabel.height())
         
-        self.lockImage.align(toTheRightOf: self.name, matchingCenterWithLeftPadding: 4, width: !self.lockImage.isHidden ? 16 : 0, height: 16)
+        self.lockImage.align(toTheRightOf: self.nameLabel, matchingCenterWithLeftPadding: 4, width: !self.lockImage.isHidden ? 16 : 0, height: 16)
         self.mutedImage.align(toTheRightOf: self.lockImage, matchingCenterWithLeftPadding: 4, width: !self.mutedImage.isHidden ? 20 : 0, height: 20)
         self.starButton.align(toTheRightOf: self.mutedImage, matchingCenterWithLeftPadding: 4, width: !self.starButton.isHidden ? 24 : 0, height: 24)
         
@@ -103,10 +108,14 @@ class ChannelDetailView: UIView {
         self.photoView.showGradient = true
         self.photoView.gradientLayer.isHidden = true
         
-        self.name.font = UIFont(name: "HelveticaNeue-Light", size: 28)!
-        self.name.textColor = Colors.white
-        self.name.numberOfLines = 2
-        
+        self.nameLabel.font = UIFont(name: "HelveticaNeue-Light", size: 28)!
+        self.nameLabel.textColor = Colors.white
+        self.nameLabel.numberOfLines = 2
+
+        self.roleLabel.font = UIFont(name: "HelveticaNeue-Light", size: 22)!
+        self.roleLabel.textColor = Colors.white
+        self.roleLabel.numberOfLines = 1
+
         self.purposeLabel.numberOfLines = 0
         
         self.optionsButton.setImage(UIImage(named: "imgOverflowVerticalLight"), for: .normal)
@@ -126,7 +135,8 @@ class ChannelDetailView: UIView {
     func bind(channel: FireChannel!) {
         
         if self.titleGroup.superview == nil {
-            self.titleGroup.addSubview(self.name)
+            self.titleGroup.addSubview(self.nameLabel)
+            self.titleGroup.addSubview(self.roleLabel)
             self.titleGroup.addSubview(self.lockImage)
             self.titleGroup.addSubview(self.mutedImage)
             self.titleGroup.addSubview(self.starButton)
@@ -136,7 +146,8 @@ class ChannelDetailView: UIView {
         
         /* Name, type and photo */
         
-        self.name.text = "#\(channel.name!)"
+        self.nameLabel.text = "#\(channel.name!)"
+        self.roleLabel.text = "channel \(channel.role!)"
         
         if channel.purpose != nil && !channel.purpose!.isEmpty {
             self.addSubview(self.infoGroup)

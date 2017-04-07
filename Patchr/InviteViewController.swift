@@ -156,10 +156,10 @@ class InviteViewController: BaseEditViewController {
                 let channelId = StateController.instance.channelId {
                 self.channelQuery = ChannelQuery(groupId: groupId, channelId: channelId, userId: nil)
                 self.channelQuery.once(with: { [weak self] error, channel in
-                    guard let strongSelf = self else { return }
+                    guard let this = self else { return }
                     if channel != nil {
                         let channelName = channel!.name!
-                        strongSelf.channels[channelId] = channelName
+                        this.channels[channelId] = channelName
                     }
                 })
             }

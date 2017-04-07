@@ -270,23 +270,23 @@ class ChannelSwitcherController: BaseTableController {
             self.groupQuery?.remove()
             self.groupQuery = GroupQuery(groupId: groupId, userId: userId)
             self.groupQuery!.observe(with: { [weak self] error, trigger, group in
-                guard let strongSelf = self else { return }
-                if strongSelf.titleButton != nil && group != nil {
-                    strongSelf.titleView.text = group!.title
+                guard let this = self else { return }
+                if this.titleButton != nil && group != nil {
+                    this.titleView.text = group!.title
                 }
                 if let role = group?.role {
-                    strongSelf.role = role
+                    this.role = role
                     if role != "guest" {
-                        strongSelf.navigationItem.setRightBarButtonItems([strongSelf.showGroupsButton, strongSelf.searchButton], animated: false)
-                        strongSelf.searchController.load()
+                        this.navigationItem.setRightBarButtonItems([this.showGroupsButton, this.searchButton], animated: false)
+                        this.searchController.load()
                     }
                     else {
-                        strongSelf.navigationItem.setRightBarButtonItems([strongSelf.showGroupsButton], animated: false)
+                        this.navigationItem.setRightBarButtonItems([this.showGroupsButton], animated: false)
                     }
                 }
-                let addButton = UIBarButtonItem(title: "New Channel", style: .plain, target: strongSelf, action: #selector(strongSelf.addAction(sender:)))
+                let addButton = UIBarButtonItem(title: "New Channel", style: .plain, target: this, action: #selector(this.addAction(sender:)))
                 addButton.tintColor = Colors.brandColor
-                strongSelf.toolbarItems = [Ui.spacerFlex, addButton, Ui.spacerFlex]
+                this.toolbarItems = [Ui.spacerFlex, addButton, Ui.spacerFlex]
             })
 
 			self.totalUnreadsQuery?.remove()

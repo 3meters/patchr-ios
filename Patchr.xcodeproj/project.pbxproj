@@ -139,7 +139,7 @@
 		E29730661C16295300B9433B /* InviteViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29730651C16295300B9433B /* InviteViewController.swift */; };
 		E2999EE31DC25AAE005C69D8 /* EmptyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2999EE21DC25AAE005C69D8 /* EmptyViewController.swift */; };
 		E2999EE51DC2CD3B005C69D8 /* PhotoBrowser.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2999EE41DC2CD3B005C69D8 /* PhotoBrowser.swift */; };
-		E29A4CDA1BD077520059D5B9 /* MessageViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29A4CD91BD077520059D5B9 /* MessageViewCell.swift */; };
+		E29A4CDA1BD077520059D5B9 /* MessageListCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29A4CD91BD077520059D5B9 /* MessageListCell.swift */; };
 		E29A921A1DB1859E00B27093 /* UserHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29A92191DB1859E00B27093 /* UserHeaderView.swift */; };
 		E29A921C1DB1988A00B27093 /* FireUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29A921B1DB1988A00B27093 /* FireUser.swift */; };
 		E29A921E1DB19A2600B27093 /* FireProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29A921D1DB19A2600B27093 /* FireProfile.swift */; };
@@ -353,7 +353,7 @@
 		E29730651C16295300B9433B /* InviteViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = InviteViewController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		E2999EE21DC25AAE005C69D8 /* EmptyViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EmptyViewController.swift; sourceTree = "<group>"; };
 		E2999EE41DC2CD3B005C69D8 /* PhotoBrowser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotoBrowser.swift; sourceTree = "<group>"; };
-		E29A4CD91BD077520059D5B9 /* MessageViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = MessageViewCell.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
+		E29A4CD91BD077520059D5B9 /* MessageListCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = MessageListCell.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		E29A92191DB1859E00B27093 /* UserHeaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = UserHeaderView.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		E29A921B1DB1988A00B27093 /* FireUser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FireUser.swift; sourceTree = "<group>"; };
 		E29A921D1DB19A2600B27093 /* FireProfile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FireProfile.swift; sourceTree = "<group>"; };
@@ -607,7 +607,7 @@
 				E227294C1CEA7D0600913041 /* GalleryViewCell.swift */,
 				E28DB2931DBBFA1C008B2E4B /* GroupListCell.swift */,
 				E2539EA51E26A2B4000FFE40 /* InviteListCell.swift */,
-				E29A4CD91BD077520059D5B9 /* MessageViewCell.swift */,
+				E29A4CD91BD077520059D5B9 /* MessageListCell.swift */,
 				E24A87251B2DC0AB00E6F96B /* ThumbnailCollectionViewCell.swift */,
 				E25B0F471DCE7D7400021D5B /* UserListCell.swift */,
 				E2CC15A01C2C897800316356 /* WrapperTableViewCell.swift */,
@@ -1080,7 +1080,7 @@
 				7D01FA361A7024E200DD6DFA /* JSONResponseSerializerWithData.m in Sources */,
 				E2F5C5741E086AB900FCA59C /* ChannelSwitcherController.swift in Sources */,
 				E29A921A1DB1859E00B27093 /* UserHeaderView.swift in Sources */,
-				E29A4CDA1BD077520059D5B9 /* MessageViewCell.swift in Sources */,
+				E29A4CDA1BD077520059D5B9 /* MessageListCell.swift in Sources */,
 				E2A28E6F1B4A602200B3A2FE /* AirToggleButton.swift in Sources */,
 				E2064BF51BC18A66009C7B6A /* AirProgress.swift in Sources */,
 				E241D15A1B1B3FCE00702E01 /* UIView+BorderLayer.m in Sources */,

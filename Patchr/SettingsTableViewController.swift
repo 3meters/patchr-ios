@@ -54,6 +54,10 @@ class SettingsTableViewController: UITableViewController {
         }
         bind()
     }
+    
+    deinit {
+        self.progress?.hide(true)
+    }
 
     /*--------------------------------------------------------------------------------------------
     * Events
@@ -87,17 +91,15 @@ class SettingsTableViewController: UITableViewController {
                     
                     if let group = StateController.instance.group {
                         let userId = UserController.instance.userId!
-                        FireController.instance.removeUserFromGroup(userId: userId, groupId: group.id!, then: { [weak self] success in
-                            if let strongSelf = self {
-                                strongSelf.progress?.hide(true)
-                                strongSelf.dismiss(animated: true)
-                                StateController.instance.clearGroup()   // Make sure group and channel are both unset
-                                let controller = GroupSwitcherController()
-                                let wrapper = AirNavigationController()
-                                wrapper.viewControllers = [controller]
-                                UIViewController.topMostViewController()?.present(wrapper, animated: true, completion: nil)
-                            }
-                        })
+                        FireController.instance.removeUserFromGroup(userId: userId, groupId: group.id!) { success in
+                            self.progress?.hide(true)
+                            self.dismiss(animated: true)
+                            StateController.instance.clearGroup()   // Make sure group and channel are both unset
+                            let controller = GroupSwitcherController()
+                            let wrapper = AirNavigationController()
+                            wrapper.viewControllers = [controller]
+                            UIViewController.topMostViewController()?.present(wrapper, animated: true, completion: nil)
+                        }
                     }
                 }
         }

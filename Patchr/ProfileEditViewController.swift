@@ -54,12 +54,12 @@ class ProfileEditViewController: BaseEditViewController {
         initialize()
         
         let userId = UserController.instance.userId!
-        self.userQuery = UserQuery(userId: userId, groupId: nil)
+        self.userQuery = UserQuery(userId: userId)
         self.userQuery.once(with: { [weak self] error, user in
-            guard let strongSelf = self else { return }
+            guard let this = self else { return }
             if (user != nil) {
-                strongSelf.user = user
-                strongSelf.bind()
+                this.user = user
+                this.bind()
             }
         })
     }

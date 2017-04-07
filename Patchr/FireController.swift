@@ -335,8 +335,8 @@ class FireController: NSObject {
         
         FireController.db.updateChildValues(updates) { error, ref in
             if error == nil {
-                FireController.db.child("member-channels/\(userId)/\(groupId)")
-                    .observeSingleEvent(of: .value, with: { snap in
+                let path = "member-channels/\(userId)/\(groupId)"
+                FireController.db.child(path).observeSingleEvent(of: .value, with: { snap in
                     
                         if !(snap.value is NSNull) && snap.hasChildren() {
                             var remaining = snap.childrenCount
@@ -369,6 +369,9 @@ class FireController: NSObject {
                             }
                         }
                         
+                }, withCancel: { error in
+                    Log.w("Permission denied trying fetch member channels: \(path)")
+                    then?(false)
                 })
             }
             else {

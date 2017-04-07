@@ -131,6 +131,10 @@ class UserListCell: UITableViewCell {
                 self.roleLabel?.text = user.role
                 self.roleLabel?.textColor = MaterialColor.deepOrange.base
             }
+            else if user.role == "visitor" {
+                self.roleLabel?.text = user.role
+                self.roleLabel?.textColor = MaterialColor.purple.base
+            }
         }
         
         let fullName = user.profile?.fullName ?? user.username

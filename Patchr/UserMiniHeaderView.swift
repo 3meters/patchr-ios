@@ -76,21 +76,21 @@ class UserMiniHeaderView: BaseDetailView {
         self.title.text?.removeAll(keepingCapacity: false)
         self.subtitle.text?.removeAll(keepingCapacity: false)
         
-        if user != nil {
+        if let user = user {
             
-            if user!.username != nil {
-                self.subtitle.text = "@\(user!.username!)"
+            if user.username != nil {
+                self.subtitle.text = "@\(user.username!)"
             }
             
-            self.title.text = user!.fullName
+            self.title.text = user.fullName
             let fullName = self.title.text!
             
-            if let photo = user!.profile?.photo {
+            if let photo = user.profile?.photo {
                 let url = Cloudinary.url(prefix: photo.filename, category: SizeCategory.profile)
-                self.photoControl.bind(url: url, name: fullName, colorSeed: user!.id)
+                self.photoControl.bind(url: url, name: fullName, colorSeed: user.id)
             }
             else {
-                self.photoControl.bind(url: nil, name: fullName, colorSeed: user!.id)
+                self.photoControl.bind(url: nil, name: fullName, colorSeed: user.id)
             }
         }
         else {

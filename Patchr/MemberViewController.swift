@@ -16,7 +16,7 @@ class MemberViewController: BaseViewController, UIScrollViewDelegate, UITextFiel
     
     var inputUserId: String!
     
-    var queryUser: UserQuery?
+    var queryUser: UserQuery!
     var user: FireUser!
 
     var headerView = MemberDetailView()
@@ -41,12 +41,12 @@ class MemberViewController: BaseViewController, UIScrollViewDelegate, UITextFiel
     override func viewDidLoad() {
         super.viewDidLoad()
         initialize()
-        let groupId = StateController.instance.groupId!
-        self.queryUser = UserQuery(userId: self.inputUserId, groupId: groupId)
+        let userId = self.inputUserId!
+        self.queryUser = UserQuery(userId: userId)
         self.queryUser?.observe(with: { [weak self] error, user in
-            guard let strongSelf = self else { return }
-            strongSelf.user = user
-            strongSelf.bind()
+            guard let this = self else { return }
+            this.user = user
+            this.bind()
         })
     }
     

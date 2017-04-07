@@ -42,13 +42,13 @@ class ChannelEditViewController: BaseEditViewController {
         if self.mode == .update {
             self.channelQuery = ChannelQuery(groupId: self.inputGroupId, channelId: self.inputChannelId, userId: nil)
             self.channelQuery.once(with: { [weak self] error, channel in
-                guard let strongSelf = self else { return }
+                guard let this = self else { return }
                 guard channel != nil else {
                     assertionFailure("Channel not found or no longer exists")
                     return
                 }
-                strongSelf.channel = channel
-                strongSelf.bind()
+                this.channel = channel
+                this.bind()
             })
         }
     }
@@ -470,8 +470,8 @@ class ChannelEditViewController: BaseEditViewController {
             
             FireController.instance.addChannelToGroup(channelId: channelId, channelMap: channelMap, groupId: groupId) { [weak self] success in
                 
-                guard let strongSelf = self else { return }
-                strongSelf.progress?.hide(true)
+                guard let this = self else { return }
+                this.progress?.hide(true)
                 if !success {
                     Log.w("Error creating channel")
                     return
@@ -482,7 +482,7 @@ class ChannelEditViewController: BaseEditViewController {
                 controller.inputAsOwner = true
                 controller.inputChannelId = channelId
                 controller.inputChannelName = channelName
-                strongSelf.navigationController?.setViewControllers([controller], animated: true)
+                this.navigationController?.setViewControllers([controller], animated: true)
             }
         }
     }

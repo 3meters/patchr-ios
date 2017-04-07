@@ -21,6 +21,7 @@ class MemberSettingsController: UITableViewController {
     var roleOwnerCell = AirTableViewCell()
     var roleMemberCell = AirTableViewCell()
     var roleGuestCell = AirTableViewCell()
+    var roleVisitorCell = AirTableViewCell()
     var guestChannelsCell = AirTableViewCell()
     var removeCell = AirTableViewCell()
     var removeButton = AirLinkButton()
@@ -44,6 +45,10 @@ class MemberSettingsController: UITableViewController {
         let viewWidth = min(Config.contentWidthMax, self.tableView.bounds.size.width)
         self.tableView.bounds.size.width = viewWidth
         self.removeButton.fillSuperview()
+    }
+    
+    deinit {
+        self.progress?.hide(true)
     }
     
     /*--------------------------------------------------------------------------------------------
@@ -93,10 +98,12 @@ class MemberSettingsController: UITableViewController {
         self.roleOwnerCell.textLabel?.text = "Owner"
         self.roleMemberCell.textLabel?.text = "Member"
         self.roleGuestCell.textLabel?.text = "Guest"
+        self.roleVisitorCell.textLabel?.text = "Visitor"
         
         self.roleOwnerCell.selectionStyle = .none
         self.roleMemberCell.selectionStyle = .none
         self.roleGuestCell.selectionStyle = .none
+        self.roleVisitorCell.selectionStyle = .none
         
         self.guestChannelsCell.textLabel?.numberOfLines = 10
         self.guestChannelsCell.textLabel?.text = nil
@@ -158,6 +165,7 @@ class MemberSettingsController: UITableViewController {
                     self.roleNext = memberRole
                     self.roleOwnerCell.accessoryType = self.role == "owner" ? .checkmark : .none
                     self.roleMemberCell.accessoryType = self.role == "member" ? .checkmark : .none
+                    self.roleVisitorCell.accessoryType = self.role == "visitor" ? .checkmark : .none
                 }
             }, withCancel: { error in
                 Log.w("Permission denied reading: \(path)")
@@ -287,19 +295,21 @@ class MemberSettingsController: UITableViewController {
                 let groupId = StateController.instance.groupId!
                 if self.target == .group {
                     FireController.instance.removeUserFromGroup(userId: userId, groupId: groupId) { [weak self] success in
-                        self?.progress?.hide(true)
+                        guard let this = self else { return }
+                        this.progress?.hide(true)
                         if success {
-                            self?.closeAction(sender: nil)
+                            this.closeAction(sender: nil)
                         }
                     }
                 }
                 else {
                     let channelId = self.inputChannel.id!
                     let channelName = self.inputChannel.name!
-                    FireController.instance.removeUserFromChannel(userId: userId, groupId: groupId, channelId: channelId, channelName: channelName) { success in
-                        self.progress?.hide(true)
+                    FireController.instance.removeUserFromChannel(userId: userId, groupId: groupId, channelId: channelId, channelName: channelName) { [weak self] success in
+                        guard let this = self else { return }
+                        this.progress?.hide(true)
                         if success {
-                            self.closeAction(sender: nil)
+                            this.closeAction(sender: nil)
                         }
                     }
                 }
@@ -346,6 +356,7 @@ extension MemberSettingsController {
                 self.roleNext = selectedCell?.textLabel!.text!.lowercased()
                 self.roleOwnerCell.accessoryType = .none
                 self.roleMemberCell.accessoryType = .none
+                self.roleVisitorCell.accessoryType = .none
                 selectedCell!.accessoryType = .checkmark
                 self.tableView.reloadData()
             }
@@ -364,7 +375,7 @@ extension MemberSettingsController {
             if section == 0 { return 3 }
             return 1
         }
-        if section == 0 { return 2 }
+        if section == 0 { return 3 }
         return 1
     }
 
@@ -384,6 +395,7 @@ extension MemberSettingsController {
         if indexPath.section == 0 {
             if indexPath.row == 0 { return self.roleOwnerCell }
             if indexPath.row == 1 { return self.roleMemberCell }
+            if indexPath.row == 2 { return self.roleVisitorCell }
         }
         return self.removeCell
     }

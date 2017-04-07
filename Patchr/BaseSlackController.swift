@@ -68,6 +68,10 @@ class BaseSlackController: SLKTextViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(textInputbarDidMove(_:)), name: NSNotification.Name.SLKTextInputbarDidMove, object: nil)
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+    }
+    
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         NotificationCenter.default.removeObserver(self, name: NSNotification.Name.UIContentSizeCategoryDidChange, object: nil)
@@ -222,7 +226,6 @@ class BaseSlackController: SLKTextViewController {
         
         self.typingIndicatorView!.canResignByTouch = true
         
-        self.tableView.separatorStyle = .none
         self.registerPrefixes(forAutoCompletion: ["@",  "#", ":", "+:", "/"])
 
         self.photoEditView.editPhotoButton.addTarget(self, action: #selector(editPhotoAction(sender:)), for: .touchUpInside)
@@ -476,11 +479,6 @@ class BaseSlackController: SLKTextViewController {
     func isEmptyString(value : String?) -> Bool {
         return (value == nil || value!.isEmpty)
     }	
-    
-    func hideOrShowTextInputbar() {
-        let hide = !self.isTextInputbarHidden
-        self.setTextInputbarHidden(hide, animated: true)
-    }
 }
 
 extension BaseSlackController {

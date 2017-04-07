@@ -9,7 +9,7 @@
 import UIKit
 import TTTAttributedLabel
 
-class MessageViewCell: AirUIView {
+class MessageListCell: UITableViewCell {
 
     var message: FireMessage!
     var userQuery: UserQuery!
@@ -21,20 +21,22 @@ class MessageViewCell: AirUIView {
     var createdDate = AirLabelDisplay()
     var edited = AirLabelDisplay()
     var unread = AirLabelDisplay()
+    var hitInsets: UIEdgeInsets = UIEdgeInsets.zero
 
     var toolbar = AirUIView()
     var likeButton = AirLikeButton(frame: CGRect.zero)
     var likesLabel = AirLabelDisplay()
     
     var template = false
+    var decorated = false
 
-    override init(frame: CGRect) {
-        super.init(frame: frame)
+    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
         initialize()
     }
-
-    required init(coder aDecoder: NSCoder) {
-        super.init(coder: aDecoder)!
+    
+    required init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
         initialize()
     }
 
@@ -55,8 +57,12 @@ class MessageViewCell: AirUIView {
         * checked for all views in the view hierarchy for every run loop iteration.
         * If dirty, layoutSubviews is called in hierarchy order and flag is reset.
         */
+        guard self.message != nil else { return }
+        
+        self.contentView.bounds.size.width = self.bounds.size.width - 24
+        
         let columnLeft = CGFloat(48 + 8)
-        let columnWidth = self.bounds.size.width - columnLeft
+        let columnWidth = self.contentView.width() - columnLeft
         let photoHeight = columnWidth * 0.5625        // 16:9 aspect ratio
 
         self.userPhotoControl.anchorTopLeft(withLeftPadding: 0, topPadding: 0, width: 48, height: 48)
@@ -103,6 +109,10 @@ class MessageViewCell: AirUIView {
         self.likesLabel.sizeToFit()
         self.likesLabel.align(toTheRightOf: self.likeButton, matchingCenterWithLeftPadding: 0, width: self.likesLabel.width(), height: self.likesLabel.height())
         self.likesLabel.frame.origin.x -= 4
+        
+        self.contentView.resizeToFitSubviews()
+        self.bounds.size.height = self.contentView.height() + 24
+        self.contentView.fillSuperview(withLeftPadding: 12, rightPadding: 12, topPadding: 12, bottomPadding: 12)
     }
 
     /*--------------------------------------------------------------------------------------------
@@ -114,17 +124,15 @@ class MessageViewCell: AirUIView {
          * The calls to addSubview will trigger a call to layoutSubviews for
          * the current update cycle.
          */
-        self.hitInsets = UIEdgeInsets(top: -16, left: -16, bottom: -16, right: -16)
 
         /* Description */
         self.description_ = TTTAttributedLabel(frame: CGRect.zero)
         self.description_!.numberOfLines = 0
         self.description_!.font = Theme.fontTextList
 
-        if self.description_ != nil && (self.description_ is TTTAttributedLabel) {
+        if let label = self.description_ as? TTTAttributedLabel {
             let linkColor = Theme.colorTint
             let linkActiveColor = Theme.colorTint
-            let label = self.description_ as! TTTAttributedLabel
             label.linkAttributes = [kCTForegroundColorAttributeName as AnyHashable: linkColor]
             label.activeLinkAttributes = [kCTForegroundColorAttributeName as AnyHashable: linkActiveColor]
             label.enabledTextCheckingTypes = NSTextCheckingResult.CheckingType.link.rawValue | NSTextCheckingResult.CheckingType.address.rawValue
@@ -183,17 +191,18 @@ class MessageViewCell: AirUIView {
         self.toolbar.addSubview(self.likeButton)
         self.toolbar.addSubview(self.likesLabel)
 
-        self.addSubview(self.toolbar)
-        self.addSubview(self.description_!)
-        self.addSubview(self.photoView!)
-        self.addSubview(self.userPhotoControl)
-        self.addSubview(self.userName)
-        self.addSubview(self.createdDate)
-        self.addSubview(self.edited)
-        self.addSubview(self.unread)
+        self.contentView.addSubview(self.toolbar)
+        self.contentView.addSubview(self.description_!)
+        self.contentView.addSubview(self.photoView!)
+        self.contentView.addSubview(self.userPhotoControl)
+        self.contentView.addSubview(self.userName)
+        self.contentView.addSubview(self.createdDate)
+        self.contentView.addSubview(self.edited)
+        self.contentView.addSubview(self.unread)
     }
 
     func reset() {
+        self.contentView.isHidden = true
         self.photoView.reset()
         self.userPhotoControl.reset()
         self.description_?.text = nil
@@ -207,6 +216,11 @@ class MessageViewCell: AirUIView {
         self.edited.isHidden = true
         self.userQuery?.remove()
         self.userQuery = nil
+        if let gestureRecognizers = self.gestureRecognizers {
+            for recognizer in gestureRecognizers {
+                self.removeGestureRecognizer(recognizer)
+            }
+        }
     }
 
     func bind(message: FireMessage) {
@@ -282,14 +296,15 @@ class MessageViewCell: AirUIView {
             self.likesLabel.isHidden = true
         }
 
+        self.contentView.isHidden = false
         self.setNeedsLayout()    // Needed because binding can change the layout
     }
 
     override func sizeThatFits(_ size: CGSize) -> CGSize {
-        self.bounds.size.width = size.width
+        self.contentView.bounds.size.width = size.width
         self.setNeedsLayout()
         self.layoutIfNeeded()
-        return sizeThatFitsSubviews()
+        return self.contentView.sizeThatFitsSubviews()
     }
 
     override func point(inside point: CGPoint, with event: UIEvent?) -> Bool {

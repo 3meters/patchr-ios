@@ -21,6 +21,7 @@ class GroupSwitcherController: BaseTableController {
     
     var message: String = "Select from groups you are a member of. You can switch groups at anytime."
 
+    var flow: Flow = .none
     var validateQuery: ChannelQuery!
     var groupAvailable = false
     var simplePicker = false
@@ -51,9 +52,8 @@ class GroupSwitcherController: BaseTableController {
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
         
-        self.view.fillSuperview()
-        
         if self.simplePicker {
+            self.view.fillSuperview()
             self.tableView.fillSuperview()
         }
         else {
@@ -222,6 +222,10 @@ class GroupSwitcherController: BaseTableController {
                     let closeButton = UIBarButtonItem(barButtonSystemItem: .stop, target: self, action: #selector(self.closeAction(sender:)))
                     self.navigationItem.rightBarButtonItems = [closeButton]
                 }
+                else if self.flow == .onboardLogin {
+                    let logoutButton = UIBarButtonItem(title: "Log out", style: UIBarButtonItemStyle.plain, target: self, action: #selector(self.logoutAction(sender:)))
+                    self.navigationItem.rightBarButtonItems = [logoutButton]
+                }
             }
         })
     }
@@ -279,17 +283,17 @@ extension GroupSwitcherController: UITableViewDelegate {
             let lastChannelId = lastChannelIds[groupId] as? String {
             self.validateQuery = ChannelQuery(groupId: groupId, channelId: lastChannelId, userId: userId)
             self.validateQuery.once(with: { [weak self] error, channel in
-                guard let strongSelf = self else { return }
+                guard let this = self else { return }
                 if channel == nil {
                     Log.w("Last channel invalid: \(lastChannelId): trying auto pick channel")
                     FireController.instance.autoPickChannel(groupId: groupId, role: role) { channelId in
                         if channelId != nil {
-                            strongSelf.showChannel(channelId: channelId!, groupId: groupId)
+                            this.showChannel(channelId: channelId!, groupId: groupId)
                         }
                     }
                 }
                 else {
-                    strongSelf.showChannel(channelId: lastChannelId, groupId: groupId)
+                    this.showChannel(channelId: lastChannelId, groupId: groupId)
                 }
             })
         }

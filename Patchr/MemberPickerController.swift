@@ -159,7 +159,8 @@ class MemberPickerController: BaseTableController, CLTokenInputViewDelegate {
         self.queryController.mapperActive = true
         self.queryController.mapper = { (snap, then) in
             let userId = snap.key
-            UserQuery(userId: userId, groupId: nil).once(with: { error, user in
+            let userQuery = UserQuery(userId: userId)
+            userQuery.once(with: { error, user in
                 if error != nil {
                     Log.w("Permission denied")
                     return
@@ -188,17 +189,17 @@ class MemberPickerController: BaseTableController, CLTokenInputViewDelegate {
             
             let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! UserListCell
             cell.reset()
-            guard let strongSelf = self else { return cell }
+            guard let this = self else { return cell }
             
             if let user = data as? FireUser {
-                strongSelf.bindCell(user: user, cell: cell)
+                this.bindCell(user: user, cell: cell)
             }
             else {
                 let snap = data as! FIRDataSnapshot
                 let userId = snap.key
-                cell.userQuery = UserQuery(userId: userId, groupId: nil)
-                cell.userQuery.once(with: { [weak strongSelf, weak cell] error, user in
-                    guard let strongSelf = strongSelf else { return }
+                cell.userQuery = UserQuery(userId: userId)
+                cell.userQuery.once(with: { [weak this, weak cell] error, user in
+                    guard let this = this else { return }
                     guard let strongCell = cell else { return }
                     if error != nil {
                         Log.w("Permission denied")
@@ -206,7 +207,7 @@ class MemberPickerController: BaseTableController, CLTokenInputViewDelegate {
                     }
                     if user != nil {
                         user!.membershipFrom(dict: snap.value as! [String : Any])
-                        strongSelf.bindCell(user: user!, cell: strongCell)
+                        this.bindCell(user: user!, cell: strongCell)
                     }
                 })
             }

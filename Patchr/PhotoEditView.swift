@@ -169,12 +169,12 @@ class PhotoEditView: UIView {
 			 */
             if imageResult!.encodingFormat == "animatedgif" {
                 self.imageView.setImageWithUrl(url: URL(string: imageResult!.contentUrl!)!, imageType: .animatedGif) { [weak self] success in
-                    guard let strongSelf = self else { return }
+                    guard let this = self else { return }
                     if !success {
                         UIShared.toast(message: "Unable to download image")
                         return
                     }
-                    NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.PhotoDidChange), object: strongSelf)
+                    NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.PhotoDidChange), object: this)
                 }
             }
             else {

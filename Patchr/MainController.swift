@@ -395,12 +395,12 @@ class MainController: NSObject, iRateDelegate {
             
             let joinButton = DefaultButton(title: "Join".uppercased(), height: 48) {
                 FireController.instance.addUserToGroup(groupId: groupId, channels: channels, role: role, inviteId: inviteId, invitedBy: inviterId) { [weak self] error, result in
-                    guard let strongSelf = self else { return }
+                    guard let this = self else { return }
                     if error == nil {
                         if channels != nil {
-                            strongSelf.afterChannelInvite(groupId: groupId, groupTitle: groupTitle, channels: channels)
+                            this.afterChannelInvite(groupId: groupId, groupTitle: groupTitle, channels: channels)
                         } else {
-                            strongSelf.afterGroupInvite(groupId: groupId, groupTitle: groupTitle)
+                            this.afterGroupInvite(groupId: groupId, groupTitle: groupTitle)
                         }
                     }
                     else {
@@ -412,7 +412,7 @@ class MainController: NSObject, iRateDelegate {
                                 if flow == .onboardInvite {
                                     // If we don't have a current group|channel then we are in the lobby
                                     if StateController.instance.groupId == nil || StateController.instance.channelId == nil {
-                                        strongSelf.route()
+                                        this.route()
                                     }
                                 }
                             }
