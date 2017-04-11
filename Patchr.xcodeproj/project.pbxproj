@@ -16,6 +16,7 @@
 		844D6E371AA6550400EE71ED /* PhotoChooserUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 844D6E361AA6550400EE71ED /* PhotoChooserUI.swift */; };
 		8468F81F1A9D09D1007D6EE6 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 8468F8211A9D09D1007D6EE6 /* Localizable.strings */; };
 		84EF12AC1AA904700043EBBA /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84EF12AB1AA904700043EBBA /* Utils.swift */; };
+		9FDCC02817FBC4B31C6CB796 /* AirReactionToolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FDCC3EBF074337408E968D0 /* AirReactionToolbar.swift */; };
 		9FDCC0B1FBF9425A99BD2185 /* FireChannel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FDCCDE61C162E20DE3909AC /* FireChannel.swift */; };
 		9FDCC14A3F9BFB4B39C54AA2 /* ChannelQuery.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FDCCE483C7DF6C69EC46E17 /* ChannelQuery.swift */; };
 		9FDCC2A7033CFB1B9AC95DDC /* PhotoControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FDCC1090EAA7D7799F16058 /* PhotoControl.swift */; };
@@ -132,6 +133,9 @@
 		E28D565F1BB1849F00BFD433 /* ReachabilityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E28D565E1BB1849F00BFD433 /* ReachabilityManager.swift */; };
 		E28DB2921DBBF95D008B2E4B /* ChannelSearchCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E28DB2911DBBF95D008B2E4B /* ChannelSearchCell.xib */; };
 		E28DB2941DBBFA1C008B2E4B /* GroupListCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E28DB2931DBBFA1C008B2E4B /* GroupListCell.swift */; };
+		E29074A01E9D2278001E0609 /* EmojiCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E290749F1E9D2278001E0609 /* EmojiCell.xib */; };
+		E29074A21E9D3554001E0609 /* AirAddReactionButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29074A11E9D3554001E0609 /* AirAddReactionButton.swift */; };
+		E29074A41E9D5897001E0609 /* ReactionCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E29074A31E9D5897001E0609 /* ReactionCell.xib */; };
 		E297305C1C13644800B9433B /* AirTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E297305B1C13644800B9433B /* AirTextView.swift */; };
 		E297305E1C136E8300B9433B /* AirRadioButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E297305D1C136E8300B9433B /* AirRadioButton.swift */; };
 		E29730601C14A7BC00B9433B /* AirSearchField.swift in Sources */ = {isa = PBXBuildFile; fileRef = E297305F1C14A7BC00B9433B /* AirSearchField.swift */; };
@@ -191,9 +195,11 @@
 		E2DA16D91DD0F7280096D86F /* AirUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2DA16D81DD0F7280096D86F /* AirUIView.swift */; };
 		E2DA16DB1DD114230096D86F /* AirStarButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2DA16DA1DD114230096D86F /* AirStarButton.swift */; };
 		E2DA16DD1DD11B7A0096D86F /* AirToggleImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2DA16DC1DD11B7A0096D86F /* AirToggleImage.swift */; };
-		E2DA16DF1DD142E00096D86F /* Emoji.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2DA16DE1DD142E00096D86F /* Emoji.swift */; };
 		E2E271291C5D1ED600E36804 /* BranchProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2E271281C5D1ED600E36804 /* BranchProvider.swift */; };
 		E2E9AAA71CEF86470057698F /* AirNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2E9AAA61CEF86470057698F /* AirNavigationController.swift */; };
+		E2EEE90E1E99470E0085565E /* AirReactionButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2EEE90D1E99470D0085565E /* AirReactionButton.swift */; };
+		E2EEE9101E9C7F730085565E /* ReactionPickerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2EEE90F1E9C7F720085565E /* ReactionPickerController.swift */; };
+		E2EEE9121E9C82680085565E /* EmojiViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2EEE9111E9C82680085565E /* EmojiViewCell.swift */; };
 		E2F5C5741E086AB900FCA59C /* ChannelSwitcherController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2F5C5731E086AB900FCA59C /* ChannelSwitcherController.swift */; };
 		E2F85C741C31F0D700FC2364 /* UIImage+ImageEffects.m in Sources */ = {isa = PBXBuildFile; fileRef = E2F85C731C31F0D700FC2364 /* UIImage+ImageEffects.m */; };
 		E2FA133E1D8220DD0057F287 /* MenuItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2FA133D1D8220DD0057F287 /* MenuItemView.swift */; };
@@ -225,6 +231,7 @@
 		9FDCC1090EAA7D7799F16058 /* PhotoControl.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotoControl.swift; sourceTree = "<group>"; };
 		9FDCC2AE42A7C32316E95CE2 /* GroupQuery.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GroupQuery.swift; sourceTree = "<group>"; };
 		9FDCC3A31B4DE515C4C32CF9 /* AboutViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AboutViewController.swift; sourceTree = "<group>"; };
+		9FDCC3EBF074337408E968D0 /* AirReactionToolbar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirReactionToolbar.swift; sourceTree = "<group>"; };
 		9FDCC5452372EFCC98BA01BF /* UserQuery.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserQuery.swift; sourceTree = "<group>"; };
 		9FDCC68ACDC02C764EE70B02 /* FireController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FireController.swift; path = Patchr/FireController.swift; sourceTree = "<group>"; };
 		9FDCC6D9E7C9AADE45675174 /* MemberSettingsController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MemberSettingsController.swift; sourceTree = "<group>"; };
@@ -346,6 +353,9 @@
 		E28D565E1BB1849F00BFD433 /* ReachabilityManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ReachabilityManager.swift; path = Patchr/ReachabilityManager.swift; sourceTree = "<group>"; };
 		E28DB2911DBBF95D008B2E4B /* ChannelSearchCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ChannelSearchCell.xib; sourceTree = "<group>"; };
 		E28DB2931DBBFA1C008B2E4B /* GroupListCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = GroupListCell.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
+		E290749F1E9D2278001E0609 /* EmojiCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = EmojiCell.xib; sourceTree = "<group>"; };
+		E29074A11E9D3554001E0609 /* AirAddReactionButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirAddReactionButton.swift; sourceTree = "<group>"; };
+		E29074A31E9D5897001E0609 /* ReactionCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ReactionCell.xib; sourceTree = "<group>"; };
 		E297305B1C13644800B9433B /* AirTextView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirTextView.swift; sourceTree = "<group>"; };
 		E297305D1C136E8300B9433B /* AirRadioButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirRadioButton.swift; sourceTree = "<group>"; };
 		E297305F1C14A7BC00B9433B /* AirSearchField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = AirSearchField.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
@@ -406,9 +416,11 @@
 		E2DA16D81DD0F7280096D86F /* AirUIView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirUIView.swift; sourceTree = "<group>"; };
 		E2DA16DA1DD114230096D86F /* AirStarButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirStarButton.swift; sourceTree = "<group>"; };
 		E2DA16DC1DD11B7A0096D86F /* AirToggleImage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirToggleImage.swift; sourceTree = "<group>"; };
-		E2DA16DE1DD142E00096D86F /* Emoji.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Emoji.swift; sourceTree = "<group>"; };
 		E2E271281C5D1ED600E36804 /* BranchProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = BranchProvider.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		E2E9AAA61CEF86470057698F /* AirNavigationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirNavigationController.swift; sourceTree = "<group>"; };
+		E2EEE90D1E99470D0085565E /* AirReactionButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirReactionButton.swift; sourceTree = "<group>"; };
+		E2EEE90F1E9C7F720085565E /* ReactionPickerController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReactionPickerController.swift; sourceTree = "<group>"; };
+		E2EEE9111E9C82680085565E /* EmojiViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EmojiViewCell.swift; sourceTree = "<group>"; };
 		E2F182CF1B4B37BC0020F6BB /* AdobeCreativeSDKImage.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdobeCreativeSDKImage.framework; path = Frameworks/AdobeCreativeSDKImage.framework; sourceTree = "<group>"; };
 		E2F5C5731E086AB900FCA59C /* ChannelSwitcherController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChannelSwitcherController.swift; sourceTree = "<group>"; };
 		E2F6C9281B1DF5500067D959 /* Notifications.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = Notifications.md; sourceTree = "<group>"; };
@@ -583,9 +595,11 @@
 				E2DA16D61DCFDF770096D86F /* ChannelTitleView.xib */,
 				E28DB2911DBBF95D008B2E4B /* ChannelSearchCell.xib */,
 				E207B5011E2978140019C2A1 /* ChannelListCell.xib */,
+				E290749F1E9D2278001E0609 /* EmojiCell.xib */,
 				E23EC4CF1DBD45C800EBCD42 /* GroupListCell.xib */,
 				E2539EA71E26A2E7000FFE40 /* InvitePendingListCell.xib */,
 				E2539EA91E26A796000FFE40 /* InviteAcceptedListCell.xib */,
+				E29074A31E9D5897001E0609 /* ReactionCell.xib */,
 				E26B0C911B46D01E00706F4A /* ThumbnailCollectionViewCell.xib */,
 				E25B0F491DCE803B00021D5B /* UserListCell.xib */,
 				E28915921C5AD528005D7AA0 /* LaunchScreen.storyboard */,
@@ -604,6 +618,7 @@
 			isa = PBXGroup;
 			children = (
 				E23EC4CD1DBD44DB00EBCD42 /* ChannelListCell.swift */,
+				E2EEE9111E9C82680085565E /* EmojiViewCell.swift */,
 				E227294C1CEA7D0600913041 /* GalleryViewCell.swift */,
 				E28DB2931DBBFA1C008B2E4B /* GroupListCell.swift */,
 				E2539EA51E26A2B4000FFE40 /* InviteListCell.swift */,
@@ -715,6 +730,7 @@
 		E2CE389F1AEFBF7600710227 /* Widgets */ = {
 			isa = PBXGroup;
 			children = (
+				E29074A11E9D3554001E0609 /* AirAddReactionButton.swift */,
 				E2D12A741C08F85E00DE507E /* AirButton.swift */,
 				E23682841E1BFE3700F9FDFB /* AirButtonBase.swift */,
 				E2FFD38E1DF4817700FD75C7 /* AirCheckBox.swift */,
@@ -733,6 +749,8 @@
 				E2064BF41BC18A66009C7B6A /* AirProgress.swift */,
 				E2B8A4B51CE7875400A28D3A /* AirRadialMenu.swift */,
 				E297305D1C136E8300B9433B /* AirRadioButton.swift */,
+				E2EEE90D1E99470D0085565E /* AirReactionButton.swift */,
+				9FDCC3EBF074337408E968D0 /* AirReactionToolbar.swift */,
 				E29730631C15090300B9433B /* AirRuleView.swift */,
 				E25617F31E02F8D000E31240 /* AirScrimButton.swift */,
 				E2DA16DA1DD114230096D86F /* AirStarButton.swift */,
@@ -780,6 +798,7 @@
 				E25B0F451DCE778B00021D5B /* MemberListController.swift */,
 				E266A1BF1DEB4E8900C71C28 /* MemberPickerController.swift */,
 				E259082D1DC69BBE00CB6C3F /* MemberViewController.swift */,
+				E2EEE90F1E9C7F720085565E /* ReactionPickerController.swift */,
 				E21B408D1E60A59E00C9143B /* SideMenuViewController.swift */,
 				E24D84D41E8B0F1400BFE408 /* SlideViewController.swift */,
 				E24D84D01E89E16300BFE408 /* UserLobbyController.swift */,
@@ -804,7 +823,6 @@
 				E26C80911C3AE246001514B3 /* Animation.swift */,
 				E20555051DBC178F003C8398 /* ColorArray.swift */,
 				E25327B11B0FCE9C00990A81 /* Constants.swift */,
-				E2DA16DE1DD142E00096D86F /* Emoji.swift */,
 				E2BC533D1DE5E7EC00C97A2C /* Http.swift */,
 				E238BB051B571AFF0094AF41 /* ImageUtils.swift */,
 				E2C0D9301B6C415100E28CE9 /* Log.swift */,
@@ -934,6 +952,7 @@
 			files = (
 				E25B0F4A1DCE803B00021D5B /* UserListCell.xib in Resources */,
 				E25A73781C1C87F500688EDC /* AdobeCreativeSDKImageResources.bundle in Resources */,
+				E29074A41E9D5897001E0609 /* ReactionCell.xib in Resources */,
 				E2A603241CD97B7A00FBD55B /* InfoPlist.strings in Resources */,
 				E28915911C5A85CF005D7AA0 /* .xctool-args in Resources */,
 				E25A73761C1C87E200688EDC /* AdobeCreativeSDKCoreResources.bundle in Resources */,
@@ -952,6 +971,7 @@
 				8468F81F1A9D09D1007D6EE6 /* Localizable.strings in Resources */,
 				E25327CE1B13DB3000990A81 /* notification_candi_discovered_soft.aac in Resources */,
 				E25327CF1B13DB3000990A81 /* notification_carme.aac in Resources */,
+				E29074A01E9D2278001E0609 /* EmojiCell.xib in Resources */,
 				E2A5A8801B6FCE98006D6E81 /* GoogleService-Info.plist in Resources */,
 				E2BC53311DE4D55100C97A2C /* invite_guest.html in Resources */,
 				E2539EAA1E26A796000FFE40 /* InviteAcceptedListCell.xib in Resources */,
@@ -1073,6 +1093,7 @@
 				E227294B1CEA743600913041 /* GalleryGridViewController.swift in Sources */,
 				E2D654FD1E13365500714BA9 /* UnreadBackView.swift in Sources */,
 				E25908321DC7B3AA00CB6C3F /* AirLabelStack.swift in Sources */,
+				E2EEE9121E9C82680085565E /* EmojiViewCell.swift in Sources */,
 				E2FFD38B1DF32D3200FD75C7 /* Debouncer.swift in Sources */,
 				E20C3A851BE04BBC008CCED1 /* Stopwatch.swift in Sources */,
 				E2999EE51DC2CD3B005C69D8 /* PhotoBrowser.swift in Sources */,
@@ -1105,6 +1126,7 @@
 				E25327D21B13DEF800990A81 /* AudioController.swift in Sources */,
 				E2BC532B1DE20E6F00C97A2C /* AirTextFieldCell.swift in Sources */,
 				E21B40901E60A62A00C9143B /* UserMiniHeaderView.swift in Sources */,
+				E2EEE90E1E99470E0085565E /* AirReactionButton.swift in Sources */,
 				E26BBF981DB5734F00038754 /* PHAsset+identifier.swift in Sources */,
 				E200E62F1DDD2A3E00E3457F /* EmailViewController.swift in Sources */,
 				E2A5A8851B703B9B006D6E81 /* PhotoEditView.swift in Sources */,
@@ -1142,6 +1164,7 @@
 				E2064BF11BBF3C26009C7B6A /* AirMuteView.swift in Sources */,
 				E2BC533E1DE5E7EC00C97A2C /* Http.swift in Sources */,
 				E2D12A711C0778C100DE507E /* AirScrollView.swift in Sources */,
+				E29074A21E9D3554001E0609 /* AirAddReactionButton.swift in Sources */,
 				E2CC15A11C2C897800316356 /* WrapperTableViewCell.swift in Sources */,
 				E266A1C01DEB4E8900C71C28 /* MemberPickerController.swift in Sources */,
 				E2539EA61E26A2B4000FFE40 /* InviteListCell.swift in Sources */,
@@ -1160,6 +1183,7 @@
 				E29730661C16295300B9433B /* InviteViewController.swift in Sources */,
 				E2D12A7B1C091C4D00DE507E /* BaseViewController.swift in Sources */,
 				E22489721E5C92B900A96F27 /* Date.swift in Sources */,
+				E2EEE9101E9C7F730085565E /* ReactionPickerController.swift in Sources */,
 				E25327B21B0FCE9C00990A81 /* Constants.swift in Sources */,
 				E25908301DC69C3F00CB6C3F /* MemberDetailView.swift in Sources */,
 				E2DA16DD1DD11B7A0096D86F /* AirToggleImage.swift in Sources */,
@@ -1189,7 +1213,6 @@
 				E2B8A4B41CE7818B00A28D3A /* CKRadialMenu.m in Sources */,
 				9FDCC8F9EEEF77DEBE173AFA /* PhotoSearchController.swift in Sources */,
 				E2BC53391DE5DE5600C97A2C /* UserController.swift in Sources */,
-				E2DA16DF1DD142E00096D86F /* Emoji.swift in Sources */,
 				E24D84D11E89E16300BFE408 /* UserLobbyController.swift in Sources */,
 				E227294D1CEA7D0600913041 /* GalleryViewCell.swift in Sources */,
 				9FDCC8FD0E124B99BA23D71A /* FireGroup.swift in Sources */,
@@ -1217,6 +1240,7 @@
 				9FDCC52A639B1102E1771A34 /* MemberSettingsController.swift in Sources */,
 				9FDCC5F52570C58229C8D971 /* NotificationSettingsViewController.swift in Sources */,
 				9FDCCEE8BA867A541B95EB3A /* SettingsTableViewController.swift in Sources */,
+				9FDCC02817FBC4B31C6CB796 /* AirReactionToolbar.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

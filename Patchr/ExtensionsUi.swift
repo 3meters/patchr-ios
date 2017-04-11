@@ -340,9 +340,12 @@ extension UIViewController {
 
     func close(animated: Bool = true, root: Bool = false) {
         /* Override in subclasses for control of dismiss/pop process */
-        if self.presented {
+        if self.presented || self.popupController != nil {
             if self.navigationController != nil {
                 self.navigationController!.dismiss(animated: animated, completion: nil)
+            }
+            else if self.popupController != nil {
+                self.popupController!.dismiss()
             }
             else {
                 self.dismiss(animated: animated, completion: nil)

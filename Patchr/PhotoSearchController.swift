@@ -113,7 +113,7 @@ class PhotoSearchController: UICollectionViewController, UITableViewDelegate, UI
 			let statusHeight = UIApplication.shared.statusBarFrame.size.height
 
             self.searchBarBoundsY = navHeight + statusHeight
-            self.searchBar = UISearchBar(frame: CGRect(x:0, y:self.searchBarBoundsY!, width:UIScreen.main.bounds.size.width, height:44))
+            self.searchBar = UISearchBar(frame: CGRect(x:0, y:self.searchBarBoundsY!, width: Config.screenWidth, height:44))
             self.searchBar!.autocapitalizationType = .none
             self.searchBar!.delegate = self
             self.searchBar!.placeholder = "Search for photos"
@@ -128,7 +128,7 @@ class PhotoSearchController: UICollectionViewController, UITableViewDelegate, UI
         }
 		
 		/* Calculate thumbnail width */
-		availableWidth = UIScreen.main.bounds.size.width - (sectionInsets!.left + sectionInsets!.right)
+		availableWidth = Config.screenWidth - (sectionInsets!.left + sectionInsets!.right)
 		let requestedColumnWidth: CGFloat = 100
 		let numColumns: CGFloat = floor(CGFloat(availableWidth!) / CGFloat(requestedColumnWidth))
 		let spaceLeftOver = availableWidth! - (numColumns * requestedColumnWidth) - ((numColumns - 1) * 4)

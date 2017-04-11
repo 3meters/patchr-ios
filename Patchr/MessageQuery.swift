@@ -10,6 +10,9 @@ class MessageQuery: NSObject {
 
     var authHandle: FIRAuthStateDidChangeListenerHandle!
 
+    var block: ((Error?, FireMessage?) -> Swift.Void)!
+    var fired = false
+
     var messagePath: String!
     var messageHandle: UInt!
     var message: FireMessage!
@@ -19,32 +22,40 @@ class MessageQuery: NSObject {
         self.messagePath = "group-messages/\(groupId)/\(channelId)/\(messageId)"
     }
     
-    func observe(with block: @escaping (Error?, FireMessage?) -> Swift.Void) {        
+    func observe(with block: @escaping (Error?, FireMessage?) -> Swift.Void) {
+        
+        self.block = block
+        
         self.authHandle = FIRAuth.auth()?.addStateDidChangeListener() { [weak self] auth, user in
+            guard let this = self else { return }
             if auth.currentUser == nil {
-                self?.remove()
+                this.remove()
             }
         }
         self.messageHandle = FireController.db.child(self.messagePath).observe(.value, with: { [weak self] snap in
-            if !(snap.value is NSNull) {
-                self?.message = FireMessage(dict: snap.value as! [String: Any], id: snap.key)
-                block(nil, self?.message)
+            guard let this = self else { return }
+            if let value = snap.value as? [String: Any] {
+                this.message = FireMessage(dict: value, id: snap.key)
+                this.block(nil, this.message)
             }
-        }, withCancel: { error in
-            Log.v("Permission denied trying to read message: \(self.messagePath!)")
-            block(error, nil)
+        }, withCancel: { [weak self] error in
+            guard let this = self else { return }
+            Log.v("Permission denied trying to read message: \(this.messagePath!)")
+            this.block(error, nil)
         })
     }
     
     func once(with block: @escaping (Error?, FireMessage?) -> Swift.Void) {
         FireController.db.child(self.messagePath).observeSingleEvent(of: .value, with: { [weak self] snap in
-            if !(snap.value is NSNull) {
-                self?.message = FireMessage(dict: snap.value as! [String: Any], id: snap.key)
-                block(nil, self?.message)
+            guard let this = self else { return }
+            if let value = snap.value as? [String: Any] {
+                this.message = FireMessage(dict: value, id: snap.key)
+                this.block(nil, this.message)
             }
-        }, withCancel: { error in
-            Log.v("Permission denied trying to read message: \(self.messagePath!)")
-            block(error, nil)
+        }, withCancel: { [weak self] error in
+            guard let this = self else { return }
+            Log.v("Permission denied trying to read message: \(this.messagePath!)")
+            this.block(error, nil)
         })
     }
     

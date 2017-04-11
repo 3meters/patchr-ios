@@ -137,10 +137,14 @@ class MemberViewController: BaseViewController, UIScrollViewDelegate, UITextFiel
 		super.initialize()
         
         self.automaticallyAdjustsScrollViewInsets = false
+        let inPopup = (self.popupController != nil)
         let viewWidth = min(Config.contentWidthMax, self.view.bounds.size.width)
         let statusHeight = UIApplication.shared.statusBarFrame.size.height
         let navigationHeight = self.navigationController?.navigationBar.height() ?? 44
-        let chromeHeight = statusHeight + navigationHeight
+        var chromeHeight = statusHeight + navigationHeight
+        if inPopup {
+            chromeHeight = 0
+        }
         
         self.headerHeight = viewWidth * 0.625
         self.scrollView.contentInset = UIEdgeInsets(top: self.headerHeight + chromeHeight, left: 0, bottom: 0, right: 0)
@@ -175,7 +179,7 @@ class MemberViewController: BaseViewController, UIScrollViewDelegate, UITextFiel
         
         if self.presented {
             let closeButton = UIBarButtonItem(barButtonSystemItem: .stop, target: self, action: #selector(closeAction(sender:)))
-            self.navigationItem.rightBarButtonItems = [closeButton]
+            self.navigationItem.leftBarButtonItems = [closeButton]
         }
 	}
 	
@@ -206,9 +210,13 @@ class MemberViewController: BaseViewController, UIScrollViewDelegate, UITextFiel
     func updateHeaderView() {
         var headerRect = CGRect(x: 0, y: -self.headerHeight, width: self.view.width(), height: self.headerHeight)
         
+        let inPopup = (self.popupController != nil)
         let statusHeight = UIApplication.shared.statusBarFrame.size.height
         let navigationHeight = self.navigationController?.navigationBar.height() ?? 44
-        let chromeHeight = statusHeight + navigationHeight
+        var chromeHeight = statusHeight + navigationHeight
+        if inPopup {
+            chromeHeight = 0
+        }
 
         if self.scrollView.contentOffset.y < -(self.headerHeight + chromeHeight) {
             headerRect.origin.y = (self.scrollView.contentOffset.y + chromeHeight)

@@ -33,7 +33,7 @@ class AirLikeButton: AirToggleButton {
     func bind(message: FireMessage) {
         self.message = message
         let userId = UserController.instance.userId!
-        let thumbsup = message.getReaction(emoji: .thumbsup, userId: userId)
+        let thumbsup = message.getReaction(emoji: ":thumbsup:", userId: userId)
         self.toggle(on: thumbsup, animate: true)
     }
 
@@ -46,13 +46,13 @@ class AirLikeButton: AirToggleButton {
         if let message = self.message {
             self.isEnabled = false
             if self.toggledOn {
-                message.removeReaction(emoji: .thumbsup)
+                message.removeReaction(emoji: ":thumbsup:")
                 self.toggle(on: false, animate: true)
                 Reporting.track("Reaction Off")
                 self.isEnabled = true
             }
             else {
-                message.addReaction(emoji: .thumbsup)
+                message.addReaction(emoji: ":thumbsup:")
                 self.toggle(on: true, animate: true)
                 Reporting.track("Reaction On")
                 self.isEnabled = true

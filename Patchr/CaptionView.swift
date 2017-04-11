@@ -15,7 +15,7 @@ class CaptionView: IDMCaptionView {
 	var userPhoto = PhotoControl()
 	var createdDate	= AirLabelDisplay()
 	var caption	= AirLabelDisplay()
-	var likeButton = AirLikeButton(frame: CGRect.zero)
+	var reactionButton: AirReactionButton!
 	var displayPhoto: DisplayPhoto
 	
 	init!(displayPhoto: DisplayPhoto) {
@@ -73,11 +73,9 @@ class CaptionView: IDMCaptionView {
 		self.createdDate.textColor = Theme.colorTextSecondary
 		self.createdDate.textAlignment = .right
 		self.createdDate.text = self.displayPhoto.createdDateLabel
-		
-		self.likeButton.imageView!.tintColor = Theme.colorTint
-        self.likeButton.bounds.size = CGSize(width:48, height:48)
-		self.likeButton.imageEdgeInsets = UIEdgeInsetsMake(14, 12, 14, 12)
-		
+
+		self.reactionButton = AirReactionButton(frame: CGRect.zero)
+
 		self.backgroundColor = Theme.colorScrimCaption
 		
 		self.addSubview(self.userPhoto)

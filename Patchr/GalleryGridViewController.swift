@@ -74,7 +74,7 @@ class GalleryGridViewController: UICollectionViewController {
 		self.sectionInsets = UIEdgeInsets(top: 4, left: 4, bottom: 4, right: 4)
 		
 		/* Calculate thumbnail width */
-		self.availableWidth = UIScreen.main.bounds.size.width - (self.sectionInsets!.left + self.sectionInsets!.right)
+		self.availableWidth = Config.screenWidth - (self.sectionInsets!.left + self.sectionInsets!.right)
 		let requestedColumnWidth: CGFloat = 200
 		let numColumns: CGFloat = floor(CGFloat(availableWidth!) / CGFloat(requestedColumnWidth))
 		let spaceLeftOver = availableWidth! - (numColumns * requestedColumnWidth) - ((numColumns - 1) * 4)
@@ -109,7 +109,9 @@ class GalleryGridViewController: UICollectionViewController {
 		}
         
 		/* Create sorted array for data binding */
-		self.displayPhotosSorted = Array(self.displayPhotos.values).sorted(by: { $0.createdDateValue! > $1.createdDateValue! })
+		self.displayPhotosSorted = Array(self.displayPhotos.values).sorted(by: {
+            $0.createdDateValue! > $1.createdDateValue!
+        })
         
         /* Start prefetching photos to the disk cache if on wifi network */
         let urls = self.displayPhotosSorted.map { $0.photoURL! }
@@ -123,7 +125,7 @@ class GalleryGridViewController: UICollectionViewController {
 		
 		/* Navigation bar buttons */
         let closeButton = UIBarButtonItem(barButtonSystemItem: .stop, target: self, action: #selector(closeAction(sender:)))
-		self.navigationItem.rightBarButtonItems = [closeButton]
+		self.navigationItem.leftBarButtonItems = [closeButton]
 	}
 	
     func imageForIndexPath(indexPath: NSIndexPath) -> DisplayPhoto? {
@@ -152,7 +154,8 @@ extension GalleryGridViewController: IDMPhotoBrowserDelegate {
 		let index = Int(index)		
 		if let browser = photoBrowser as? PhotoBrowser {
 			let displayPhoto = self.displayPhotosSorted![index]
-			browser.likeButton?.bind(displayPhoto: displayPhoto)
+            browser.reactionToolbar.alwaysShowAddButton = true
+            browser.reactionToolbar.bind(message: displayPhoto.message!)
 		}
 	}
 }

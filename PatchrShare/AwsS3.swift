@@ -26,6 +26,11 @@ public class S3: NSObject {
         let expression = AWSS3TransferUtilityUploadExpression()
         expression.progressBlock = progress
         
+        /* Saves the data as a file in a temporary directory. The next time
+           the transfer utility is initialized, the expired temp files are cleaned up. 
+           Upload continues whether app is active or in background. If app is terminated by
+           iOS, the system continues the upload and launches app after upload finishes. 
+           If user kills app, the upload stops. */
         AWSS3TransferUtility.default().uploadData(imageData
             , bucket: self.imageBucket
             , key: imageKey

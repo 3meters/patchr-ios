@@ -11,6 +11,11 @@ import FirebaseDatabaseUI
 
 class MemberListController: BaseTableController {
     
+    var inputReactionPath: String!
+    var inputEmojiCode: String!
+    var inputEmoji: String!
+    var inputEmojiCount: Int!
+    
     var channel: FireChannel!
     var channelQuery: ChannelQuery!
     var scope: ListScope = .group
@@ -114,14 +119,14 @@ class MemberListController: BaseTableController {
         
         self.view.addSubview(self.tableView)
         
-        if self.presented {
+        if self.presented || self.popupController != nil {
             let closeButton = UIBarButtonItem(barButtonSystemItem: .stop, target: self, action: #selector(self.closeAction(sender:)))
             self.navigationItem.leftBarButtonItems = [closeButton]
         }
     }
 
     func bind() {
-
+        
         let groupId = StateController.instance.groupId!
         let group = StateController.instance.group!
         var query = FireController.db.child("group-members/\(groupId)")
@@ -133,17 +138,32 @@ class MemberListController: BaseTableController {
         }
         
         if (self.scope == .channel && self.channel.role == "owner") || group.role == "owner" {
-            if self.target == .channel {
-                let addButton = UIBarButtonItem(title: "Invite", style: .plain, target: self, action: #selector(channelInviteAction(sender:)))
-                self.navigationItem.rightBarButtonItems = [addButton]
-            }
-            else if self.target == .group {
-                let inviteButton = UIBarButtonItem(title: "Invite", style: .plain, target: self, action: #selector(groupInviteAction(sender:)))
-                self.navigationItem.rightBarButtonItems = [inviteButton]
+            
+            if self.scope != .reaction {
+                if self.target == .channel {
+                    let addButton = UIBarButtonItem(title: "Invite", style: .plain, target: self, action: #selector(channelInviteAction(sender:)))
+                    self.navigationItem.rightBarButtonItems = [addButton]
+                }
+                else if self.target == .group {
+                    let inviteButton = UIBarButtonItem(title: "Invite", style: .plain, target: self, action: #selector(groupInviteAction(sender:)))
+                    self.navigationItem.rightBarButtonItems = [inviteButton]
+                }
             }
         }
         
-        self.navigationItem.title = self.scope == .channel ? "# \(self.channel!.name!)" : group.title!
+        if self.scope == .reaction {
+            query = FireController.db.child(self.inputReactionPath)
+            if self.inputEmojiCount == 1 {
+                self.navigationItem.title = "\(self.inputEmoji!)  \(self.inputEmojiCount!) person reacted with \(self.inputEmojiCode!)"
+            }
+            else {
+                self.navigationItem.title = "\(self.inputEmoji!)  \(self.inputEmojiCount!) people reacted with \(self.inputEmojiCode!)"
+            }
+        }
+        else {
+            self.navigationItem.title = self.scope == .channel ? "# \(self.channel!.name!)" : group.title!
+        }
+        
         
         self.queryController = DataSourceController(name: "member_list")
         self.queryController.bind(to: self.tableView, query: query) { [weak self] tableView, indexPath, data in
@@ -157,34 +177,42 @@ class MemberListController: BaseTableController {
             let groupId = StateController.instance.groupId!
             
             if this.target == .group {
-                cell.userQuery = UserQuery(userId: userId, groupId: groupId)
+                if this.scope == .reaction {
+                    cell.userQuery = UserQuery(userId: userId)
+                }
+                else {
+                    cell.userQuery = UserQuery(userId: userId, groupId: groupId)
+                }
             }
-            else {
+            else  {
                 let channelId = this.channel.id!
                 cell.userQuery = UserQuery(userId: userId, groupId: groupId, channelId: channelId)
             }
             
             cell.userQuery.once(with: { [weak self, weak cell] error, user in
                 guard let this = self else { return }
-                guard let strongCell = cell else { return }
+                guard let cell = cell else { return }
                 if user != nil {
-                    let target = (this.target == .group) ? "group" : "channel"
-                    strongCell.bind(user: user!, target: target)
+                    var target = (this.target == .group) ? "group" : "channel"
+                    if this.scope == .reaction {
+                        target = "reaction"
+                    }
+                    cell.bind(user: user!, target: target)
                     if this.manage {
                         if this.scope == .group {
                             if let role = StateController.instance.group!.role, role == "owner" {
-                                strongCell.actionButton?.isHidden = false
-                                strongCell.actionButton?.setTitle("Manage", for: .normal)
-                                strongCell.actionButton?.data = user
-                                strongCell.actionButton?.addTarget(this, action: #selector(this.manageUserAction(sender:)), for: .touchUpInside)
+                                cell.actionButton?.isHidden = false
+                                cell.actionButton?.setTitle("Manage", for: .normal)
+                                cell.actionButton?.data = user
+                                cell.actionButton?.addTarget(this, action: #selector(this.manageUserAction(sender:)), for: .touchUpInside)
                             }
                         }
                         else if this.scope == .channel {
                             if let role = self!.channel.role, role == "owner" {
-                                strongCell.actionButton?.isHidden = false
-                                strongCell.actionButton?.setTitle("Manage", for: .normal)
-                                strongCell.actionButton?.data = user
-                                strongCell.actionButton?.addTarget(this, action: #selector(this.manageUserAction(sender:)), for: .touchUpInside)
+                                cell.actionButton?.isHidden = false
+                                cell.actionButton?.setTitle("Manage", for: .normal)
+                                cell.actionButton?.data = user
+                                cell.actionButton?.addTarget(this, action: #selector(this.manageUserAction(sender:)), for: .touchUpInside)
                             }
                         }
                     }
@@ -199,6 +227,7 @@ class MemberListController: BaseTableController {
     enum ListScope: Int {
         case group
         case channel
+        case reaction
     }
     
     enum MemberTarget: Int {
@@ -214,7 +243,13 @@ extension MemberListController: UITableViewDelegate {
         let user = cell.user
         let controller = MemberViewController()
         controller.inputUserId = user?.id
-        self.navigationController?.pushViewController(controller, animated: true)
+        if self.popupController == nil {
+            self.navigationController?.pushViewController(controller, animated: true)
+        }
+        else {
+            controller.contentSizeInPopup = self.contentSizeInPopup
+            self.popupController?.push(controller, animated: true)
+        }
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {

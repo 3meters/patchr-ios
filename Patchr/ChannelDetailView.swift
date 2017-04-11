@@ -69,7 +69,7 @@ class ChannelDetailView: UIView {
 
         self.roleLabel.bounds.size.width = self.titleGroup.width()
         self.roleLabel.sizeToFit()
-        self.roleLabel.anchorBottomLeft(withLeftPadding: 14, bottomPadding: 0, width: self.roleLabel.width(), height: self.roleLabel.height())
+        self.roleLabel.anchorBottomLeft(withLeftPadding: 0, bottomPadding: 0, width: self.roleLabel.width(), height: self.roleLabel.height())
 
         let indicatorsWidth = (!self.lockImage.isHidden ? 20 : 0) + (!self.mutedImage.isHidden ? 24 : 0)
         self.nameLabel.bounds.size.width = self.titleGroup.width() - CGFloat(indicatorsWidth + 28)
@@ -112,7 +112,7 @@ class ChannelDetailView: UIView {
         self.nameLabel.textColor = Colors.white
         self.nameLabel.numberOfLines = 2
 
-        self.roleLabel.font = UIFont(name: "HelveticaNeue-Light", size: 22)!
+        self.roleLabel.font = UIFont(name: "HelveticaNeue-LightItalic", size: 20)!
         self.roleLabel.textColor = Colors.white
         self.roleLabel.numberOfLines = 1
 
@@ -146,8 +146,14 @@ class ChannelDetailView: UIView {
         
         /* Name, type and photo */
         
-        self.nameLabel.text = "#\(channel.name!)"
-        self.roleLabel.text = "channel \(channel.role!)"
+        let nameString = "\(channel.name!)"
+        let attrString = NSMutableAttributedString(string: nameString)
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.lineHeightMultiple = 0.8
+        attrString.addAttribute(NSParagraphStyleAttributeName, value: paragraphStyle, range: NSMakeRange(0, attrString.length))
+        
+        self.nameLabel.attributedText = attrString
+        self.roleLabel.text = "you: channel \(channel.role!)"
         
         if channel.purpose != nil && !channel.purpose!.isEmpty {
             self.addSubview(self.infoGroup)

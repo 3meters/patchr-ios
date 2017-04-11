@@ -5,7 +5,7 @@ import FLAnimatedImage
 
 class DisplayPhoto: IDMPhoto {
 
-    weak var message: FireMessage? // Supports like button
+    var message: FireMessage? // Supports reaction button
 
     /* Used to build caption in gallery browsing */
 	
@@ -14,8 +14,7 @@ class DisplayPhoto: IDMPhoto {
 	var creatorName: String?
 	var creatorUrl: URL?
 	var userLikes = false
-	var userLikesId: String?
-    
+
     var size: CGSize? // Used as hint for grid layout
     
     convenience init(from message: FireMessage) {
@@ -42,9 +41,8 @@ class DisplayPhoto: IDMPhoto {
         }
         
         let userId = UserController.instance.userId!
-        if message.getReaction(emoji: .thumbsup, userId: userId) {
+        if message.getReaction(emoji: ":thumbsup:", userId: userId) {
             self.userLikes = true
-            self.userLikesId = userId
         }
     }
 }

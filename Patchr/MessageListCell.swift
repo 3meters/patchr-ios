@@ -23,10 +23,8 @@ class MessageListCell: UITableViewCell {
     var unread = AirLabelDisplay()
     var hitInsets: UIEdgeInsets = UIEdgeInsets.zero
 
-    var toolbar = AirUIView()
-    var likeButton = AirLikeButton(frame: CGRect.zero)
-    var likesLabel = AirLabelDisplay()
-    
+    var reactionToolbar: AirReactionToolbar!
+
     var template = false
     var decorated = false
 
@@ -103,12 +101,13 @@ class MessageListCell: UITableViewCell {
 
         /* Footer */
 
-        self.toolbar.alignUnder(self.edited, matchingLeftAndFillingWidthWithRightPadding: 0, topPadding: 0, height: self.toolbar.isHidden ? 0 : 36)
-        self.likeButton.anchorCenterLeft(withLeftPadding: 0, width: self.likeButton.width(), height: self.likeButton.height())
-        self.likeButton.frame.origin.x -= 12
-        self.likesLabel.sizeToFit()
-        self.likesLabel.align(toTheRightOf: self.likeButton, matchingCenterWithLeftPadding: 0, width: self.likesLabel.width(), height: self.likesLabel.height())
-        self.likesLabel.frame.origin.x -= 4
+        if !self.reactionToolbar.isHidden {
+            let toolbarSize = self.reactionToolbar.intrinsicContentSize
+            self.reactionToolbar.alignUnder(self.edited
+                , matchingLeftWithTopPadding: 8
+                , width: columnWidth
+                , height: toolbarSize.height)
+        }
         
         self.contentView.resizeToFitSubviews()
         self.bounds.size.height = self.contentView.height() + 24
@@ -140,7 +139,7 @@ class MessageListCell: UITableViewCell {
 
         /* Photo: give initial size in case the image displays before call to layoutSubviews		 */
         let columnLeft = CGFloat(48 + 8)
-        let columnWidth = min(Config.contentWidthMax, UIScreen.main.bounds.size.width) - columnLeft
+        let columnWidth = min(Config.contentWidthMax, Config.screenWidth) - columnLeft
         let photoHeight = columnWidth * 0.5625        // 16:9 aspect ratio
 
         self.photoView = AirImageView(frame: CGRect(x: 0, y: 0, width: columnWidth, height: photoHeight))
@@ -148,6 +147,7 @@ class MessageListCell: UITableViewCell {
         self.photoView!.cornerRadius = 4
         self.photoView!.contentMode = .scaleAspectFill
         self.photoView!.backgroundColor = Theme.colorBackgroundImage
+        self.photoView!.isHidden = true
 
         /* Header */
         self.userName.font = Theme.fontTextBold
@@ -173,25 +173,9 @@ class MessageListCell: UITableViewCell {
         self.unread.textAlignment = .left
         self.unread.isHidden = true
         
-        /* Footer */
-
-        self.toolbar.hitInsets = UIEdgeInsets(top: -16, left: -16, bottom: -16, right: -16)
-        self.toolbar.isHidden = true
-
-        self.likeButton.imageView!.tintColor = Theme.colorTint
-        self.likeButton.bounds.size = CGSize(width: 48, height: 48)
-        self.likeButton.imageEdgeInsets = UIEdgeInsetsMake(14, 12, 14, 12)
-        self.likeButton.hitInsets = UIEdgeInsets(top: -16, left: -16, bottom: -16, right: -16)
-
-        self.likesLabel.font = Theme.fontText
-        self.likesLabel.numberOfLines = 1
-        self.likesLabel.textColor = Theme.colorText
-        self.likesLabel.textAlignment = .right
-
-        self.toolbar.addSubview(self.likeButton)
-        self.toolbar.addSubview(self.likesLabel)
-
-        self.contentView.addSubview(self.toolbar)
+        self.reactionToolbar = AirReactionToolbar()
+        
+        self.contentView.addSubview(self.reactionToolbar)
         self.contentView.addSubview(self.description_!)
         self.contentView.addSubview(self.photoView!)
         self.contentView.addSubview(self.userPhotoControl)
@@ -201,34 +185,14 @@ class MessageListCell: UITableViewCell {
         self.contentView.addSubview(self.unread)
     }
 
-    func reset() {
-        self.contentView.isHidden = true
-        self.photoView.reset()
-        self.userPhotoControl.reset()
-        self.description_?.text = nil
-        self.description_?.textColor = Colors.black
-        self.description_!.font = Theme.fontTextList
-        self.userName.text = nil
-        self.unread.isHidden = true
-        self.toolbar.isHidden = true
-        self.likeButton.isHidden = true
-        self.likesLabel.isHidden = true
-        self.edited.isHidden = true
-        self.userQuery?.remove()
-        self.userQuery = nil
-        if let gestureRecognizers = self.gestureRecognizers {
-            for recognizer in gestureRecognizers {
-                self.removeGestureRecognizer(recognizer)
-            }
-        }
-    }
-
     func bind(message: FireMessage) {
 
         self.message = message
+        
+        /* Text */
 
         self.description_?.isHidden = true
-        
+
         if let description = message.text {
             self.description_?.isHidden = false
             let label = self.description_ as! TTTAttributedLabel
@@ -243,18 +207,28 @@ class MessageListCell: UITableViewCell {
             self.description_?.text = description
         }
         
+        /* Username */
+        
         self.userName.text = message.creator?.username
-        let fullName = message.creator?.fullName
+        
+        /* User photo */
         
         if let profilePhoto = message.creator?.profile?.photo {
             if !self.template {
                 let url = Cloudinary.url(prefix: profilePhoto.filename, category: SizeCategory.profile)
-                self.userPhotoControl.bind(url: url, name: fullName, colorSeed: message.creator?.id)
+                if !self.userPhotoControl.photoView.associated(withUrl: url) {
+                    let fullName = message.creator?.fullName
+                    self.userPhotoControl.photoView.image = nil
+                    self.userPhotoControl.bind(url: url, name: fullName, colorSeed: message.creator?.id)
+                }
             }
         }
         else {
+            let fullName = message.creator?.fullName
             self.userPhotoControl.bind(url: nil, name: fullName, colorSeed: message.creator?.id)
         }
+        
+        /* Message photo */
         
         if let photo = message.attachments?.values.first?.photo {
             self.photoView?.isHidden = false
@@ -270,43 +244,36 @@ class MessageListCell: UITableViewCell {
             self.photoView?.isHidden = true
             self.photoView?.image = nil
         }
+        
+        /* Created date and edited flag */
 
         let createdAt = DateUtils.from(timestamp: message.createdAt!)
         self.createdDate.text = DateUtils.timeAgoShort(date: createdAt)
-
         self.edited.isHidden = (message.createdAt == message.modifiedAt)
+        
+        /* Reaction toolbar */
+        
+        self.reactionToolbar.isHidden = true
+        self.reactionToolbar.bind(message: message)
+        self.reactionToolbar.isHidden = (self.reactionToolbar.reactionButtons.count == 0)
 
-        let thumbsupCount = message.getReactionCount(emoji: .thumbsup)
-        let userId = UserController.instance.userId!
-
-        if thumbsupCount != 0 {
-            self.likeButton.bind(message: message)
-            self.likesLabel.textColor = Theme.colorText
-            self.likesLabel.text = String(thumbsupCount)
-            if message.getReaction(emoji: .thumbsup, userId: userId) {
-                self.likesLabel.textColor = Colors.brandColor
-            }
-            self.toolbar.isHidden = false
-            self.likeButton.isHidden = false
-            self.likesLabel.isHidden = false
-        }
-        else {
-            self.toolbar.isHidden = true
-            self.likeButton.isHidden = true
-            self.likesLabel.isHidden = true
-        }
-
-        self.contentView.isHidden = false
-        self.setNeedsLayout()    // Needed because binding can change the layout
-    }
-
-    override func sizeThatFits(_ size: CGSize) -> CGSize {
-        self.contentView.bounds.size.width = size.width
+        //self.contentView.isHidden = false
         self.setNeedsLayout()
-        self.layoutIfNeeded()
-        return self.contentView.sizeThatFitsSubviews()
     }
-
+    
+    func reset() {
+        //self.contentView.isHidden = true
+        //self.photoView.isHidden = true
+        self.photoView.reset()
+        self.userPhotoControl.reset()
+        self.description_?.textColor = Colors.black
+        self.description_!.font = Theme.fontTextList
+        self.unread.isHidden = true
+        self.edited.isHidden = true
+        self.userQuery?.remove()
+        self.userQuery = nil
+    }
+    
     override func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
 
         let newRect = CGRect(x: 0 + hitInsets.left,

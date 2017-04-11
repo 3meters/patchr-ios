@@ -13,14 +13,18 @@ class AirScrollView: UIScrollView {
 	required init?(coder aDecoder: NSCoder) {
 		super.init(coder: aDecoder)!
 		self.delaysContentTouches = false
+        initialize()
 	}
 	
 	override init(frame: CGRect) {
 		super.init(frame: frame)
 		self.delaysContentTouches = false
+        initialize()
 	}
 	
 	override func touchesShouldCancel(in view: UIView) -> Bool {
 		return true
 	}
+    
+    func initialize() { }
 }

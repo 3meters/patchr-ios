@@ -172,7 +172,7 @@ class InviteViewController: BaseEditViewController {
             self.contentHolder.addSubview(self.inviteListButton)
             
             let closeButton = UIBarButtonItem(barButtonSystemItem: .stop, target: self, action: #selector(closeAction(sender:)))
-            self.navigationItem.rightBarButtonItems = [closeButton]
+            self.navigationItem.leftBarButtonItems = [closeButton]
         }
 	}
     

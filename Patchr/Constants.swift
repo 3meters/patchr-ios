@@ -40,21 +40,25 @@ struct Config {
     static let iOS8 = iosVersion >= 8
     static let iOS7 = iosVersion >= 7 && iosVersion < 8
 
-    static let widthNarrow = (UIScreen.main.bounds.size.width == 320)
-    static let width320 = (UIScreen.main.bounds.size.width == 320)// iphone 4s
-    static let width375 = (UIScreen.main.bounds.size.width == 375)// iphone 6
-    static let pixelScale = CGFloat(UIScreen.main.scale)
+    static let screenWidth = UIScreen.main.bounds.size.width
+    static let screenHeight = UIScreen.main.bounds.size.height
+    static let isWidthNarrow = (UIScreen.main.bounds.size.width == 320)
+    static let isWidth320 = (UIScreen.main.bounds.size.width == 320)// iphone 4s
+    static let isWidth375 = (UIScreen.main.bounds.size.width == 375)// iphone 6
+    static let pixelScale = UIScreen.main.scale
     
     static let imageDimensionMax = CGFloat(1600)
     static let contentWidthMax = CGFloat(462)
     static let sideMenuWidth = CGFloat(260)
     
     static var navigationDrawerWidth: CGFloat {
-        if widthNarrow {
+        if isWidthNarrow {
             return CGFloat(300)
         }
-        return min(CGFloat(UIScreen.main.bounds.size.width - 96), CGFloat(384))
+        return min((screenWidth - 96), CGFloat(384))
     }
+    
+    static let typingInterval = CGFloat(12.0)
 
     /* This is private because the use of 'appConfiguration' is preferred. */
     private static let isTestFlight = Bundle.main.appStoreReceiptURL?.lastPathComponent == "sandboxReceipt"

@@ -13,9 +13,9 @@ import Photos
 
 class PhotoBrowser: IDMPhotoBrowser {
     
-    var likes : Bool = false
-    var likeButton : AirLikeButton?
-    var message	: FireMessage?  // Needed to make the like button work
+    var likes: Bool = false
+    var reactionToolbar: AirReactionToolbar!
+    var message: FireMessage?  // Needed to make the reaction button work
     var mode: PhotoBrowserMode = .browse
     
     /* UI specialized for previewing photos from the photo picker. */
@@ -86,26 +86,24 @@ class PhotoBrowser: IDMPhotoBrowser {
             let fixedSpacer = UIBarButtonItem(barButtonSystemItem: .fixedSpace, target: self, action: nil)
             let shareButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.action, target: self, action: #selector(IDMPhotoBrowser.actionButtonPressed(_:)))    // Handled by IDMPhotoBrowser
             
-            self.likeButton = AirLikeButton(frame: CGRect(x:0, y:0, width:44, height:44))
-            self.likeButton!.imageEdgeInsets = UIEdgeInsets(top: 10, left: 8, bottom: 10, right:8)
-            self.likeButton!.isHidden = (self.message == nil)
+            self.reactionToolbar = AirReactionToolbar()
+            self.reactionToolbar.bounds.size = CGSize(width: Config.screenWidth - 96, height: 32)
+            self.reactionToolbar.isHidden = (self.message == nil)
             
             fixedSpacer.width = 16
             
-            let barLikeButton = UIBarButtonItem(customView: self.likeButton!)
+            let barReactionButton = UIBarButtonItem(customView: self.reactionToolbar)
             
             var items = [UIBarButtonItem]()
-            items.append(flexSpacer)
+            items.append(barReactionButton)
             items.append(flexSpacer)	// Doubled up hack to prevent jitters because of animation
-            items.append(barLikeButton)
-            items.append(flexSpacer)
             items.append(flexSpacer)
             items.append(shareButton)
             
             toolbar.items = items
             
             if self.mode == .gallery {
-                self.likeButton!.isHidden = false
+                self.reactionToolbar.isHidden = false
             }
         }
     }
@@ -118,15 +116,9 @@ class PhotoBrowser: IDMPhotoBrowser {
         }
         else {
             let closeButton = UIBarButtonItem(barButtonSystemItem: .stop, target: self, action: #selector(IDMPhotoBrowser.doneButtonPressed(_:)))
-            self.navigationItem.rightBarButtonItems = [closeButton]
+            self.navigationItem.leftBarButtonItems = [closeButton]
         }
     }
-    
-	func bind(message: FireMessage!) {
-		self.message = message
-        self.likeButton!.bind(message: message)
-		self.likeButton!.isHidden = (message == nil)
-	}
 }
 
 public enum PhotoBrowserMode: Int {

@@ -178,7 +178,7 @@ class SettingsTableViewController: UITableViewController {
         
         if self.presented {
             let closeButton = UIBarButtonItem(barButtonSystemItem: .stop, target: self, action: #selector(self.closeAction(sender:)))
-            self.navigationItem.rightBarButtonItems = [closeButton]
+            self.navigationItem.leftBarButtonItems = [closeButton]
         }
     }
     

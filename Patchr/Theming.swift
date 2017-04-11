@@ -78,9 +78,11 @@ class Snow {
 	let colorButtonTitleFeaturedHighlighted = Colors.lightGray
 	let colorButtonBorder					= Colors.gray66pcntColor
 	let colorButtonBorderFeatured			= Colors.brandColorFill
+	let colorButtonBorderSelected			= Colors.accentColorRule
 	let colorButtonFill						= Colors.clear
 	let colorButtonFillFeatured				= Colors.brandColorFill
-	
+	let colorButtonFillSelected				= Colors.accentColorFillHighlight
+
 	let fontSize				= 18
 
 	let fontBanner				: UIFont! = UIFont(name: "HelveticaNeue-Thin", size: 48)
@@ -152,7 +154,8 @@ public struct Colors {
 	static let accentColorLighter = UIColor(hexString: "#CDF5FCFF")
 	static let accentColorDark = UIColor(hexString: "#44C0D7FF")
 	static let accentColorDarker = UIColor(hexString: "#23A6BFFF")
-	
+	static let accentColorFillHighlight = UIColor(hexString: "#69D3E722")
+
 	static let accentOnLight = accentColorDarker
 	static let accentOnDark = accentColor
 	static let brandOnLight = brandColor

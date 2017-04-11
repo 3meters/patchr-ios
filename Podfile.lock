@@ -45,6 +45,7 @@ PODS:
   - DACircularProgress (2.3.1)
   - DateTools (2.0.0)
   - DLRadioButton (1.4.9)
+  - Emoji-swift (0.1.0)
   - Facade (1.1.1)
   - Firebase/Auth (3.15.0):
     - Firebase/Core
@@ -140,6 +141,7 @@ PODS:
   - SkyFloatingLabelTextField (2.0.0)
   - SlackTextViewController (1.9.5)
   - SlideMenuControllerSwift (3.0.1)
+  - STPopup (1.8.2)
   - TTTAttributedLabel (2.0.0)
   - TwicketSegmentedControl (0.1.1)
   - UIDevice-Hardware (0.1.8)
@@ -156,6 +158,7 @@ DEPENDENCIES:
   - CocoaLumberjack/Swift
   - DateTools (from `https://github.com/MatthewYork/DateTools`, branch `swift`)
   - DLRadioButton (~> 1.4.9)
+  - Emoji-swift
   - Facade (~> 1.1.1)
   - Firebase/Auth
   - Firebase/Core
@@ -178,6 +181,7 @@ DEPENDENCIES:
   - SkyFloatingLabelTextField (~> 2.0.0)
   - SlackTextViewController (from `~/code/SlackTextViewController`)
   - SlideMenuControllerSwift (from `~/code/SlideMenuControllerSwift`)
+  - STPopup
   - TTTAttributedLabel
   - TwicketSegmentedControl
   - UIDevice-Hardware (~> 0.1.7)
@@ -214,6 +218,7 @@ SPEC CHECKSUMS:
   DACircularProgress: 4dd437c0fc3da5161cb289e07ac449493d41db71
   DateTools: 9a92563d4567296fb6fa8ae586321159c514c8c6
   DLRadioButton: 7bb8a6e3768b572469ace553391ab4d2af6f9c19
+  Emoji-swift: 20010383183f4d85e6e5a2b9642b96ebdb4f06ae
   Facade: 3c5c6fb1ba042d20885cfe5a290050f5b9351ca2
   Firebase: 2b1cdfba1cda8589f32904a697cc753322bff9d8
   FirebaseAnalytics: 0d1b7d81d5021155be37702a94ba1ec16d45365d
@@ -244,11 +249,12 @@ SPEC CHECKSUMS:
   SkyFloatingLabelTextField: a81a0eaed2785d1599f11484c6ebc1c4eb5d1228
   SlackTextViewController: fbcdadbb8090673f604484ff5b6eb8d77baed42a
   SlideMenuControllerSwift: 08e93da4735d78038057ec636028d35ba24f0983
+  STPopup: b69b3e7484ef7d2baec5f9ab2939f8a7bcdfe218
   TTTAttributedLabel: 8cffe8e127e4e82ff3af1e5386d4cd0ad000b656
   TwicketSegmentedControl: bbb2d155792dbfcee7fea995a614d0c0a3de4a16
   UIDevice-Hardware: ecb52d9a7b223b31f81982358e2b0769ac1a7918
   VTAcknowledgementsViewController: e1de80f2c0ce31cc7e1c6f1c8aaeec2770371f09
 
-PODFILE CHECKSUM: 69fa89d27e9fd56fb22393a037e8121f3604be48
+PODFILE CHECKSUM: 3347fdb36e6151bf5644a0425189588d10f5702b
 
 COCOAPODS: 1.1.0.rc.3

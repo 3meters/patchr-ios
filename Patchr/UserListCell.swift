@@ -126,7 +126,7 @@ class UserListCell: UITableViewCell {
                 self.roleLabel?.textColor = MaterialColor.lightBlue.base
             }
         }
-        else {
+        else if target == "channel" {
             if user.role == "owner" {
                 self.roleLabel?.text = user.role
                 self.roleLabel?.textColor = MaterialColor.deepOrange.base
@@ -135,6 +135,9 @@ class UserListCell: UITableViewCell {
                 self.roleLabel?.text = user.role
                 self.roleLabel?.textColor = MaterialColor.purple.base
             }
+        }
+        else if target == "reaction" {
+            self.roleLabel?.isHidden = true
         }
         
         let fullName = user.profile?.fullName ?? user.username

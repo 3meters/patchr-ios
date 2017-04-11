@@ -16,7 +16,17 @@ class AirImageView: FLAnimatedImageView {
     var gradientHeightPcnt = CGFloat(0.35)
     var gradientLayer: CAGradientLayer!
     var asset: Any? // Holds extra metadata when image is from device library
-    var fromUrl: URL?
+    var fromUrl: URL! {
+        didSet {
+            if self.enableLogging {
+                if fromUrl == nil {
+                    Log.d("fromUrl set to: nil")
+                    return
+                }
+                Log.d("fromUrl set to: \(fromUrl!)")                
+            }
+        }
+    }
     var processing = false
     var enableProgress = true
     var enableLogging = false
@@ -136,29 +146,31 @@ class AirImageView: FLAnimatedImageView {
         }
         
         let progress: SDWebImageDownloaderProgressBlock = { [weak self] loadedSize, expectedSize, url in
+            guard let this = self else { return }
             let progress = CGFloat(loadedSize) / CGFloat(expectedSize)
             DispatchQueue.main.async {
-                self?.progressView.setProgress(progress, animated: true)
+                this.progressView.setProgress(progress, animated: true)
             }
         }
         
         let setImageCompleted: SDExternalCompletionBlock = { [weak self] image, error, cacheType, imageUrl in
-            self?.processing = false
+            guard let this = self else { return }
+            this.processing = false
             DispatchQueue.main.async() {
                 
                 if error != nil {
-                    self?.progressView.progressLabel.text = "Image missing"
-                    self?.progressView.progressLabel.textColor = Theme.colorTextSecondary
+                    this.progressView.progressLabel.text = "Image missing"
+                    this.progressView.progressLabel.textColor = Theme.colorTextSecondary
                     Log.w("*** Image fetch failed: " + error!.localizedDescription)
                     Log.w("*** Failed url: \(url.absoluteString)")
-                    self?.fromUrl = nil
+                    this.fromUrl = nil
                     return
                 }
                 
-                self?.hideProgress()
+                this.hideProgress()
                 
                 /* Exit if image returned is not the one we want anymore */
-                if self?.fromUrl?.absoluteString != url.absoluteString {
+                if this.fromUrl?.absoluteString != url.absoluteString {
                     return
                 }
                 
@@ -166,49 +178,50 @@ class AirImageView: FLAnimatedImageView {
                     UIView.transition(with: self!
                         , duration: 0.3
                         , options: .transitionCrossDissolve
-                        , animations: { self?.image = image })
+                        , animations: { this.image = image })
                 }
                 else {
-                    self?.image = image
+                    this.image = image
                 }
                 then?(true)
             }
         }
         
         let loadImageCompleted: SDInternalCompletionBlock = { [weak self] image, imageData, error, cacheType, finished, imageUrl in
-            self?.processing = false
+            guard let this = self else { return }
+            this.processing = false
             if error != nil {
                 Log.w("*** Animated gif fetch failed: " + error!.localizedDescription)
                 Log.w("*** Failed url: \(url.absoluteString)")
                 DispatchQueue.main.async() {
-                    self?.progressView.progressLabel.textColor = Theme.colorTextSecondary
-                    self?.progressView.progressLabel.text = "Image unavailable"
+                    this.progressView.progressLabel.textColor = Theme.colorTextSecondary
+                    this.progressView.progressLabel.text = "Image unavailable"
                 }
-                self?.fromUrl = nil
+                this.fromUrl = nil
                 return
             }
             
             /* Image returned is not the one we want anymore */
-            if self?.fromUrl?.absoluteString != url.absoluteString {
+            if this.fromUrl?.absoluteString != url.absoluteString {
                 return
             }
             
             if finished && image != nil && imageData != nil {
                 let animatedImage = FLAnimatedImage(animatedGIFData: imageData)
                 DispatchQueue.main.async() {
-                    self?.hideProgress()
+                    this.hideProgress()
                     if animate {
                         UIView.transition(with: self!
                             , duration: 0.3
                             , options: .transitionCrossDissolve
                             , animations: {
-                                self?.image = image
-                                self?.animatedImage = animatedImage
+                                this.image = image
+                                this.animatedImage = animatedImage
                         })
                     }
                     else {
-                        self?.image = image
-                        self?.animatedImage = animatedImage
+                        this.image = image
+                        this.animatedImage = animatedImage
                     }
                     then?(true)
                 }
@@ -231,7 +244,7 @@ class AirImageView: FLAnimatedImageView {
 	}
     
     func associated(withUrl: URL) -> Bool {
-        if self.fromUrl != nil && withUrl.absoluteString == self.fromUrl?.absoluteString {
+        if self.fromUrl != nil && withUrl.absoluteString == self.fromUrl!.absoluteString {
             return (self.image != nil || self.processing)
         }
         return false
