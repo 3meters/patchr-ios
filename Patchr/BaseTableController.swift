@@ -236,6 +236,7 @@ class DataSourceController: NSObject, FUICollectionDelegate, UITableViewDataSour
     }
     
     func arrayDidBeginUpdates(_ collection: FUICollection) {
+        self.tableView.beginUpdates()
         self.delegate?.arrayDidBeginUpdates?(collection)
     }
     
@@ -258,38 +259,35 @@ class DataSourceController: NSObject, FUICollectionDelegate, UITableViewDataSour
             }
         }
         self.delegate?.arrayDidEndUpdates?(collection)
+        self.tableView.endUpdates()
     }
 
     func array(_ array: FUICollection, didAdd object: Any, at index: UInt) {
         if self.filterActive || self.mapperActive || self.startEmpty { return }
         self.delegate?.array?(array, didAdd: object, at: index)
-        self.tableView.beginUpdates()
         self.tableView.insertRows(at: [IndexPath(row: Int(index), section: 0)], with: .none)
-        self.tableView.endUpdates()
     }
     
     func array(_ array: FUICollection, didMove object: Any, from fromIndex: UInt, to toIndex: UInt) {
         if self.filterActive || self.mapperActive || self.startEmpty { return }
         self.delegate?.array?(array, didMove: object, from: fromIndex, to: toIndex)
-        self.tableView.beginUpdates()
         self.tableView.moveRow(at: IndexPath(row: Int(fromIndex), section: 0), to: IndexPath(row: Int(toIndex), section: 0))
-        self.tableView.endUpdates()
     }
     
     func array(_ array: FUICollection, didRemove object: Any, at index: UInt) {
         if self.filterActive || self.mapperActive || self.startEmpty { return }
         self.delegate?.array?(array, didRemove: object, at: index)
-        self.tableView.beginUpdates()
         self.tableView.deleteRows(at: [IndexPath(row: Int(index), section: 0)], with: .none)
-        self.tableView.endUpdates()
     }
     
     func array(_ array: FUICollection, didChange object: Any, at index: UInt) {
         if self.filterActive || self.mapperActive || self.startEmpty { return }
-        self.delegate?.array?(array, didChange: object, at: index)
-        self.tableView.beginUpdates()
-        self.tableView.reloadRows(at: [IndexPath(row: Int(index), section: 0)], with: .none)
-        self.tableView.endUpdates()
+        if (self.delegate?.responds(to: #selector(array(_:didChange:at:))))! {
+            self.delegate?.array?(array, didChange: object, at: index)
+        }
+        else {
+            self.tableView.reloadRows(at: [IndexPath(row: Int(index), section: 0)], with: .none)
+        }
     }
     
     func array(_ array: FUICollection, queryCancelledWithError error: Error) {

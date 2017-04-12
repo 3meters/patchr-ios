@@ -8,16 +8,19 @@
 
 import UIKit
 import pop
+import AlertOnboarding
 
 class LobbyViewController: UIViewController {
 	
-	var appName			= AirLabelBanner()
+	var appName	= AirLabelBanner()
 	var imageBackground = AirImageView(frame: CGRect.zero)
-	var imageLogo		= AirImageView(frame: CGRect.zero)
-	var buttonLogin		= AirButton()
-	var buttonSignup	= AirButton()
-	var buttonGroup		= UIView()
-	var firstLaunch		= true
+	var imageLogo = AirImageView(frame: CGRect.zero)
+	var buttonLogin = AirButton()
+	var buttonSignup = AirButton()
+    var buttonOnboard = AirButton()
+	var buttonGroup	= UIView()
+    var alertView: AlertOnboarding!
+	var firstLaunch	= true
 	
     /*--------------------------------------------------------------------------------------------
     * Lifecycle
@@ -35,6 +38,7 @@ class LobbyViewController: UIViewController {
 		self.buttonGroup.anchorInCenter(withWidth: 240, height: 96)
 		self.buttonSignup.anchorTopCenterFillingWidth(withLeftAndRightPadding: 0, topPadding: 0, height: 44)
 		self.buttonLogin.anchorBottomCenterFillingWidth(withLeftAndRightPadding: 0, bottomPadding: 0, height: 44)
+        self.buttonOnboard.alignUnder(self.buttonGroup, matchingCenterWithTopPadding: 36, width: 240, height: 44)
 		self.appName.align(above: self.buttonGroup, matchingCenterWithBottomPadding: 20, width: 228, height: 48)
 	}
 	
@@ -50,6 +54,11 @@ class LobbyViewController: UIViewController {
 	}
 	
 	override func viewDidAppear(_ animated: Bool) {
+        let appDelegate = UIApplication.shared.delegate as! AppDelegate
+        if appDelegate.firstLaunch {
+            Reporting.track("Onboarding displayed: first launch")
+            showOnboarding()
+        }
 		
 		if self.firstLaunch {
             
@@ -82,6 +91,7 @@ class LobbyViewController: UIViewController {
                                     if finished {
                                         self.appName.fadeIn(duration: 0.3)
                                         self.buttonGroup.fadeIn(duration: 0.7)
+                                        self.buttonOnboard.fadeIn(duration: 0.7)
                                     }
                             })
                     })
@@ -92,6 +102,7 @@ class LobbyViewController: UIViewController {
 	
 	override func viewWillDisappear(_ animated: Bool) {
 		super.viewWillDisappear(animated)
+        self.alertView?.hide()
 		self.navigationController?.setNavigationBarHidden(false, animated: animated)
 	}
 	
@@ -130,6 +141,11 @@ class LobbyViewController: UIViewController {
 		}
 	}
 	
+    func onboardingAction(sender: AnyObject?) {
+        Reporting.track("Onboarding displayed: user initiated")
+        showOnboarding()
+    }
+
     /*--------------------------------------------------------------------------------------------
     * Methods
     *--------------------------------------------------------------------------------------------*/
@@ -161,21 +177,71 @@ class LobbyViewController: UIViewController {
 		self.buttonSignup.borderColor = Colors.white
 		self.buttonSignup.borderWidth = Theme.dimenButtonBorderWidth
 		self.buttonSignup.cornerRadius = Theme.dimenButtonCornerRadius
+        
+        self.buttonOnboard.setTitle("Onboard me", for: .normal)
+        self.buttonOnboard.setTitleColor(Colors.white, for: .normal)
+        self.buttonOnboard.setTitleColor(Theme.colorTint, for: .highlighted)
 		
 		self.buttonGroup.addSubview(self.buttonLogin)
 		self.buttonGroup.addSubview(self.buttonSignup)
+        self.view.addSubview(self.buttonOnboard)
 		self.view.addSubview(self.buttonGroup)
 		
 		self.buttonLogin.addTarget(self, action: #selector(loginAction(sender:)), for: .touchUpInside)
 		self.buttonSignup.addTarget(self, action: #selector(signupAction(sender:)), for: .touchUpInside)
+        self.buttonOnboard.addTarget(self, action: #selector(onboardingAction(sender:)), for: .touchUpInside)
 		
 		if self.firstLaunch {
 			self.appName.alpha = 0.0
 			self.buttonGroup.alpha = 0.0
+            self.buttonOnboard.alpha = 0.0
 		}
 	}
+    
+    func showOnboarding() {
+        
+        if self.alertView == nil {
+            let images = [
+                "create_group",
+                "invite_friends_2",
+                "group_chat"]
+            
+            let titles = [
+                "Create a Group".uppercased(),
+                "Invite Members".uppercased(),
+                "Carry On!".uppercased()
+            ]
+            
+            let descriptions = [
+                "Patchr groups are a modern way to organize all your group messaging for free!",
+                "Select members from your contacts and we handle the rest! We email them an invite, help them install Patchr and gently launch them into your group.",
+                "Patchr has brilliant messaging features: great privacy and sharing controls, photo search and editing, and offline posting."
+            ]
+            
+            self.alertView = AlertOnboarding(arrayOfImage: images, arrayOfTitle: titles, arrayOfDescription: descriptions)
+            self.alertView.delegate = self
+            self.alertView.colorButtonBottomBackground = Colors.accentColorFill
+            self.alertView.colorButtonText = Colors.white
+            self.alertView.colorCurrentPageIndicator = Colors.brandColor
+            self.alertView.titleGotItButton = "Got it!".uppercased()
+        }
+        
+        self.alertView.show()
+    }
     
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return UIStatusBarStyle.lightContent
     }
+}
+
+extension LobbyViewController: AlertOnboardingDelegate {
+    func alertOnboardingSkipped(_ currentStep: Int, maxStep: Int) {
+        Reporting.track("Onboarding skipped")
+    }
+    
+    func alertOnboardingCompleted() {
+        Reporting.track("Onboarding completed")
+    }
+    
+    func alertOnboardingNext(_ nextStep: Int) { }
 }

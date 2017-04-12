@@ -37,6 +37,7 @@ target 'Patchr' do
     pod 'SlackTextViewController',  :path => '~/code/SlackTextViewController'
     pod 'SDWebImage/GIF',           '~> 4.0'
     pod 'UIDevice-Hardware',        '~> 0.1.7'		# Convenience for determining system version and model identifier
+    pod 'AlertOnboarding'
     pod 'Bugsnag'                                   # Crash reporting
     pod 'BEMCheckBox'
     pod 'CocoaLumberjack/Swift'

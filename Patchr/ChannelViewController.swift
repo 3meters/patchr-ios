@@ -13,6 +13,7 @@ import FirebaseDatabaseUI
 import TTTAttributedLabel
 import SlideMenuControllerSwift
 import STPopup
+import BEMCheckBox
 
 class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
     
@@ -277,6 +278,7 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
             let point = sender.location(in: self.tableView)
             if let indexPath = self.tableView.indexPathForRow(at: point) {
                 dismissKeyboard(true)
+                self.tableView.setEditing(true, animated: true)
                 let cell = self.tableView.cellForRow(at: indexPath) as! MessageListCell
                 let snap = self.queryController.snapshot(at: indexPath.row)
                 let message = FireMessage(dict: snap.value as! [String: Any], id: snap.key)
@@ -533,11 +535,7 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
         self.queryController.bind(to: self.tableView, query: query) { [weak self] tableView, indexPath, data in
 
             /* If cell.prepareToReuse is called, userQuery observer is removed */
-            var cell: MessageListCell! = tableView.cellForRow(at: indexPath) as! MessageListCell!
-            if cell == nil {
-                cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! MessageListCell
-            }
-            
+            let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! MessageListCell
             guard let this = self else { return cell }
             
             let snap = data as! FIRDataSnapshot
@@ -545,7 +543,7 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
             let message = FireMessage(dict: snap.value as! [String: Any], id: snap.key)
             
             guard message.createdBy != nil else {
-                return cell!
+                return cell
             }
             
             cell.userQuery = UserQuery(userId: message.createdBy!, groupId: groupId)
@@ -1112,6 +1110,9 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
             self.tableView.scrollToRow(at: indexPath, at: .bottom, animated: true)
         }
     }
+}
+
+extension ChannelViewController {
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         /*
@@ -1126,19 +1127,19 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
         let viewWidth = min(Config.contentWidthMax, self.tableView.width())
         let snap = self.queryController.snapshots.snapshot(at: indexPath.row)
         let message = FireMessage(dict: snap.value as! [String: Any], id: snap.key)
-            
+        
         if message.id != nil {
             if let cachedHeight = self.rowHeights.object(forKey: message.id!) as? CGFloat {
                 return cachedHeight
             }
         }
-
+        
         self.itemTemplate.bounds.size.width = viewWidth
         self.itemTemplate.bind(message: message)
         self.itemTemplate.layoutIfNeeded()
         
         viewHeight = self.itemTemplate.height() + 1
-
+        
         if message.id != nil {
             self.rowHeights[message.id!] = viewHeight
         }
@@ -1150,8 +1151,13 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
 extension ChannelViewController: FUICollectionDelegate {
     
     func array(_ array: FUICollection, didChange object: Any, at index: UInt) {
-        if let snap = object as? FIRDataSnapshot {
+        let indexPath = IndexPath(row: Int(index), section: 0)
+        if let snap = object as? FIRDataSnapshot,
+            let cell = self.tableView.cellForRow(at: indexPath) as? MessageListCell!{
             self.rowHeights.removeObject(forKey: snap.key)
+            let message = FireMessage(dict: snap.value as! [String: Any], id: snap.key)
+            message.creator = cell.message.creator
+            cell.bind(message: message)
         }
     }
     

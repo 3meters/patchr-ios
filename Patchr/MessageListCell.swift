@@ -203,6 +203,8 @@ class MessageListCell: UITableViewCell {
             }
             else {
                 label.textInsets = UIEdgeInsets.zero
+                self.description_?.textColor = Colors.black
+                self.description_!.font = Theme.fontTextList
             }
             self.description_?.text = description
         }

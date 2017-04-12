@@ -23,6 +23,7 @@ PODS:
   - AFNetworking/UIKit (2.6.3):
     - AFNetworking/NSURLConnection
     - AFNetworking/NSURLSession
+  - AlertOnboarding (1.9)
   - AWSCore (2.4.9)
   - AWSS3 (2.4.9):
     - AWSCore (= 2.4.9)
@@ -150,6 +151,7 @@ PODS:
 DEPENDENCIES:
   - AFNetworkActivityLogger (~> 2.0)
   - AFNetworking (~> 2.6)
+  - AlertOnboarding
   - AWSS3 (= 2.4.9)
   - BEMCheckBox
   - Branch (~> 0.12.5)
@@ -208,6 +210,7 @@ CHECKOUT OPTIONS:
 SPEC CHECKSUMS:
   AFNetworkActivityLogger: 121486778117d53b3ab1c61d264b88081d0c3eee
   AFNetworking: cb8d14a848e831097108418f5d49217339d4eb60
+  AlertOnboarding: 0c97f5c4feac0a4e914bae5d530f66b4dbc6b771
   AWSCore: 175208358b95492e0ebe0337df2ab415300bddac
   AWSS3: e4959b48db48d5f3dcd5cdf9e24a07f60a313611
   BEMCheckBox: e18e4a148905b290bd03d98b767651c104f4eda3
@@ -255,6 +258,6 @@ SPEC CHECKSUMS:
   UIDevice-Hardware: ecb52d9a7b223b31f81982358e2b0769ac1a7918
   VTAcknowledgementsViewController: e1de80f2c0ce31cc7e1c6f1c8aaeec2770371f09
 
-PODFILE CHECKSUM: 3347fdb36e6151bf5644a0425189588d10f5702b
+PODFILE CHECKSUM: 253df95911f219b0615270c43d753998e60bba16
 
 COCOAPODS: 1.1.0.rc.3
