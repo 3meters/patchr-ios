@@ -300,7 +300,7 @@ class ChannelEditViewController: BaseEditViewController {
 
         if self.mode == .insert {
 
-            Reporting.screen("ChannelNew")
+            Reporting.track("open_channel_new")
             self.banner.text = "New Channel"
             self.usersButton.isHidden = true
 
@@ -313,7 +313,7 @@ class ChannelEditViewController: BaseEditViewController {
         }
         else if self.mode == .update  {
 
-            Reporting.screen("ChannelEdit")
+            Reporting.track("open_channel_edit")
             self.banner.text = "Edit Channel"
             self.visibilityGroup.isHidden = true
 

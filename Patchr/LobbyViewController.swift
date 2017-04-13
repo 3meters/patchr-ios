@@ -56,7 +56,7 @@ class LobbyViewController: UIViewController {
 	override func viewDidAppear(_ animated: Bool) {
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
         if appDelegate.firstLaunch {
-            Reporting.track("Onboarding displayed: first launch")
+            Reporting.track("Onboarding_displayed_first_launch")
             showOnboarding()
         }
 		
@@ -65,7 +65,8 @@ class LobbyViewController: UIViewController {
             UIView.animate(withDuration: 0.3
                 , delay: 0
                 , animations: { [weak self] in
-                    self?.imageLogo.transform = CGAffineTransform(scaleX: 0.5, y: 0.5)
+                    guard let this = self else { return }
+                    this.imageLogo.transform = CGAffineTransform(scaleX: 0.5, y: 0.5)
                 }
                 , completion: { finished in
                     
@@ -75,7 +76,8 @@ class LobbyViewController: UIViewController {
                         , initialSpringVelocity: 6.0
                         , options: []
                         , animations: { [weak self] in
-                            self?.imageLogo.transform = .identity
+                            guard let this = self else { return }
+                            this.imageLogo.transform = .identity
                         }
                         , completion: { finished in
                             
@@ -85,7 +87,8 @@ class LobbyViewController: UIViewController {
                                 , initialSpringVelocity: 4.0
                                 , options: [.curveEaseIn]
                                 , animations: { [weak self] in
-                                    self?.imageLogo.transform = CGAffineTransform(translationX: 0, y: -156)
+                                    guard let this = self else { return }
+                                    this.imageLogo.transform = CGAffineTransform(translationX: 0, y: -156)
                                 }
                                 , completion: { finished in
                                     if finished {
@@ -102,7 +105,6 @@ class LobbyViewController: UIViewController {
 	
 	override func viewWillDisappear(_ animated: Bool) {
 		super.viewWillDisappear(animated)
-        self.alertView?.hide()
 		self.navigationController?.setNavigationBarHidden(false, animated: animated)
 	}
 	
@@ -142,13 +144,17 @@ class LobbyViewController: UIViewController {
 	}
 	
     func onboardingAction(sender: AnyObject?) {
-        Reporting.track("Onboarding displayed: user initiated")
+        Reporting.track("Onboarding_displayed_by_user")
         showOnboarding()
     }
-
+    
     /*--------------------------------------------------------------------------------------------
-    * Methods
-    *--------------------------------------------------------------------------------------------*/
+     * Notifications
+     *--------------------------------------------------------------------------------------------*/
+    
+    /*--------------------------------------------------------------------------------------------
+     * Methods
+     *--------------------------------------------------------------------------------------------*/
 	
 	func initialize() {
         
@@ -178,9 +184,10 @@ class LobbyViewController: UIViewController {
 		self.buttonSignup.borderWidth = Theme.dimenButtonBorderWidth
 		self.buttonSignup.cornerRadius = Theme.dimenButtonCornerRadius
         
-        self.buttonOnboard.setTitle("Onboard me", for: .normal)
+        self.buttonOnboard.setTitle("Onboard me!", for: .normal)
         self.buttonOnboard.setTitleColor(Colors.white, for: .normal)
         self.buttonOnboard.setTitleColor(Theme.colorTint, for: .highlighted)
+        self.buttonOnboard.borderColor = Colors.clear
 		
 		self.buttonGroup.addSubview(self.buttonLogin)
 		self.buttonGroup.addSubview(self.buttonSignup)
@@ -223,6 +230,10 @@ class LobbyViewController: UIViewController {
             self.alertView.colorButtonBottomBackground = Colors.accentColorFill
             self.alertView.colorButtonText = Colors.white
             self.alertView.colorCurrentPageIndicator = Colors.brandColor
+            if Config.screenWidth > 414 {                
+                self.alertView.percentageRatioWidth = (331 / Config.screenWidth)
+                self.alertView.percentageRatioHeight = (588 / Config.screenHeight)
+            }
             self.alertView.titleGotItButton = "Got it!".uppercased()
         }
         
@@ -236,11 +247,11 @@ class LobbyViewController: UIViewController {
 
 extension LobbyViewController: AlertOnboardingDelegate {
     func alertOnboardingSkipped(_ currentStep: Int, maxStep: Int) {
-        Reporting.track("Onboarding skipped")
+        Reporting.track("Onboarding_skipped")
     }
     
     func alertOnboardingCompleted() {
-        Reporting.track("Onboarding completed")
+        Reporting.track("Onboarding_completed")
     }
     
     func alertOnboardingNext(_ nextStep: Int) { }

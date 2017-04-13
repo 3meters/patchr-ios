@@ -112,15 +112,16 @@ class MainController: NSObject, iRateDelegate {
         
         /* Initialize Branch: The deepLinkHandler gets called every time the app opens. */
         Branch.getInstance().initSession(launchOptions: launchOptions, andRegisterDeepLinkHandler: { [weak self] params, error in
+            guard let this = self else { return }
             if error == nil {
                 /* A hit could mean a deferred link match */
                 if let clickedBranchLink = params?["+clicked_branch_link"] as? Bool , clickedBranchLink {
                     Log.d("Deep link routing based on clicked branch link", breadcrumb: true)
-                    if !(self?.bootstrapping)! && self?.link == nil {
-                        self?.routeDeepLink(link: params!, error: error)
+                    if !this.bootstrapping && this.link == nil {
+                        this.routeDeepLink(link: params!, error: error)
                     }
                     else {
-                        self?.link = params!
+                        this.link = params!
                     }
                 }
             }

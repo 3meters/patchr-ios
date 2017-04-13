@@ -127,18 +127,8 @@ class MemberListController: BaseTableController {
 
     func bind() {
         
-        let groupId = StateController.instance.groupId!
         let group = StateController.instance.group!
-        var query = FireController.db.child("group-members/\(groupId)")
-            .queryOrdered(byChild: "index_priority_joined_at_desc")
-        
-        if self.scope == .channel {
-            let channelId = StateController.instance.channelId!
-            query = FireController.db.child("group-channel-members/\(groupId)/\(channelId)")
-        }
-        
         if (self.scope == .channel && self.channel.role == "owner") || group.role == "owner" {
-            
             if self.scope != .reaction {
                 if self.target == .channel {
                     let addButton = UIBarButtonItem(title: "Invite", style: .plain, target: self, action: #selector(channelInviteAction(sender:)))
@@ -152,18 +142,22 @@ class MemberListController: BaseTableController {
         }
         
         if self.scope == .reaction {
-            query = FireController.db.child(self.inputReactionPath)
-            if self.inputEmojiCount == 1 {
-                self.navigationItem.title = "\(self.inputEmoji!)  \(self.inputEmojiCount!) person reacted with \(self.inputEmojiCode!)"
-            }
-            else {
-                self.navigationItem.title = "\(self.inputEmoji!)  \(self.inputEmojiCount!) people reacted with \(self.inputEmojiCode!)"
-            }
+            let noun = (self.inputEmojiCount == 1) ? "person" : "people"
+            self.navigationItem.title = "\(self.inputEmoji!)  \(self.inputEmojiCount!) \(noun) reacted with \(self.inputEmojiCode!)"
         }
         else {
             self.navigationItem.title = self.scope == .channel ? "# \(self.channel!.name!)" : group.title!
         }
         
+        let groupId = StateController.instance.groupId!
+        let channelId = StateController.instance.channelId!
+        var query = FireController.db.child("group-members/\(groupId)").queryOrdered(byChild: "index_priority_joined_at_desc")
+        if self.scope == .channel {
+            query = FireController.db.child("group-channel-members/\(groupId)/\(channelId)")
+        }
+        else if self.scope == .reaction {
+            query = FireController.db.child(self.inputReactionPath)
+        }
         
         self.queryController = DataSourceController(name: "member_list")
         self.queryController.bind(to: self.tableView, query: query) { [weak self] tableView, indexPath, data in
@@ -192,6 +186,10 @@ class MemberListController: BaseTableController {
             cell.userQuery.once(with: { [weak self, weak cell] error, user in
                 guard let this = self else { return }
                 guard let cell = cell else { return }
+                if error != nil {
+                    Log.w("Permission denied")
+                    return
+                }
                 if user != nil {
                     var target = (this.target == .group) ? "group" : "channel"
                     if this.scope == .reaction {
@@ -208,7 +206,7 @@ class MemberListController: BaseTableController {
                             }
                         }
                         else if this.scope == .channel {
-                            if let role = self!.channel.role, role == "owner" {
+                            if let role = this.channel.role, role == "owner" {
                                 cell.actionButton?.isHidden = false
                                 cell.actionButton?.setTitle("Manage", for: .normal)
                                 cell.actionButton?.data = user

@@ -118,28 +118,29 @@ class GroupCreateController: BaseEditViewController {
         let title = self.groupTitleField.text!
 
         FireController.instance.addGroup(groupId: groupId, title: title, then: { [weak self] success in
-            
-            self?.progress?.hide(true)
-            self?.processing = false
+            guard let this = self else { return }
+
+            this.progress?.hide(true)
+            this.processing = false
 
             if success {
                 if CNContactStore.authorizationStatus(for: .contacts) == .authorized {
                     /* Straight to contact picker */
                     let controller = ContactPickerController()
-                    controller.flow = (self?.flow)!
+                    controller.flow = this.flow
                     controller.inputRole = "members"
                     controller.inputGroupId = groupId
-                    controller.inputGroupTitle = self?.groupTitleField.text!
-                    self?.navigationController?.setViewControllers([controller], animated: true)
+                    controller.inputGroupTitle = this.groupTitleField.text!
+                    this.navigationController?.setViewControllers([controller], animated: true)
                 }
                 else {
                     /* Show invite doorstep so they know why contacts are needed. */
                     let controller = InviteViewController()
-                    controller.flow = (self?.flow)!
+                    controller.flow = this.flow
                     controller.inputRole = "members"
                     controller.inputGroupId = groupId
-                    controller.inputGroupTitle = self?.groupTitleField.text!
-                    self?.navigationController?.setViewControllers([controller], animated: true)
+                    controller.inputGroupTitle = this.groupTitleField.text!
+                    this.navigationController?.setViewControllers([controller], animated: true)
                 }
             }
         })

@@ -136,12 +136,13 @@ class InviteListController: BaseTableController, UITableViewDelegate {
         self.tableView.register(UINib(nibName: "InvitePendingListCell", bundle: nil), forCellReuseIdentifier: "pending")
         self.tableView.register(UINib(nibName: "InviteAcceptedListCell", bundle: nil), forCellReuseIdentifier: "accepted")
         self.tableView.backgroundColor = Theme.colorBackgroundTable
+        self.tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 116, right: 0)
+        self.tableView.delegate = self
         self.tableView.tableFooterView = UIView()
         self.tableView.separatorInset = UIEdgeInsets.zero
         self.tableView.rowHeight = UITableViewAutomaticDimension
         self.tableView.allowsSelection = false
         self.tableView.estimatedRowHeight = 130
-        self.tableView.delegate = self
         
         self.switcher.setSegmentItems(["Pending","Accepted"])
         self.switcher.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: 48)
@@ -186,13 +187,13 @@ class InviteListController: BaseTableController, UITableViewDelegate {
                 cell.userQuery = UserQuery(userId: userId, groupId: groupId)
                 cell.userQuery.once(with: { [weak this, weak cell] error, user in
                     guard let this = this else { return }
-                    guard let strongCell = cell else { return }
+                    guard let cell = cell else { return }
                     if user != nil {
                         let recognizer = UILongPressGestureRecognizer(target: this, action: #selector(this.longPressAction(sender:)))
                         recognizer.minimumPressDuration = TimeInterval(0.2)
-                        strongCell.addGestureRecognizer(recognizer)
-                        strongCell.data = invite as AnyObject?
-                        strongCell.bind(user: user!, invite: invite)
+                        cell.addGestureRecognizer(recognizer)
+                        cell.data = invite as AnyObject?
+                        cell.bind(user: user!, invite: invite)
                     }
                 })
             }

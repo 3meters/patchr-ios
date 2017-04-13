@@ -175,7 +175,7 @@ class AirImageView: FLAnimatedImageView {
                 }
                 
                 if animate {
-                    UIView.transition(with: self!
+                    UIView.transition(with: this
                         , duration: 0.3
                         , options: .transitionCrossDissolve
                         , animations: { this.image = image })
@@ -211,7 +211,7 @@ class AirImageView: FLAnimatedImageView {
                 DispatchQueue.main.async() {
                     this.hideProgress()
                     if animate {
-                        UIView.transition(with: self!
+                        UIView.transition(with: this
                             , duration: 0.3
                             , options: .transitionCrossDissolve
                             , animations: {

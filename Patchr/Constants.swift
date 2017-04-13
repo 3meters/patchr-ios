@@ -43,8 +43,9 @@ struct Config {
     static let screenWidth = UIScreen.main.bounds.size.width
     static let screenHeight = UIScreen.main.bounds.size.height
     static let isWidthNarrow = (UIScreen.main.bounds.size.width == 320)
-    static let isWidth320 = (UIScreen.main.bounds.size.width == 320)// iphone 4s
+    static let isWidth320 = (UIScreen.main.bounds.size.width == 320)// iphone 4s/5/5s
     static let isWidth375 = (UIScreen.main.bounds.size.width == 375)// iphone 6
+    static let isWidth414 = (UIScreen.main.bounds.size.width == 414)// iphone 6+/7
     static let pixelScale = UIScreen.main.scale
     
     static let imageDimensionMax = CGFloat(1600)

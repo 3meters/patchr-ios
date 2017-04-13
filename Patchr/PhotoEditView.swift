@@ -140,9 +140,10 @@ class PhotoEditView: UIView {
 
 	func setPhotoAction(sender: AnyObject) {
 		self.photoChooser?.choosePhoto(sender: sender) { [weak self] image, imageResult, asset, cancelled in
+            guard let this = self else { return }
 			if !cancelled {
 				DispatchQueue.main.async {
-					self?.photoChosen(image: image, imageResult: imageResult, asset: asset)
+					this.photoChosen(image: image, imageResult: imageResult, asset: asset)
 				}
 			}
 		}
@@ -181,13 +182,12 @@ class PhotoEditView: UIView {
                 let dimension = imageResult!.width! >= imageResult!.height! ? ResizeDimension.width : ResizeDimension.height
                 let url = URL(string: GooglePlusProxy.convert(uri: imageResult!.contentUrl!, size: Int(Config.imageDimensionMax), dimension: dimension))
                 self.imageView.setImageWithUrl(url: url!) { [weak self] success in
-                    if self != nil {
-                        if success {
-                            NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.PhotoDidChange), object: self)
-                        }
-                        else {
-                            UIShared.toast(message: "Unable to download image")
-                        }
+                    guard let this = self else { return }
+                    if success {
+                        NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.PhotoDidChange), object: this)
+                    }
+                    else {
+                        UIShared.toast(message: "Unable to download image")
                     }
                 }  // Downloads and pushes into photoImage
             }
@@ -208,10 +208,11 @@ class PhotoEditView: UIView {
 		self.backgroundColor = Colors.clear
 
 		self.progressBlock = { [weak self] task, progress in
+            guard let this = self else { return }
 			DispatchQueue.main.async {
-				self?.imageView.progressView.progress = CGFloat(progress.fractionCompleted)
+				this.imageView.progressView.progress = CGFloat(progress.fractionCompleted)
                 if progress.fractionCompleted == 1.0 {
-                    self?.imageView.hideProgress()
+                    this.imageView.hideProgress()
                 }
 			}
 		}

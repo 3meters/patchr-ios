@@ -80,7 +80,8 @@ class EmptyViewController: UIViewController {
         UIView.animate(withDuration: 0.3
             , delay: 0
             , animations: { [weak self] in
-                self?.imageLogo.transform = CGAffineTransform(scaleX: 0.5, y: 0.5)
+                guard let this = self else { return }
+                this.imageLogo.transform = CGAffineTransform(scaleX: 0.5, y: 0.5)
             }
             , completion: { finished in
                 
@@ -90,7 +91,8 @@ class EmptyViewController: UIViewController {
                     , initialSpringVelocity: 6.0
                     , options: []
                     , animations: { [weak self] in
-                        self?.imageLogo.transform = .identity
+                        guard let this = self else { return }
+                        this.imageLogo.transform = .identity
                     }
                     , completion: { finished in
                         
@@ -100,7 +102,8 @@ class EmptyViewController: UIViewController {
                             , initialSpringVelocity: 6.0
                             , options: [.curveEaseIn]
                             , animations: { [weak self] in
-                                self?.imageLogo.transform = CGAffineTransform(translationX: 0, y: -156)
+                                guard let this = self else { return }
+                                this.imageLogo.transform = CGAffineTransform(translationX: 0, y: -156)
                             }
                             , completion: { finished in
                                 if finished {

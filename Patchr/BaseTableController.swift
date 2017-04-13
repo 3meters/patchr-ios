@@ -62,8 +62,9 @@ class BaseTableController: UIViewController {
 	
 	func initialize() {
         self.handleAuth = FIRAuth.auth()?.addStateDidChangeListener() { [weak self] auth, user in
-            if user == nil && self?.queryController != nil {
-                self?.queryController.unbind()
+            guard let this = self else { return }
+            if user == nil && this.queryController != nil {
+                this.queryController.unbind()
             }
         }
         self.view.backgroundColor = Theme.colorBackgroundForm
@@ -236,7 +237,6 @@ class DataSourceController: NSObject, FUICollectionDelegate, UITableViewDataSour
     }
     
     func arrayDidBeginUpdates(_ collection: FUICollection) {
-        self.tableView.beginUpdates()
         self.delegate?.arrayDidBeginUpdates?(collection)
     }
     
@@ -259,7 +259,6 @@ class DataSourceController: NSObject, FUICollectionDelegate, UITableViewDataSour
             }
         }
         self.delegate?.arrayDidEndUpdates?(collection)
-        self.tableView.endUpdates()
     }
 
     func array(_ array: FUICollection, didAdd object: Any, at index: UInt) {
@@ -282,7 +281,7 @@ class DataSourceController: NSObject, FUICollectionDelegate, UITableViewDataSour
     
     func array(_ array: FUICollection, didChange object: Any, at index: UInt) {
         if self.filterActive || self.mapperActive || self.startEmpty { return }
-        if (self.delegate?.responds(to: #selector(array(_:didChange:at:))))! {
+        if self.delegate != nil && self.delegate!.responds(to: #selector(array(_:didChange:at:))) {
             self.delegate?.array?(array, didChange: object, at: index)
         }
         else {

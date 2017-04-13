@@ -157,18 +157,19 @@ class AccountEditViewController: BaseEditViewController {
         let email = self.emailField.text!
         
         FireController.instance.emailProviderExists(email: email, next: { [weak self] error, exists in
+            guard let this = self else { return }
             if error != nil {
-                self?.progress?.hide(true)
-                self?.processing = false
-                self?.emailField.errorMessage = error!.localizedDescription
+                this.progress?.hide(true)
+                this.processing = false
+                this.emailField.errorMessage = error!.localizedDescription
             }
             if exists {
-                self?.progress?.hide(true)
-                self?.processing = false
-                self?.emailField.errorMessage = "Email is already being used"
+                this.progress?.hide(true)
+                this.processing = false
+                this.emailField.errorMessage = "Email is already being used"
             }
             else {
-                self?.updateEmail()
+                this.updateEmail()
             }
         })
     }
@@ -181,31 +182,33 @@ class AccountEditViewController: BaseEditViewController {
             
             /* Update in firebase auth account */
             authUser.updateEmail(email, completion: { [weak self] error in
+                guard let this = self else { return }
                 if error == nil {
                     authUser.sendEmailVerification()
                     
                     /* Update in memberships that share email */
                     FireController.instance.updateEmail(userId: userId, email: email) { [weak self] error in
+                        guard let this = self else { return }
                         if error == nil {
-                            if self?.userNameField.text != UserController.instance.user?.username {
-                                self?.verifyUsername()
+                            if this.userNameField.text != UserController.instance.user?.username {
+                                this.verifyUsername()
                                 return
                             }
-                            self?.progress?.hide(true)
-                            self?.processing = false
-                            let _ = self?.navigationController?.popToRootViewController(animated: true)
+                            this.progress?.hide(true)
+                            this.processing = false
+                            let _ = this.navigationController?.popToRootViewController(animated: true)
                         }
                         else {
-                            self?.progress?.hide(true)
-                            self?.processing = false
-                            self?.emailField.errorMessage = error!.localizedDescription
+                            this.progress?.hide(true)
+                            this.processing = false
+                            this.emailField.errorMessage = error!.localizedDescription
                         }
                     }
                 }
                 else {
-                    self?.progress?.hide(true)
-                    self?.processing = false
-                    self?.emailField.errorMessage = error!.localizedDescription
+                    this.progress?.hide(true)
+                    this.processing = false
+                    this.emailField.errorMessage = error!.localizedDescription
                 }
             })
         }
@@ -216,23 +219,25 @@ class AccountEditViewController: BaseEditViewController {
         let username = self.userNameField.text!
         
         FireController.instance.usernameExists(username: username, next: { [weak self] error, exists in
-            self?.progress?.hide(true)
-            self?.processing = false
+            guard let this = self else { return }
+            this.progress?.hide(true)
+            this.processing = false
             if error != nil {
-                self?.userNameField.errorMessage = error!.localizedDescription
+                this.userNameField.errorMessage = error!.localizedDescription
                 return
             }
             if exists {
-                self?.userNameField.errorMessage = "Choose another username"
+                this.userNameField.errorMessage = "Choose another username"
             }
             else {
                 let userId = UserController.instance.userId!
                 FireController.instance.updateUsername(userId: userId, username: username) { [weak self] error, result in
+                    guard let this = self else { return }
                     if error == nil {
-                        let _ = self?.navigationController?.popToRootViewController(animated: true)
+                        let _ = this.navigationController?.popToRootViewController(animated: true)
                     }
                     else {
-                        self?.userNameField.errorMessage = error!.message
+                        this.userNameField.errorMessage = error!.message
                     }
                 }
             }

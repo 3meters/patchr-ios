@@ -175,16 +175,15 @@ class ChannelPickerController: BaseTableController, CLTokenInputViewDelegate {
         
         self.queryController.bind(to: self.tableView, query: query) { [weak self] tableView, indexPath, data in
             let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! ChannelListCell
-            if self != nil {
-                let snap = data as! FIRDataSnapshot
-                let channel = FireChannel(dict: snap.value as! [String: Any], id: snap.key)
-                let channelId = channel.id!
-                cell.selectionStyle = .none
-                cell.reset()
-                cell.selected(on: (self!.channels[channelId] != nil), style: .normal)
-                cell.bind(channel: channel)
-                cell.status?.isHidden = true
-            }
+            guard let this = self else { return cell }
+            let snap = data as! FIRDataSnapshot
+            let channel = FireChannel(dict: snap.value as! [String: Any], id: snap.key)
+            let channelId = channel.id!
+            cell.selectionStyle = .none
+            cell.reset()
+            cell.selected(on: (this.channels[channelId] != nil), style: .normal)
+            cell.bind(channel: channel)
+            cell.status?.isHidden = true
             return cell
         }
     }

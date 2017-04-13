@@ -145,6 +145,11 @@ class UserController: NSObject {
                 if this.user != nil {
                     Log.d("User updated: \(user!.id!)")
                 }
+                else {
+                    if let email = FIRAuth.auth()?.currentUser?.email! {
+                        UIShared.toast(message: "Logged in using: \(email)")
+                    }
+                }
                 
                 this.user = user
                 

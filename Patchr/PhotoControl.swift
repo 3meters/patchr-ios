@@ -91,9 +91,10 @@ class PhotoControl: UIControl {
 		
 		if url != nil {
             self.photoView.setImageWithUrl(url: url!) { [weak self] success in
+                guard let this = self else { return }
                 if success {
-                    self?.nameLabel.isHidden = true
-                    self?.photoView.isHidden = false
+                    this.nameLabel.isHidden = true
+                    this.photoView.isHidden = false
                 }
             }
 		}

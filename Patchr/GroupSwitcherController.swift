@@ -220,7 +220,7 @@ class GroupSwitcherController: BaseTableController {
                 
                 if self.presented {
                     let closeButton = UIBarButtonItem(barButtonSystemItem: .stop, target: self, action: #selector(self.closeAction(sender:)))
-                    self.navigationItem.rightBarButtonItems = [closeButton]
+                    self.navigationItem.leftBarButtonItems = [closeButton]
                 }
                 else if self.flow == .onboardLogin {
                     let logoutButton = UIBarButtonItem(title: "Log out", style: UIBarButtonItemStyle.plain, target: self, action: #selector(self.logoutAction(sender:)))
@@ -246,21 +246,20 @@ class GroupSwitcherController: BaseTableController {
             
             self.queryController.bind(to: self.tableView, query: query) { [weak self] tableView, indexPath, data in
                 let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! GroupListCell
-                if self != nil {
-                    let snapMember = data as! FIRDataSnapshot
-                    let groupId = snapMember.key
-                    cell.reset()
-                    FireController.db.child("groups/\(groupId)").observeSingleEvent(of: .value, with: { snapGroup in
-                        if !(snapGroup.value is NSNull) {
-                            let group = FireGroup(dict: snapGroup.value as! [String: Any], id: snapGroup.key)
-                            group.membershipFrom(dict: snapMember.value as! [String : Any])
-                            cell.bind(group: group)
-                            if group.id! == StateController.instance.groupId {
-                                cell.selected(on: true)
-                            }
+                guard self != nil else { return cell }
+                let snapMember = data as! FIRDataSnapshot
+                let groupId = snapMember.key
+                cell.reset()
+                FireController.db.child("groups/\(groupId)").observeSingleEvent(of: .value, with: { snapGroup in
+                    if !(snapGroup.value is NSNull) {
+                        let group = FireGroup(dict: snapGroup.value as! [String: Any], id: snapGroup.key)
+                        group.membershipFrom(dict: snapMember.value as! [String : Any])
+                        cell.bind(group: group)
+                        if group.id! == StateController.instance.groupId {
+                            cell.selected(on: true)
                         }
-                    })
-                }
+                    }
+                })
                 return cell
             }
             self.view.setNeedsLayout()

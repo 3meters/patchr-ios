@@ -54,6 +54,7 @@
 		E20C3A851BE04BBC008CCED1 /* Stopwatch.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20C3A841BE04BBC008CCED1 /* Stopwatch.swift */; };
 		E20C74311DD548A400D90A4D /* invite_member.html in Resources */ = {isa = PBXBuildFile; fileRef = E20C74301DD548A400D90A4D /* invite_member.html */; };
 		E20C74351DD934CD00D90A4D /* ChannelEditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20C74341DD934CC00D90A4D /* ChannelEditViewController.swift */; };
+		E214A3A21E9FDFAF0040A04D /* AdSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E214A3A11E9FDFAF0040A04D /* AdSupport.framework */; };
 		E21B408E1E60A59E00C9143B /* SideMenuViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E21B408D1E60A59E00C9143B /* SideMenuViewController.swift */; };
 		E21B40901E60A62A00C9143B /* UserMiniHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E21B408F1E60A62A00C9143B /* UserMiniHeaderView.swift */; };
 		E21B40921E60A65600C9143B /* GroupMiniHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E21B40911E60A65600C9143B /* GroupMiniHeaderView.swift */; };
@@ -267,6 +268,7 @@
 		E20C3A841BE04BBC008CCED1 /* Stopwatch.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Stopwatch.swift; sourceTree = "<group>"; };
 		E20C74301DD548A400D90A4D /* invite_member.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = invite_member.html; sourceTree = "<group>"; };
 		E20C74341DD934CC00D90A4D /* ChannelEditViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = ChannelEditViewController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
+		E214A3A11E9FDFAF0040A04D /* AdSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdSupport.framework; path = System/Library/Frameworks/AdSupport.framework; sourceTree = SDKROOT; };
 		E21B408D1E60A59E00C9143B /* SideMenuViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SideMenuViewController.swift; sourceTree = "<group>"; };
 		E21B408F1E60A62A00C9143B /* UserMiniHeaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserMiniHeaderView.swift; sourceTree = "<group>"; };
 		E21B40911E60A65600C9143B /* GroupMiniHeaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GroupMiniHeaderView.swift; sourceTree = "<group>"; };
@@ -442,6 +444,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E214A3A21E9FDFAF0040A04D /* AdSupport.framework in Frameworks */,
 				E25A73711C1C81D000688EDC /* libc++.tbd in Frameworks */,
 				E25A736F1C1C81A300688EDC /* libz.tbd in Frameworks */,
 				E289158A1C5839E8005D7AA0 /* AdobeCreativeSDKCore.framework in Frameworks */,
@@ -541,6 +544,7 @@
 		A0DA2C2AA90D81631E6BF68D /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				E214A3A11E9FDFAF0040A04D /* AdSupport.framework */,
 				E25A73701C1C81D000688EDC /* libc++.tbd */,
 				E25A736D1C1C813900688EDC /* libz.tbd */,
 				E238BAD71B5090870094AF41 /* Social.framework */,

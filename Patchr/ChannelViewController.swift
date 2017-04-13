@@ -278,7 +278,6 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
             let point = sender.location(in: self.tableView)
             if let indexPath = self.tableView.indexPathForRow(at: point) {
                 dismissKeyboard(true)
-                self.tableView.setEditing(true, animated: true)
                 let cell = self.tableView.cellForRow(at: indexPath) as! MessageListCell
                 let snap = self.queryController.snapshot(at: indexPath.row)
                 let message = FireMessage(dict: snap.value as! [String: Any], id: snap.key)
@@ -568,7 +567,6 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
                     cell.decorated = true
                 }
                 
-                cell.photoView.enableLogging = true
                 cell.bind(message: message)
 
                 if message.creator != nil {
@@ -1018,19 +1016,17 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
                                 index += 1
                             }
                         }
-                        if self != nil {
-                            let browser = PhotoBrowser(photos: self!.displayPhotosSorted, animatedFrom: fromView)
-                            browser?.mode = .gallery
-                            browser?.setInitialPageIndex(UInt(initialIndex))
-                            browser?.useWhiteBackgroundColor = true
-                            browser?.usePopAnimation = true
-                            browser?.scaleImage = (fromView as! UIImageView).image  // Used because final image might have different aspect ratio than initially
-                            browser?.disableVerticalSwipe = false
-                            browser?.autoHideInterface = false
-                            browser?.delegate = self
-                            
-                            self!.navigationController!.present(browser!, animated:true, completion:nil)
-                        }
+                        let browser = PhotoBrowser(photos: this.displayPhotosSorted, animatedFrom: fromView)
+                        browser?.mode = .gallery
+                        browser?.setInitialPageIndex(UInt(initialIndex))
+                        browser?.useWhiteBackgroundColor = true
+                        browser?.usePopAnimation = true
+                        browser?.scaleImage = (fromView as! UIImageView).image  // Used because final image might have different aspect ratio than initially
+                        browser?.disableVerticalSwipe = false
+                        browser?.autoHideInterface = false
+                        browser?.delegate = self
+                        
+                        this.navigationController!.present(browser!, animated:true, completion:nil)
                     }
                 }
             })
@@ -1156,8 +1152,10 @@ extension ChannelViewController: FUICollectionDelegate {
             let cell = self.tableView.cellForRow(at: indexPath) as? MessageListCell!{
             self.rowHeights.removeObject(forKey: snap.key)
             let message = FireMessage(dict: snap.value as! [String: Any], id: snap.key)
-            message.creator = cell.message.creator
+            message.creator = cell.message?.creator
             cell.bind(message: message)
+            self.tableView.beginUpdates()
+            self.tableView.endUpdates()
         }
     }
     

@@ -250,9 +250,10 @@ class GroupEditViewController: BaseEditViewController {
         Log.d("Deleting group: \(self.group.id!)")
         StateController.instance.clearGroup()
         FireController.instance.deleteGroup(groupId: self.group.id!, then: { [weak self] error, result in
+            guard let this = self else { return }
             if error == nil {
                 MainController.instance.route()
-                self?.close(animated: true)
+                this.close(animated: true)
             }
             else {
                 UIShared.toast(message: "Error deleting group: \(error!.message)")

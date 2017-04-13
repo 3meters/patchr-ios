@@ -159,10 +159,11 @@ class ChannelSwitcherController: BaseTableController {
 		super.initialize()
         
         self.handleAuthState = FIRAuth.auth()?.addStateDidChangeListener() { [weak self] auth, user in
+            guard let this = self else { return }
             if user == nil {
-                self?.groupQuery?.remove()
-                self?.groupUnreadsQuery?.remove()
-                self?.totalUnreadsQuery?.remove()
+                this.groupQuery?.remove()
+                this.groupUnreadsQuery?.remove()
+                this.totalUnreadsQuery?.remove()
             }
         }
         
@@ -292,18 +293,20 @@ class ChannelSwitcherController: BaseTableController {
 			self.totalUnreadsQuery?.remove()
 			self.totalUnreadsQuery = UnreadQuery(level: .user, userId: userId)
 			self.totalUnreadsQuery!.observe(with: { [weak self] error, total in
-				if total != self?.unreadTotal {
-					self?.unreadTotal = total ?? 0
-					self?.unreadOther = (self?.unreadTotal)! - (self?.unreadGroup)!
+                guard let this = self else { return }
+				if total != this.unreadTotal {
+					this.unreadTotal = total ?? 0
+					this.unreadOther = this.unreadTotal - this.unreadGroup
 				}
 			})
 
 			self.groupUnreadsQuery?.remove()
 			self.groupUnreadsQuery = UnreadQuery(level: .group, userId: userId, groupId: groupId)
 			self.groupUnreadsQuery!.observe(with: { [weak self] error, total in
-				if total != self?.unreadGroup {
-					self?.unreadGroup = total ?? 0
-					self?.unreadOther = (self?.unreadTotal)! - (self?.unreadGroup)!
+                guard let this = self else { return }
+				if total != this.unreadGroup {
+					this.unreadGroup = total ?? 0
+					this.unreadOther = this.unreadTotal - this.unreadGroup
 				}
 			})
 
@@ -326,21 +329,22 @@ class ChannelSwitcherController: BaseTableController {
                     cell.channelQuery = ChannelQuery(groupId: groupId, channelId: channelId, userId: userId)    // Just channel lookup
                     cell.channelQuery!.observe(with: { [weak cell] error, channel in
                         
-                        guard let strongCell = cell else { return }
+                        guard let cell = cell else { return }
                         
                         if channel != nil {
-                            strongCell.selected(on: (channelId == StateController.instance.channelId), style: .prominent)
-                            strongCell.bind(channel: channel!)
-                            strongCell.unreadQuery = UnreadQuery(level: .channel, userId: userId, groupId: groupId, channelId: channelId)
-                            strongCell.unreadQuery!.observe(with: { [weak strongCell] error, total in
+                            cell.selected(on: (channelId == StateController.instance.channelId), style: .prominent)
+                            cell.bind(channel: channel!)
+                            cell.unreadQuery = UnreadQuery(level: .channel, userId: userId, groupId: groupId, channelId: channelId)
+                            cell.unreadQuery!.observe(with: { [weak cell] error, total in
+                                guard let cell = cell else { return }
                                 if total != nil && total! > 0 {
-                                    strongCell?.badge?.text = "\(total!)"
-                                    strongCell?.badge?.isHidden = false
-                                    strongCell?.accessoryType = .none
+                                    cell.badge?.text = "\(total!)"
+                                    cell.badge?.isHidden = false
+                                    cell.accessoryType = .none
                                 }
                                 else {
-                                    strongCell?.badge?.isHidden = true
-                                    strongCell?.accessoryType = (strongCell?.selectedOn)! ? .checkmark : .none
+                                    cell.badge?.isHidden = true
+                                    cell.accessoryType = cell.selectedOn ? .checkmark : .none
                                 }
                             })
                         }
@@ -463,8 +467,9 @@ class SearchController: NSObject {
         super.init()
 		self.tableView = tableView
         self.authHandle = FIRAuth.auth()?.addStateDidChangeListener() { [weak self] auth, user in
-            if auth.currentUser == nil && self?.queryController != nil {
-                self?.queryController.unbind()
+            guard let this = self else { return }
+            if auth.currentUser == nil && this.queryController != nil {
+                this.queryController.unbind()
             }
         }
 	}
@@ -510,12 +515,11 @@ class SearchController: NSObject {
         
         self.queryController.bind(to: self.tableView, query: query) { [weak self] tableView, indexPath, data in
             let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! ChannelListCell
-            if self != nil {
-                let snap = data as! FIRDataSnapshot
-                let channel = FireChannel(dict: snap.value as! [String: Any], id: snap.key)
-                cell.reset()
-                cell.bind(channel: channel, searching: true)
-            }
+            guard self != nil else { return cell }
+            let snap = data as! FIRDataSnapshot
+            let channel = FireChannel(dict: snap.value as! [String: Any], id: snap.key)
+            cell.reset()
+            cell.bind(channel: channel, searching: true)
             return cell
         }
 	}

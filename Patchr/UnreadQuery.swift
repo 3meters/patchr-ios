@@ -30,20 +30,22 @@ class UnreadQuery: NSObject {
     func observe(with block: @escaping (Error?, Int?) -> Void) {
         
         self.authHandle = FIRAuth.auth()?.addStateDidChangeListener() { [weak self] auth, user in
+            guard let this = self else { return }
             if auth.currentUser == nil {
-                self?.remove()
+                this.remove()
             }
         }
 
         self.handle = FireController.db.child(self.path).observe(.value, with: { [weak self] snap in
+            guard let this = self else { return }
             var total = 0
             if !(snap.value is NSNull) {
-                if self?.level == .channel  {
+                if this.level == .channel  {
                     if let messages = snap.value as? [String: Any] {
                         total = messages.count
                     }
                 }
-                else if self?.level == .group {
+                else if this.level == .group {
                     let channels = snap.value as! [String: Any]
                     for channelId in channels.keys {
                         if let messages = channels[channelId] as? [String: Any] {
@@ -51,7 +53,7 @@ class UnreadQuery: NSObject {
                         }
                     }
                 }
-                else if self?.level == .user {
+                else if this.level == .user {
                     let groups = snap.value as! [String: Any]
                     for groupId in groups.keys {
                         let channels = groups[groupId] as! [String: Any]
@@ -62,11 +64,12 @@ class UnreadQuery: NSObject {
                         }
                     }
                 }
-                self?.total = total
+                this.total = total
             }
             block(nil, total)
-        }, withCancel: { error in
-            Log.v("Permission denied trying to read unreads: \(self.path!)")
+        }, withCancel: { [weak self] error in
+            guard let this = self else { return }
+            Log.v("Permission denied trying to read unreads: \(this.path!)")
             block(error, nil)
         })
     }

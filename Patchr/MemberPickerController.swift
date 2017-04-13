@@ -152,15 +152,16 @@ class MemberPickerController: BaseTableController, CLTokenInputViewDelegate {
     func bind() {
 
         let groupId = StateController.instance.groupId!
-        let query = FireController.db.child("group-members/\(groupId)")
-            .queryOrdered(byChild: "index_priority_joined_at_desc")
+        let query = FireController.db.child("group-members/\(groupId)").queryOrdered(byChild: "index_priority_joined_at_desc")
         
         self.queryController = DataSourceController(name: "member_picker")
         self.queryController.mapperActive = true
         self.queryController.mapper = { (snap, then) in
+            /* Converts membership snapshot into user+membership object used later for filtering */
             let userId = snap.key
-            let userQuery = UserQuery(userId: userId)
+            var userQuery: UserQuery! = UserQuery(userId: userId)
             userQuery.once(with: { error, user in
+                userQuery = nil // Captured to ensure the callback
                 if error != nil {
                     Log.w("Permission denied")
                     return
@@ -171,20 +172,19 @@ class MemberPickerController: BaseTableController, CLTokenInputViewDelegate {
                 }
             })
         }
-        
         self.queryController.matcher = { searchText, data in
-            let user = data as! FireUser
-            if user.username!.lowercased().contains(searchText.lowercased()) {
-                return true
-            }
-            else if let profile = user.profile, let fullName = profile.fullName {
-                if fullName.lowercased().contains(searchText.lowercased()) {
+            if let user = data as? FireUser {
+                if user.username!.lowercased().contains(searchText.lowercased()) {
                     return true
+                }
+                else if let profile = user.profile, let fullName = profile.fullName {
+                    if fullName.lowercased().contains(searchText.lowercased()) {
+                        return true
+                    }
                 }
             }
             return false
         }
-
         self.queryController.bind(to: self.tableView, query: query) { [weak self] tableView, indexPath, data in
             
             let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! UserListCell
@@ -200,14 +200,14 @@ class MemberPickerController: BaseTableController, CLTokenInputViewDelegate {
                 cell.userQuery = UserQuery(userId: userId)
                 cell.userQuery.once(with: { [weak this, weak cell] error, user in
                     guard let this = this else { return }
-                    guard let strongCell = cell else { return }
+                    guard let cell = cell else { return }
                     if error != nil {
                         Log.w("Permission denied")
                         return
                     }
                     if user != nil {
                         user!.membershipFrom(dict: snap.value as! [String : Any])
-                        this.bindCell(user: user!, cell: strongCell)
+                        this.bindCell(user: user!, cell: cell)
                     }
                 })
             }

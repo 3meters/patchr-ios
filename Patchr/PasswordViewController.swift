@@ -190,19 +190,20 @@ class PasswordViewController: BaseEditViewController {
                     let email = authUser.email!
                     UserDefaults.standard.set(email, forKey: Prefs.lastUserEmail)
                     FireController.instance.addUser(userId: authUser.uid, username: username, then: { [weak self] error, result in
+                        guard let this = self else { return }
                         if error == nil {
                             authUser.sendEmailVerification()
                             Reporting.track("Account Created")
                             UserController.instance.setUserId(userId: authUser.uid) { result in
-                                if self?.flow == .onboardCreate {
+                                if this.flow == .onboardCreate {
                                     let controller = GroupCreateController()
-                                    controller.flow = (self?.flow)!
-                                    self?.navigationController?.pushViewController(controller, animated: true)
+                                    controller.flow = this.flow
+                                    this.navigationController?.pushViewController(controller, animated: true)
                                 }
-                                else if self?.flow == .onboardInvite {
+                                else if this.flow == .onboardInvite {
                                     let controller = EmptyViewController()
-                                    self?.navigationController?.setViewControllers([controller], animated: true)
-                                    MainController.instance.routeDeepLink(link: (self?.inputInviteLink)!, flow: (self?.flow)!, error: nil)
+                                    this.navigationController?.setViewControllers([controller], animated: true)
+                                    MainController.instance.routeDeepLink(link: (this.inputInviteLink)!, flow: this.flow, error: nil)
                                 }
                             }
                         }
@@ -222,24 +223,23 @@ class PasswordViewController: BaseEditViewController {
         if error == nil {
             Reporting.track("Logged In")
             UserController.instance.setUserId(userId: (user?.uid)!) { [weak self] result in
-                if self != nil {
-                    if self!.flow == .onboardLogin {
-                        let controller = GroupSwitcherController()
-                        controller.flow = self!.flow
-                        controller.navigationItem.backBarButtonItem = nil
-                        controller.navigationItem.hidesBackButton = true
-                        self!.navigationController?.pushViewController(controller, animated: true)
-                    }
-                    else if self!.flow == .onboardCreate {
-                        let controller = GroupCreateController()
-                        controller.flow = self!.flow
-                        self!.navigationController?.pushViewController(controller, animated: true)
-                    }
-                    else if self!.flow == .onboardInvite {
-                        let controller = EmptyViewController()
-                        self!.navigationController?.setViewControllers([controller], animated: true)
-                        MainController.instance.routeDeepLink(link: self!.inputInviteLink, flow: self!.flow, error: nil)
-                    }
+                guard let this = self else { return }
+                if this.flow == .onboardLogin {
+                    let controller = GroupSwitcherController()
+                    controller.flow = this.flow
+                    controller.navigationItem.backBarButtonItem = nil
+                    controller.navigationItem.hidesBackButton = true
+                    this.navigationController?.pushViewController(controller, animated: true)
+                }
+                else if this.flow == .onboardCreate {
+                    let controller = GroupCreateController()
+                    controller.flow = this.flow
+                    this.navigationController?.pushViewController(controller, animated: true)
+                }
+                else if this.flow == .onboardInvite {
+                    let controller = EmptyViewController()
+                    this.navigationController?.setViewControllers([controller], animated: true)
+                    MainController.instance.routeDeepLink(link: this.inputInviteLink, flow: this.flow, error: nil)
                 }
             }
         }

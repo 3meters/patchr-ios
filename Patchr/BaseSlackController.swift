@@ -99,14 +99,15 @@ class BaseSlackController: SLKTextViewController {
         
         self.dismissKeyboard(true)
         self.photoEditView.photoChooser?.choosePhoto(sender: sender as AnyObject) { [weak self] image, imageResult, asset, cancelled in
+            guard let this = self else { return }
             if let controller = self as? ChannelViewController {
                 controller.isTyping = false
             }
             if !cancelled {
                 if image != nil || imageResult != nil {
                     DispatchQueue.main.async {
-                        self?.photoEditView.photoChosen(image: image, imageResult: imageResult, asset: asset)
-                        self?.showPhotoEdit()
+                        this.photoEditView.photoChosen(image: image, imageResult: imageResult, asset: asset)
+                        this.showPhotoEdit()
                     }
                 }
             }

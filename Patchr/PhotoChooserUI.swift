@@ -50,27 +50,31 @@ class PhotoChooserUI: NSObject, UINavigationControllerDelegate {
 		let sheet = UIAlertController(title: nil, message: nil, preferredStyle: UIAlertControllerStyle.actionSheet)
 		
 		let search = UIAlertAction(title: "Search for photos", style: .default) { [weak self] action in
-            self?.searchForPhoto(imageType: .photo)
+            guard let this = self else { return }
+            this.searchForPhoto(imageType: .photo)
 		}
 		sheet.addAction(search)
 
 		if photoLibraryAvailable {
 			let library = UIAlertAction(title: "Select a library photo", style: .default) { [weak self] action in
-				self?.choosePhotoFromLibrary()
+                guard let this = self else { return }
+				this.choosePhotoFromLibrary()
 			}
 			sheet.addAction(library)
 		}
 		
 		if cameraAvailable {
 			let camera = UIAlertAction(title: "Take a new photo", style: .default) { [weak self] action in
-				self?.takePhotoWithCamera()
+                guard let this = self else { return }
+				this.takePhotoWithCamera()
 			}
 			sheet.addAction(camera)
 		}
 		
 		let cancel = UIAlertAction(title: "Cancel", style: .cancel) { [weak self] action in
+            guard let this = self else { return }
 			sheet.dismiss(animated: true, completion: nil)
-			self?.completion!(nil, nil, nil, true)
+			this.completion!(nil, nil, nil, true)
 		}
 		
 		sheet.addAction(cancel)
