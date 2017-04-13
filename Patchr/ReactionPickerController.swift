@@ -56,7 +56,6 @@ class ReactionPickerController: UICollectionViewController {
 
 	override func viewWillAppear(_ animated: Bool) {
 		super.viewWillAppear(animated)
-        Reporting.screen("ReactionPicker")
 	}
     
     override func viewWillLayoutSubviews() {
@@ -102,6 +101,7 @@ extension ReactionPickerController { /* UICollectionViewDelegate, UICollectionVi
         let reacted = self.inputMessage.getReaction(emoji: emojiCode, userId: userId)
         
         if !reacted {
+            Reporting.track("add_reaction", properties: ["code": emojiCode])
             inputMessage.addReaction(emoji: emojiCode)
             NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.MessageDidUpdate)
                 , object: self, userInfo: ["message_id": messageId]) // Clears cached row height for the message

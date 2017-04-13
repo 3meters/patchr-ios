@@ -63,7 +63,7 @@ class PasswordViewController: BaseEditViewController {
     func doneAction(sender: AnyObject) {
         if isValid() {
             let _ = self.passwordField.resignFirstResponder()
-            
+            Reporting.track("submit_password")
             if self.mode == .reauth {
                 reauthenticate()
             }
@@ -75,14 +75,17 @@ class PasswordViewController: BaseEditViewController {
                 self.progress?.removeFromSuperViewOnHide = true
                 self.progress?.show(true)
                 self.progress?.labelText = "Logging in..."
-                
                 authenticate()
             }
+        }
+        else {
+            Reporting.track("password_validation_error")
         }
     }
 
     func hideShowPasswordAction(sender: AnyObject?) {
         if let button = sender as? AirHideShowButton {
+            Reporting.track(button.toggledOn ? "hide_password" : "show_password")
             button.toggle(on: !button.toggledOn)
             self.passwordField.isSecureTextEntry = !button.toggledOn
         }
@@ -91,6 +94,7 @@ class PasswordViewController: BaseEditViewController {
     func passwordResetAction(sender: AnyObject) {
         FIRAuth.auth()?.sendPasswordReset(withEmail: self.inputEmail) { error in
             if error == nil {
+                Reporting.track("request_password_reset")
                 self.alert(title: "A password reset email has been sent to your email address.")
             }
         }
@@ -106,7 +110,7 @@ class PasswordViewController: BaseEditViewController {
 
     override func initialize() {
         super.initialize()
-
+        
         self.message.text = (self.mode == .reauth)
             ? "Password confirmation"
             : "Almost to the good stuff."
@@ -171,11 +175,11 @@ class PasswordViewController: BaseEditViewController {
         let email = self.inputEmail!
         
         if self.branch == .login {
-            FIRAuth.auth()?.signIn(withEmail: email, password: password) { user, error in
+            FIRAuth.auth()?.signIn(withEmail: email, password: password) { authUser, error in
                 if error == nil {
                     UserDefaults.standard.set(email, forKey: Prefs.lastUserEmail)
                 }
-                self.authenticated(user: user, error: error)
+                self.authenticated(user: authUser, error: error)
             }
         }
         else {  // Only happens if creating group
@@ -188,19 +192,21 @@ class PasswordViewController: BaseEditViewController {
                 if error == nil, let authUser = authUser {
                     let username = self.userNameField.text!
                     let email = authUser.email!
+                    Reporting.track("create_user_account", properties:["uid": authUser.uid])
                     UserDefaults.standard.set(email, forKey: Prefs.lastUserEmail)
                     FireController.instance.addUser(userId: authUser.uid, username: username, then: { [weak self] error, result in
                         guard let this = self else { return }
                         if error == nil {
                             authUser.sendEmailVerification()
-                            Reporting.track("Account Created")
                             UserController.instance.setUserId(userId: authUser.uid) { result in
                                 if this.flow == .onboardCreate {
+                                    Reporting.track("view_group_new")
                                     let controller = GroupCreateController()
                                     controller.flow = this.flow
                                     this.navigationController?.pushViewController(controller, animated: true)
                                 }
                                 else if this.flow == .onboardInvite {
+                                    Reporting.track("resume_invite")
                                     let controller = EmptyViewController()
                                     this.navigationController?.setViewControllers([controller], animated: true)
                                     MainController.instance.routeDeepLink(link: (this.inputInviteLink)!, flow: this.flow, error: nil)
@@ -221,10 +227,11 @@ class PasswordViewController: BaseEditViewController {
         self.progress?.hide(true)
         
         if error == nil {
-            Reporting.track("Logged In")
+            Reporting.track("login", properties:["uid": user!.uid])
             UserController.instance.setUserId(userId: (user?.uid)!) { [weak self] result in
                 guard let this = self else { return }
                 if this.flow == .onboardLogin {
+                    Reporting.track("view_group_switcher")
                     let controller = GroupSwitcherController()
                     controller.flow = this.flow
                     controller.navigationItem.backBarButtonItem = nil
@@ -232,11 +239,13 @@ class PasswordViewController: BaseEditViewController {
                     this.navigationController?.pushViewController(controller, animated: true)
                 }
                 else if this.flow == .onboardCreate {
+                    Reporting.track("view_group_new")
                     let controller = GroupCreateController()
                     controller.flow = this.flow
                     this.navigationController?.pushViewController(controller, animated: true)
                 }
                 else if this.flow == .onboardInvite {
+                    Reporting.track("resume_invite")
                     let controller = EmptyViewController()
                     this.navigationController?.setViewControllers([controller], animated: true)
                     MainController.instance.routeDeepLink(link: this.inputInviteLink, flow: this.flow, error: nil)
@@ -246,12 +255,15 @@ class PasswordViewController: BaseEditViewController {
         else {
             var errorMessage = error?.localizedDescription
             if error!._code == FIRAuthErrorCode.errorCodeEmailAlreadyInUse.rawValue {
+                Reporting.track("login_error", properties:["message": "email_already_used"])
                 errorMessage = "Email already used"
             }
             else if error!._code == FIRAuthErrorCode.errorCodeInvalidEmail.rawValue {
+                Reporting.track("login_error", properties:["message": "email_address_not_valid"])
                 errorMessage = "Email address is not valid"
             }
             else if error!._code == FIRAuthErrorCode.errorCodeWrongPassword.rawValue {
+                Reporting.track("login_error", properties:["message": "wrong_password"])
                 errorMessage = "Wrong email and password combination"
             }
             self.passwordField.errorMessage = errorMessage
@@ -317,7 +329,6 @@ class PasswordViewController: BaseEditViewController {
     }
 
     override func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-
         if textField == self.userNameField {
             let _ = passwordField.becomeFirstResponder()
         }

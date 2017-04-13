@@ -148,6 +148,7 @@ class MainController: NSObject, iRateDelegate {
             showLobby() {
                 self.bootstrapping = false
                 if let link = MainController.instance.link {
+                    Reporting.track("resume_invite")
                     MainController.instance.link = nil
                     MainController.instance.routeDeepLink(link: link, error: nil)
                 }
@@ -160,6 +161,7 @@ class MainController: NSObject, iRateDelegate {
                     self.showUserLobby() {
                         self.bootstrapping = false
                         if let link = MainController.instance.link {
+                            Reporting.track("resume_invite")
                             MainController.instance.link = nil
                             MainController.instance.routeDeepLink(link: link, error: nil)
                         }
@@ -169,6 +171,7 @@ class MainController: NSObject, iRateDelegate {
                     self.showGroupSwitcher() {
                         self.bootstrapping = false
                         if let link = MainController.instance.link {
+                            Reporting.track("resume_invite")
                             MainController.instance.link = nil
                             MainController.instance.routeDeepLink(link: link, error: nil)
                         }
@@ -186,7 +189,8 @@ class MainController: NSObject, iRateDelegate {
     func showLobby(controller: UIViewController? = nil, then: (() -> Void)? = nil) {
         
         /* If onboarding via invite, passed in controller is email form */
-        
+        Reporting.track("view_lobby")
+
         if StateController.instance.groupId != nil {
             StateController.instance.clearGroup()   // Make sure group and channel are both unset
         }
@@ -210,6 +214,8 @@ class MainController: NSObject, iRateDelegate {
     
     func showUserLobby(then: (() -> Void)? = nil) {
         
+        Reporting.track("view_user_lobby")
+        
         if StateController.instance.groupId != nil {
             StateController.instance.clearGroup()   // Make sure group and channel are both unset
         }
@@ -230,6 +236,7 @@ class MainController: NSObject, iRateDelegate {
     }
     
     func showGroupSwitcher(then: (() -> Void)? = nil) {
+        Reporting.track("view_group_switcher")
         let controller = GroupSwitcherController()
         let wrapper = AirNavigationController(rootViewController: controller)
         self.containerController.changeController(controller: wrapper)
@@ -277,6 +284,7 @@ class MainController: NSObject, iRateDelegate {
         showMain {
             if let slide = self.containerController.controller as? SlideViewController {
                 if let wrapper = slide.mainViewController as? AirNavigationController {
+                    Reporting.track("view_channel")
                     let controller = ChannelViewController()
                     controller.inputGroupId = groupId
                     controller.inputChannelId = channelId
@@ -315,20 +323,24 @@ class MainController: NSObject, iRateDelegate {
                 if let membership = snap.value as? [String: Any] {
                     /* Already a member */
                     let role = membership["role"] as? String
+                    Reporting.track("process_invite")
                     self.processInvite(link: link, member: true, memberRole: role, flow: flow)
                 }
                 else {
                     /* Not a group member yet */
+                    Reporting.track("process_invite")
                     self.processInvite(link: link, member: false, memberRole: nil, flow: flow)
                 }
             }, withCancel: { error in
                 /* Not a member yet */
                 guard !inviteProcessing else { return }
                 inviteProcessing = true
+                Reporting.track("process_invite")
                 self.processInvite(link: link, member: false, memberRole: nil, flow: flow)  // permission denied means not group member
             })
         }
         else {
+            Reporting.track("pause_invite_for_login")
             let controller = EmailViewController()
             controller.flow = .onboardInvite
             controller.inputInviteLink = link
@@ -360,6 +372,7 @@ class MainController: NSObject, iRateDelegate {
                     let popup = PopupDialog(title: "Already a Member", message: "You are currently a member of the \(groupTitle) Patchr group!")
                     let button = DefaultButton(title: "OK") {
                         if flow == .onboardInvite {
+                            Reporting.track("view_group_switcher")
                             let controller = GroupSwitcherController()
                             topController.navigationController?.pushViewController(controller, animated: true)
                         }
@@ -389,12 +402,14 @@ class MainController: NSObject, iRateDelegate {
             
             let cancelButton = CancelButton(title: "Cancel".uppercased(), height: 48) {
                 // If we don't have a currrent group|channel then we are in the lobby
+                Reporting.track("cancel_invite")
                 if StateController.instance.groupId == nil || StateController.instance.channelId == nil {
                     self.route()
                 }
             }
             
             let joinButton = DefaultButton(title: "Join".uppercased(), height: 48) {
+                Reporting.track("accept_invite")
                 FireController.instance.addUserToGroup(groupId: groupId, channels: channels, role: role, inviteId: inviteId, invitedBy: inviterId) { [weak self] error, result in
                     guard let this = self else { return }
                     if error == nil {
@@ -406,6 +421,7 @@ class MainController: NSObject, iRateDelegate {
                     }
                     else {
                         if let topController = UIViewController.topMostViewController() {
+                            Reporting.track((error!.code == 404.2) ? "error_invite_used" : "error_invite_invalid")
                             let title = (error!.code == 404.2) ? "Used Invitation" : "Unusable Invitation"
                             let message = (error!.code == 404.2) ? "The invitation has already been used." : "The invitation has been used or revoked."
                             let popup = PopupDialog(title: title, message: message)
@@ -442,11 +458,14 @@ class MainController: NSObject, iRateDelegate {
                         let popup = PopupDialog(title: "Welcome!", message: "You are now a member of the \(groupTitle) Patchr group. Use the navigation drawer to discover and join channels.")
                         popup.buttonAlignment = .horizontal
                         let showButton = DefaultButton(title: "Show Me".uppercased(), height: 48) {
+                            Reporting.track("invite_show_me")
                             if let slideController = self.window?.rootViewController as? SlideViewController {
                                 slideController.openLeft()
                             }
                         }
-                        let doneButton = DefaultButton(title: "Carry On".uppercased(), height: 48) {}
+                        let doneButton = DefaultButton(title: "Carry On".uppercased(), height: 48) {
+                            Reporting.track("invite_carry_on")
+                        }
                         popup.addButtons([showButton, doneButton])
                         topController.present(popup, animated: true)
                     }
@@ -470,13 +489,16 @@ class MainController: NSObject, iRateDelegate {
                     let popup = PopupDialog(title: "Welcome!", message: message)
                     popup.buttonAlignment = .horizontal
                     let showButton = DefaultButton(title: "Show Me".uppercased(), height: 48) {
+                        Reporting.track("invite_show_me")
                         if let slideController = self.window?.rootViewController as? SlideViewController,
                             let wrapper = slideController.mainViewController as? AirNavigationController,
                             let channelController = wrapper.topViewController as? ChannelViewController {
                             channelController.textInputbar.textView.becomeFirstResponder()
                         }
                     }
-                    let doneButton = DefaultButton(title: "Carry On".uppercased(), height: 48) {}
+                    let doneButton = DefaultButton(title: "Carry On".uppercased(), height: 48) {
+                        Reporting.track("invite_carry_on")
+                    }
                     popup.addButtons([showButton, doneButton])
                     topController.present(popup, animated: true)
                 }
@@ -488,6 +510,7 @@ class MainController: NSObject, iRateDelegate {
         FireController.db.child("clients").child("ios").observeSingleEvent(of: .value, with: { snap in
             if let minVersion = snap.value as? Int {
                 if !UIShared.versionIsValid(versionMin: Int(minVersion)) {
+                    Reporting.track("version_update_required")
                     self.upgradeRequired = true
                     UIShared.compatibilityUpgrade()
                 }
@@ -505,19 +528,19 @@ class MainController: NSObject, iRateDelegate {
 extension MainController {
     
     func iRateDidPromptForRating() {
-        Reporting.track("Prompted for Rating")
+        Reporting.track("rate_prompted")
     }
 
     func iRateUserDidAttemptToRateApp() {
-        Reporting.track("Attempted to Rate")
+        Reporting.track("rate_attempted")
     }
 
     func iRateUserDidDeclineToRateApp() {
-        Reporting.track("Declined to Rate")
+        Reporting.track("rate_declined")
     }
 
     func iRateUserDidRequestReminderToRateApp() {
-        Reporting.track("Requested Reminder to Rate")
+        Reporting.track("rate_requested_reminder")
     }
 }
 

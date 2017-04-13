@@ -79,7 +79,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FIRMessagingDelegate {
             UserDefaults.standard.set(true, forKey: Prefs.firstLaunch)
             self.firstLaunch = true
             try! FIRAuth.auth()!.signOut()  // Triggers cleanup by canned queries
-            Reporting.track("Launched for First Time")
+            Reporting.track("first_launch")
         }
         
         self.window = UIWindow(frame: UIScreen.main.bounds)
@@ -135,6 +135,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FIRMessagingDelegate {
     }
 
     func applicationWillEnterForeground(_ application: UIApplication) {
+        Reporting.track(kFIREventAppOpen)
         Log.d("Application will enter foreground", breadcrumb: true)
     }
     
@@ -149,6 +150,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FIRMessagingDelegate {
     }
 
     func applicationDidEnterBackground(_ application: UIApplication) {
+        Reporting.track(kFIREventAppOpen)
         Log.d("Application did enter background", breadcrumb: true)
         disconnectFromFcm()
         FIRDatabase.database().goOffline()

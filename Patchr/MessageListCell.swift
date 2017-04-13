@@ -259,13 +259,10 @@ class MessageListCell: UITableViewCell {
         self.reactionToolbar.bind(message: message)
         self.reactionToolbar.isHidden = (self.reactionToolbar.reactionButtons.count == 0)
 
-        //self.contentView.isHidden = false
         self.setNeedsLayout()
     }
     
     func reset() {
-        //self.contentView.isHidden = true
-        //self.photoView.isHidden = true
         self.photoView.reset()
         self.userPhotoControl.reset()
         self.description_?.textColor = Colors.black

@@ -49,6 +49,7 @@ class UserLobbyController: BaseViewController {
                 self.alert(title: "Not connected", message: message, cancelButtonTitle: "OK")
             }
             else {
+                Reporting.track("view_group_new")
                 let controller = GroupCreateController()
                 let wrapper = AirNavigationController(rootViewController: controller)
                 controller.flow = .internalCreate
@@ -59,12 +60,14 @@ class UserLobbyController: BaseViewController {
     }
     
     func switchLoginAction(sender: AnyObject?) {
+        Reporting.track("view_email_entry")
         let controller = EmailViewController()
         controller.flow = .onboardLogin
         self.navigationController?.pushViewController(controller, animated: true)
     }
     
     func logoutAction(sender: AnyObject?) {
+        Reporting.track("logout")
         UserController.instance.logout()
         close(animated: true)
     }

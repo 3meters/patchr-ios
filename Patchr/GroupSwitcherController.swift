@@ -87,6 +87,7 @@ class GroupSwitcherController: BaseTableController {
                 self.alert(title: "Not connected", message: message, cancelButtonTitle: "OK")
             }
             else {
+                Reporting.track("view_group_new")
                 let controller = GroupCreateController()
                 let wrapper = AirNavigationController(rootViewController: controller)
                 controller.flow = .internalCreate
@@ -97,16 +98,12 @@ class GroupSwitcherController: BaseTableController {
     }
     
     func closeAction(sender: AnyObject?) {
+        Reporting.track("switch_navigation_to_channels")
         close(animated: true)
     }
     
-    func switchLoginAction(sender: AnyObject?) {
-        let controller = EmailViewController()
-        controller.flow = .onboardLogin
-        self.navigationController?.pushViewController(controller, animated: true)
-    }
-    
     func logoutAction(sender: AnyObject?) {
+        Reporting.track("logout")
         UserController.instance.logout()
         close(animated: true)
     }
@@ -134,7 +131,7 @@ class GroupSwitcherController: BaseTableController {
         self.navigationController?.setToolbarHidden(false, animated: true)
         
         NotificationCenter.default.addObserver(self, selector: #selector(userDidSwitch(notification:)), name: NSNotification.Name(rawValue: Events.UserDidSwitch), object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(groupDidSwitch(notification:)), name: NSNotification.Name(rawValue: Events.GroupDidSwitch), object: nil)        
+        NotificationCenter.default.addObserver(self, selector: #selector(groupDidSwitch(notification:)), name: NSNotification.Name(rawValue: Events.GroupDidSwitch), object: nil)
         
         if self.simplePicker { // Shown in navigation drawer
             
@@ -193,6 +190,7 @@ class GroupSwitcherController: BaseTableController {
             }
             
             else { /* User is a member of at least one group */
+                
                 self.groupAvailable = true
                 
                 self.headingLabel = AirLabelTitle()
@@ -271,6 +269,7 @@ extension GroupSwitcherController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
+        Reporting.track("select_group")
         let cell = tableView.cellForRow(at: indexPath) as! GroupListCell
         
         /* User last channel if available */

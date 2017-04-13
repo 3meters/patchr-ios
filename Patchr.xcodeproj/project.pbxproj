@@ -149,7 +149,6 @@
 		E29A921C1DB1988A00B27093 /* FireUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29A921B1DB1988A00B27093 /* FireUser.swift */; };
 		E29A921E1DB19A2600B27093 /* FireProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29A921D1DB19A2600B27093 /* FireProfile.swift */; };
 		E29A92201DB19A3C00B27093 /* FirePhoto.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29A921F1DB19A3C00B27093 /* FirePhoto.swift */; };
-		E2A28E6D1B49D88900B3A2FE /* AirLikeButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2A28E6C1B49D88800B3A2FE /* AirLikeButton.swift */; };
 		E2A28E6F1B4A602200B3A2FE /* AirToggleButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2A28E6E1B4A602200B3A2FE /* AirToggleButton.swift */; };
 		E2A5A8801B6FCE98006D6E81 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = E2A5A87F1B6FCE98006D6E81 /* GoogleService-Info.plist */; };
 		E2A5A8851B703B9B006D6E81 /* PhotoEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2A5A8841B703B9B006D6E81 /* PhotoEditView.swift */; };
@@ -370,7 +369,6 @@
 		E29A921B1DB1988A00B27093 /* FireUser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FireUser.swift; sourceTree = "<group>"; };
 		E29A921D1DB19A2600B27093 /* FireProfile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FireProfile.swift; sourceTree = "<group>"; };
 		E29A921F1DB19A3C00B27093 /* FirePhoto.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FirePhoto.swift; sourceTree = "<group>"; };
-		E2A28E6C1B49D88800B3A2FE /* AirLikeButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = AirLikeButton.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		E2A28E6E1B4A602200B3A2FE /* AirToggleButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirToggleButton.swift; sourceTree = "<group>"; };
 		E2A5A87F1B6FCE98006D6E81 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		E2A5A8841B703B9B006D6E81 /* PhotoEditView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = PhotoEditView.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
@@ -746,7 +744,6 @@
 				E2D12A841C0A592D00DE507E /* AirLabelBanner.swift */,
 				E2D12A7C1C0A03F100DE507E /* AirLabelDisplay.swift */,
 				E25908311DC7B3AA00CB6C3F /* AirLabelStack.swift */,
-				E2A28E6C1B49D88800B3A2FE /* AirLikeButton.swift */,
 				E2D12A781C08FA0E00DE507E /* AirLinkButton.swift */,
 				E2064BF01BBF3C26009C7B6A /* AirMuteView.swift */,
 				E24D84D21E8AF1D300BFE408 /* AirNavigationBar.swift */,
@@ -1179,7 +1176,6 @@
 				E25B4ABB1E00BA6B00D17613 /* FireArray.swift in Sources */,
 				E24D74541BBAED5F0061F339 /* TaskQueue.swift in Sources */,
 				E2E9AAA71CEF86470057698F /* AirNavigationController.swift in Sources */,
-				E2A28E6D1B49D88900B3A2FE /* AirLikeButton.swift in Sources */,
 				E2D12A751C08F85E00DE507E /* AirButton.swift in Sources */,
 				E2D12A771C08F9CE00DE507E /* AirFeaturedButton.swift in Sources */,
 				E2B756A91D84600E00C102EC /* ChannelsHeaderView.swift in Sources */,

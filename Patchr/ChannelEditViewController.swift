@@ -135,6 +135,7 @@ class ChannelEditViewController: BaseEditViewController {
                 self.progress?.show(true)
                 isValidChannelName() { valid in
                     if valid {
+                        Reporting.track("update_channel")
                         self.post()
                     }
                     else {
@@ -160,6 +161,7 @@ class ChannelEditViewController: BaseEditViewController {
                         self.progress?.show(true)
                         self.isValidChannelName() { valid in
                             if valid {
+                                Reporting.track("create_channel")
                                 self.post()
                             }
                             else {
@@ -188,6 +190,7 @@ class ChannelEditViewController: BaseEditViewController {
                     actionTitle: "Delete", cancelTitle: "Cancel", delegate: self) {
                         doIt in
                         if doIt {
+                            Reporting.track("delete_channel")
                             self.delete()
                         }
                 }
@@ -196,6 +199,7 @@ class ChannelEditViewController: BaseEditViewController {
     }
     
     func manageUsersAction(sender: AnyObject?) {
+        Reporting.track("view_channel_members_management")
         let controller = MemberListController()
         controller.scope = .channel
         controller.target = .channel
@@ -300,7 +304,6 @@ class ChannelEditViewController: BaseEditViewController {
 
         if self.mode == .insert {
 
-            Reporting.track("open_channel_new")
             self.banner.text = "New Channel"
             self.usersButton.isHidden = true
 
@@ -313,7 +316,6 @@ class ChannelEditViewController: BaseEditViewController {
         }
         else if self.mode == .update  {
 
-            Reporting.track("open_channel_edit")
             self.banner.text = "Edit Channel"
             self.visibilityGroup.isHidden = true
 
@@ -557,6 +559,7 @@ class ChannelEditViewController: BaseEditViewController {
                     return
                 }
                 if exists {
+                    Reporting.track("error_channel_name_used")
                     self.nameField.errorMessage = "Choose another channel name"
                     then(false)
                     return

@@ -62,10 +62,12 @@ class AccountEditViewController: BaseEditViewController {
                 
                 if self.emailField.text != FIRAuth.auth()?.currentUser?.email {
                     self.processing = true
+                    Reporting.track("validate_email")
                     verifyEmail()
                 }
-                else if self.userNameField.text != UserController.instance.user?.username {
+                if self.userNameField.text != UserController.instance.user?.username {
                     self.processing = true
+                    Reporting.track("validate_username")
                     verifyUsername()
                 }
             }
@@ -80,6 +82,7 @@ class AccountEditViewController: BaseEditViewController {
     }
     
     func changePasswordAction(sender: AnyObject) {
+        Reporting.track("view_password_edit")
         let controller = PasswordEditViewController()
         self.navigationController?.pushViewController(controller, animated: true)
     }
@@ -166,6 +169,7 @@ class AccountEditViewController: BaseEditViewController {
             if exists {
                 this.progress?.hide(true)
                 this.processing = false
+                Reporting.track("error_email_used")
                 this.emailField.errorMessage = "Email is already being used"
             }
             else {
@@ -227,6 +231,7 @@ class AccountEditViewController: BaseEditViewController {
                 return
             }
             if exists {
+                Reporting.track("error_username_used")
                 this.userNameField.errorMessage = "Choose another username"
             }
             else {

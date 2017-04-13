@@ -60,6 +60,7 @@ class InviteListController: BaseTableController, UITableViewDelegate {
             let inviter = invite["inviter"] as? [String: Any],
             let inviterId = inviter["id"] as? String,
             let groupId = StateController.instance.groupId {
+            Reporting.track("resend_invite")
             FireController.instance.deleteInvite(groupId: groupId, inviterId: inviterId, inviteId: inviteId)
                 resendInvite(invite: invite)
         }
@@ -77,6 +78,7 @@ class InviteListController: BaseTableController, UITableViewDelegate {
                         let inviter = invite["inviter"] as? [String: Any],
                         let inviterId = inviter["id"] as? String,
                         let groupId = StateController.instance.groupId {
+                        Reporting.track("revoke_invite")
                         FireController.instance.deleteInvite(groupId: groupId, inviterId: inviterId, inviteId: inviteId)
                         UIShared.toast(message: "Invite revoked")
                     }
@@ -92,6 +94,7 @@ class InviteListController: BaseTableController, UITableViewDelegate {
                 let snap = self.queryController.snapshot(at: indexPath.row)
                 var invite = snap.value as! [String: Any]
                 invite["id"] = snap.key
+                Reporting.track("view_invite_actions")
                 showInviteActions(invite: invite, sourceView: cell.contentView)
             }
         }
@@ -109,6 +112,7 @@ class InviteListController: BaseTableController, UITableViewDelegate {
                         let inviterId = inviter["id"] as? String,
                         let group = invite["group"] as? [String: Any],
                         let groupId = group["id"] as? String {
+                        Reporting.track("delete_invite")
                         FireController.instance.deleteInvite(groupId: groupId, inviterId: inviterId, inviteId: inviteId) { success in
                             if success {
                                 UIShared.toast(message: "Invite deleted")

@@ -58,7 +58,7 @@ class GroupCreateController: BaseEditViewController {
                     self.progress?.labelText = "Activating..."
                     self.progress?.removeFromSuperViewOnHide = true
                     self.progress?.show(true)
-                    
+                    Reporting.track("create_group")
                     self.createGroup()
                 }
             }
@@ -135,6 +135,7 @@ class GroupCreateController: BaseEditViewController {
                 }
                 else {
                     /* Show invite doorstep so they know why contacts are needed. */
+                    Reporting.track("view_group_invite")
                     let controller = InviteViewController()
                     controller.flow = this.flow
                     controller.inputRole = "members"

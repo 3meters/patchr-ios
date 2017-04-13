@@ -67,8 +67,6 @@ class GalleryGridViewController: UICollectionViewController {
 
 	override func viewWillAppear(_ animated: Bool) {
 		super.viewWillAppear(animated)
-        
-        Reporting.screen("GalleryGrid")
 		
 		/* Scroll inset */
 		self.sectionInsets = UIEdgeInsets(top: 4, left: 4, bottom: 4, right: 4)
@@ -179,6 +177,7 @@ extension GalleryGridViewController { /* UICollectionViewDelegate, UICollectionV
         
 		photoBrowser!.setInitialPageIndex(UInt(indexPath.row))
 		photoBrowser!.scaleImage = cell.displayImageView.image  // Used because final image might have different aspect ratio than initially
+        Reporting.track("view_photo_from_gallery")
 		self.navigationController!.present(photoBrowser!, animated: true, completion: nil)
 	}
 	

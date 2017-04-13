@@ -76,7 +76,6 @@ class DevelopmentViewController: BaseViewController {
 	override func initialize() {
         super.initialize()
 		
-		Reporting.screen("DevelopmentSettings")
 		self.view.backgroundColor = Theme.colorBackgroundForm
 		
 		self.enableDevModeSwitch.isOn = UserDefaults.standard.bool(forKey: Prefs.developerMode)

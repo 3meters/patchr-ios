@@ -55,7 +55,7 @@ class EmailViewController: BaseEditViewController {
             self.progress?.labelText = "Verifying..."
             self.progress?.removeFromSuperViewOnHide = true
             self.progress?.show(true)
-            
+            Reporting.track("validate_email")
             validateEmail()
         }
     }
@@ -70,7 +70,7 @@ class EmailViewController: BaseEditViewController {
 
     override func initialize() {
         super.initialize()
-
+        
         if self.flow == .onboardLogin {
             self.message.text = "Welcome back."
         }
@@ -126,9 +126,12 @@ class EmailViewController: BaseEditViewController {
             
             if self.flow == .onboardLogin {
                 if !exists {
+                    Reporting.track("email_account_not_found")
                     self.emailField.errorMessage = "No account found."
                 }
                 else {
+                    Reporting.track("email_found")
+                    Reporting.track("view_password_entry")
                     let controller = PasswordViewController()
                     controller.flow = self.flow
                     controller.branch = .login
@@ -137,6 +140,7 @@ class EmailViewController: BaseEditViewController {
                 }
             }
             else if self.flow == .onboardInvite {
+                Reporting.track("view_password_entry")
                 let controller = PasswordViewController()
                 controller.flow = self.flow
                 controller.branch = exists ? .login : .signup
@@ -145,6 +149,7 @@ class EmailViewController: BaseEditViewController {
                 self.navigationController?.pushViewController(controller, animated: true)
             }
             else if self.flow == .onboardCreate {
+                Reporting.track("view_password_entry")
                 let controller = PasswordViewController()
                 controller.flow = self.flow
                 controller.branch = exists ? .login : .signup

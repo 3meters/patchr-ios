@@ -61,6 +61,7 @@ class InviteViewController: BaseEditViewController {
     
 	func inviteMembersAction(sender: AnyObject?) {
         self.validateFor = "members"
+        Reporting.track("invite_group_members")
 		inviteMembers()
 	}
 	
@@ -70,6 +71,7 @@ class InviteViewController: BaseEditViewController {
 	}
     
     func inviteListAction(sender: AnyObject?) {
+        Reporting.track("view_outstanding_invites")
         inviteList()
     }
     
@@ -95,8 +97,6 @@ class InviteViewController: BaseEditViewController {
 	
 	override func initialize() {
 		super.initialize()
-		
-		Reporting.screen("PatchInvite")
         
         let groupTitle = self.inputGroupTitle ?? StateController.instance.group?.title!
         self.heading.text = "Invite people to \(groupTitle!)."

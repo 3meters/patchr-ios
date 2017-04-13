@@ -54,14 +54,6 @@ class SideMenuViewController: BaseTableController, UITableViewDelegate, UITableV
         self.tableView.fillSuperview()
     }
     
-    func editProfileAction(sender: AnyObject?) {
-        let controller = ProfileEditViewController()
-        let wrapper = AirNavigationController()
-        wrapper.viewControllers = [controller]
-        UIViewController.topMostViewController()?.present(wrapper, animated: true, completion: nil)
-        slideMenuController()?.closeRight()
-    }
-    
     func userStateDidChange(notification: NSNotification) {
         bind()
     }
@@ -74,14 +66,18 @@ class SideMenuViewController: BaseTableController, UITableViewDelegate, UITableV
         bind()
     }
     
+    func rightWillOpen(notification: NSNotification?) {
+        Reporting.track("view_sidemenu")
+    }
+    
+    func rightDidClose(notification: NSNotification?) {}
+
     /*--------------------------------------------------------------------------------------------
     * Methods
     *--------------------------------------------------------------------------------------------*/
 
     override func initialize() {
         super.initialize()
-
-        Reporting.screen("SideMenu")
 
         self.tableView = UITableView(frame: self.tableView.frame, style: .plain)
         self.tableView.delegate = self
@@ -113,6 +109,8 @@ class SideMenuViewController: BaseTableController, UITableViewDelegate, UITableV
         NotificationCenter.default.addObserver(self, selector: #selector(userStateDidChange(notification:)), name: NSNotification.Name(rawValue: Events.UserDidSwitch), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(groupDidSwitch(notification:)), name: NSNotification.Name(rawValue: Events.GroupDidSwitch), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(groupDidChange(notification:)), name: NSNotification.Name(rawValue: Events.GroupDidUpdate), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(rightDidClose(notification:)), name: NSNotification.Name(rawValue: Events.RightDidClose), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(rightWillOpen(notification:)), name: NSNotification.Name(rawValue: Events.RightWillOpen), object: nil)
     }
     
     func bind() {
@@ -151,6 +149,7 @@ extension SideMenuViewController {
         if selectedCell == self.membersCell {
             
             if let role = StateController.instance.group.role {
+                Reporting.track("view_group_members")
                 let controller = MemberListController()
                 let wrapper = AirNavigationController(rootViewController: controller)
                 controller.scope = (role == "guest") ? .channel : .group
@@ -163,6 +162,7 @@ extension SideMenuViewController {
                 UIShared.toast(message: "Guests can\'t send group invites")
             }
             else {
+                Reporting.track("invite_group_members")
                 let controller = ContactPickerController()
                 controller.flow = .none
                 controller.inputRole = "members"
@@ -174,6 +174,7 @@ extension SideMenuViewController {
         }
         if selectedCell == self.profileCell {
             
+            Reporting.track("view_profile_edit")
             let controller = ProfileEditViewController()
             let wrapper = AirNavigationController()
             wrapper.viewControllers = [controller]
@@ -181,6 +182,7 @@ extension SideMenuViewController {
         }
         if selectedCell == self.switchCell {
             
+            Reporting.track("view_group_switcher")
             let controller = GroupSwitcherController()
             let wrapper = AirNavigationController(rootViewController: controller)
             UIViewController.topMostViewController()?.present(wrapper, animated: true, completion: nil)
@@ -190,6 +192,7 @@ extension SideMenuViewController {
                 UIShared.toast(message: "Only group owners can manage groups")
             }
             else {
+                Reporting.track("view_group_manager")
                 let controller = GroupEditViewController()
                 let wrapper = AirNavigationController(rootViewController: controller)
                 UIViewController.topMostViewController()?.present(wrapper, animated: true, completion: nil)
@@ -197,6 +200,7 @@ extension SideMenuViewController {
         }
         if selectedCell == self.settingsCell {
             
+            Reporting.track("view_user_settings")
             let controller = SettingsTableViewController()
             let wrapper = AirNavigationController(rootViewController: controller)
             UIViewController.topMostViewController()?.present(wrapper, animated: true, completion: nil)

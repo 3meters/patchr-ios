@@ -25,7 +25,7 @@ struct UIShared {
 						doIt in
 						if doIt {
                             Log.w("Incompatible version: Update selected")
-                            Reporting.track("Selected to Update Incompatible Version")
+                            Reporting.track("accept_update")
                             var appStoreURL = "itms-apps://itunes.apple.com/app/id\(Ids.appleAppId)"
                             if Config.appConfiguration == .testFlight {
                                 appStoreURL = "https://beta.itunes.apple.com/v1/app/\(Ids.appleAppId)"
@@ -37,7 +37,8 @@ struct UIShared {
 						else {
 							if UserController.instance.authenticated {
 								Log.w("Incompatible version: Declined so signout and jump to lobby")
-								Reporting.track("Declined to Update Incompatible Version")
+								Reporting.track("decline_update")
+                                Reporting.track("logout")
 								UserController.instance.logout()
 							}
 						}
@@ -63,7 +64,6 @@ struct UIShared {
 						doIt in
 						if doIt {
 							Log.w("Prompt to enable location: Go to settings option selected")
-							Reporting.track("Selected to View Location Settings")
 							let settingsURL = UIApplicationOpenSettingsURLString
 							if let url = NSURL(string: settingsURL) {
 								UIApplication.shared.openURL(url as URL)
@@ -71,7 +71,6 @@ struct UIShared {
 						}
 						else {
 							Log.w("Prompt to enable location: Declined")
-							Reporting.track("Declined to View Location Settings")
 						}
 				}
 			}

@@ -44,8 +44,6 @@ class LobbyViewController: UIViewController {
 	
 	override func viewWillAppear(_ animated: Bool) {
 		super.viewWillAppear(animated)
-		Reporting.screen("Lobby")
-		
 		self.view.endEditing(true)
 		self.navigationController?.setNavigationBarHidden(true, animated: animated)
 		if self.firstLaunch {
@@ -56,7 +54,7 @@ class LobbyViewController: UIViewController {
 	override func viewDidAppear(_ animated: Bool) {
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
         if appDelegate.firstLaunch {
-            Reporting.track("Onboarding_displayed_first_launch")
+            Reporting.track("view_onboarding_auto")
             showOnboarding()
         }
 		
@@ -117,6 +115,7 @@ class LobbyViewController: UIViewController {
 			UIShared.compatibilityUpgrade()
 		}
 		else {
+            Reporting.track("view_email_form")
 			let controller = EmailViewController()
 			controller.flow = .onboardLogin
 			self.navigationController?.pushViewController(controller, animated: true)
@@ -135,6 +134,7 @@ class LobbyViewController: UIViewController {
 					self.alert(title: "Not connected", message: message, cancelButtonTitle: "OK")
 				}
 				else {
+                    Reporting.track("view_email_form")
 					let controller = EmailViewController()
 					controller.flow = .onboardCreate
 					self.navigationController?.pushViewController(controller, animated: true)
@@ -144,7 +144,7 @@ class LobbyViewController: UIViewController {
 	}
 	
     func onboardingAction(sender: AnyObject?) {
-        Reporting.track("Onboarding_displayed_by_user")
+        Reporting.track("view_onboarding")
         showOnboarding()
     }
     
@@ -247,11 +247,11 @@ class LobbyViewController: UIViewController {
 
 extension LobbyViewController: AlertOnboardingDelegate {
     func alertOnboardingSkipped(_ currentStep: Int, maxStep: Int) {
-        Reporting.track("Onboarding_skipped")
+        Reporting.track("skip_onboarding")
     }
     
     func alertOnboardingCompleted() {
-        Reporting.track("Onboarding_completed")
+        Reporting.track("complete_onboarding")
     }
     
     func alertOnboardingNext(_ nextStep: Int) { }

@@ -193,6 +193,7 @@ class MemberSettingsController: UITableViewController {
         let userId = self.inputUser.id!
 
         if self.target == .group {
+            Reporting.track("update_group_member_role")
             if self.roleNext != self.role {
 
                 let role = self.roleNext!
@@ -204,6 +205,7 @@ class MemberSettingsController: UITableViewController {
                     memberGroupsPath: role
                 ]
 
+                Reporting.track("update_group_member_role")
                 FireController.db.updateChildValues(updates)
 
                 /* Switching to full member */
@@ -258,6 +260,7 @@ class MemberSettingsController: UITableViewController {
                             memberChannelsPath: self.roleNext!,
                             channelMembersPath: self.roleNext!
                         ]
+                        Reporting.track("update_channel_member_role")
                         FireController.db.updateChildValues(updates)
                         self.closeAction(sender: nil)
                     }
@@ -268,6 +271,7 @@ class MemberSettingsController: UITableViewController {
                     memberChannelsPath: self.roleNext!,
                     channelMembersPath: self.roleNext!
                 ]
+                Reporting.track("update_channel_member_role")
                 FireController.db.updateChildValues(updates)
                 closeAction(sender: nil)
             }
@@ -283,6 +287,9 @@ class MemberSettingsController: UITableViewController {
             message: "Are you sure you want to remove \(userTitle) from this \(targetTitle)?",
         actionTitle: "Remove", cancelTitle: "Cancel", delegate: self) { doIt in
             if doIt {
+                
+                Reporting.track((self.target == .group) ? "remove_group_member" : "remove_channel_member")
+
                 self.progress = AirProgress.showAdded(to: self.view.window!, animated: true)
                 self.progress!.mode = MBProgressHUDMode.indeterminate
                 self.progress!.styleAs(progressStyle: .activityWithText)
@@ -337,6 +344,7 @@ extension MemberSettingsController {
                 self.tableView.reloadData()
             }
             else if self.roleNext == "guest" && indexPath.section == 1 {
+                Reporting.track("view_channel_picker")
                 let controller = ChannelPickerController()
                 let wrapper = AirNavigationController(rootViewController: controller)
                 if self.channelsAfter.count > 0 {

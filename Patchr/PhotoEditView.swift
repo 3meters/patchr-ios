@@ -114,6 +114,7 @@ class PhotoEditView: UIView {
 	}
 
 	func editPhotoAction(sender: AnyObject) {
+        Reporting.track("view_photo_editor")
 		if self.controller != nil, let image = self.imageView.image {
 			let controller = AdobeUXImageEditorViewController(image: image)
 			controller.delegate = self
@@ -122,6 +123,7 @@ class PhotoEditView: UIView {
 	}
 
 	func clearPhotoAction(sender: AnyObject) {
+        Reporting.track("clear_photo")
 		if self.photoSchema == Schema.entityMessage {
 			self.imageView.image = nil
 			configureTo(photoMode: .empty)
@@ -139,6 +141,7 @@ class PhotoEditView: UIView {
 	}
 
 	func setPhotoAction(sender: AnyObject) {
+        Reporting.track("open_photo_options")
 		self.photoChooser?.choosePhoto(sender: sender) { [weak self] image, imageResult, asset, cancelled in
             guard let this = self else { return }
 			if !cancelled {
@@ -324,11 +327,12 @@ extension PhotoEditView: AdobeUXImageEditorViewControllerDelegate {
 
 	func photoEditor(_ editor: AdobeUXImageEditorViewController, finishedWith image: UIImage?) {
 		self.photoChosen(image: image, imageResult: nil, asset: self.imageView.asset)
-		Reporting.track("Edited Photo")
+		Reporting.track("edited_photo")
 		self.controller!.dismiss(animated: true, completion: nil)
 	}
 
 	func photoEditorCanceled(_ editor: AdobeUXImageEditorViewController) {
+        Reporting.track("cancel_photo_edit")
 		self.controller!.dismiss(animated: true, completion: nil)
 	}
 }

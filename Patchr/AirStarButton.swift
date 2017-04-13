@@ -33,6 +33,7 @@ class AirStarButton: AirToggleButton {
     }
 
     override func onClick(sender: AnyObject) {
+        Reporting.track(self.toggledOn ? "unstar_channel" : "star_channel")
         self.channel.star(on: !self.toggledOn)
         toggle(on: !self.toggledOn, animate: true)
     }

@@ -52,15 +52,15 @@ class AirReactionButton: UIControl {
         if let message = self.message {
             self.isEnabled = false
             if self.toggledOn {
+                Reporting.track("remove_reaction", properties: ["code": emojiCode])
                 message.removeReaction(emoji: self.emojiCode)
                 self.toggle(on: false, animate: true)
-                Reporting.track("Reaction Off")
                 self.isEnabled = true
             }
             else {
+                Reporting.track("add_reaction", properties: ["code": emojiCode])
                 message.addReaction(emoji: self.emojiCode)
                 self.toggle(on: true, animate: true)
-                Reporting.track("Reaction On")
                 self.isEnabled = true
             }
         }

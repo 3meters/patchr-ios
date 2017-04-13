@@ -79,6 +79,7 @@ class GroupEditViewController: BaseEditViewController {
         self.activeTextField?.resignFirstResponder()
         isValid() { valid in
             if valid {
+                Reporting.track("update_group")
                 self.post()
             }
         }
@@ -102,6 +103,7 @@ class GroupEditViewController: BaseEditViewController {
                     destructConfirmation: true,
                     delegate: self) { doIt in
                         if doIt {
+                            Reporting.track("delete_group")
                             self.delete()
                         }
                 }
@@ -110,6 +112,7 @@ class GroupEditViewController: BaseEditViewController {
     }
     
     func manageUsersAction(sender: AnyObject?) {
+        Reporting.track("view_group_members_management")
         let controller = MemberListController()
         controller.scope = .group
         controller.manage = true
@@ -175,7 +178,6 @@ class GroupEditViewController: BaseEditViewController {
         self.contentHolder.addSubview(self.titleField)
         self.contentHolder.addSubview(self.usersButton)
 
-        Reporting.screen("GroupEdit")
         self.banner.text = "Group Settings"
         
         /* Delete */

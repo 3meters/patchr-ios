@@ -81,6 +81,7 @@ class SettingsTableViewController: UITableViewController {
             message: "Are you sure you want to leave this group? An invitation may be required to rejoin.",
             actionTitle: "Leave", cancelTitle: "Cancel", delegate: self) { doIt in
                 if doIt {
+                    Reporting.track("leave_group")
                     self.progress = AirProgress.showAdded(to: MainController.instance.window!, animated: true)
                     self.progress!.mode = MBProgressHUDMode.indeterminate
                     self.progress!.styleAs(progressStyle: .activityWithText)
@@ -107,6 +108,7 @@ class SettingsTableViewController: UITableViewController {
 
     func logoutAction(sender: AnyObject) {
         self.dismiss(animated: true) {
+            Reporting.track("logout")
             UserController.instance.logout()
         }
     }
@@ -122,7 +124,7 @@ class SettingsTableViewController: UITableViewController {
         self.progress!.show(true)
 
         Utils.clearSearchHistory()
-        Reporting.track("Cleared search history")
+        Reporting.track("clear_search_history")
 
         self.progress!.hide(true)
     }
@@ -136,8 +138,6 @@ class SettingsTableViewController: UITableViewController {
     *--------------------------------------------------------------------------------------------*/
 
     func initialize() {
-
-        Reporting.screen("Settings")
 
         self.navigationItem.title = "Settings"
 
@@ -204,6 +204,7 @@ class SettingsTableViewController: UITableViewController {
                 let memberGroupsPath = "member-groups/\(userId)/\(groupId)/email"
                 let groupMembersPath = "group-members/\(groupId)/\(userId)/email"
                 if switcher.isOn {
+                    Reporting.track("hide_email")
                     let updates: [String: Any] = [
                         groupMembersPath: NSNull(),
                         memberGroupsPath: NSNull()
@@ -211,6 +212,7 @@ class SettingsTableViewController: UITableViewController {
                     FireController.db.updateChildValues(updates)
                 }
                 else if let email = FIRAuth.auth()?.currentUser?.email {
+                    Reporting.track("show_email")
                     let updates: [String: Any] = [
                         groupMembersPath: email,
                         memberGroupsPath: email
@@ -235,16 +237,19 @@ extension SettingsTableViewController {
         let selectedCell = tableView.cellForRow(at: indexPath)
         
         if selectedCell == self.editProfileCell {
+            Reporting.track("view_profile_edit")
             let controller = ProfileEditViewController()
             self.navigationController?.pushViewController(controller, animated: true)
         }
 
         if selectedCell == self.notificationsCell {
+            Reporting.track("view_notification_settings")
             let controller = NotificationSettingsViewController()
             self.navigationController?.pushViewController(controller, animated: true)
         }
         
         if selectedCell == self.sendFeedbackCell {
+            Reporting.track("view_feedback_compose")
             let email = "feedback@patchr.com"
             let subject = "Feedback for Patchr iOS"
             if MFMailComposeViewController.canSendMail() {
@@ -264,6 +269,7 @@ extension SettingsTableViewController {
         }
             
         if selectedCell == self.rateCell {
+            Reporting.track("rate_app")
             let appStoreURL = "itms-apps://itunes.apple.com/app/id\(Ids.appleAppId)"
             if let url = NSURL(string: appStoreURL) {
                 UIApplication.shared.openURL(url as URL)
@@ -272,11 +278,13 @@ extension SettingsTableViewController {
         }
             
         if selectedCell == self.aboutCell {
+            Reporting.track("view_about")
             let controller = AboutViewController()
             self.navigationController?.pushViewController(controller, animated: true)
         }
             
         if selectedCell == self.developmentCell {
+            Reporting.track("view_development_settings")
             let controller = DevelopmentViewController()
             self.navigationController?.pushViewController(controller, animated: true)
         }
@@ -386,11 +394,13 @@ extension SettingsTableViewController: MFMailComposeViewControllerDelegate {
 
         switch result {
             case MFMailComposeResult.cancelled:    // 0
+                Reporting.track("cancel_feedback")
                 UIShared.toast(message: "Feedback cancelled", controller: self, addToWindow: false)
             case MFMailComposeResult.saved:        // 1
+                Reporting.track("save_feedback")
                 UIShared.toast(message: "Feedback saved", controller: self, addToWindow: false)
             case MFMailComposeResult.sent:        // 2
-                Reporting.track("Sent Feedback")
+                Reporting.track("send_feedback")
                 UIShared.toast(message: "Feedback sent", controller: self, addToWindow: false)
             case MFMailComposeResult.failed:    // 3
                 UIShared.toast(message: "Feedback send failure: \(error!.localizedDescription)", controller: self, addToWindow: false)

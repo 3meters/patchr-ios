@@ -72,6 +72,7 @@ class MemberPickerController: BaseTableController, CLTokenInputViewDelegate {
     }
     
     func inviteListAction(sender: AnyObject?) {
+        Reporting.track("view_outstanding_invites")
         inviteList()
     }
 
@@ -284,6 +285,7 @@ class MemberPickerController: BaseTableController, CLTokenInputViewDelegate {
                 }
                 UpdateConfirmationAlert(title: "Add to channel", message: message, actionTitle: "Add", cancelTitle: "Cancel", delegate: nil, onDismiss: { doit in
                     if doit {
+                        Reporting.track("add_members_to_channel")
                         for userId in self.picks.keys {
                             FireController.instance.addUserToChannel(userId: userId, groupId: groupId, channelId: channelId, channelName: channelName)
                         }
@@ -293,6 +295,8 @@ class MemberPickerController: BaseTableController, CLTokenInputViewDelegate {
             }
         }
         else {
+            
+            Reporting.track("invite_members_to_channel")
             
             let channels = [self.inputChannelId!: self.inputChannelName!]
             

@@ -111,22 +111,22 @@ extension AboutViewController {
         let selectedCell = tableView.cellForRow(at: indexPath)
         
         if selectedCell == self.termsOfServiceCell {
+            Reporting.track("view_terms_of_service")
             let termsURLString = "http://patchr.com/terms"
             self.pushWebViewController(url: NSURL(string: termsURLString) as URL?)
-            Reporting.track("Viewed Terms of Service")
         }
             
         if selectedCell == self.privacyPolicyCell {
+            Reporting.track("view_privacy_policy")
             let privacyPolicyURLString = "http://patchr.com/privacy"
             self.pushWebViewController(url: NSURL(string: privacyPolicyURLString) as URL?)
-            Reporting.track("Viewed Privacy Policy")
         }
             
         if selectedCell == self.softwareLicensesCell {
+            Reporting.track("view_software_licenses")
             let controller = VTAcknowledgementsViewController.acknowledgementsViewController()
             controller?.headerText = "The following third party software may be contained in portions of the Patchr mobile application. We offer our sincere thanks to the open source community for all of their contributions. Carry on!"
             self.navigationController?.pushViewController(controller!, animated: true)
-            Reporting.track("Viewed Software Licenses")
         }
     }
 

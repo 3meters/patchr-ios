@@ -155,6 +155,7 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
     }
     
     func openGalleryAction(sender: AnyObject) {
+        Reporting.track("view_photo_gallery")
         showPhotos(mode: .gallery)
     }
     
@@ -171,6 +172,7 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
             if let user = photoControl.target as? FireUser {
                 let controller = MemberViewController()
                 controller.inputUserId = user.id
+                Reporting.track("view_group_members")
                 self.navigationController?.pushViewController(controller, animated: true)
             }
         }
@@ -180,6 +182,7 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
         if let recognizer = sender as? UITapGestureRecognizer,
             let control = recognizer.view as? AirImageView,
             let url = control.fromUrl {
+            Reporting.track("view_photos")
             showPhotos(mode: .browse, fromView: control, initialUrl: url)
         }
     }
@@ -194,6 +197,7 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
                     let groupId = self.channel.groupId!
                     let channelId = message.channelId!
                     let messageId = message.id!
+                    Reporting.track("delete_message")
                     FireController.instance.deleteMessage(messageId: messageId, channelId: channelId, groupId: groupId)
                 }
         }
@@ -206,6 +210,7 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
         controller.inputChannelId = self.channel.id
         controller.inputGroupId = self.channel.groupId
         wrapper.viewControllers = [controller]
+        Reporting.track("view_channel_edit")
         self.present(wrapper, animated: true, completion: nil)
     }
     
@@ -214,6 +219,7 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
         let channelId = self.channel.id!
         let channelName = self.channel.name!
         let userId = UserController.instance.userId!
+        Reporting.track("join_channel")
         FireController.instance.addUserToChannel(userId: userId, groupId: groupId, channelId: channelId, channelName: channelName, then: { success in
             if success {
                 UIShared.toast(message: "You have joined this channel")
@@ -230,6 +236,7 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
             if self.channel.visibility == "open" && role != "guest" {
                 let userId = UserController.instance.userId!
                 let channelName = self.channel.name!
+                Reporting.track("leave_open_channel")
                 FireController.instance.removeUserFromChannel(userId: userId, groupId: group.id!, channelId: self.channel.id!, channelName: channelName, then: { success in
                     if success {
                         UIShared.toast(message: "You have left this channel.")
@@ -256,6 +263,12 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
                             let groupId = group.id!
                             let channelId = self.channel.id!
                             let channelName = self.channel.name!
+                            if role == "guest" {
+                                Reporting.track("leave_channel_as_guest")
+                            }
+                            else {
+                                Reporting.track("leave_private_channel")
+                            }
                             FireController.instance.removeUserFromChannel(userId: userId, groupId: groupId, channelId: channelId, channelName: channelName, then: { [weak self] success in
                                 guard self != nil else { return }
                                 if success {
@@ -281,6 +294,7 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
                 let cell = self.tableView.cellForRow(at: indexPath) as! MessageListCell
                 let snap = self.queryController.snapshot(at: indexPath.row)
                 let message = FireMessage(dict: snap.value as! [String: Any], id: snap.key)
+                Reporting.track("view_message_actions")
                 showMessageActions(message: message, sourceView: cell.contentView)
             }
         }
@@ -290,8 +304,16 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
         NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.LeftWillOpen), object: self, userInfo: nil)
     }
     
+    func rightWillOpen() {
+        NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.RightWillOpen), object: self, userInfo: nil)
+    }
+    
     func leftDidOpen() {
         self.viewIsVisible = false
+    }
+    
+    func rightDidClose() {
+        NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.RightDidClose), object: self, userInfo: nil)
     }
     
     func leftDidClose() {
@@ -389,12 +411,14 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
 
     func reachabilityChanged() {
         if ReachabilityManager.instance.isReachable() {
+            Reporting.track("network_available")
             hideMessageBar()
             if self.headerView.needsPhoto {
                 self.headerView.displayPhoto()
             }
         }
         else {
+            Reporting.track("network_unavailable")
             showMessageBar()
         }
     }
@@ -784,7 +808,7 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
                 UIShared.toast(message: "Join this channel to add reactions.")
                 return
             }
-            
+            Reporting.track("view_reaction_picker")
             let layout = UICollectionViewFlowLayout()
             let controller = ReactionPickerController(collectionViewLayout: layout)
             controller.inputMessage = message
@@ -837,6 +861,8 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
     
     func showChannelActions(sender: AnyObject?) {
         
+        Reporting.track("view_channel_actions")
+        
         if self.channel != nil {
             let sheet = UIAlertController(title: nil, message: nil, preferredStyle: UIAlertControllerStyle.actionSheet)
             
@@ -876,6 +902,7 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
                     let mutedTitle = muted ? "Unmute channel" : "Mute channel"
                     muteAction = UIAlertAction(title: mutedTitle, style: .default) { [weak self] action in
                         guard let this = self else { return }
+                        Reporting.track(muted ? "unmute_channel" : "mute_channel")
                         this.channel.mute(on: !muted)
                     }
                 }
@@ -884,6 +911,7 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
                     let starredTitle = starred ? "Unstar channel" : "Star channel"
                     starAction = UIAlertAction(title: starredTitle, style: .default) { [weak self] action in
                         guard let this = self else { return }
+                        Reporting.track(starred ? "unstar_channel" : "star_channel")
                         this.channel.star(on: !starred)
                         this.headerView.starButton.toggle(on: !starred, animate: true)
                     }
@@ -905,6 +933,7 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
 
             let inviteAction = UIAlertAction(title: "Invite to channel", style: .default) { [weak self] action in
                 guard let this = self else { return }
+                Reporting.track("view_channel_invite")
                 let controller = ChannelInviteController()
                 controller.flow = .none
                 controller.inputChannelId = this.channel.id!

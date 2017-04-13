@@ -319,6 +319,8 @@ class ContactPickerController: BaseTableController, CLTokenInputViewDelegate {
     
     func filterContacts() {
         
+        Reporting.track("filter_contacts")
+        
         self.contactsBySection.removeAll()
         self.contactsFiltered.removeAll()
         self.sectionTitles = nil
@@ -374,6 +376,8 @@ class ContactPickerController: BaseTableController, CLTokenInputViewDelegate {
     func invite() {
         
         if self.inputRole == "members" {
+            
+            Reporting.track("invite_group_members")
             
             let groupId = self.inputGroupId ?? StateController.instance.groupId!
             let groupTitle = self.inputGroupTitle ?? StateController.instance.group!.title!
@@ -432,6 +436,8 @@ class ContactPickerController: BaseTableController, CLTokenInputViewDelegate {
             }
         }
         else if self.inputRole == "guests" {
+            
+            Reporting.track("invite_channel_guests")
             
             let channels = [self.inputChannelId!: self.inputChannelName!]
             

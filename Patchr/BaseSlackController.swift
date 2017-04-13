@@ -87,6 +87,7 @@ class BaseSlackController: SLKTextViewController {
 	*--------------------------------------------------------------------------------------------*/
 
     func editPhotoAction(sender: AnyObject) {
+        Reporting.track("edit_photo")
         hidePhotoEdit()
         self.photoEditView.editPhotoAction(sender: sender)
     }
@@ -98,6 +99,8 @@ class BaseSlackController: SLKTextViewController {
         }
         
         self.dismissKeyboard(true)
+        Reporting.track("open_photo_options")
+
         self.photoEditView.photoChooser?.choosePhoto(sender: sender as AnyObject) { [weak self] image, imageResult, asset, cancelled in
             guard let this = self else { return }
             if let controller = self as? ChannelViewController {
@@ -106,10 +109,14 @@ class BaseSlackController: SLKTextViewController {
             if !cancelled {
                 if image != nil || imageResult != nil {
                     DispatchQueue.main.async {
+                        Reporting.track("chose_photo")
                         this.photoEditView.photoChosen(image: image, imageResult: imageResult, asset: asset)
                         this.showPhotoEdit()
                     }
                 }
+            }
+            else {
+                Reporting.track("cancel_photo_selection")
             }
         }
     }
@@ -159,11 +166,13 @@ class BaseSlackController: SLKTextViewController {
 
     func photoDidChange(sender: NSNotification) {
         textDidUpdate(true)
+        Reporting.track("change_photo")
         showPhotoEdit()
     }
     
     func photoRemoved(sender: NSNotification) {
         textDidUpdate(true)
+        Reporting.track("remove_photo")
         hidePhotoEdit()
     }
 
@@ -311,6 +320,7 @@ class BaseSlackController: SLKTextViewController {
         }
         
         ref.setValue(message)
+        Reporting.track("send_message")
         
         let path = "queue/notifications/\(ref.key)"
         FireController.db.child(path).setValue(task) { error, ref in
@@ -351,7 +361,7 @@ class BaseSlackController: SLKTextViewController {
         
         let text = self.textInputbar.textView.text
         updateMap["text"] = (text == nil || text!.isEmpty) ? NSNull() : text
-        
+        Reporting.track("send_edited_message")
         FireController.db.child(path).updateChildValues(updateMap)
         NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.MessageDidUpdate), object: self, userInfo: ["message_id":self.editingMessage.id!])
     }

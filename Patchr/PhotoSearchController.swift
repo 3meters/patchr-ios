@@ -105,8 +105,6 @@ class PhotoSearchController: UICollectionViewController, UITableViewDelegate, UI
 
 	override func viewWillAppear(_ animated: Bool) {
 		super.viewWillAppear(animated)
-        
-        Reporting.screen("PhotoPicker")
 		
         if self.searchBar == nil {
 			let navHeight = self.navigationController?.navigationBar.height() ?? 0
@@ -313,6 +311,7 @@ extension PhotoSearchController: UISearchBarDelegate {
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         self.offset = 0
         searchBar.resignFirstResponder()
+        Reporting.track("submit_photo_search")
         self.loadData(paging: false)
         self.autocompleteList.isHidden = true
     }
@@ -402,7 +401,7 @@ extension PhotoSearchController {
                 browser.disableVerticalSwipe = false
                 browser.browseDelegate = self.pickerDelegate  // Pass delegate through
                 browser.imageResult = self.imageForIndexPath(indexPath: indexPath as NSIndexPath)
-                
+                Reporting.track("preview_search_photo")
                 present(browser, animated:true, completion:nil)
             }
             else if self.inputImageType == .animatedGif {

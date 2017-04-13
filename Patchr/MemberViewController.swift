@@ -85,6 +85,7 @@ class MemberViewController: BaseViewController, UIScrollViewDelegate, UITextFiel
 	 *--------------------------------------------------------------------------------------------*/
     
     func editAction(sender: AnyObject?) {
+        Reporting.track("view_profile_edit")
         let controller = ProfileEditViewController()
         let wrapper = AirNavigationController()
         wrapper.viewControllers = [controller]
@@ -92,7 +93,7 @@ class MemberViewController: BaseViewController, UIScrollViewDelegate, UITextFiel
     }
     
     func emailAction(sender: AnyObject?) {
-        
+        Reporting.track("view_email_compose")
         if let email = self.user!.email {
             if MFMailComposeViewController.canSendMail() {
                 Ui.mailComposer!.mailComposeDelegate = self
@@ -111,6 +112,7 @@ class MemberViewController: BaseViewController, UIScrollViewDelegate, UITextFiel
 
     func phoneAction(sender: AnyObject?) {
         do {
+            Reporting.track("call_member")
             let phoneNumberKit = PhoneNumberKit()
             let phoneNumber = try phoneNumberKit.parse((self.user?.profile?.phone!)!)
             UIApplication.shared.openURL(URL(string: "tel://\(phoneNumber.adjustedNationalNumber())")!)
@@ -240,14 +242,16 @@ extension MemberViewController: MFMailComposeViewControllerDelegate {
     func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Error?) {
 		switch result {
 			case MFMailComposeResult.cancelled:	// 0
-				UIShared.toast(message: "Report cancelled", controller: self, addToWindow: false)
+                Reporting.track("email_cancelled")
+				UIShared.toast(message: "Email cancelled", controller: self, addToWindow: false)
 			case MFMailComposeResult.saved:		// 1
-				UIShared.toast(message: "Report saved", controller: self, addToWindow: false)
+                Reporting.track("email_saved")
+				UIShared.toast(message: "Email saved", controller: self, addToWindow: false)
 			case MFMailComposeResult.sent:		// 2
-				Reporting.track("Sent Report", properties: ["target":"Message" as AnyObject])
-				UIShared.toast(message: "Report sent", controller: self, addToWindow: false)
+                Reporting.track("email_sent")
+				UIShared.toast(message: "Email sent", controller: self, addToWindow: false)
 			case MFMailComposeResult.failed:	// 3
-				UIShared.toast(message: "Report send failure: \(error!.localizedDescription)", controller: self, addToWindow: false)
+				UIShared.toast(message: "Email send failure: \(error!.localizedDescription)", controller: self, addToWindow: false)
 				break
 		}
 		

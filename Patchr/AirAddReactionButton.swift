@@ -60,6 +60,7 @@ class AirAddReactionButton: UIControl {
     }
     
     func showReactionPicker() {
+        Reporting.track("view_reaction_picker")
         let layout = UICollectionViewFlowLayout()
         let controller = ReactionPickerController(collectionViewLayout: layout)
         controller.inputMessage = self.message

@@ -37,7 +37,7 @@ struct Reporting {
         
         FIRAnalytics.setUserID(user?.uid)
         FIRAnalytics.setUserPropertyString(user?.displayName, forName: "name")
-        FIRAnalytics.setUserPropertyString(user?.email, forName: "email")
+        FIRAnalytics.setUserPropertyString(user?.email, forName: "email") // TODO: Is this allowed?
         
         Bugsnag.configuration()!.setUser(user?.uid, withName: user?.displayName, andEmail: user?.email)
         
@@ -52,9 +52,5 @@ struct Reporting {
 	static func track(_ event: String, properties: [String : Any]? = nil) {
         let event = event.lowercased().replacingOccurrences(of: " ", with: "_")
         FIRAnalytics.logEvent(withName: event, parameters: nil)
-	}
-	
-	static func screen(_ name: String) {
-        FIRAnalytics.logEvent(withName: name, parameters: nil)
 	}
 }

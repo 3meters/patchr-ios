@@ -137,6 +137,8 @@ public struct Events {
     static let GroupDisconnected = "GroupDisconnected"
     static let LeftDidClose = "LeftDidClose"
     static let LeftWillOpen = "LeftWillOpen"
+    static let RightDidClose = "RightDidClose"
+    static let RightWillOpen = "RightWillOpen"
     static let MessageDidUpdate = "MessageDidUpdate"
     static let PhotoDidChange = "PhotoDidChange"
     static let PhotoRemoved = "PhotoRemoved"

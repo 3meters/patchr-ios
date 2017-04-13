@@ -93,6 +93,7 @@ class PhotoChooserUI: NSObject, UINavigationControllerDelegate {
 	}
 
 	private func choosePhotoFromLibrary() {
+        Reporting.track("choose_photo_from_library")
         chosenPhotoFunction = .ChooseLibraryPhoto
 		let pickerController = UIImagePickerController()
         pickerController.sourceType = .photoLibrary
@@ -122,6 +123,7 @@ class PhotoChooserUI: NSObject, UINavigationControllerDelegate {
 		pickerController.sourceType = .camera
 		pickerController.delegate = self
 		pickerController.mediaTypes = [kUTTypeImage as String]
+        Reporting.track("take_photo_with_device")
 		self.hostViewController?.present(pickerController, animated: true, completion: nil)
 	}
 
@@ -133,6 +135,7 @@ class PhotoChooserUI: NSObject, UINavigationControllerDelegate {
         controller.inputImageType = imageType
 		controller.pickerDelegate = self
 		navController.viewControllers = [controller]
+        Reporting.track("search_photos")
 		self.hostViewController?.present(navController, animated: true, completion: nil)
 	}
 

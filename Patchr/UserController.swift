@@ -97,7 +97,6 @@ class UserController: NSObject {
                     }
                 }
             })
-            
             self.setUserId(userId: user.uid)
             then?(true)
         }
@@ -190,14 +189,15 @@ class UserController: NSObject {
         self.counterRef?.removeObserver(withHandle: self.counterHandle!)
         
         try! FIRAuth.auth()!.signOut()  // Triggers cleanup by canned queries including self.userQuery
-        
+
         Reporting.updateUser(user: nil)
+        
+        Log.i("User logged out")
+
         StateController.instance.clearGroup() // Also clears channel
         self.user = nil
         self.userId = nil
         
         MainController.instance.route() // Showing lobby also clears group and channel
-        Reporting.track("Logged Out")
-        Log.i("User logged out")
     }
 }

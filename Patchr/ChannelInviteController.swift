@@ -93,8 +93,6 @@ class ChannelInviteController: BaseEditViewController {
 	override func initialize() {
 		super.initialize()
 		
-		Reporting.screen("ChannelInvite")
-        
         self.channels[self.inputChannelId] = self.inputChannelName
         
         self.heading.text = "Invite people to #\(self.inputChannelName!)."

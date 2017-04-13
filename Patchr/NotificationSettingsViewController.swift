@@ -47,7 +47,6 @@ class NotificationSettingsViewController: UITableViewController {
     *--------------------------------------------------------------------------------------------*/
 
     func initialize() {
-        Reporting.screen("NotificationSettings")
 
         self.navigationItem.title = "Notifications and Sounds"
 
@@ -81,6 +80,7 @@ class NotificationSettingsViewController: UITableViewController {
     func toggleAction(sender: AnyObject?) {
         if let switcher = sender as? UISwitch {
             if switcher.tag == Setting.playSoundEffects.rawValue {
+                Reporting.track(switcher.isOn ? "enable_sound_effects" : "disable_sound_effects")
                 UserDefaults.standard.set(switcher.isOn, forKey: PerUserKey(key: Prefs.soundEffects))
             }
         }
@@ -105,6 +105,8 @@ extension NotificationSettingsViewController {
         
         if indexPath.section == 0 {
             
+            Reporting.track("update_notification_settings")
+
             let groupId = StateController.instance.groupId!
             let userId = UserController.instance.userId!
             let memberGroupsPath = "member-groups/\(userId)/\(groupId)/notifications"

@@ -84,6 +84,7 @@ class ProfileEditViewController: BaseEditViewController {
     
     func accountAction(sender: AnyObject) {
         /* Requires re-authentication */
+        Reporting.track("view_password_entry")
         let controller = PasswordViewController()
         controller.mode = .reauth
         self.navigationController?.pushViewController(controller, animated: true)
@@ -146,8 +147,6 @@ class ProfileEditViewController: BaseEditViewController {
 
     override func initialize() {
         super.initialize()
-
-        Reporting.screen("ProfileEdit")
 
         self.message.text = "Profile"
         self.message.textColor = Theme.colorTextTitle
@@ -280,6 +279,7 @@ class ProfileEditViewController: BaseEditViewController {
         }
 
         if updates.keys.count > 0 {
+            Reporting.track("update_profile")
             FireController.db.child("users/\(userId)/profile").updateChildValues(updates)
             NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.UserDidUpdate), object: self, userInfo: ["user_id": userId])
         }

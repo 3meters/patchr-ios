@@ -54,12 +54,14 @@ class PasswordEditViewController: BaseEditViewController {
             self.progress?.removeFromSuperViewOnHide = true
             self.progress?.show(true)
 
+            Reporting.track("update_password")
 			updatePassword()
 		}
 	}
 	
 	func hideShowPasswordAction(sender: AnyObject?) {
 		if let button = sender as? AirHideShowButton {
+            Reporting.track(button.toggledOn ? "hide_password" : "show_password")
 			button.toggle(on: !button.toggledOn)
 			self.passwordField.isSecureTextEntry = !button.toggledOn
 		}
@@ -80,8 +82,6 @@ class PasswordEditViewController: BaseEditViewController {
 	
 	override func initialize() {
 		super.initialize()
-		
-		Reporting.screen("PasswordEdit")
 		
 		self.message.text = "Change password"
 		self.message.numberOfLines = 0

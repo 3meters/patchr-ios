@@ -99,6 +99,7 @@ class ChannelSwitcherController: BaseTableController {
 				self.alert(title: "Not connected", message: message, cancelButtonTitle: "OK")
 			}
 			else {
+                Reporting.track("view_channel_new")
 				let groupId = StateController.instance.groupId!
 				let controller = ChannelEditViewController()
 				let wrapper = AirNavigationController(rootViewController: controller)
@@ -111,6 +112,7 @@ class ChannelSwitcherController: BaseTableController {
 	}
 
 	func showGroupsAction(sender: AnyObject?) {
+        Reporting.track("switch_navigation_to_groups")
 		let controller = GroupSwitcherController()
         controller.simplePicker = true
         controller.view.setNeedsLayout()
@@ -138,6 +140,7 @@ class ChannelSwitcherController: BaseTableController {
 	}
 
 	func leftWillOpen(notification: NSNotification?) {
+        Reporting.track("view_navigation")
         self.dropdownButton.isUserInteractionEnabled = true
 	}
 
@@ -399,6 +402,8 @@ class ChannelSwitcherController: BaseTableController {
 extension ChannelSwitcherController: UITableViewDelegate {
 
 	func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+
+        Reporting.track("select_channel")
 
 		let cell = tableView.cellForRow(at: indexPath) as! ChannelListCell
 		let channelId = cell.channel.id!

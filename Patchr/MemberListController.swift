@@ -241,6 +241,7 @@ extension MemberListController: UITableViewDelegate {
         let user = cell.user
         let controller = MemberViewController()
         controller.inputUserId = user?.id
+        Reporting.track("view_member_detail")
         if self.popupController == nil {
             self.navigationController?.pushViewController(controller, animated: true)
         }
