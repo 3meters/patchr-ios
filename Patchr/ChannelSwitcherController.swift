@@ -282,7 +282,7 @@ class ChannelSwitcherController: BaseTableController {
                     this.role = role
                     if role != "guest" {
                         this.navigationItem.setRightBarButtonItems([this.showGroupsButton, this.searchButton], animated: false)
-                        this.searchController.load()
+                        this.searchController?.load()
                     }
                     else {
                         this.navigationItem.setRightBarButtonItems([this.showGroupsButton], animated: false)
@@ -480,47 +480,49 @@ class SearchController: NSObject {
 
 	func load() {
 
-		let userId = UserController.instance.userId!
-		let groupId = StateController.instance.groupId!
-        let path = "group-channels/\(groupId)"  // User must be group member and not guest
-        let query = FireController.db.child(path).queryOrdered(byChild: "name")
-        
-        self.queryController = DataSourceController(name:"channel_switcher")
-        self.queryController.startEmpty = true
-        self.queryController.matcher = { searchText, data in
-            let snap = data as! FIRDataSnapshot
-            let dict = snap.value as! [String: Any]
-            let name = dict["name"] as! String
-            return name.lowercased().contains(searchText.lowercased())
-        }
-        
-        self.queryController.mapper = { (snap, then) in
-            let channel = FireChannel(dict: snap.value as! [String: Any], id: snap.key)
-            if channel.visibility == "open" {
-                then(snap)
+		if let userId = UserController.instance.userId,
+            let groupId = StateController.instance.groupId {
+            
+            let path = "group-channels/\(groupId)"  // User must be group member and not guest
+            let query = FireController.db.child(path).queryOrdered(byChild: "name")
+            
+            self.queryController = DataSourceController(name:"channel_switcher")
+            self.queryController.startEmpty = true
+            self.queryController.matcher = { searchText, data in
+                let snap = data as! FIRDataSnapshot
+                let dict = snap.value as! [String: Any]
+                let name = dict["name"] as! String
+                return name.lowercased().contains(searchText.lowercased())
             }
-            else { // Only add if user is currently a member
-                let channelId = channel.id!
-                let path = "member-channels/\(userId)/\(groupId)/\(channelId)"
-                FireController.db.child(path).observeSingleEvent(of: .value, with: { snapMember in
-                    if !(snapMember.value is NSNull) {
-                        then(snap)
-                    }
-                    else {
-                        then(nil)
-                    }
-                })
+            
+            self.queryController.mapper = { (snap, then) in
+                let channel = FireChannel(dict: snap.value as! [String: Any], id: snap.key)
+                if channel.visibility == "open" {
+                    then(snap)
+                }
+                else { // Only add if user is currently a member
+                    let channelId = channel.id!
+                    let path = "member-channels/\(userId)/\(groupId)/\(channelId)"
+                    FireController.db.child(path).observeSingleEvent(of: .value, with: { snapMember in
+                        if !(snapMember.value is NSNull) {
+                            then(snap)
+                        }
+                        else {
+                            then(nil)
+                        }
+                    })
+                }
             }
-        }
-        
-        self.queryController.bind(to: self.tableView, query: query) { [weak self] tableView, indexPath, data in
-            let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! ChannelListCell
-            guard self != nil else { return cell }
-            let snap = data as! FIRDataSnapshot
-            let channel = FireChannel(dict: snap.value as! [String: Any], id: snap.key)
-            cell.reset()
-            cell.bind(channel: channel, searching: true)
-            return cell
+            
+            self.queryController.bind(to: self.tableView, query: query) { [weak self] tableView, indexPath, data in
+                let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! ChannelListCell
+                guard self != nil else { return cell }
+                let snap = data as! FIRDataSnapshot
+                let channel = FireChannel(dict: snap.value as! [String: Any], id: snap.key)
+                cell.reset()
+                cell.bind(channel: channel, searching: true)
+                return cell
+            }
         }
 	}
 }
