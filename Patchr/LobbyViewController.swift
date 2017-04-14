@@ -55,7 +55,7 @@ class LobbyViewController: UIViewController {
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
         if appDelegate.firstLaunch {
             Reporting.track("view_onboarding_auto")
-            showOnboarding()
+            showOnboarding(appFirstLaunch: true)
         }
 		
 		if self.firstLaunch {
@@ -205,31 +205,38 @@ class LobbyViewController: UIViewController {
 		}
 	}
     
-    func showOnboarding() {
+    func showOnboarding(appFirstLaunch: Bool = false) {
         
         if self.alertView == nil {
-            let images = [
+            var images = [
                 "create_group",
                 "invite_friends_2",
-                "group_chat"]
+                "group_chat_splash_3"]
             
-            let titles = [
+            var titles = [
                 "Create a Group".uppercased(),
                 "Invite Members".uppercased(),
                 "Carry On!".uppercased()
             ]
             
-            let descriptions = [
-                "Patchr groups are a modern way to organize all your group messaging for free!",
+            var descriptions = [
+                "What are the important groups in your life? Family, work or school buddies, people with a shared interest? Bring them together with a Patchr group!",
                 "Select members from your contacts and we handle the rest! We email them an invite, help them install Patchr and gently launch them into your group.",
-                "Patchr has brilliant messaging features: great privacy and sharing controls, photo search and editing, and offline posting."
+                "Patchr has brilliant messaging features: great privacy and sharing controls, photo search and editing, offline posting plus much more."
             ]
+            
+            if appFirstLaunch {
+                images.insert("group_chat_splash_3", at: 0)
+                titles.insert("Welcome!".uppercased(), at: 0)
+                descriptions.insert("Patchr groups are a modern way to organize all your group messaging for free!", at: 0)
+            }
             
             self.alertView = AlertOnboarding(arrayOfImage: images, arrayOfTitle: titles, arrayOfDescription: descriptions)
             self.alertView.delegate = self
             self.alertView.colorButtonBottomBackground = Colors.accentColorFill
             self.alertView.colorButtonText = Colors.white
             self.alertView.colorCurrentPageIndicator = Colors.brandColor
+            
             if Config.screenWidth > 414 {                
                 self.alertView.percentageRatioWidth = (331 / Config.screenWidth)
                 self.alertView.percentageRatioHeight = (588 / Config.screenHeight)
