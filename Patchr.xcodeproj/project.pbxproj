@@ -879,7 +879,6 @@
 				7D3D39C61A6F086F00A44CB2 /* Frameworks */,
 				7D3D39C71A6F086F00A44CB2 /* Resources */,
 				7DFA37DB1AB7B87B00CFCEE1 /* Warn about TODO: and FIXME: */,
-				0323771184558D5A9D967346 /* Upload Bugsnag dSYM */,
 				E2CF512F1D9C71CF00515506 /* Upload Symbol Files for Firebase */,
 				069FF0CA3B048556CADED785 /* [CP] Embed Pods Frameworks */,
 				4A6C2A7E7DB62B7BB5F3347C /* [CP] Copy Pods Resources */,
@@ -988,21 +987,6 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		0323771184558D5A9D967346 /* Upload Bugsnag dSYM */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 12;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Upload Bugsnag dSYM";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = "/usr/bin/env ruby";
-			shellScript = "fork do\n  Process.setsid\n  STDIN.reopen(\"/dev/null\")\n  STDOUT.reopen(\"/dev/null\", \"a\")\n  STDERR.reopen(\"/dev/null\", \"a\")\n\n  require 'shellwords'\n\n  Dir[\"#{ENV[\"DWARF_DSYM_FOLDER_PATH\"]}/*/Contents/Resources/DWARF/*\"].each do |dsym|\n    system(\"curl -F dsym=@#{Shellwords.escape(dsym)} -F projectRoot=#{Shellwords.escape(ENV[\"PROJECT_DIR\"])} https://upload.bugsnag.com/\")\n  end\nend\n";
-			showEnvVarsInLog = 0;
-		};
 		069FF0CA3B048556CADED785 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;

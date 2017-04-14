@@ -14,7 +14,6 @@ import AFNetworkActivityLogger
 import AWSCore
 import AWSS3
 import Branch
-import Bugsnag
 import Firebase
 import FirebaseInstanceID
 import FirebaseMessaging
@@ -63,9 +62,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FIRMessagingDelegate {
         let credProvider = AWSStaticCredentialsProvider(accessKey: Ids.awsAccessKey, secretKey: PatchrKeys().awsS3Secret)
         let serviceConfig = AWSServiceConfiguration(region: AWSRegionType(rawValue: 3/*'us-west-2'*/)!, credentialsProvider: credProvider)
         AWSServiceManager.default().defaultServiceConfiguration = serviceConfig
-        
-        /* Initialize Bugsnag */
-        Bugsnag.start(withApiKey: PatchrKeys().bugsnagKey)
         
         #if DEBUG
         AFNetworkActivityLogger.shared().startLogging()
@@ -181,11 +177,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FIRMessagingDelegate {
             }
         }
         else if application.applicationState == .active {
-//            let groupId = userInfo["group_id"] as! String
-//            let channelId = userInfo["channel_id"] as! String
-//            let messageId = userInfo["message_id"] as! String
-//            let userInfo = ["group_id": groupId, "channel_id": channelId, "message_id": messageId]
-//            NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.UnreadChange), object: self, userInfo: userInfo)
             if UserDefaults.standard.bool(forKey: PerUserKey(key: Prefs.soundEffects)) {
                 AudioController.instance.play(sound: Sound.notification.rawValue)
             }

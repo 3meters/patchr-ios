@@ -7,8 +7,8 @@
 //
 
 import Foundation
-import Bugsnag
 import CocoaLumberjack
+import FirebaseCrash
 
 class Log {
     
@@ -76,7 +76,7 @@ class Log {
 	static func breadcrumb(message: String!) {
 		/* Requited to call on the main thread */
 		OperationQueue.main.addOperation {
-			Bugsnag.leaveBreadcrumb(withMessage: message);
+            FIRCrashMessage(message)
 		}
 	}
 }

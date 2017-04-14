@@ -33,8 +33,6 @@ PODS:
     - Branch/without-IDFA (= 0.12.30)
   - Branch/Core (0.12.30)
   - Branch/without-IDFA (0.12.30)
-  - Bugsnag (5.7.0):
-    - KSCrash/RecordingAdvanced (= 1.11.2)
   - CLTokenInputView (2.3.0)
   - CocoaLumberjack/Core (3.0.0)
   - CocoaLumberjack/Default (3.0.0):
@@ -117,9 +115,6 @@ PODS:
     - SDWebImage
   - iRate (1.11.6)
   - Keys (1.0.0)
-  - KSCrash/Recording (1.11.2)
-  - KSCrash/RecordingAdvanced (1.11.2):
-    - KSCrash/Recording
   - MBProgressHUD (0.9.2)
   - NHBalancedFlowLayout (0.2)
   - PBWebViewController (0.5.0)
@@ -155,7 +150,6 @@ DEPENDENCIES:
   - AWSS3 (= 2.4.9)
   - BEMCheckBox
   - Branch (~> 0.12.5)
-  - Bugsnag
   - CLTokenInputView
   - CocoaLumberjack/Swift
   - DateTools (from `https://github.com/MatthewYork/DateTools`, branch `swift`)
@@ -215,7 +209,6 @@ SPEC CHECKSUMS:
   AWSS3: e4959b48db48d5f3dcd5cdf9e24a07f60a313611
   BEMCheckBox: e18e4a148905b290bd03d98b767651c104f4eda3
   Branch: 024ce8e69872f159e7de45b72fc681f9971b8599
-  Bugsnag: d86488d670f91acbce0186e6570e500039676ef0
   CLTokenInputView: 9dc1ffb7c9d2d81787e69a63c75bd97b0b2d1e76
   CocoaLumberjack: c823149bccc5519a9447aeb433be7b1212a7d6a5
   DACircularProgress: 4dd437c0fc3da5161cb289e07ac449493d41db71
@@ -239,7 +232,6 @@ SPEC CHECKSUMS:
   IDMPhotoBrowser: bcd6cbc9ccaf7e945c3a5a065ffa1a4dee81b722
   iRate: 61e558919c4a7fde63b3c22ebbd6c114a1eee658
   Keys: 9c35bf00f612ee1d48556f4a4b9b4551e224e90f
-  KSCrash: 8acc46aca72b2772d5d1e3cba1da9173db4d705e
   MBProgressHUD: 1569cf7ace17a8bac47aabfbb8580a49690386d1
   NHBalancedFlowLayout: fd253023c6754e605acdb180d50123e582cc62bb
   PBWebViewController: 6537990155ca850fb8d0563efbc12becebc953ef
@@ -258,6 +250,6 @@ SPEC CHECKSUMS:
   UIDevice-Hardware: ecb52d9a7b223b31f81982358e2b0769ac1a7918
   VTAcknowledgementsViewController: e1de80f2c0ce31cc7e1c6f1c8aaeec2770371f09
 
-PODFILE CHECKSUM: 253df95911f219b0615270c43d753998e60bba16
+PODFILE CHECKSUM: d34fa75dec1eb376086fd8243fa9732755011cd8
 
 COCOAPODS: 1.1.0.rc.3

@@ -7,7 +7,6 @@ plugin 'cocoapods-keys', {
   :keys => [
     "AwsS3Secret",              # p1
     "BingSubscriptionKey",      # p1
-    "BugsnagKey",               # p3
     "CreativeSdkClientSecret",  # p2
     "BranchKey"                 # p3
   ]
@@ -38,7 +37,6 @@ target 'Patchr' do
     pod 'SDWebImage/GIF',           '~> 4.0'
     pod 'UIDevice-Hardware',        '~> 0.1.7'		# Convenience for determining system version and model identifier
     pod 'AlertOnboarding'
-    pod 'Bugsnag'                                   # Crash reporting
     pod 'BEMCheckBox'
     pod 'CocoaLumberjack/Swift'
     pod 'CLTokenInputView'
