@@ -237,27 +237,42 @@ class GroupSwitcherController: BaseTableController {
                 self.tableView.reloadData()
             }            
             
-            let query = FireController.db.child("member-groups/\(userId)")
-                .queryOrdered(byChild: "index_priority_joined_at_desc")
+            let query = FireController.db.child("member-groups/\(userId)").queryOrdered(byChild: "index_priority_joined_at_desc")
             
             self.queryController = DataSourceController(name: "group_switcher")
-            
             self.queryController.bind(to: self.tableView, query: query) { [weak self] tableView, indexPath, data in
+                
                 let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! GroupListCell
-                guard self != nil else { return cell }
-                let snapMember = data as! FIRDataSnapshot
-                let groupId = snapMember.key
                 cell.reset()
-                FireController.db.child("groups/\(groupId)").observeSingleEvent(of: .value, with: { snapGroup in
-                    if !(snapGroup.value is NSNull) {
-                        let group = FireGroup(dict: snapGroup.value as! [String: Any], id: snapGroup.key)
-                        group.membershipFrom(dict: snapMember.value as! [String : Any])
-                        cell.bind(group: group)
-                        if group.id! == StateController.instance.groupId {
-                            cell.selected(on: true)
+                guard self != nil else { return cell }
+                
+                if let userId = UserController.instance.userId,
+                    let snap = data as? FIRDataSnapshot {
+                    
+                    let groupId = snap.key
+                    
+                    cell.groupQuery = GroupQuery(groupId: groupId, userId: userId)
+                    cell.groupQuery!.observe(with: { [weak cell] error, trigger, group in
+                        guard let cell = cell else { return }
+                        if group != nil {
+                            cell.selected(on: (groupId == StateController.instance.groupId), style: .prominent)
+                            cell.bind(group: group!)
+                            cell.unreadQuery = UnreadQuery(level: .group, userId: userId, groupId: groupId)
+                            cell.unreadQuery!.observe(with: { [weak cell] error, total in
+                                guard let cell = cell else { return }
+                                if total != nil && total! > 0 {
+                                    cell.badge?.text = "\(total!)"
+                                    cell.badge?.isHidden = false
+                                    cell.accessoryType = .none
+                                }
+                                else {
+                                    cell.badge?.isHidden = true
+                                    cell.accessoryType = cell.selectedOn ? .checkmark : .none
+                                }
+                            })
                         }
-                    }
-                })
+                    })
+                }                
                 return cell
             }
             self.view.setNeedsLayout()

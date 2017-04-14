@@ -16,7 +16,7 @@ class UserController: NSObject {
 
     fileprivate(set) internal var userId: String?
     fileprivate(set) internal var user: FireUser?
-    fileprivate(set) internal var unreads = 0
+    fileprivate(set) internal var unreads = 0 // Read interally by channel view controller to set nav button badge
 
     fileprivate var counterRef: FIRDatabaseReference?
     fileprivate var counterHandle: UInt?

@@ -325,7 +325,11 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
             }
         }
         if self.viewIsVisible && self.unreads.count > 0 {
-            self.tableView.reloadData()
+            let groupId = StateController.instance.groupId!
+            let channelId = StateController.instance.channelId!
+            for messageId in self.unreads.keys {
+                FireController.instance.clearMessageUnread(messageId: messageId, channelId: channelId, groupId: groupId)
+            }
         }
     }
     
@@ -382,27 +386,31 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
     
     func unreadChange(notification: NSNotification?) {
         
+        /* Sent two ways:
+           - when counter observer in user controller get a callback with changed count.
+           - app delegate receives new message notification and app is active. */
+        
         self.navButton.badgeValue = "\(UserController.instance.unreads)"
         
         /* Turn on unread indicator if we already have the message */
         
-        if let channelId = notification?.userInfo?["channel_id"] as? String,
-            let messageId = notification?.userInfo?["message_id"] as? String,
-            channelId == self.channel.id {
-            
-            var index = 0
-            for data in self.queryController.items {
-                let snap = data as! FIRDataSnapshot
-                if snap.key == messageId {
-                    self.tableView.beginUpdates()
-                    self.tableView.reloadRows(at: [IndexPath(row: index, section: 0)], with: .automatic)
-                    self.tableView.endUpdates()
-                    return
-                }
-                index += 1
-            }
-            self.tableView.reloadData()
-        }
+//        if let channelId = notification?.userInfo?["channel_id"] as? String,
+//            let messageId = notification?.userInfo?["message_id"] as? String,
+//            channelId == self.channel.id {
+//            
+//            var index = 0
+//            for data in self.queryController.items {
+//                let snap = data as! FIRDataSnapshot
+//                if snap.key == messageId {
+////                    self.tableView.beginUpdates()
+////                    self.tableView.reloadRows(at: [IndexPath(row: index, section: 0)], with: .automatic)
+////                    self.tableView.endUpdates()
+//                    return
+//                }
+//                index += 1
+//            }
+//            self.tableView.reloadData()
+//        }
     }
     
     func userDidUpdate(notification: NSNotification) {
@@ -598,24 +606,21 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
                     cell.userPhotoControl.addTarget(this, action: #selector(this.browseMemberAction(sender:)), for: .touchUpInside)
                 }
                 
+                /* Unread handling */
+                
                 let messageId = message.id!
                 if this.unreads[messageId] != nil {
-                    /* We cached the unread flag for the message so now use it and remove it. */
                     cell.unread.isHidden = false
-                    this.unreads.removeValue(forKey: messageId)
-                    FireController.instance.clearMessageUnread(messageId: messageId, channelId: channelId, groupId: groupId)
                 }
                 else {
-                    /* Initial bind and might not be visible to the user yet. If not then
-                       cache the unread flag to use when we are user visible. */
-                    let unreadPath = "unreads/\(userId)/\(groupId)/\(channelId)/\(messageId)"
-                    FireController.db.child(unreadPath).observeSingleEvent(of: .value, with: { snap in
-                        if !(snap.value is NSNull) {
-                            if !this.viewIsVisible {
-                                this.unreads[messageId] = true // Cache it
-                            }
-                            else {
-                                cell.unread.isHidden = false
+                    cell.unreadQuery = UnreadQuery(level: .message, userId: userId, groupId: groupId, channelId: channelId, messageId: messageId)
+                    cell.unreadQuery!.observe(with: { [weak this, weak cell] error, total in
+                        guard let this = this else { return }
+                        guard let cell = cell else { return }
+                        if total != nil && total! > 0 {
+                            cell.unread.isHidden = false
+                            this.unreads[messageId] = true // Cache it
+                            if this.viewIsVisible {
                                 FireController.instance.clearMessageUnread(messageId: messageId, channelId: channelId, groupId: groupId)
                             }
                         }

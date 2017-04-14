@@ -18,21 +18,27 @@ class ChannelListCell: UITableViewCell {
     @IBOutlet weak var lockWidth: NSLayoutConstraint?
     
     var channel: FireChannel!
-    var unreadQuery: UnreadQuery?   // Passed in by table data source
-    var channelQuery: ChannelQuery?
+    var unreadQuery: UnreadQuery? // Passed in by table data source
+    var channelQuery: ChannelQuery? // Passed in by table data source
     var selectedOn = false
     
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
+        initialize()
     }
     
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
+        initialize()
     }
     
     override func layoutSubviews() {
         super.layoutSubviews()
         self.badge?.layer.cornerRadius = (self.badge?.frame.size.height)! / 2
+    }
+    
+    func initialize() {
+        self.badge?.backgroundColor = Theme.colorBackgroundBadge
     }
     
     func selected(on: Bool, style: SelectedStyle = .prominent) {

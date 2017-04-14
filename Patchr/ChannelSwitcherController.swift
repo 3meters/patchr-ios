@@ -313,8 +313,7 @@ class ChannelSwitcherController: BaseTableController {
 				}
 			})
 
-			let query = FireController.db.child("member-channels/\(userId)/\(groupId)")
-					.queryOrdered(byChild: "index_priority_joined_at_desc")
+			let query = FireController.db.child("member-channels/\(userId)/\(groupId)").queryOrdered(byChild: "index_priority_joined_at_desc")
             
             self.queryController = DataSourceController(name: "channel_switcher")
             self.queryController.bind(to: self.tableView, query: query) { [weak self] tableView, indexPath, data in
@@ -331,9 +330,7 @@ class ChannelSwitcherController: BaseTableController {
                     
                     cell.channelQuery = ChannelQuery(groupId: groupId, channelId: channelId, userId: userId)    // Just channel lookup
                     cell.channelQuery!.observe(with: { [weak cell] error, channel in
-                        
                         guard let cell = cell else { return }
-                        
                         if channel != nil {
                             cell.selected(on: (channelId == StateController.instance.channelId), style: .prominent)
                             cell.bind(channel: channel!)
@@ -409,12 +406,10 @@ extension ChannelSwitcherController: UITableViewDelegate {
 		let channelId = cell.channel.id!
 		let groupId = cell.channel.groupId!
 		self.slideMenuController()?.closeLeft()
-		if let currentChannelId = StateController.instance.channelId {
-			if channelId != currentChannelId {
-				StateController.instance.setChannelId(channelId: channelId, groupId: groupId)
-				MainController.instance.showChannel(channelId: channelId, groupId: groupId)
-			}
-		}
+        if channelId != StateController.instance.channelId {
+            StateController.instance.setChannelId(channelId: channelId, groupId: groupId)
+            MainController.instance.showChannel(channelId: channelId, groupId: groupId)
+        }
 
 		if let indexPath = self.tableView.indexPathForSelectedRow {
 			self.tableView.deselectRow(at: indexPath, animated: false)

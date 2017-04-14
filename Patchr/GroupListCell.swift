@@ -15,6 +15,8 @@ class GroupListCell: UITableViewCell {
     @IBOutlet weak var badge: UILabel?
     
     var group: FireGroup!
+    var unreadQuery: UnreadQuery? // Passed in by table data source
+    var groupQuery: GroupQuery? // Passed in by table data source
     var selectedOn = false
     
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
@@ -36,7 +38,7 @@ class GroupListCell: UITableViewCell {
         self.badge?.backgroundColor = Theme.colorBackgroundBadge
     }
     
-    func selected(on: Bool) {
+    func selected(on: Bool, style: SelectedStyle = .prominent) {
         self.selectedOn = on
         if on {
             self.backgroundColor = Theme.colorBackgroundSelected
@@ -57,7 +59,7 @@ class GroupListCell: UITableViewCell {
     }
     
     func reset() {
-        selected(on: false)
+        self.selected(on: false)
         self.photoControl?.reset()
         self.title?.text = nil
         self.subtitle?.text = nil
@@ -65,6 +67,10 @@ class GroupListCell: UITableViewCell {
         self.badge?.text = nil
         self.badge?.isHidden = true
         self.group = nil
+        self.groupQuery?.remove()
+        self.groupQuery = nil
+        self.unreadQuery?.remove()
+        self.unreadQuery = nil
     }
     
     func bind(group: FireGroup) {
@@ -73,20 +79,6 @@ class GroupListCell: UITableViewCell {
         self.title?.text = group.title!
         self.subtitle?.text = "\(group.role!)"
 
-        let groupId = group.id!
-        let userId = UserController.instance.userId!
-        UnreadQuery(level: .group, userId: userId, groupId: groupId).observe(with: { error, total in
-            if total != nil && total! > 0 {
-                self.badge?.text = "\(total!)"
-                self.badge?.isHidden = false
-                self.accessoryType = .none
-            }
-            else {
-                self.badge?.isHidden = true
-                self.accessoryType = self.selectedOn ? .checkmark : .none
-            }
-        })
-        
         if let photo = group.photo {
             let url = Cloudinary.url(prefix: photo.filename!, category: SizeCategory.profile)
             self.photoControl!.bind(url: url, name: nil, colorSeed: group.id)

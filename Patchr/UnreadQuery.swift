@@ -10,12 +10,14 @@ class UnreadQuery: NSObject {
     
     var authHandle: FIRAuthStateDidChangeListenerHandle!
     
+    var block: ((Error?, Int?) -> Swift.Void)!
+
     var path: String!
     var handle: UInt!
     var total: Int!
     var level: UnreadLevel!
     
-    init(level: UnreadLevel, userId: String, groupId: String? = nil, channelId: String? = nil) {
+    init(level: UnreadLevel, userId: String, groupId: String? = nil, channelId: String? = nil, messageId: String? = nil) {
         super.init()
         self.level = level
         self.path = "unreads/\(userId)"
@@ -25,9 +27,14 @@ class UnreadQuery: NSObject {
         else if level == .channel {
             self.path = "unreads/\(userId)/\(groupId!)/\(channelId!)"
         }
+        else if level == .message {
+            self.path = "unreads/\(userId)/\(groupId!)/\(channelId!)/\(messageId!)"
+        }
     }
     
     func observe(with block: @escaping (Error?, Int?) -> Void) {
+        
+        self.block = block
         
         self.authHandle = FIRAuth.auth()?.addStateDidChangeListener() { [weak self] auth, user in
             guard let this = self else { return }
@@ -40,7 +47,10 @@ class UnreadQuery: NSObject {
             guard let this = self else { return }
             var total = 0
             if !(snap.value is NSNull) {
-                if this.level == .channel  {
+                if this.level == .message  {
+                    total = 1
+                }
+                else if this.level == .channel  {
                     if let messages = snap.value as? [String: Any] {
                         total = messages.count
                     }
@@ -66,11 +76,12 @@ class UnreadQuery: NSObject {
                 }
                 this.total = total
             }
-            block(nil, total)
+            this.block(nil, total)
+            
         }, withCancel: { [weak self] error in
             guard let this = self else { return }
             Log.v("Permission denied trying to read unreads: \(this.path!)")
-            block(error, nil)
+            this.block(error, nil)
         })
     }
     
@@ -92,4 +103,5 @@ enum UnreadLevel: Int {
     case user
     case group
     case channel
+    case message
 }

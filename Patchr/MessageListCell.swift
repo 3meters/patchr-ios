@@ -12,7 +12,8 @@ import TTTAttributedLabel
 class MessageListCell: UITableViewCell {
 
     var message: FireMessage!
-    var userQuery: UserQuery!
+    var userQuery: UserQuery! // Passed in by table data source
+    var unreadQuery: UnreadQuery? // Passed in by table data source
 
     var description_: UILabel!
     var photoView: AirImageView!
@@ -271,6 +272,8 @@ class MessageListCell: UITableViewCell {
         self.edited.isHidden = true
         self.userQuery?.remove()
         self.userQuery = nil
+        self.unreadQuery?.remove()
+        self.unreadQuery = nil
     }
     
     override func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
