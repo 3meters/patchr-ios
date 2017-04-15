@@ -347,7 +347,7 @@
 		E27F8A7D1DFB3A180020E852 /* FloatTextField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FloatTextField.swift; sourceTree = "<group>"; };
 		E2810BA51DC8E6930013AEA0 /* PresenceView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PresenceView.swift; sourceTree = "<group>"; };
 		E281776D1B5B0EE200D65AC1 /* Reporting.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Reporting.swift; sourceTree = "<group>"; };
-		E28177751B5C39E200D65AC1 /* AwsS3.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AwsS3.swift; path = PatchrShare/AwsS3.swift; sourceTree = SOURCE_ROOT; };
+		E28177751B5C39E200D65AC1 /* AwsS3.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AwsS3.swift; path = Patchr/AwsS3.swift; sourceTree = "<group>"; };
 		E28915901C5A85CF005D7AA0 /* .xctool-args */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ".xctool-args"; sourceTree = "<group>"; };
 		E28915921C5AD528005D7AA0 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		E28A481E1DE72E0400A01B46 /* BaseTableController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseTableController.swift; sourceTree = "<group>"; };

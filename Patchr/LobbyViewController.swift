@@ -211,7 +211,7 @@ class LobbyViewController: UIViewController {
             var images = [
                 "create_group",
                 "invite_friends_2",
-                "group_chat_splash_3"]
+                "group_chat_splash_4"]
             
             var titles = [
                 "Create a Group".uppercased(),
@@ -226,7 +226,7 @@ class LobbyViewController: UIViewController {
             ]
             
             if appFirstLaunch {
-                images.insert("group_chat_splash_3", at: 0)
+                images.insert("group_chat_splash_4", at: 0)
                 titles.insert("Welcome!".uppercased(), at: 0)
                 descriptions.insert("Patchr groups are a modern way to organize all your group messaging for free!", at: 0)
             }
