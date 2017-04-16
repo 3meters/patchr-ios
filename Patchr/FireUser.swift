@@ -14,30 +14,19 @@ import FirebaseDatabase
 class FireUser: NSObject {
 
     var path: String {
-        return "users/\(self.id!)"
+        return "users/\(self.id)"
     }
 
-    var id: String?
-    var createdAt: Int64?
-    var createdBy: String?
-    var modifiedAt: Int64?
-    var presence: Any?
+    var channel: ChannelMembership!
+    var createdAt: Int64!
+    var createdBy: String!
     var developer: Bool?
-    var username: String?
+    var group: GroupMembership!
+    var id: String!
+    var modifiedAt: Int64!
+    var presence: Any?
     var profile: FireProfile?
-    
-    /* Group link properties for the current user */
-    var disabled: Bool?
-    var email: String?
-    var notifications: String?
-    
-    /* Group link properties for the user */
-    var starred: Bool?
-    var muted: Bool?
-    
-    /* Shared by group and channel links */
-    var role: String?
-    var joinedAt: Int?
+    var username: String!
     
     var fullName: String! {
         get {
@@ -60,24 +49,49 @@ class FireUser: NSObject {
             self.profile = FireProfile(dict: dict["profile"] as! [String : Any])
         }
     }
+}
+
+class ChannelMembership: NSObject {
+    var joinedAt: Int?
+    var muted: Bool!
+    var role: String!
+    var starred: Bool!
     
-    func membershipClear() {
-        self.disabled = nil
+    init(dict: [String: Any]) {
+        self.role = dict["role"] as! String
+        self.joinedAt = dict["joined_at"] as? Int
+        self.starred = dict["starred"] as? Bool
+        self.muted = dict["muted"] as? Bool
+    }
+    
+    func clear() {
         self.role = nil
-        self.notifications = nil
-        self.email = nil
         self.joinedAt = nil
         self.starred = nil
         self.muted = nil
     }
+}
+
+class GroupMembership: NSObject {
+    var disabled: Bool!
+    var email: String?
+    var joinedAt: Int?
+    var notifications: String!
+    var role: String!
     
-    func membershipFrom(dict: [String: Any]) {
+    init(dict: [String: Any]) {
         self.disabled = dict["disabled"] as? Bool
         self.role = dict["role"] as? String
         self.notifications = dict["notifications"] as? String
         self.email = dict["email"] as? String
         self.joinedAt = dict["joined_at"] as? Int
-        self.starred = dict["starred"] as? Bool
-        self.muted = dict["muted"] as? Bool
+    }
+    
+    func clear() {
+        self.disabled = nil
+        self.role = nil
+        self.notifications = nil
+        self.email = nil
+        self.joinedAt = nil
     }
 }

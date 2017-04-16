@@ -169,17 +169,12 @@ class MemberListController: BaseTableController {
             let snap = data as! FIRDataSnapshot
             let userId = snap.key
             let groupId = StateController.instance.groupId!
+            let channelId = StateController.instance.channelId!
             
-            if this.target == .group {
-                if this.scope == .reaction {
-                    cell.userQuery = UserQuery(userId: userId)
-                }
-                else {
-                    cell.userQuery = UserQuery(userId: userId, groupId: groupId)
-                }
+            if this.scope == .reaction {
+                cell.userQuery = UserQuery(userId: userId)
             }
-            else  {
-                let channelId = this.channel.id!
+            else {
                 cell.userQuery = UserQuery(userId: userId, groupId: groupId, channelId: channelId)
             }
             

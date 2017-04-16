@@ -132,6 +132,7 @@ class SideMenuViewController: BaseTableController, UITableViewDelegate, UITableV
                 if group != nil {
                     this.group = group
                     this.groupHeader.bind(group: group)
+                    this.tableView.reloadData()
                 }
             })
         }
@@ -213,6 +214,18 @@ extension SideMenuViewController {
     }
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        if self.group?.role == "guest" {
+            if indexPath.row == 2 || indexPath.row == 4 {
+                return CGFloat(0)
+            }
+        }
+
+        if self.group?.role != "owner" {
+            if indexPath.row == 4 {
+                return CGFloat(0)
+            }
+        }
+
         if indexPath.row == 0 {
             return CGFloat(96)
         }

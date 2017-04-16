@@ -112,28 +112,43 @@ class UserListCell: UITableViewCell {
         }
         
         if target == "group" {
-            self.roleLabel?.text = user.role
-            if user.role == "owner" {
+            if user.group.role == "owner" {
+                self.roleLabel?.text = "group owner"
                 self.roleLabel?.textColor = MaterialColor.deepOrange.base
             }
-            else if user.role == "admin" {
-                self.roleLabel?.textColor = MaterialColor.amber.base
-            }
-            else if user.role == "member" {
+            else if user.group.role == "member" {
+                self.roleLabel?.text = ""
                 self.roleLabel?.textColor = MaterialColor.lightGreen.base
             }
-            else if user.role == "guest" {
+            else if user.group.role == "guest" {
+                self.roleLabel?.text = "guest member"
                 self.roleLabel?.textColor = MaterialColor.lightBlue.base
             }
         }
         else if target == "channel" {
-            if user.role == "owner" {
-                self.roleLabel?.text = user.role
+            if user.channel.role == "owner" {
+                self.roleLabel?.text = "channel owner"
                 self.roleLabel?.textColor = MaterialColor.deepOrange.base
             }
-            else if user.role == "visitor" {
-                self.roleLabel?.text = user.role
-                self.roleLabel?.textColor = MaterialColor.purple.base
+            else if user.channel.role == "member" {
+                if user.group.role == "guest" {
+                    self.roleLabel?.text = "guest member"
+                    self.roleLabel?.textColor = MaterialColor.lightGreen.base
+                }
+                else {
+                    self.roleLabel?.text = ""
+                    self.roleLabel?.textColor = MaterialColor.lightGreen.base
+                }
+            }
+            else if user.channel.role == "visitor" {
+                if user.group.role == "guest" {
+                    self.roleLabel?.text = "guest visitor"
+                    self.roleLabel?.textColor = MaterialColor.purple.base
+                }
+                else {
+                    self.roleLabel?.text = "visitor"
+                    self.roleLabel?.textColor = MaterialColor.purple.base
+                }
             }
         }
         else if target == "reaction" {

@@ -57,10 +57,10 @@ class InviteListCell: UITableViewCell {
             self.title?.text = user.profile?.fullName ?? user.username!
             
             if user.username != nil {
-                if user.email != nil {
-                    self.subtitle?.text = "@\(user.username!) • \(user.email!)"
+                if user.group.email != nil {
+                    self.subtitle?.text = "@\(user.username!) • \(user.group.email!)"
                 }
-                else if user.role != nil {
+                else if user.group.role != nil {
                     self.subtitle?.text = "@\(user.username!) • (email hidden)"
                 }
                 else {

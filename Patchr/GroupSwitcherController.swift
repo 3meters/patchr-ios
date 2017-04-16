@@ -49,6 +49,16 @@ class GroupSwitcherController: BaseTableController {
         }
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        if !UserController.instance.loginAlertShown {
+            if let email = FIRAuth.auth()?.currentUser?.email! {
+                UIShared.toast(message: "Logged in using: \(email)", duration: 1.0)
+            }
+        }
+        UserController.instance.loginAlertShown = true
+    }
+    
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
         

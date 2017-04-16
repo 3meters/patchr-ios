@@ -20,6 +20,8 @@ class UserController: NSObject {
 
     fileprivate var counterRef: FIRDatabaseReference?
     fileprivate var counterHandle: UInt?
+    
+    var loginAlertShown = false
 
     var authenticated: Bool {
         return (self.userId != nil)
@@ -44,7 +46,7 @@ class UserController: NSObject {
     
     var userEmail: String? {
         var userEmail: String?
-        if let email = UserController.instance.user?.email {
+        if let email = UserController.instance.user?.group.email {
             userEmail = email
         }
         if userEmail == nil, let authEmail = FIRAuth.auth()?.currentUser?.email {
@@ -112,6 +114,7 @@ class UserController: NSObject {
         if userId != self.userId {
             
             Log.i("User logged in: \(userId)")
+            self.loginAlertShown = false
             
             if let token = FIRInstanceID.instanceID().token() {
                 Log.i("UserController: setting firebase messaging token: \(token)")
@@ -143,11 +146,6 @@ class UserController: NSObject {
                 
                 if this.user != nil {
                     Log.d("User updated: \(user!.id!)")
-                }
-                else {
-                    if let email = FIRAuth.auth()?.currentUser?.email! {
-                        UIShared.toast(message: "Logged in using: \(email)")
-                    }
                 }
                 
                 this.user = user

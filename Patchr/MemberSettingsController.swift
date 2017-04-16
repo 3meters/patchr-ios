@@ -129,8 +129,8 @@ class MemberSettingsController: UITableViewController {
         
         if self.target == .group {
             
-            self.role = self.inputUser.role
-            self.roleNext = self.inputUser.role
+            self.role = self.inputUser.group.role
+            self.roleNext = self.inputUser.group.role
             self.roleOwnerCell.accessoryType = self.role == "owner" ? .checkmark : .none
             self.roleMemberCell.accessoryType = self.role == "member" ? .checkmark : .none
             self.roleGuestCell.accessoryType = self.role == "guest" ? .checkmark : .none
@@ -381,9 +381,16 @@ extension MemberSettingsController {
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if self.target == .group {
             if section == 0 { return 3 }
+        }
+        else if self.target == .channel {
+            if section == 0 {
+                if self.inputUser.group.role == "guest" {
+                    return 2
+                }
+                return 3
+            }
             return 1
         }
-        if section == 0 { return 3 }
         return 1
     }
 
@@ -401,9 +408,15 @@ extension MemberSettingsController {
             return self.removeCell
         }
         if indexPath.section == 0 {
-            if indexPath.row == 0 { return self.roleOwnerCell }
-            if indexPath.row == 1 { return self.roleMemberCell }
-            if indexPath.row == 2 { return self.roleVisitorCell }
+            if self.inputUser.group.role == "guest" {
+                if indexPath.row == 0 { return self.roleMemberCell }
+                if indexPath.row == 1 { return self.roleVisitorCell }
+            }
+            else {
+                if indexPath.row == 0 { return self.roleOwnerCell }
+                if indexPath.row == 1 { return self.roleMemberCell }
+                if indexPath.row == 2 { return self.roleVisitorCell }
+            }
         }
         return self.removeCell
     }
@@ -419,6 +432,9 @@ extension MemberSettingsController {
             return nil
         }
         if section == 0 {
+            if self.inputUser.group.role == "guest" {
+                return "Channel guest role".uppercased()
+            }
             return "Channel role".uppercased()
         }
         return nil

@@ -94,7 +94,7 @@ class MemberViewController: BaseViewController, UIScrollViewDelegate, UITextFiel
     
     func emailAction(sender: AnyObject?) {
         Reporting.track("view_email_compose")
-        if let email = self.user!.email {
+        if let email = self.user!.group.email {
             if MFMailComposeViewController.canSendMail() {
                 Ui.mailComposer!.mailComposeDelegate = self
                 Ui.mailComposer!.setToRecipients([email])
@@ -201,9 +201,9 @@ class MemberViewController: BaseViewController, UIScrollViewDelegate, UITextFiel
         }
         
         self.email.isHidden = true
-        if self.user?.email != nil && !self.user!.email!.isEmpty {
+        if self.user?.group.email != nil && !self.user!.group.email!.isEmpty {
             self.email.isHidden = false
-            self.email.label.text = self.user!.email!
+            self.email.label.text = self.user!.group.email!
         }
         
         self.view?.setNeedsLayout() // Does NOT trigger layoutSubviews for header view

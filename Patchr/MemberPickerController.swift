@@ -168,7 +168,7 @@ class MemberPickerController: BaseTableController, CLTokenInputViewDelegate {
                     return
                 }
                 if user != nil {
-                    user!.membershipFrom(dict: snap.value as! [String : Any])
+                    user!.group = GroupMembership(dict: snap.value as! [String : Any])
                     then(user)
                 }
             })
@@ -207,7 +207,7 @@ class MemberPickerController: BaseTableController, CLTokenInputViewDelegate {
                         return
                     }
                     if user != nil {
-                        user!.membershipFrom(dict: snap.value as! [String : Any])
+                        user!.group = GroupMembership(dict: snap.value as! [String : Any])
                         this.bindCell(user: user!, cell: cell)
                     }
                 })
@@ -239,7 +239,7 @@ class MemberPickerController: BaseTableController, CLTokenInputViewDelegate {
                 cell.allowSelection = false
             }
             else {
-                if user.email != nil {
+                if user.group.email != nil {
                     cell.roleLabel?.isHidden = true
                     cell.checkBox?.isHidden = false
                     cell.checkBox?.on = cell.isSelected

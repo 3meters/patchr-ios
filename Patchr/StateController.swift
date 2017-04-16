@@ -166,6 +166,7 @@ class StateController: NSObject {
             UserDefaults.standard.set(groupId, forKey: PerUserKey(key: Prefs.lastGroupId))
 
             if channelId != nil {
+                /* Group needed to changed first. Now recurse to set the channel */
                 setChannelId(channelId: channelId, groupId: groupId, bundle: userInfo, next: next)
             }
             

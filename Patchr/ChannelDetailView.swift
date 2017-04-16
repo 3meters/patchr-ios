@@ -153,7 +153,21 @@ class ChannelDetailView: UIView {
         attrString.addAttribute(NSParagraphStyleAttributeName, value: paragraphStyle, range: NSMakeRange(0, attrString.length))
         
         self.nameLabel.attributedText = attrString
-        self.roleLabel.text = channel.role != nil ? "you: channel \(channel.role!)" : "you: previewing"
+        if let group = StateController.instance.group {
+            if group.role == "guest" {
+                if channel.role != nil {
+                    self.roleLabel.text = channel.role == "visitor" ? "you: guest visitor" : "you: guest member"
+                }
+            }
+            else {
+                if channel.role != nil {
+                    self.roleLabel.text = channel.role == "visitor" ? "you: channel visitor" : "you: channel member"
+                }
+                else {
+                    self.roleLabel.text = "you: previewing"
+                }
+            }
+        }
         
         if channel.purpose != nil && !channel.purpose!.isEmpty {
             self.addSubview(self.infoGroup)

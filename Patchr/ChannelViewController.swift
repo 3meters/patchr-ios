@@ -102,6 +102,12 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
             MainController.instance.link = nil
             MainController.instance.routeDeepLink(link: link, error: nil)
         }
+        else if !UserController.instance.loginAlertShown {
+            if let email = FIRAuth.auth()?.currentUser?.email! {
+                UIShared.toast(message: "Logged in using: \(email)", duration: 1.0)
+            }
+        }
+        UserController.instance.loginAlertShown = true
     }
     
     override func viewDidDisappear(_ animated: Bool) {
@@ -874,6 +880,7 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
             let isMember = (self.channel.joinedAt != nil)
             let userId = UserController.instance.userId!
             let isOwner = (self.channel.role == "owner" || self.channel.ownedBy == userId)
+            let isVisitor = (self.channel.role == "visitor")
             
             let statusTitle = isMember ? "Leave channel" : "Join channel"
             let statusAction = UIAlertAction(title: statusTitle, style: .default) { [weak self] action in
@@ -965,6 +972,19 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
                     sheet.addAction(statusAction)
                 }
                 sheet.addAction(editAction) // Owners only
+                sheet.addAction(cancel)
+            }
+            else if isVisitor {
+                if starAction != nil {
+                    sheet.addAction(starAction!)
+                }
+                if muteAction != nil {
+                    sheet.addAction(muteAction!)
+                }
+                sheet.addAction(browseMembersAction)
+                if !self.channel!.general! { // Can't leave the general channel
+                    sheet.addAction(statusAction)
+                }
                 sheet.addAction(cancel)
             }
             else if isMember {
