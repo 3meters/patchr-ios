@@ -42,7 +42,8 @@ class MemberViewController: BaseViewController, UIScrollViewDelegate, UITextFiel
         super.viewDidLoad()
         initialize()
         let userId = self.inputUserId!
-        self.queryUser = UserQuery(userId: userId)
+        let groupId = StateController.instance.groupId!
+        self.queryUser = UserQuery(userId: userId, groupId: groupId)
         self.queryUser?.observe(with: { [weak self] error, user in
             guard let this = self else { return }
             this.user = user
