@@ -21,11 +21,6 @@ class BranchProvider: NSObject {
     
     typealias CompletionBlock = (_ response: AnyObject?, _ error: NSError?) -> Void
     
-//    static func inviteMember(group: FireGroup, completion: @escaping CompletionBlock) {
-//        let username = UserController.instance.user?.username
-//        BranchProvider.inviteMember(groupId: group.id!, groupTitle: group.title!, username: username, completion: completion)
-//    }
-    
     static func inviteMember(groupId: String, groupTitle: String, username: String?, email: String, inviteId: String, completion: @escaping CompletionBlock) {
         
         let group = StateController.instance.group

@@ -46,7 +46,7 @@ class UserController: NSObject {
     
     var userEmail: String? {
         var userEmail: String?
-        if let email = UserController.instance.user?.group.email {
+        if let email = UserController.instance.user?.group?.email {
             userEmail = email
         }
         if userEmail == nil, let authEmail = FIRAuth.auth()?.currentUser?.email {

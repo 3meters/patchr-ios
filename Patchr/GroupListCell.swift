@@ -77,7 +77,9 @@ class GroupListCell: UITableViewCell {
         self.group = group
         
         self.title?.text = group.title!
-        self.subtitle?.text = "\(group.role!)"
+        if let role = group.role {
+            self.subtitle?.text = "\(role)"
+        }
 
         if let photo = group.photo {
             let url = Cloudinary.url(prefix: photo.filename!, category: SizeCategory.profile)

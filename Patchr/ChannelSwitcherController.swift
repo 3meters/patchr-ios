@@ -487,7 +487,7 @@ class SearchController: NSObject {
             let query = FireController.db.child(path).queryOrdered(byChild: "name")
             
             self.queryController = DataSourceController(name:"channel_switcher")
-            self.queryController.startEmpty = true
+            self.queryController.startEmpty = false
             self.queryController.matcher = { searchText, data in
                 let snap = data as! FIRDataSnapshot
                 let dict = snap.value as! [String: Any]

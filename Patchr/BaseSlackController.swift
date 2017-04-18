@@ -88,7 +88,7 @@ class BaseSlackController: SLKTextViewController {
 
     func editPhotoAction(sender: AnyObject) {
         Reporting.track("edit_photo")
-        hidePhotoEdit()
+        //hidePhotoEdit()
         self.photoEditView.editPhotoAction(sender: sender)
     }
     

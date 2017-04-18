@@ -53,9 +53,10 @@ class LobbyViewController: UIViewController {
 	
 	override func viewDidAppear(_ animated: Bool) {
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
-        if appDelegate.firstLaunch {
+        if appDelegate.firstLaunch && !appDelegate.showedLaunchOnboarding {
             Reporting.track("view_onboarding_auto")
             showOnboarding(appFirstLaunch: true)
+            appDelegate.showedLaunchOnboarding = true
         }
 		
 		if self.firstLaunch {

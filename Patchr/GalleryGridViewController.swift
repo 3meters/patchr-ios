@@ -20,6 +20,7 @@ class GalleryGridViewController: UICollectionViewController {
 	var activity: UIActivityIndicatorView?
 	var footerView: UIView!
 	var loadMoreMessage: String = "LOAD MORE"
+    var inputTitle: String?
 	var morePhotos = false
 	
     var largePhotoIndexPath : IndexPath? {
@@ -122,6 +123,9 @@ class GalleryGridViewController: UICollectionViewController {
 		self.activity = addActivityIndicatorTo(view: self.view)
 		
 		/* Navigation bar buttons */
+        if self.inputTitle != nil {
+            self.navigationItem.title = self.inputTitle!
+        }
         let closeButton = UIBarButtonItem(barButtonSystemItem: .stop, target: self, action: #selector(closeAction(sender:)))
 		self.navigationItem.leftBarButtonItems = [closeButton]
 	}
@@ -208,31 +212,31 @@ extension GalleryGridViewController { /* UICollectionViewDelegate, UICollectionV
 }
 
 extension GalleryGridViewController : NHBalancedFlowLayoutDelegate {
-    func collectionView(_ collectionView: UICollectionView!,
-                        layout collectionViewLayout: NHBalancedFlowLayout!,
-                        preferredSizeForItemAt indexPath: IndexPath!) -> CGSize {
+    func collectionView(_ collectionView: UICollectionView!
+        , layout collectionViewLayout: NHBalancedFlowLayout!
+        , preferredSizeForItemAt indexPath: IndexPath!) -> CGSize {
 		
 		let displayPhoto = self.displayPhotosSorted[indexPath.item]
-        return displayPhoto.size ?? CGSize(width:500, height:500)
+        //return displayPhoto.size ?? CGSize(width:500, height:500)
+        return displayPhoto.size ?? CGSize(width:300, height:300)
 	}
 }
 
 extension GalleryGridViewController : UICollectionViewDelegateFlowLayout {
     
-    func collectionView(_ collectionView: UICollectionView,
-        layout collectionViewLayout: UICollectionViewLayout,
-        sizeForItemAt indexPath: IndexPath) -> CGSize {
+    func collectionView(_ collectionView: UICollectionView
+        , layout collectionViewLayout: UICollectionViewLayout
+        , sizeForItemAt indexPath: IndexPath) -> CGSize {
             
             if indexPath == self.largePhotoIndexPath {
                 return CGSize(width: self.availableWidth! - 100, height: self.availableWidth! - 100)
             }
-            
             return CGSize(width: self.thumbnailWidth!, height: self.thumbnailWidth!)
     }
     
-    func collectionView(_ collectionView: UICollectionView,
-        layout collectionViewLayout: UICollectionViewLayout,
-        insetForSectionAt section: Int) -> UIEdgeInsets {
+    func collectionView(_ collectionView: UICollectionView
+        , layout collectionViewLayout: UICollectionViewLayout
+        , insetForSectionAt section: Int) -> UIEdgeInsets {
             return self.sectionInsets!
     }
 }

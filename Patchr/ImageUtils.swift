@@ -112,6 +112,7 @@ class Cloudinary {
     }
     
     static func url(prefix: String, params: String) -> URL {
+        /* Currently only called by the branch provider with "w_250,q_auto,c_fill" */
         let urlString = "https://s3-us-west-2.amazonaws.com/aircandi-images/\(prefix)".stringByAddingPercentEncodingForUrl()
         let path = "https://res.cloudinary.com/patchr/image/fetch/\(params)/\(urlString!)"
         return URL(string: path)!

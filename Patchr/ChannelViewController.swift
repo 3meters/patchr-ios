@@ -648,8 +648,8 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
                 if error != nil {
                     /* The channel has been deleted from under us and the group might be gone too. */
                     if let group = StateController.instance.group {
-                        let role = group.role!
                         this.channelQuery?.remove()
+                        let role = group.role ?? "guest"
                         FireController.instance.autoPickChannel(groupId: groupId, role: role) { channelId in
                             if channelId != nil {
                                 StateController.instance.setChannelId(channelId: channelId!, groupId: groupId)
@@ -827,7 +827,10 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
             
             if let topController = UIViewController.topMostViewController() {
                 let popController = STPopupController(rootViewController: controller)
+                let backgroundView = UIView()
+                backgroundView.backgroundColor = Colors.opacity25pcntBlack
                 popController.style = .bottomSheet
+                popController.backgroundView = backgroundView
                 popController.hidesCloseButton = true
                 self.sheetController = popController
                 let tap = UITapGestureRecognizer(target: self, action: #selector(self.backgroundTapped(sender:)))
@@ -1048,9 +1051,10 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
                             return
                         }
                         let layout = NHBalancedFlowLayout()
-                        layout.preferredRowSize = 200
+                        layout.preferredRowSize = 150
                         let controller = GalleryGridViewController(collectionViewLayout: layout)
                         controller.displayPhotos = this.displayPhotos
+                        controller.inputTitle = "Channel gallery"
                         let wrapper = AirNavigationController(rootViewController: controller)
                         this.navigationController!.present(wrapper, animated: true, completion: nil)
                     }
