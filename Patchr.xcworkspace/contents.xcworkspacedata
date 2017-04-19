@@ -7,35 +7,4 @@
    <FileRef
       location = "group:Pods/Pods.xcodeproj">
    </FileRef>
-   <Group
-      location = "container:"
-      name = "Locations">
-      <FileRef
-         location = "group:Patchr/Locations/massena_residence.gpx">
-      </FileRef>
-      <FileRef
-         location = "group:/Users/jaymassena/Code/Patchr-ios/Patchr/Patchr/Locations/skyridge_park.gpx">
-      </FileRef>
-      <FileRef
-         location = "group:Patchr/Locations/massena_residence+250m.gpx">
-      </FileRef>
-      <FileRef
-         location = "group:Patchr/Locations/massena_residence+500m.gpx">
-      </FileRef>
-      <FileRef
-         location = "group:Patchr/Locations/massena_residence+1000m.gpx">
-      </FileRef>
-      <FileRef
-         location = "group:Patchr/Locations/ballard.gpx">
-      </FileRef>
-      <FileRef
-         location = "group:/Users/jaymassena/Code/Patchr-ios/Patchr/Patchr/Locations/bellevue_palomino.gpx">
-      </FileRef>
-      <FileRef
-         location = "group:Patchr/Locations/factoria_qfc.gpx">
-      </FileRef>
-      <FileRef
-         location = "group:Patchr/Locations/sunset_qfc.gpx">
-      </FileRef>
-   </Group>
 </Workspace>
