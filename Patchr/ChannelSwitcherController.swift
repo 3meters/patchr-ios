@@ -23,7 +23,7 @@ class ChannelSwitcherController: BaseTableController {
 	var searchBar: UISearchBar!
 	var searchBarHolder = UIView()
 	var searchController: SearchController!
-	var searchTableView = AirTableView(frame: CGRect.zero, style: .plain)
+    var searchTableView: AirTableView!
 	var searchOn = false
 	var rule = UIView()
     
@@ -190,8 +190,8 @@ class ChannelSwitcherController: BaseTableController {
         
 		self.view.addSubview(self.tableView)
 
-        self.searchController = SearchController(tableView: self.searchTableView)
-        
+        self.searchTableView = AirTableView(frame: CGRect.zero, style: .plain)
+        self.searchController = SearchController(tableView: self.searchTableView)        
 		self.searchTableView.backgroundColor = Theme.colorBackgroundTable
 		self.searchTableView.tableFooterView = UIView()
 		self.searchTableView.delegate = self
@@ -282,6 +282,10 @@ class ChannelSwitcherController: BaseTableController {
                     this.role = role
                     if role != "guest" {
                         this.navigationItem.setRightBarButtonItems([this.showGroupsButton, this.searchButton], animated: false)
+                        if this.searchController.queryController != nil {
+                            this.searchController.queryController.unbind()
+                            this.searchController.tableView.reloadData()    // Resets to zero rows
+                        }
                         this.searchController?.load()
                     }
                     else {
@@ -486,7 +490,8 @@ class SearchController: NSObject {
             let path = "group-channels/\(groupId)"  // User must be group member and not guest
             let query = FireController.db.child(path).queryOrdered(byChild: "name")
             
-            self.queryController = DataSourceController(name:"channel_switcher")
+            self.queryController?.unbind()            
+            self.queryController = DataSourceController(name:"channel_switcher_search")
             self.queryController.startEmpty = false
             self.queryController.matcher = { searchText, data in
                 let snap = data as! FIRDataSnapshot

@@ -227,29 +227,73 @@
 		844D6E361AA6550400EE71ED /* PhotoChooserUI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = PhotoChooserUI.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		8468F8201A9D09D1007D6EE6 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		84EF12AB1AA904700043EBBA /* Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
+		9FDCC049778239D3F3D452DB /* nexus-7-aircandi.psd */ = {isa = PBXFileReference; lastKnownFileType = file.psd; path = "nexus-7-aircandi.psd"; sourceTree = "<group>"; };
 		9FDCC06A84126B197626CEB2 /* PhotoSearchController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = PhotoSearchController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		9FDCC1090EAA7D7799F16058 /* PhotoControl.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotoControl.swift; sourceTree = "<group>"; };
+		9FDCC15031FC0921002C6B82 /* background.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = background.png; sourceTree = "<group>"; };
+		9FDCC1577A4D0CB7D4B299DE /* Demo New Patch.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file.mp4; path = "Demo New Patch.mp4"; sourceTree = "<group>"; };
+		9FDCC171492BC6FB680DEA05 /* HBehrens-android-emulator-skins-2483cef (1).zip */ = {isa = PBXFileReference; lastKnownFileType = archive.zip; path = "HBehrens-android-emulator-skins-2483cef (1).zip"; sourceTree = "<group>"; };
+		9FDCC19D62A17A76696DF9CC /* notifications_framed.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = notifications_framed.png; sourceTree = "<group>"; };
+		9FDCC1B507E1AD6DAD845F72 /* FrameFile.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = FrameFile.json; sourceTree = "<group>"; };
+		9FDCC23341B48DB27FB32EB6 /* patchr-promo-graphic.psd */ = {isa = PBXFileReference; lastKnownFileType = file.psd; path = "patchr-promo-graphic.psd"; sourceTree = "<group>"; };
+		9FDCC23489051DEAA6B4439A /* patchr-feature2-graphic.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "patchr-feature2-graphic.jpg"; sourceTree = "<group>"; };
 		9FDCC2AE42A7C32316E95CE2 /* GroupQuery.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GroupQuery.swift; sourceTree = "<group>"; };
+		9FDCC3142275CEFEAC3D5BDB /* gallery.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = gallery.png; sourceTree = "<group>"; };
 		9FDCC3A31B4DE515C4C32CF9 /* AboutViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AboutViewController.swift; sourceTree = "<group>"; };
+		9FDCC3E79F04E31E0CFFD040 /* patchr-feature-graphic.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "patchr-feature-graphic.jpg"; sourceTree = "<group>"; };
 		9FDCC3EBF074337408E968D0 /* AirReactionToolbar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirReactionToolbar.swift; sourceTree = "<group>"; };
+		9FDCC47A30865CF890DE7198 /* channel.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = channel.png; sourceTree = "<group>"; };
+		9FDCC4C5C9FEFD653014342D /* FrameFile.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = FrameFile.json; sourceTree = "<group>"; };
+		9FDCC516D8E48ABD22EE441A /* nexus_5_tilt.psd */ = {isa = PBXFileReference; lastKnownFileType = file.psd; path = nexus_5_tilt.psd; sourceTree = "<group>"; };
 		9FDCC5452372EFCC98BA01BF /* UserQuery.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserQuery.swift; sourceTree = "<group>"; };
+		9FDCC5CDEEB4DD9DDA31F876 /* single-nexus-5.psd */ = {isa = PBXFileReference; lastKnownFileType = file.psd; path = "single-nexus-5.psd"; sourceTree = "<group>"; };
+		9FDCC5E84AD8B2BDA2A67F77 /* channel_framed.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = channel_framed.png; sourceTree = "<group>"; };
 		9FDCC68ACDC02C764EE70B02 /* FireController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FireController.swift; path = Patchr/FireController.swift; sourceTree = "<group>"; };
 		9FDCC6D9E7C9AADE45675174 /* MemberSettingsController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MemberSettingsController.swift; sourceTree = "<group>"; };
+		9FDCC7279D63732F217E85F0 /* cover-image.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "cover-image.jpg"; sourceTree = "<group>"; };
+		9FDCC73F84557793D2F1F813 /* patchr_banner.psd */ = {isa = PBXFileReference; lastKnownFileType = file.psd; path = patchr_banner.psd; sourceTree = "<group>"; };
+		9FDCC7748B8151E060CC29A3 /* Nexus-5.psd */ = {isa = PBXFileReference; lastKnownFileType = file.psd; path = "Nexus-5.psd"; sourceTree = "<group>"; };
+		9FDCC79D24939EE5431E8F6E /* patchr-feature-graphic.psd */ = {isa = PBXFileReference; lastKnownFileType = file.psd; path = "patchr-feature-graphic.psd"; sourceTree = "<group>"; };
 		9FDCC7A62C9C1A632319795D /* MaterialColor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MaterialColor.swift; sourceTree = "<group>"; };
 		9FDCC7D2BF8341DCBB416DC4 /* ChannelViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChannelViewController.swift; sourceTree = "<group>"; };
+		9FDCC7F05DD5B1EB3998A138 /* nexus-5-white.psd */ = {isa = PBXFileReference; lastKnownFileType = file.psd; path = "nexus-5-white.psd"; sourceTree = "<group>"; };
+		9FDCC7F70FDCF3917DC5C784 /* 2-phone-left.psd */ = {isa = PBXFileReference; lastKnownFileType = file.psd; path = "2-phone-left.psd"; sourceTree = "<group>"; };
+		9FDCC803B919DFA96A4BAE85 /* notifications.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = notifications.png; sourceTree = "<group>"; };
+		9FDCC824712DD2F8575F766E /* Reflector Recording.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file.mp4; path = "Reflector Recording.mp4"; sourceTree = "<group>"; };
+		9FDCC82CA7DCA03118C419B1 /* patchr-square.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "patchr-square.jpg"; sourceTree = "<group>"; };
 		9FDCC87DC2923CE4A6F17C1E /* SlideAnimationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SlideAnimationController.swift; sourceTree = "<group>"; };
+		9FDCC8BBAF9AC5D8407A4060 /* nexus_4__psd_by_slaveoffear-d5m3092.zip */ = {isa = PBXFileReference; lastKnownFileType = archive.zip; path = "nexus_4__psd_by_slaveoffear-d5m3092.zip"; sourceTree = "<group>"; };
+		9FDCC8C47C8D789AEB916280 /* nexus-5.psd.zip */ = {isa = PBXFileReference; lastKnownFileType = archive.zip; path = "nexus-5.psd.zip"; sourceTree = "<group>"; };
+		9FDCC92495199E1EE9A9554F /* hand-dribbble2x.psd */ = {isa = PBXFileReference; lastKnownFileType = file.psd; path = "hand-dribbble2x.psd"; sourceTree = "<group>"; };
+		9FDCC95879B8093C86BEF044 /* nexus_7__psd_by_slaveoffear-d5m8vr0.zip */ = {isa = PBXFileReference; lastKnownFileType = archive.zip; path = "nexus_7__psd_by_slaveoffear-d5m8vr0.zip"; sourceTree = "<group>"; };
+		9FDCC9636DDC0646225E236C /* photo_edit.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = photo_edit.png; sourceTree = "<group>"; };
 		9FDCC96E81DE7C49C64D3D9C /* FireGroup.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FireGroup.swift; sourceTree = "<group>"; };
 		9FDCC985C0388C8C96A207CE /* FireMessage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FireMessage.swift; sourceTree = "<group>"; };
+		9FDCC9FB41B6849BBBB72F96 /* nexus-5-mockup.psd */ = {isa = PBXFileReference; lastKnownFileType = file.psd; path = "nexus-5-mockup.psd"; sourceTree = "<group>"; };
 		9FDCCA7AB0285558DFFDF2C1 /* SettingsTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsTableViewController.swift; sourceTree = "<group>"; };
+		9FDCCAC04E140F7D6BDCEF10 /* Roboto-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file.ttf; path = "Roboto-Regular.ttf"; sourceTree = "<group>"; };
 		9FDCCADB4957C2E128DDE9FF /* MainController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MainController.swift; path = Patchr/MainController.swift; sourceTree = "<group>"; };
+		9FDCCB4B50E35F9A34C652AA /* channel.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = channel.png; sourceTree = "<group>"; };
 		9FDCCBBC7BF1C0419007B9F9 /* AccountEditViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccountEditViewController.swift; sourceTree = "<group>"; };
+		9FDCCC15CA72BB57D88D11CC /* patchr-promo-graphic.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "patchr-promo-graphic.jpg"; sourceTree = "<group>"; };
+		9FDCCC2AD3C89FB0B7776F9E /* nexus-5-angled.psd */ = {isa = PBXFileReference; lastKnownFileType = file.psd; path = "nexus-5-angled.psd"; sourceTree = "<group>"; };
+		9FDCCC5F15F0E689FE8A44C2 /* nexus-5-angled-2.psd */ = {isa = PBXFileReference; lastKnownFileType = file.psd; path = "nexus-5-angled-2.psd"; sourceTree = "<group>"; };
+		9FDCCCA823E6E76A18E74581 /* nexus-5-angled-3.psd */ = {isa = PBXFileReference; lastKnownFileType = file.psd; path = "nexus-5-angled-3.psd"; sourceTree = "<group>"; };
 		9FDCCCCCF3108C93E4D09188 /* NotificationSettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NotificationSettingsViewController.swift; sourceTree = "<group>"; };
+		9FDCCCE5648A5D9C4A980E39 /* Patchr.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file.mp4; path = Patchr.mp4; sourceTree = "<group>"; };
+		9FDCCD45CAF08747C58A184B /* gallery_framed.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = gallery_framed.png; sourceTree = "<group>"; };
+		9FDCCD6CFF5308043FF34AC4 /* background.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = background.png; sourceTree = "<group>"; };
 		9FDCCD7DF56E13112F3E35C6 /* DevelopmentViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DevelopmentViewController.swift; sourceTree = "<group>"; };
+		9FDCCDA8A010A731ECD2ED21 /* nexus-5-black.psd */ = {isa = PBXFileReference; lastKnownFileType = file.psd; path = "nexus-5-black.psd"; sourceTree = "<group>"; };
 		9FDCCDE61C162E20DE3909AC /* FireChannel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FireChannel.swift; sourceTree = "<group>"; };
+		9FDCCE421B9E2B656F80B6E2 /* patchr-square.psd */ = {isa = PBXFileReference; lastKnownFileType = file.psd; path = "patchr-square.psd"; sourceTree = "<group>"; };
 		9FDCCE482E821C4491DB4117 /* SlideBounceAnimationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SlideBounceAnimationController.swift; sourceTree = "<group>"; };
 		9FDCCE483C7DF6C69EC46E17 /* ChannelQuery.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChannelQuery.swift; sourceTree = "<group>"; };
 		9FDCCE5E0AA449B739AD0137 /* ProfileEditViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = ProfileEditViewController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		9FDCCEFC8FC05526D291A77B /* MessageQuery.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageQuery.swift; sourceTree = "<group>"; };
+		9FDCCF1B16FEE7BE42F9A731 /* channel_framed.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = channel_framed.png; sourceTree = "<group>"; };
+		9FDCCF46E5C9BD1E20E59536 /* photo_edit_framed.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = photo_edit_framed.png; sourceTree = "<group>"; };
+		9FDCCFBA14298172864A2DAB /* Free iPhone Mockup Generator & App Demo Videos by Placeit.webloc */ = {isa = PBXFileReference; lastKnownFileType = file.webloc; path = "Free iPhone Mockup Generator & App Demo Videos by Placeit.webloc"; sourceTree = "<group>"; };
 		A1F9EE0FA6DBB46F1B1D440D /* Pods-PatchrShare.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PatchrShare.debug.xcconfig"; path = "Pods/Target Support Files/Pods-PatchrShare/Pods-PatchrShare.debug.xcconfig"; sourceTree = "<group>"; };
 		E20004DE1B094ACA00425694 /* PasswordEditViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = PasswordEditViewController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		E200E62E1DDD2A3E00E3457F /* EmailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EmailViewController.swift; sourceTree = "<group>"; };
@@ -474,6 +518,7 @@
 				7D3D39CA1A6F086F00A44CB2 /* Products */,
 				A0DA2C2AA90D81631E6BF68D /* Frameworks */,
 				CBCFB05350CA96E040A81097 /* Pods */,
+				9FDCCDB775AC6FECCE8DF240 /* Marketing */,
 			);
 			sourceTree = "<group>";
 		};
@@ -537,6 +582,153 @@
 				9FDCCA7AB0285558DFFDF2C1 /* SettingsTableViewController.swift */,
 			);
 			name = Settings;
+			sourceTree = "<group>";
+		};
+		9FDCC1C71B32386D99F98E13 /* AppStore */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = AppStore;
+			sourceTree = "<group>";
+		};
+		9FDCC2A3551B6EF3EDD0B1C6 /* Fonts */ = {
+			isa = PBXGroup;
+			children = (
+				9FDCCAC04E140F7D6BDCEF10 /* Roboto-Regular.ttf */,
+			);
+			path = Fonts;
+			sourceTree = "<group>";
+		};
+		9FDCC337C438804D9F25CD63 /* PlayStore */ = {
+			isa = PBXGroup;
+			children = (
+				9FDCCC15CA72BB57D88D11CC /* patchr-promo-graphic.jpg */,
+				9FDCC3E79F04E31E0CFFD040 /* patchr-feature-graphic.jpg */,
+				9FDCC23489051DEAA6B4439A /* patchr-feature2-graphic.jpg */,
+			);
+			path = PlayStore;
+			sourceTree = "<group>";
+		};
+		9FDCC457D907CF60FBC1C1C6 /* Promotional */ = {
+			isa = PBXGroup;
+			children = (
+				9FDCC7098C614F7EF03E2A8C /* Branch */,
+				9FDCCC8D91F8489BAE2C102B /* Source */,
+				9FDCC1C71B32386D99F98E13 /* AppStore */,
+				9FDCCA2419FEE5441928185C /* Facebook */,
+				9FDCC337C438804D9F25CD63 /* PlayStore */,
+			);
+			path = Promotional;
+			sourceTree = "<group>";
+		};
+		9FDCC7098C614F7EF03E2A8C /* Branch */ = {
+			isa = PBXGroup;
+			children = (
+				9FDCC82CA7DCA03118C419B1 /* patchr-square.jpg */,
+			);
+			path = Branch;
+			sourceTree = "<group>";
+		};
+		9FDCC853E6502A7681588F49 /* iPad Pro */ = {
+			isa = PBXGroup;
+			children = (
+				9FDCC47A30865CF890DE7198 /* channel.png */,
+				9FDCC15031FC0921002C6B82 /* background.png */,
+				9FDCC4C5C9FEFD653014342D /* FrameFile.json */,
+				9FDCCF1B16FEE7BE42F9A731 /* channel_framed.png */,
+			);
+			path = "iPad Pro";
+			sourceTree = "<group>";
+		};
+		9FDCC8864D10E2B761942BCC /* 5.5 */ = {
+			isa = PBXGroup;
+			children = (
+				9FDCCB4B50E35F9A34C652AA /* channel.png */,
+				9FDCC3142275CEFEAC3D5BDB /* gallery.png */,
+				9FDCCD6CFF5308043FF34AC4 /* background.png */,
+				9FDCC1B507E1AD6DAD845F72 /* FrameFile.json */,
+				9FDCC9636DDC0646225E236C /* photo_edit.png */,
+				9FDCC803B919DFA96A4BAE85 /* notifications.png */,
+				9FDCC5E84AD8B2BDA2A67F77 /* channel_framed.png */,
+				9FDCCD45CAF08747C58A184B /* gallery_framed.png */,
+				9FDCCF46E5C9BD1E20E59536 /* photo_edit_framed.png */,
+				9FDCC19D62A17A76696DF9CC /* notifications_framed.png */,
+			);
+			path = 5.5;
+			sourceTree = "<group>";
+		};
+		9FDCCA2419FEE5441928185C /* Facebook */ = {
+			isa = PBXGroup;
+			children = (
+				9FDCC7279D63732F217E85F0 /* cover-image.jpg */,
+			);
+			path = Facebook;
+			sourceTree = "<group>";
+		};
+		9FDCCAAACB845A3D877AFD87 /* Mockups */ = {
+			isa = PBXGroup;
+			children = (
+				9FDCC7748B8151E060CC29A3 /* Nexus-5.psd */,
+				9FDCC8C47C8D789AEB916280 /* nexus-5.psd.zip */,
+				9FDCC7F70FDCF3917DC5C784 /* 2-phone-left.psd */,
+				9FDCC516D8E48ABD22EE441A /* nexus_5_tilt.psd */,
+				9FDCCDA8A010A731ECD2ED21 /* nexus-5-black.psd */,
+				9FDCC7F05DD5B1EB3998A138 /* nexus-5-white.psd */,
+				9FDCCC2AD3C89FB0B7776F9E /* nexus-5-angled.psd */,
+				9FDCC9FB41B6849BBBB72F96 /* nexus-5-mockup.psd */,
+				9FDCC5CDEEB4DD9DDA31F876 /* single-nexus-5.psd */,
+				9FDCC92495199E1EE9A9554F /* hand-dribbble2x.psd */,
+				9FDCCC5F15F0E689FE8A44C2 /* nexus-5-angled-2.psd */,
+				9FDCCCA823E6E76A18E74581 /* nexus-5-angled-3.psd */,
+				9FDCC049778239D3F3D452DB /* nexus-7-aircandi.psd */,
+				9FDCC8BBAF9AC5D8407A4060 /* nexus_4__psd_by_slaveoffear-d5m3092.zip */,
+				9FDCC95879B8093C86BEF044 /* nexus_7__psd_by_slaveoffear-d5m8vr0.zip */,
+				9FDCC171492BC6FB680DEA05 /* HBehrens-android-emulator-skins-2483cef (1).zip */,
+				9FDCCFBA14298172864A2DAB /* Free iPhone Mockup Generator & App Demo Videos by Placeit.webloc */,
+			);
+			path = Mockups;
+			sourceTree = "<group>";
+		};
+		9FDCCB5B038D7C85538ED03E /* Screenshots */ = {
+			isa = PBXGroup;
+			children = (
+				9FDCC8864D10E2B761942BCC /* 5.5 */,
+				9FDCC853E6502A7681588F49 /* iPad Pro */,
+			);
+			path = Screenshots;
+			sourceTree = "<group>";
+		};
+		9FDCCC8D91F8489BAE2C102B /* Source */ = {
+			isa = PBXGroup;
+			children = (
+				9FDCCE421B9E2B656F80B6E2 /* patchr-square.psd */,
+				9FDCC73F84557793D2F1F813 /* patchr_banner.psd */,
+				9FDCC23341B48DB27FB32EB6 /* patchr-promo-graphic.psd */,
+				9FDCC79D24939EE5431E8F6E /* patchr-feature-graphic.psd */,
+			);
+			path = Source;
+			sourceTree = "<group>";
+		};
+		9FDCCDB775AC6FECCE8DF240 /* Marketing */ = {
+			isa = PBXGroup;
+			children = (
+				9FDCC2A3551B6EF3EDD0B1C6 /* Fonts */,
+				9FDCCE75661AB298D46F8D12 /* Video */,
+				9FDCCAAACB845A3D877AFD87 /* Mockups */,
+				9FDCC457D907CF60FBC1C1C6 /* Promotional */,
+				9FDCCB5B038D7C85538ED03E /* Screenshots */,
+			);
+			path = Marketing;
+			sourceTree = "<group>";
+		};
+		9FDCCE75661AB298D46F8D12 /* Video */ = {
+			isa = PBXGroup;
+			children = (
+				9FDCCCE5648A5D9C4A980E39 /* Patchr.mp4 */,
+				9FDCC1577A4D0CB7D4B299DE /* Demo New Patch.mp4 */,
+				9FDCC824712DD2F8575F766E /* Reflector Recording.mp4 */,
+			);
+			path = Video;
 			sourceTree = "<group>";
 		};
 		A0DA2C2AA90D81631E6BF68D /* Frameworks */ = {

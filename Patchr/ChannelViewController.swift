@@ -1212,7 +1212,7 @@ extension ChannelViewController: FUICollectionDelegate {
             let message = FireMessage(dict: snap.value as! [String: Any], id: snap.key)
             message.creator = cell.message?.creator
             cell.bind(message: message)
-            self.tableView.beginUpdates()
+            self.tableView.beginUpdates() // Triggers reset of row heights
             self.tableView.endUpdates()
         }
     }
