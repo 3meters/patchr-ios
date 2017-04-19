@@ -1,0 +1,48 @@
+{
+  "device_frame_version": "latest",
+  "default": {
+    "title": {
+      "font": "../../fonts/Roboto-Regular.ttf",
+      "color": "#ffffff"
+    },
+    "font_scale_factor": 0.06,
+    "background": "./background.png",
+    "padding": 50,
+    "show_complete_frame": false,
+    "stack_title" : false
+  },
+  "data": [
+    {
+      "filter": "ipad_pro_channel",
+      "font_scale_factor": 0.05,
+      "padding": "5%",
+      "title": {
+        "text": "Free group messaging\nfor control freaks."
+      }
+    },
+    {
+      "filter": "channel",
+      "title": {
+        "text": "Free group messaging\nfor control freaks."
+      }
+    },
+    {
+      "filter": "gallery",
+      "title": {
+        "text": "Photo gallery\nfor easy photo browsing."
+      }
+    },
+    {
+      "filter": "notifications",
+      "title": {
+        "text": "Stay current\nwith sync and notifications."
+      }
+    },
+    {
+      "filter": "photo_edit",
+      "title": {
+        "text": "Say it perfectly\nwith photo search and edit."
+      }
+    }
+  ]
+}
