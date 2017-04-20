@@ -1,0 +1,23 @@
+{
+  "name": "Craig",
+  "surname": "Simpson",
+  "gender": "male",
+  "region": "United States",
+  "age": 24,
+  "title": "mr",
+  "phone": "(424) 281 6535",
+  "birthday": {
+    "dmy": "03/05/1993",
+    "mdy": "05/03/1993",
+    "raw": 736447944
+  },
+  "email": "craig93@example.com",
+  "password": "Simpson93!%",
+  "credit_card": {
+    "expiration": "9/21",
+    "number": "1670-1729-1773-4793",
+    "pin": 8255,
+    "security": 620
+  },
+  "photo": "https://uinames.com/api/photos/male/37.jpg"
+}

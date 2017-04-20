@@ -1,0 +1,23 @@
+{
+  "name": "Kristofer",
+  "surname": "Kull",
+  "gender": "male",
+  "region": "Estonia",
+  "age": 31,
+  "title": "mr",
+  "phone": "(725) 413 1587",
+  "birthday": {
+    "dmy": "06/05/1986",
+    "mdy": "05/06/1986",
+    "raw": 515785112
+  },
+  "email": "kristofer86@example.com",
+  "password": "Kull86(@",
+  "credit_card": {
+    "expiration": "10/21",
+    "number": "7465-9879-3405-8916",
+    "pin": 8221,
+    "security": 318
+  },
+  "photo": "https://uinames.com/api/photos/male/28.jpg"
+}

@@ -1,0 +1,23 @@
+{
+  "name": "Heather",
+  "surname": "Pierce",
+  "gender": "female",
+  "region": "United States",
+  "age": 34,
+  "title": "ms",
+  "phone": "(157) 598 4557",
+  "birthday": {
+    "dmy": "22/08/1983",
+    "mdy": "08/22/1983",
+    "raw": 430388155
+  },
+  "email": "heather-83@example.com",
+  "password": "Pierce83~=",
+  "credit_card": {
+    "expiration": "9/19",
+    "number": "2348-9446-5727-1652",
+    "pin": 5747,
+    "security": 381
+  },
+  "photo": "https://uinames.com/api/photos/female/7.jpg"
+}

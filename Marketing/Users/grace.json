@@ -1,0 +1,23 @@
+{
+  "name": "Grace",
+  "surname": "Harper",
+  "gender": "female",
+  "region": "United States",
+  "age": 31,
+  "title": "ms",
+  "phone": "(270) 351 7885",
+  "birthday": {
+    "dmy": "16/06/1986",
+    "mdy": "06/16/1986",
+    "raw": 519355439
+  },
+  "email": "grace_harper@example.com",
+  "password": "Harper86)@",
+  "credit_card": {
+    "expiration": "9/22",
+    "number": "2416-9848-4664-8621",
+    "pin": 4048,
+    "security": 743
+  },
+  "photo": "https://uinames.com/api/photos/female/13.jpg"
+}
