@@ -154,18 +154,29 @@ class ChannelDetailView: UIView {
         
         self.nameLabel.attributedText = attrString
         if let group = StateController.instance.group {
-            if group.role == "guest" {
-                if channel.role != nil {
-                    self.roleLabel.text = channel.role == "visitor" ? "you: guest visitor" : "you: guest member"
+            if let channelRole = channel.role {
+                if channelRole == "owner" {
+                    self.roleLabel.text = "you: channel owner"
+                }
+                else if channelRole == "member" {
+                    if group.role == "guest" {
+                        self.roleLabel.text = "you: guest member"
+                    }
+                    else {
+                        self.roleLabel.text = "you: channel member"
+                    }
+                }
+                else if channelRole == "visitor" {
+                    if group.role == "guest" {
+                        self.roleLabel.text = "you: guest visitor"
+                    }
+                    else {
+                        self.roleLabel.text = "you: channel visitor"
+                    }
                 }
             }
             else {
-                if channel.role != nil {
-                    self.roleLabel.text = channel.role == "visitor" ? "you: channel visitor" : "you: channel member"
-                }
-                else {
-                    self.roleLabel.text = "you: previewing"
-                }
+                self.roleLabel.text = "you: previewing"
             }
         }
         

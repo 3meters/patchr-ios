@@ -459,7 +459,7 @@ class MainController: NSObject, iRateDelegate {
                         popup.buttonAlignment = .horizontal
                         let showButton = DefaultButton(title: "Show Me".uppercased(), height: 48) {
                             Reporting.track("invite_show_me")
-                            if let slideController = self.window?.rootViewController as? SlideViewController {
+                            if let slideController = self.containerController.controller as? SlideViewController {
                                 slideController.openLeft()
                             }
                         }
@@ -490,7 +490,7 @@ class MainController: NSObject, iRateDelegate {
                     popup.buttonAlignment = .horizontal
                     let showButton = DefaultButton(title: "Show Me".uppercased(), height: 48) {
                         Reporting.track("invite_show_me")
-                        if let slideController = self.window?.rootViewController as? SlideViewController,
+                        if let slideController = self.containerController.controller as? SlideViewController,
                             let wrapper = slideController.mainViewController as? AirNavigationController,
                             let channelController = wrapper.topViewController as? ChannelViewController {
                             channelController.textInputbar.textView.becomeFirstResponder()
