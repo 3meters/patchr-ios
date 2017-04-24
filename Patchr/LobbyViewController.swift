@@ -210,9 +210,9 @@ class LobbyViewController: UIViewController {
         
         if self.alertView == nil {
             var images = [
-                "create_group",
-                "invite_friends_2",
-                "group_chat_splash_4"]
+                "imgCreateGroup",
+                "imgInviteFriends",
+                "imgGroupChat"]
             
             var titles = [
                 "Create a Group".uppercased(),
@@ -221,13 +221,13 @@ class LobbyViewController: UIViewController {
             ]
             
             var descriptions = [
-                "What are the important groups in your life? Family, work or school buddies, people with a shared interest? Bring them together with a Patchr group!",
-                "Select members from your contacts and we handle the rest! We email them an invite, help them install Patchr and gently launch them into your group.",
-                "Patchr has brilliant messaging features: great privacy and sharing controls, photo search and editing, offline posting plus much more."
+                "Bring together the important people in your life with a Patchr group: family, work or school buddies, fantasy league, book club, you get the idea.",
+                "Select members from your contacts and we handle the rest! We will email them an invite, help them install Patchr and gently launch them into your amazing group.",
+                "Patchr has brilliant messaging features: photo search and editing, emoji reactions, realtime notifications, offline posting plus much more."
             ]
             
             if appFirstLaunch {
-                images.insert("group_chat_splash_4", at: 0)
+                images.insert("imgGroupChat", at: 0)
                 titles.insert("Welcome!".uppercased(), at: 0)
                 descriptions.insert("Patchr groups are a modern way to organize all your group messaging for free!", at: 0)
             }
