@@ -93,7 +93,10 @@ class AirReactionButton: UIControl {
                 
                 if let topController = UIViewController.topMostViewController() {
                     let popController = STPopupController(rootViewController: controller)
+                    let backgroundView = UIView()
+                    backgroundView.backgroundColor = Colors.opacity25pcntBlack
                     popController.style = .bottomSheet
+                    popController.backgroundView = backgroundView
                     popController.hidesCloseButton = true
                     self.sheetController = popController
                     let tap = UITapGestureRecognizer(target: self, action: #selector(backgroundTapped(sender:)))

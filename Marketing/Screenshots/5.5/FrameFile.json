@@ -18,6 +18,13 @@
       }
     },
     {
+      "filter": "reaction",
+      "background": "./background.png",
+      "title": {
+        "text": "Emoji reactions\nlet you respond quickly with style."
+      }
+    },
+    {
       "filter": "channel",
       "background": "./background.png",
       "title": {

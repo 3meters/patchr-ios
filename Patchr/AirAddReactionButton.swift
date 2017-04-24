@@ -68,6 +68,9 @@ class AirAddReactionButton: UIControl {
         
         if let topController = UIViewController.topMostViewController() {
             let popController = STPopupController(rootViewController: controller)
+            let backgroundView = UIView()
+            backgroundView.backgroundColor = Colors.opacity25pcntBlack
+            popController.backgroundView = backgroundView
             popController.style = .bottomSheet
             popController.hidesCloseButton = true
             self.sheetController = popController
