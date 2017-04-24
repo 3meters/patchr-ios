@@ -50,6 +50,7 @@ struct Config {
     
     static let imageDimensionMax = CGFloat(1600)
     static let contentWidthMax = CGFloat(462)
+    static let contentWidth = CGFloat(288)
     static let sideMenuWidth = CGFloat(260)
     
     static var navigationDrawerWidth: CGFloat {

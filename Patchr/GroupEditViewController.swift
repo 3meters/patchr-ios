@@ -41,14 +41,14 @@ class GroupEditViewController: BaseEditViewController {
          * - setting frame on self.view if size is different
          * - scrolling when self.view is a scrollview
          */
-        let bannerSize = self.banner.sizeThatFits(CGSize(width:288, height:CGFloat.greatestFiniteMagnitude))
-        let messageSize = self.message.sizeThatFits(CGSize(width:288, height:CGFloat.greatestFiniteMagnitude))
+        let bannerSize = self.banner.sizeThatFits(CGSize(width: Config.contentWidth, height:CGFloat.greatestFiniteMagnitude))
+        let messageSize = self.message.sizeThatFits(CGSize(width: Config.contentWidth, height:CGFloat.greatestFiniteMagnitude))
 
-        self.banner.anchorTopCenter(withTopPadding: 0, width: 288, height: bannerSize.height)
-        self.message.alignUnder(self.banner, matchingCenterWithTopPadding: 8, width: 288, height: messageSize.height)
+        self.banner.anchorTopCenter(withTopPadding: 0, width: Config.contentWidth, height: bannerSize.height)
+        self.message.alignUnder(self.banner, matchingCenterWithTopPadding: 8, width: Config.contentWidth, height: messageSize.height)
         self.photoEditView.alignUnder(self.message, matchingCenterWithTopPadding: 16, width: 150, height: 150)
-        self.titleField.alignUnder(self.photoEditView, matchingCenterWithTopPadding: 16, width: 288, height: 48)
-        self.usersButton.alignUnder(self.titleField, matchingCenterWithTopPadding: 16, width: 288, height: 48)
+        self.titleField.alignUnder(self.photoEditView, matchingCenterWithTopPadding: 16, width: Config.contentWidth, height: 48)
+        self.usersButton.alignUnder(self.titleField, matchingCenterWithTopPadding: 16, width: Config.contentWidth, height: 48)
 
         super.viewWillLayoutSubviews()
     }

@@ -31,12 +31,12 @@ class AccountEditViewController: BaseEditViewController {
     
     override func viewWillLayoutSubviews() {
         
-        let messageSize = self.message.sizeThatFits(CGSize(width:288, height:CGFloat.greatestFiniteMagnitude))
+        let messageSize = self.message.sizeThatFits(CGSize(width: Config.contentWidth, height:CGFloat.greatestFiniteMagnitude))
         
-        self.message.anchorTopCenter(withTopPadding: 0, width: 288, height: messageSize.height)
-        self.emailField.alignUnder(self.message, matchingCenterWithTopPadding: 16, width: 288, height: 48)
-        self.userNameField.alignUnder(self.emailField, matchingCenterWithTopPadding: 8, width: 288, height: 48)
-        self.passwordButton.alignUnder(self.userNameField, matchingCenterWithTopPadding: 16, width: 288, height: 48)
+        self.message.anchorTopCenter(withTopPadding: 0, width: Config.contentWidth, height: messageSize.height)
+        self.emailField.alignUnder(self.message, matchingCenterWithTopPadding: 16, width: Config.contentWidth, height: 48)
+        self.userNameField.alignUnder(self.emailField, matchingCenterWithTopPadding: 8, width: Config.contentWidth, height: 48)
+        self.passwordButton.alignUnder(self.userNameField, matchingCenterWithTopPadding: 16, width: Config.contentWidth, height: 48)
         
         super.viewWillLayoutSubviews()
     }

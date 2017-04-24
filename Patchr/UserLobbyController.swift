@@ -28,8 +28,8 @@ class UserLobbyController: BaseViewController {
     
     override func viewWillLayoutSubviews() {
         
-        let headingSize = self.headingLabel.sizeThatFits(CGSize(width:288, height:CGFloat.greatestFiniteMagnitude))        
-        self.headingLabel.anchorTopCenter(withTopPadding: 74, width: 288, height:  headingSize.height + 24)
+        let headingSize = self.headingLabel.sizeThatFits(CGSize(width: Config.contentWidth, height:CGFloat.greatestFiniteMagnitude))        
+        self.headingLabel.anchorTopCenter(withTopPadding: 74, width: Config.contentWidth, height:  headingSize.height + 24)
         self.buttonGroup.anchorInCenter(withWidth: 240, height: 96)
         self.buttonSignup.anchorTopCenterFillingWidth(withLeftAndRightPadding: 0, topPadding: 0, height: 44)
         self.buttonLogin.anchorBottomCenterFillingWidth(withLeftAndRightPadding: 0, bottomPadding: 0, height: 44)

@@ -42,15 +42,15 @@ class ChannelInviteController: BaseEditViewController {
     
 	override func viewWillLayoutSubviews() {
 		
-        let headingSize = self.heading.sizeThatFits(CGSize(width:288, height:CGFloat.greatestFiniteMagnitude))
-        let messageSize = self.message.sizeThatFits(CGSize(width:288, height:CGFloat.greatestFiniteMagnitude))
+        let headingSize = self.heading.sizeThatFits(CGSize(width: Config.contentWidth, height:CGFloat.greatestFiniteMagnitude))
+        let messageSize = self.message.sizeThatFits(CGSize(width: Config.contentWidth, height:CGFloat.greatestFiniteMagnitude))
         
-		self.heading.anchorTopCenter(withTopPadding: 0, width: 288, height: headingSize.height)
-        self.message.alignUnder(self.heading, matchingCenterWithTopPadding: 16, width: 288, height: messageSize.height)
+		self.heading.anchorTopCenter(withTopPadding: 0, width: Config.contentWidth, height: headingSize.height)
+        self.message.alignUnder(self.heading, matchingCenterWithTopPadding: 16, width: Config.contentWidth, height: messageSize.height)
         
-		self.inviteGuestsButton.alignUnder(self.message, matchingCenterWithTopPadding: 24, width: 288, height: 48)
-		self.inviteMembersButton.alignUnder(self.inviteGuestsButton, matchingCenterWithTopPadding: 16, width: 288, height: 48)
-        self.inviteListButton.alignUnder(self.inviteMembersButton, matchingCenterWithTopPadding: 16, width: 288, height: 48)
+		self.inviteGuestsButton.alignUnder(self.message, matchingCenterWithTopPadding: 24, width: Config.contentWidth, height: 48)
+		self.inviteMembersButton.alignUnder(self.inviteGuestsButton, matchingCenterWithTopPadding: 16, width: Config.contentWidth, height: 48)
+        self.inviteListButton.alignUnder(self.inviteMembersButton, matchingCenterWithTopPadding: 16, width: Config.contentWidth, height: 48)
 		
         super.viewWillLayoutSubviews()
 	}

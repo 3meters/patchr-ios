@@ -68,9 +68,9 @@ class GroupSwitcherController: BaseTableController {
         }
         else {
             if self.headingLabel != nil {
-                let headingSize = self.headingLabel.sizeThatFits(CGSize(width:288, height:CGFloat.greatestFiniteMagnitude))
+                let headingSize = self.headingLabel.sizeThatFits(CGSize(width: Config.contentWidth, height:CGFloat.greatestFiniteMagnitude))
                 
-                self.headingLabel.anchorTopCenter(withTopPadding: 74, width: 288, height:  headingSize.height + 24)
+                self.headingLabel.anchorTopCenter(withTopPadding: 74, width: Config.contentWidth, height:  headingSize.height + 24)
                 self.rule.alignUnder(self.headingLabel, centeredFillingWidthWithLeftAndRightPadding: 0, topPadding: 0, height: 1)
                 
                 if self.groupAvailable {

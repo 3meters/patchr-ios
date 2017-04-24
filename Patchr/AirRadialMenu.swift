@@ -43,14 +43,14 @@ class AirRadialMenu: CKRadialMenu  {
 	override func layoutSubviews() {
 		super.layoutSubviews()
 		
-        let titleSize = self.title.sizeThatFits(CGSize(width:288, height:CGFloat.greatestFiniteMagnitude))
-        let messageSize = self.message.sizeThatFits(CGSize(width:288, height:CGFloat.greatestFiniteMagnitude))
+        let titleSize = self.title.sizeThatFits(CGSize(width: Config.contentWidth, height:CGFloat.greatestFiniteMagnitude))
+        let messageSize = self.message.sizeThatFits(CGSize(width: Config.contentWidth, height:CGFloat.greatestFiniteMagnitude))
 		let availableHeight = self.parentView.height() - 144
 		let contentHeight = titleSize.height + messageSize.height + 12
 		let topLayoutGuide = (availableHeight - contentHeight) / 2
 		
-		self.title.anchorTopCenter(withTopPadding: topLayoutGuide, width: 288, height: titleSize.height)
-		self.message.alignUnder(self.title, matchingCenterWithTopPadding: 12, width: 288, height: messageSize.height)
+		self.title.anchorTopCenter(withTopPadding: topLayoutGuide, width: Config.contentWidth, height: titleSize.height)
+		self.message.alignUnder(self.title, matchingCenterWithTopPadding: 12, width: Config.contentWidth, height: messageSize.height)
 		
 		self.centerView.layer.cornerRadius = self.bounds.width / 2
 		self.imageView.fillSuperview(withLeftPadding: self.imageInsets.left
@@ -87,8 +87,8 @@ class AirRadialMenu: CKRadialMenu  {
 		self.message.numberOfLines = 0
 		self.message.textAlignment = .center
 		
-        let titleSize = self.title.sizeThatFits(CGSize(width:288, height:CGFloat.greatestFiniteMagnitude))
-        let messageSize = self.message.sizeThatFits(CGSize(width:288, height:CGFloat.greatestFiniteMagnitude))
+        let titleSize = self.title.sizeThatFits(CGSize(width: Config.contentWidth, height:CGFloat.greatestFiniteMagnitude))
+        let messageSize = self.message.sizeThatFits(CGSize(width: Config.contentWidth, height:CGFloat.greatestFiniteMagnitude))
 		let availableHeight = self.parentView.height() - 144
 		let contentHeight = titleSize.height + messageSize.height + 12
 		let topLayoutGuide = (availableHeight - contentHeight) / 2

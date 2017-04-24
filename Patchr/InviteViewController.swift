@@ -41,16 +41,16 @@ class InviteViewController: BaseEditViewController {
     
 	override func viewWillLayoutSubviews() {
 		
-        let headingSize = self.heading.sizeThatFits(CGSize(width:288, height:CGFloat.greatestFiniteMagnitude))
-        let inviteMembersCommentSize = self.inviteMembersComment.sizeThatFits(CGSize(width:288, height:CGFloat.greatestFiniteMagnitude))
-        let inviteGuestsCommentSize = self.inviteGuestsComment.sizeThatFits(CGSize(width:288, height:CGFloat.greatestFiniteMagnitude))
+        let headingSize = self.heading.sizeThatFits(CGSize(width: Config.contentWidth, height:CGFloat.greatestFiniteMagnitude))
+        let inviteMembersCommentSize = self.inviteMembersComment.sizeThatFits(CGSize(width: Config.contentWidth, height:CGFloat.greatestFiniteMagnitude))
+        let inviteGuestsCommentSize = self.inviteGuestsComment.sizeThatFits(CGSize(width: Config.contentWidth, height:CGFloat.greatestFiniteMagnitude))
         
-		self.heading.anchorTopCenter(withTopPadding: 0, width: 288, height: headingSize.height)
-		self.inviteMembersButton.alignUnder(self.heading, matchingCenterWithTopPadding: 24, width: 288, height: 48)
-        self.inviteMembersComment.alignUnder(self.inviteMembersButton, matchingCenterWithTopPadding: 12, width: 288, height: inviteMembersCommentSize.height)
-		self.inviteGuestsButton.alignUnder(self.inviteMembersComment, matchingCenterWithTopPadding: 20, width: 288, height: 48)
+		self.heading.anchorTopCenter(withTopPadding: 0, width: Config.contentWidth, height: headingSize.height)
+		self.inviteMembersButton.alignUnder(self.heading, matchingCenterWithTopPadding: 24, width: Config.contentWidth, height: 48)
+        self.inviteMembersComment.alignUnder(self.inviteMembersButton, matchingCenterWithTopPadding: 12, width: Config.contentWidth, height: inviteMembersCommentSize.height)
+		self.inviteGuestsButton.alignUnder(self.inviteMembersComment, matchingCenterWithTopPadding: 20, width: Config.contentWidth, height: 48)
         self.inviteGuestsComment.alignUnder(self.inviteGuestsButton, matchingCenterWithTopPadding: 12, width: 280, height: inviteGuestsCommentSize.height)
-        self.inviteListButton.alignUnder(self.inviteGuestsComment, matchingCenterWithTopPadding: 12, width: 288, height: 48)
+        self.inviteListButton.alignUnder(self.inviteGuestsComment, matchingCenterWithTopPadding: 12, width: Config.contentWidth, height: 48)
 		
         super.viewWillLayoutSubviews()
 	}

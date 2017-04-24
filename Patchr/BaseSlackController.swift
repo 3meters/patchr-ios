@@ -54,10 +54,10 @@ class BaseSlackController: SLKTextViewController {
     
     override func viewWillLayoutSubviews() {
         let holderWidth = self.view.width()
-        let holderHeight = CGFloat((288 * 0.56) + 32)
+        let holderHeight = CGFloat((Config.contentWidth * 0.56) + 32)
         self.photoHolder?.frame.size = CGSize(width: holderWidth, height: holderHeight)
         self.photoHolder?.frame.origin.x = 0
-        self.photoEditView?.anchorInCenter(withWidth: 288, height: CGFloat(288 * 0.56))
+        self.photoEditView?.anchorInCenter(withWidth: Config.contentWidth, height: CGFloat(Config.contentWidth * 0.56))
         self.rule.anchorTopCenterFillingWidth(withLeftAndRightPadding: 0, topPadding: 0, height: 0.5)
         super.viewWillLayoutSubviews()
     }

@@ -47,9 +47,9 @@ class ChannelPickerController: BaseTableController, CLTokenInputViewDelegate {
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
         
-        let headingSize = self.headingLabel.sizeThatFits(CGSize(width:288, height:CGFloat.greatestFiniteMagnitude))
+        let headingSize = self.headingLabel.sizeThatFits(CGSize(width: Config.contentWidth, height:CGFloat.greatestFiniteMagnitude))
         
-        self.headingLabel.anchorTopCenter(withTopPadding: 74, width: 288, height: headingSize.height)
+        self.headingLabel.anchorTopCenter(withTopPadding: 74, width: Config.contentWidth, height: headingSize.height)
         self.tokenView.alignUnder(self.headingLabel, centeredFillingWidthWithLeftAndRightPadding: 0, topPadding: 16, height: tokenView.height())
         self.tableView.alignUnder(self.tokenView, centeredFillingWidthAndHeightWithLeftAndRightPadding: 0, topAndBottomPadding: 0)
     }

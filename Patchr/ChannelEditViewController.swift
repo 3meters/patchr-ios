@@ -66,34 +66,34 @@ class ChannelEditViewController: BaseEditViewController {
          * - setting frame on self.view if size is different
          * - scrolling when self.view is a scrollview
          */
-        let bannerSize = self.banner.sizeThatFits(CGSize(width:288, height:CGFloat.greatestFiniteMagnitude))
-        let purposeSize = self.purposeField.sizeThatFits(CGSize(width:288, height:CGFloat.greatestFiniteMagnitude))
+        let bannerSize = self.banner.sizeThatFits(CGSize(width: Config.contentWidth, height:CGFloat.greatestFiniteMagnitude))
+        let purposeSize = self.purposeField.sizeThatFits(CGSize(width: Config.contentWidth, height:CGFloat.greatestFiniteMagnitude))
 
-        self.banner.anchorTopCenter(withTopPadding: 0, width: 288, height: bannerSize.height)
+        self.banner.anchorTopCenter(withTopPadding: 0, width: Config.contentWidth, height: bannerSize.height)
         
         if self.usersButton.isHidden {
-            self.usersButton.alignUnder(self.banner, matchingCenterWithTopPadding: 0, width: 288, height: 0)
+            self.usersButton.alignUnder(self.banner, matchingCenterWithTopPadding: 0, width: Config.contentWidth, height: 0)
         }
         else {
-            self.usersButton.alignUnder(self.banner, matchingCenterWithTopPadding: 24, width: 288, height: 48)
+            self.usersButton.alignUnder(self.banner, matchingCenterWithTopPadding: 24, width: Config.contentWidth, height: 48)
         }
         
-        self.nameField.alignUnder(self.usersButton, matchingCenterWithTopPadding: 8, width: 288, height: 48)
+        self.nameField.alignUnder(self.usersButton, matchingCenterWithTopPadding: 8, width: Config.contentWidth, height: 48)
         
         if self.visibilityGroup.isHidden {
-            self.visibilityGroup.alignUnder(self.nameField, matchingCenterWithTopPadding: 0, width: 288, height: 0)
+            self.visibilityGroup.alignUnder(self.nameField, matchingCenterWithTopPadding: 0, width: Config.contentWidth, height: 0)
         }
         else {
             self.visibilityLabel.sizeToFit()
             self.visibilityComment.sizeToFit()
-            self.visibilityGroup.alignUnder(self.nameField, matchingCenterWithTopPadding: 8, width: 288, height: 48)
+            self.visibilityGroup.alignUnder(self.nameField, matchingCenterWithTopPadding: 8, width: Config.contentWidth, height: 48)
             self.visibilityLabel.anchorCenterLeft(withLeftPadding: 0, width: self.visibilityLabel.width(), height: self.visibilityLabel.height())
             self.visibilityComment.align(toTheRightOf: self.visibilityLabel, matchingBottomWithLeftPadding: 8, width: self.visibilityComment.width(), height: self.visibilityComment.height())
             self.visibilitySwitch.anchorCenterRight(withRightPadding: 0, width: self.visibilitySwitch.width(), height: self.visibilitySwitch.height())
         }
         
-        self.photoEditView.alignUnder(self.visibilityGroup, matchingCenterWithTopPadding: 16, width: 288, height: 288 * 0.56)
-        self.purposeField.alignUnder(self.photoEditView, matchingCenterWithTopPadding: 16, width: 288, height: max(48, purposeSize.height))
+        self.photoEditView.alignUnder(self.visibilityGroup, matchingCenterWithTopPadding: 16, width: Config.contentWidth, height: Config.contentWidth * 0.56)
+        self.purposeField.alignUnder(self.photoEditView, matchingCenterWithTopPadding: 16, width: Config.contentWidth, height: max(48, purposeSize.height))
         
         super.viewWillLayoutSubviews()
     }

@@ -274,7 +274,7 @@
 		9FDCCAC04E140F7D6BDCEF10 /* Roboto-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file.ttf; path = "Roboto-Regular.ttf"; sourceTree = "<group>"; };
 		9FDCCADB4957C2E128DDE9FF /* MainController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MainController.swift; path = Patchr/MainController.swift; sourceTree = "<group>"; };
 		9FDCCB4B50E35F9A34C652AA /* channel.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = channel.png; sourceTree = "<group>"; };
-		9FDCCBBC7BF1C0419007B9F9 /* AccountEditViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccountEditViewController.swift; sourceTree = "<group>"; };
+		9FDCCBBC7BF1C0419007B9F9 /* AccountEditViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = AccountEditViewController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		9FDCCC15CA72BB57D88D11CC /* patchr-promo-graphic.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "patchr-promo-graphic.jpg"; sourceTree = "<group>"; };
 		9FDCCC2AD3C89FB0B7776F9E /* nexus-5-angled.psd */ = {isa = PBXFileReference; lastKnownFileType = file.psd; path = "nexus-5-angled.psd"; sourceTree = "<group>"; };
 		9FDCCC5F15F0E689FE8A44C2 /* nexus-5-angled-2.psd */ = {isa = PBXFileReference; lastKnownFileType = file.psd; path = "nexus-5-angled-2.psd"; sourceTree = "<group>"; };
@@ -296,13 +296,13 @@
 		9FDCCFBA14298172864A2DAB /* Free iPhone Mockup Generator & App Demo Videos by Placeit.webloc */ = {isa = PBXFileReference; lastKnownFileType = file.webloc; path = "Free iPhone Mockup Generator & App Demo Videos by Placeit.webloc"; sourceTree = "<group>"; };
 		A1F9EE0FA6DBB46F1B1D440D /* Pods-PatchrShare.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PatchrShare.debug.xcconfig"; path = "Pods/Target Support Files/Pods-PatchrShare/Pods-PatchrShare.debug.xcconfig"; sourceTree = "<group>"; };
 		E20004DE1B094ACA00425694 /* PasswordEditViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = PasswordEditViewController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
-		E200E62E1DDD2A3E00E3457F /* EmailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EmailViewController.swift; sourceTree = "<group>"; };
-		E203BBCA1E69CDDA00589071 /* ChannelInviteController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChannelInviteController.swift; sourceTree = "<group>"; };
+		E200E62E1DDD2A3E00E3457F /* EmailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = EmailViewController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
+		E203BBCA1E69CDDA00589071 /* ChannelInviteController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = ChannelInviteController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		E20555051DBC178F003C8398 /* ColorArray.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ColorArray.swift; sourceTree = "<group>"; };
 		E2064BF01BBF3C26009C7B6A /* AirMuteView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = AirMuteView.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		E2064BF21BC0212B009C7B6A /* silence.caf */ = {isa = PBXFileReference; lastKnownFileType = file; path = silence.caf; sourceTree = "<group>"; };
 		E2064BF41BC18A66009C7B6A /* AirProgress.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirProgress.swift; sourceTree = "<group>"; };
-		E207B4FF1E2936920019C2A1 /* ChannelPickerController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChannelPickerController.swift; sourceTree = "<group>"; };
+		E207B4FF1E2936920019C2A1 /* ChannelPickerController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = ChannelPickerController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		E207B5011E2978140019C2A1 /* ChannelListCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ChannelListCell.xib; sourceTree = "<group>"; };
 		E20C1FB61AFE462500A471E9 /* UIShared.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIShared.swift; sourceTree = "<group>"; };
 		E20C3A7A1BD6A717008CCED1 /* BaseView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseView.swift; sourceTree = "<group>"; };
@@ -357,7 +357,7 @@
 		E2539EA51E26A2B4000FFE40 /* InviteListCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = InviteListCell.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		E2539EA71E26A2E7000FFE40 /* InvitePendingListCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = InvitePendingListCell.xib; sourceTree = "<group>"; };
 		E2539EA91E26A796000FFE40 /* InviteAcceptedListCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = InviteAcceptedListCell.xib; sourceTree = "<group>"; };
-		E25603951DDE122B00961E10 /* GroupCreateController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GroupCreateController.swift; sourceTree = "<group>"; };
+		E25603951DDE122B00961E10 /* GroupCreateController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = GroupCreateController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		E25617EF1E01D08800E31240 /* NavigationHeaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NavigationHeaderView.swift; sourceTree = "<group>"; };
 		E25617F31E02F8D000E31240 /* AirScrimButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirScrimButton.swift; sourceTree = "<group>"; };
 		E256B4271BD3DDC900EBF894 /* AirTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirTableViewCell.swift; sourceTree = "<group>"; };
@@ -419,7 +419,7 @@
 		E2A603231CD97B7A00FBD55B /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		E2AC5FAB1E37DC6400C95A60 /* DropdownTransitionManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DropdownTransitionManager.swift; sourceTree = "<group>"; };
 		E2B2CAB11C553A8900CAE183 /* BaseEditViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = BaseEditViewController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
-		E2B756A41D84565F00C102EC /* GroupSwitcherController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GroupSwitcherController.swift; sourceTree = "<group>"; };
+		E2B756A41D84565F00C102EC /* GroupSwitcherController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = GroupSwitcherController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		E2B756A81D84600E00C102EC /* ChannelsHeaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = ChannelsHeaderView.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		E2B8A4B21CE7818B00A28D3A /* CKRadialMenu.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = CKRadialMenu.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		E2B8A4B31CE7818B00A28D3A /* CKRadialMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CKRadialMenu.h; sourceTree = "<group>"; };
@@ -1250,7 +1250,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "GOOGLE_APP_ID=1:486989499957:ios:b62b1047b75b4f5e\n\"${PODS_ROOT}\"/FirebaseCrash/upload-sym \"${SRCROOT}/Patchr/ServiceAccount.json\"";
+			shellScript = "GOOGLE_APP_ID=1:148529190495:ios:2e74793bf3076ad4\n\"${PODS_ROOT}\"/FirebaseCrash/upload-sym \"${SRCROOT}/Patchr/ServiceAccount.json\"";
 		};
 /* End PBXShellScriptBuildPhase section */
 
