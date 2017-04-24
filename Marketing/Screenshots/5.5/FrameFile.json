@@ -6,34 +6,50 @@
       "color": "#ffffff"
     },
     "font_scale_factor": 0.06,
-    "background": "./background.png",
     "padding": 50,
     "show_complete_frame": false,
     "stack_title" : false
   },
   "data": [
     {
-      "filter": "channel",
+      "filter": "web",
       "title": {
-        "text": "Free group messaging\nfor control freaks."
+        "text": "Just some placeholder text."
+      }
+    },
+    {
+      "filter": "channel",
+      "background": "./background.png",
+      "title": {
+        "text": "Free group messaging\nwith awesome sharing controls."
       }
     },
     {
       "filter": "gallery",
+      "background": "./background.png",
       "title": {
         "text": "Photo gallery\nfor easy photo browsing."
       }
     },
     {
       "filter": "notifications",
+      "background": "./background.png",
       "title": {
-        "text": "Stay current\nwith sync and notifications."
+        "text": "Stay current\nwith real-time notifications."
       }
     },
     {
       "filter": "photo_edit",
+      "background": "./background.png",
       "title": {
-        "text": "Say it perfectly\nwith photo search and edit."
+        "text": "Get creative with\nphoto edit."
+      }
+    },
+    {
+      "filter": "photo_search",
+      "background": "./background.png",
+      "title": {
+        "text": "Say it perfectly\nwith photo search."
       }
     }
   ]
