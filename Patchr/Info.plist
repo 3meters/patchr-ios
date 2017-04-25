@@ -166,6 +166,8 @@
 	<dict>
 		<key>live</key>
 		<string>key_live_aabKfhL9u6piQ93E2lzVslklzraKnSc3</string>
+        <key>test</key>
+        <string>key_test_nagIgfP2w3gbPZZyXerwZofkBBpJgTcO</string>
 	</dict>
 </dict>
 </plist>

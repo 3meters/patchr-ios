@@ -28,11 +28,11 @@ PODS:
   - AWSS3 (2.4.9):
     - AWSCore (= 2.4.9)
   - BEMCheckBox (1.4.0)
-  - Branch (0.12.30):
-    - Branch/Core (= 0.12.30)
-    - Branch/without-IDFA (= 0.12.30)
-  - Branch/Core (0.12.30)
-  - Branch/without-IDFA (0.12.30)
+  - Branch (0.14.12):
+    - Branch/Core (= 0.14.12)
+    - Branch/without-IDFA (= 0.14.12)
+  - Branch/Core (0.14.12)
+  - Branch/without-IDFA (0.14.12)
   - CLTokenInputView (2.3.0)
   - CocoaLumberjack/Core (3.0.0)
   - CocoaLumberjack/Default (3.0.0):
@@ -46,33 +46,33 @@ PODS:
   - DLRadioButton (1.4.9)
   - Emoji-swift (0.1.0)
   - Facade (1.1.1)
-  - Firebase/Auth (3.15.0):
+  - Firebase/Auth (3.16.0):
     - Firebase/Core
     - FirebaseAuth (= 3.1.1)
-  - Firebase/Core (3.15.0):
-    - FirebaseAnalytics (= 3.7.0)
-    - FirebaseCore (= 3.5.2)
-  - Firebase/Crash (3.15.0):
+  - Firebase/Core (3.16.0):
+    - FirebaseAnalytics (= 3.8.0)
+    - FirebaseCore (= 3.6.0)
+  - Firebase/Crash (3.16.0):
     - Firebase/Core
     - FirebaseCrash (= 1.1.6)
-  - Firebase/Database (3.15.0):
+  - Firebase/Database (3.16.0):
     - Firebase/Core
     - FirebaseDatabase (= 3.1.2)
-  - Firebase/Messaging (3.15.0):
+  - Firebase/Messaging (3.16.0):
     - Firebase/Core
-    - FirebaseMessaging (= 1.2.2)
-  - Firebase/RemoteConfig (3.15.0):
+    - FirebaseMessaging (= 1.2.3)
+  - Firebase/RemoteConfig (3.16.0):
     - Firebase/Core
     - FirebaseRemoteConfig (= 1.3.4)
-  - FirebaseAnalytics (3.7.0):
-    - FirebaseCore (~> 3.5)
+  - FirebaseAnalytics (3.8.0):
+    - FirebaseCore (~> 3.6)
     - FirebaseInstanceID (~> 1.0)
     - GoogleToolboxForMac/NSData+zlib (~> 2.1)
   - FirebaseAuth (3.1.1):
     - FirebaseAnalytics (~> 3.7)
     - GoogleToolboxForMac/NSDictionary+URLArguments (~> 2.1)
     - GTMSessionFetcher/Core (~> 1.1)
-  - FirebaseCore (3.5.2):
+  - FirebaseCore (3.6.0):
     - GoogleToolboxForMac/NSData+zlib (~> 2.1)
   - FirebaseCrash (1.1.6):
     - FirebaseAnalytics (~> 3.7)
@@ -82,9 +82,10 @@ PODS:
     - Protobuf (~> 3.1)
   - FirebaseDatabase (3.1.2):
     - FirebaseAnalytics (~> 3.7)
-  - FirebaseInstanceID (1.0.9)
-  - FirebaseMessaging (1.2.2):
-    - FirebaseAnalytics (~> 3.7)
+  - FirebaseInstanceID (1.0.10):
+    - FirebaseCore (~> 3.6)
+  - FirebaseMessaging (1.2.3):
+    - FirebaseAnalytics (~> 3.8)
     - FirebaseInstanceID (~> 1.0)
     - GoogleToolboxForMac/Logger (~> 2.1)
     - Protobuf (~> 3.1)
@@ -126,7 +127,7 @@ PODS:
     - PhoneNumberKit/PhoneNumberKitCore
   - pop (1.0.9)
   - PopupDialog (0.5.3)
-  - Protobuf (3.2.0)
+  - Protobuf (3.2.1)
   - ReachabilitySwift (3)
   - SDWebImage (4.0.0):
     - SDWebImage/Core (= 4.0.0)
@@ -149,7 +150,7 @@ DEPENDENCIES:
   - AlertOnboarding
   - AWSS3 (= 2.4.9)
   - BEMCheckBox
-  - Branch (~> 0.12.5)
+  - Branch (~> 0.14.0)
   - CLTokenInputView
   - CocoaLumberjack/Swift
   - DateTools (from `https://github.com/MatthewYork/DateTools`, branch `swift`)
@@ -208,7 +209,7 @@ SPEC CHECKSUMS:
   AWSCore: 175208358b95492e0ebe0337df2ab415300bddac
   AWSS3: e4959b48db48d5f3dcd5cdf9e24a07f60a313611
   BEMCheckBox: e18e4a148905b290bd03d98b767651c104f4eda3
-  Branch: 024ce8e69872f159e7de45b72fc681f9971b8599
+  Branch: f63d9cf82ac09747349a73184a0b739d28781c4d
   CLTokenInputView: 9dc1ffb7c9d2d81787e69a63c75bd97b0b2d1e76
   CocoaLumberjack: c823149bccc5519a9447aeb433be7b1212a7d6a5
   DACircularProgress: 4dd437c0fc3da5161cb289e07ac449493d41db71
@@ -216,14 +217,14 @@ SPEC CHECKSUMS:
   DLRadioButton: 7bb8a6e3768b572469ace553391ab4d2af6f9c19
   Emoji-swift: 20010383183f4d85e6e5a2b9642b96ebdb4f06ae
   Facade: 3c5c6fb1ba042d20885cfe5a290050f5b9351ca2
-  Firebase: 2b1cdfba1cda8589f32904a697cc753322bff9d8
-  FirebaseAnalytics: 0d1b7d81d5021155be37702a94ba1ec16d45365d
+  Firebase: 21bf4a89d3f01bfbe11adc3a5d934a4a3d3a5fd6
+  FirebaseAnalytics: 920e46455f27b0a52a80907a6d9b73ee4bd1c635
   FirebaseAuth: cc8a1824170adbd351edb7f994490a3fb5c18be6
-  FirebaseCore: a024587e43778508700af8c6b1209f7c4516ba02
+  FirebaseCore: 9691ee2ade70c098d7cf92440f4303f16d83ca75
   FirebaseCrash: db4c05d9c75baa050744d31b36357c8f1efba481
   FirebaseDatabase: 05c96d7b43a7368dc91c07791adb49683e1738d1
-  FirebaseInstanceID: 2d0518b1378fe9d685ef40cbdd63d2fdc1125339
-  FirebaseMessaging: df8267f378580a24174ce7861233aa11d5c90109
+  FirebaseInstanceID: b9eedd6846fb5e1f0f7279e1deaa7a7e4cf8392e
+  FirebaseMessaging: 753d05a925e9eb8eadd09a0ffc9b808578b72fac
   FirebaseRemoteConfig: af3003f4e8daa2bd1d5cf90d3cccc1fe224f8ed9
   FirebaseUI: d9e83c4c22dd922c661d85f041a771d1953405a9
   FLAnimatedImage: 4a0b56255d9b05f18b6dd7ee06871be5d3b89e31
@@ -238,7 +239,7 @@ SPEC CHECKSUMS:
   PhoneNumberKit: 0b5ea9a5454d201656db766343e9d768f8542496
   pop: f667631a5108a2e60d9e8797c9b32ddaf2080bce
   PopupDialog: 533dd564f8781633375505b9fbd406f8f146ccc9
-  Protobuf: 745f59e122e5de98d4d7ef291e264a0eef80f58e
+  Protobuf: 2ccbaf193f6c65adc67745453ca0c13234c32796
   ReachabilitySwift: f5b9bb30a0777fac8f09ce8b067e32faeb29bb64
   SDWebImage: 76a6348bdc74eb5a55dd08a091ef298e56b55e41
   SkyFloatingLabelTextField: a81a0eaed2785d1599f11484c6ebc1c4eb5d1228
@@ -250,6 +251,6 @@ SPEC CHECKSUMS:
   UIDevice-Hardware: ecb52d9a7b223b31f81982358e2b0769ac1a7918
   VTAcknowledgementsViewController: e1de80f2c0ce31cc7e1c6f1c8aaeec2770371f09
 
-PODFILE CHECKSUM: d34fa75dec1eb376086fd8243fa9732755011cd8
+PODFILE CHECKSUM: ff02ccfa9feb9aa4c3e606b489fc1067c6827127
 
 COCOAPODS: 1.1.0.rc.3

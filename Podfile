@@ -20,7 +20,7 @@ target 'Patchr' do
     pod 'AFNetworking',             '~> 2.6'
     pod 'AFNetworkActivityLogger',  '~> 2.0'
     pod 'AWSS3',                    '2.4.9'
-    pod 'Branch',                   '~> 0.12.5'     # Url routing and deep linking
+    pod 'Branch',                   '~> 0.14.0'     # Url routing and deep linking
     pod 'DateTools',                :git => 'https://github.com/MatthewYork/DateTools', :branch => 'swift'
     pod 'DLRadioButton',            '~> 1.4.9'
     pod 'Facade',                   '~> 1.1.1'	    # Convenience methods for frame based layout
