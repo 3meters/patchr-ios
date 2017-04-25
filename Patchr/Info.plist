@@ -32,7 +32,7 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>227</string>
+	<string>228</string>
 	<key>FirebaseAppDelegateProxyEnabled</key>
 	<false/>
 	<key>ITSAppUsesNonExemptEncryption</key>
@@ -166,8 +166,8 @@
 	<dict>
 		<key>live</key>
 		<string>key_live_aabKfhL9u6piQ93E2lzVslklzraKnSc3</string>
-        <key>test</key>
-        <string>key_test_nagIgfP2w3gbPZZyXerwZofkBBpJgTcO</string>
+		<key>test</key>
+		<string>key_test_nagIgfP2w3gbPZZyXerwZofkBBpJgTcO</string>
 	</dict>
 </dict>
 </plist>
