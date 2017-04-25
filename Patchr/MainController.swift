@@ -116,12 +116,18 @@ class MainController: NSObject, iRateDelegate {
             if error == nil {
                 /* A hit could mean a deferred link match */
                 if let clickedBranchLink = params?["+clicked_branch_link"] as? Bool , clickedBranchLink {
-                    Log.d("Deep link routing based on clicked branch link", breadcrumb: true)
-                    if !this.bootstrapping && this.link == nil {
-                        this.routeDeepLink(link: params!, error: error)
+                    if let feature = params?["~feature"] as? String, feature.lowercased() == "textmetheapp" {
+                        Reporting.track("install_via_website")
+                        Log.d("App install using TextMeTheApp", breadcrumb: true)
                     }
                     else {
-                        this.link = params!
+                        Log.d("Deep link routing based on clicked branch link", breadcrumb: true)
+                        if !this.bootstrapping && this.link == nil {
+                            this.routeDeepLink(link: params!, error: error)
+                        }
+                        else {
+                            this.link = params!
+                        }
                     }
                 }
             }
@@ -311,8 +317,9 @@ class MainController: NSObject, iRateDelegate {
          * Not logged in: email -> username|password -> open channel
          */
         if UserController.instance.authenticated {
-            let groupId = (link["group_id"] as! String)
-            let userId = UserController.instance.userId!
+            
+            guard let groupId = link["group_id"] as? String
+                , let userId = UserController.instance.userId else { return }
             
             /* Must be group member or we get permission denied. Weirdly, we can get callbacks on with and withCancel
                when there is no membership record. So we have to use a flag to prevent double handling. */
@@ -372,9 +379,7 @@ class MainController: NSObject, iRateDelegate {
                     let popup = PopupDialog(title: "Already a Member", message: "You are currently a member of the \(groupTitle) Patchr group!")
                     let button = DefaultButton(title: "OK") {
                         if flow == .onboardInvite {
-                            Reporting.track("view_group_switcher")
-                            let controller = GroupSwitcherController()
-                            topController.navigationController?.pushViewController(controller, animated: true)
+                            self.showGroupSwitcher()
                         }
                     }
                     button.buttonHeight = 48
