@@ -251,7 +251,7 @@ class MainController: NSObject, iRateDelegate {
     
     func showMain(then: (() -> Void)? = nil) {
         
-        if self.containerController.controller is SlideViewController {
+        if self.containerController.controller is SlideMenuController {
             then?()
             return
         }
@@ -266,7 +266,7 @@ class MainController: NSObject, iRateDelegate {
         mainBar.navigationBarHeight = 54
         drawerBar.navigationBarHeight = UserDefaults.standard.bool(forKey: Prefs.statusBarHidden) ? 74 : 54
 
-        let slideController = SlideViewController(mainViewController: mainWrapper
+        let slideController = SlideMenuController(mainViewController: mainWrapper
             , leftMenuViewController: drawerWrapper
             , rightMenuViewController: menuController)
         
@@ -288,7 +288,7 @@ class MainController: NSObject, iRateDelegate {
 
     func showChannel(channelId: String, groupId: String, then: (() -> Void)? = nil) {
         showMain {
-            if let slide = self.containerController.controller as? SlideViewController {
+            if let slide = self.containerController.controller as? SlideMenuController {
                 if let wrapper = slide.mainViewController as? AirNavigationController {
                     Reporting.track("view_channel")
                     let controller = ChannelViewController()
@@ -464,7 +464,7 @@ class MainController: NSObject, iRateDelegate {
                         popup.buttonAlignment = .horizontal
                         let showButton = DefaultButton(title: "Show Me".uppercased(), height: 48) {
                             Reporting.track("invite_show_me")
-                            if let slideController = self.containerController.controller as? SlideViewController {
+                            if let slideController = self.containerController.controller as? SlideMenuController {
                                 slideController.openLeft()
                             }
                         }
@@ -495,7 +495,7 @@ class MainController: NSObject, iRateDelegate {
                     popup.buttonAlignment = .horizontal
                     let showButton = DefaultButton(title: "Show Me".uppercased(), height: 48) {
                         Reporting.track("invite_show_me")
-                        if let slideController = self.containerController.controller as? SlideViewController,
+                        if let slideController = self.containerController.controller as? SlideMenuController,
                             let wrapper = slideController.mainViewController as? AirNavigationController,
                             let channelController = wrapper.topViewController as? ChannelViewController {
                             channelController.textInputbar.textView.becomeFirstResponder()
