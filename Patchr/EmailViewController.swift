@@ -126,7 +126,7 @@ class EmailViewController: BaseEditViewController {
             
             if self.flow == .onboardLogin {
                 if !exists {
-                    Reporting.track("email_account_not_found")
+                    Reporting.track("email_account_not_found", properties: ["email": email])
                     self.emailField.errorMessage = "No account found."
                 }
                 else {

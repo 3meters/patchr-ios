@@ -179,7 +179,7 @@ class PasswordViewController: BaseEditViewController {
                 if error == nil {
                     UserDefaults.standard.set(email, forKey: Prefs.lastUserEmail)
                 }
-                self.authenticated(user: authUser, error: error)
+                self.authenticated(user: authUser, email: email, error: error)
             }
         }
         else {  // Only happens if creating group
@@ -222,7 +222,7 @@ class PasswordViewController: BaseEditViewController {
         }
     }
     
-    func authenticated(user: FIRUser?, error: Error?) {
+    func authenticated(user: FIRUser?, email: String?, error: Error?) {
         self.processing = false
         self.progress?.hide(true)
         
@@ -255,11 +255,11 @@ class PasswordViewController: BaseEditViewController {
         else {
             var errorMessage = error?.localizedDescription
             if error!._code == FIRAuthErrorCode.errorCodeEmailAlreadyInUse.rawValue {
-                Reporting.track("login_error", properties:["message": "email_already_used"])
+                Reporting.track("login_error", properties:["message": "email_already_used", "email": email!])
                 errorMessage = "Email already used"
             }
             else if error!._code == FIRAuthErrorCode.errorCodeInvalidEmail.rawValue {
-                Reporting.track("login_error", properties:["message": "email_address_not_valid"])
+                Reporting.track("login_error", properties:["message": "email_address_not_valid", "email": email!])
                 errorMessage = "Email address is not valid"
             }
             else if error!._code == FIRAuthErrorCode.errorCodeWrongPassword.rawValue {

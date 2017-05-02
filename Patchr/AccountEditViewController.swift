@@ -169,7 +169,7 @@ class AccountEditViewController: BaseEditViewController {
             if exists {
                 this.progress?.hide(true)
                 this.processing = false
-                Reporting.track("error_email_used")
+                Reporting.track("error_email_used", properties: ["email": email])
                 this.emailField.errorMessage = "Email is already being used"
             }
             else {
@@ -231,7 +231,7 @@ class AccountEditViewController: BaseEditViewController {
                 return
             }
             if exists {
-                Reporting.track("error_username_used")
+                Reporting.track("error_username_used", properties: ["username": username])
                 this.userNameField.errorMessage = "Choose another username"
             }
             else {
