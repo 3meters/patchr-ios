@@ -148,7 +148,6 @@
 		E29A921E1DB19A2600B27093 /* FireProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29A921D1DB19A2600B27093 /* FireProfile.swift */; };
 		E29A92201DB19A3C00B27093 /* FirePhoto.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29A921F1DB19A3C00B27093 /* FirePhoto.swift */; };
 		E2A28E6F1B4A602200B3A2FE /* AirToggleButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2A28E6E1B4A602200B3A2FE /* AirToggleButton.swift */; };
-		E2A5A8801B6FCE98006D6E81 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = E2A5A87F1B6FCE98006D6E81 /* GoogleService-Info.plist */; };
 		E2A5A8851B703B9B006D6E81 /* PhotoEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2A5A8841B703B9B006D6E81 /* PhotoEditView.swift */; };
 		E2A603241CD97B7A00FBD55B /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = E2A603221CD97B7A00FBD55B /* InfoPlist.strings */; };
 		E2AC5FAC1E37DC6400C95A60 /* DropdownTransitionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2AC5FAB1E37DC6400C95A60 /* DropdownTransitionManager.swift */; };
@@ -173,7 +172,6 @@
 		E2CA16FF1DB95DDB00F99E1D /* FireAttachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2CA16FE1DB95DDB00F99E1D /* FireAttachment.swift */; };
 		E2CC15A11C2C897800316356 /* WrapperTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2CC15A01C2C897800316356 /* WrapperTableViewCell.swift */; };
 		E2CCAAE21B67EE2C0071170C /* chirp.caf in Resources */ = {isa = PBXBuildFile; fileRef = E2CCAAE11B67EE2C0071170C /* chirp.caf */; };
-		E2CF51331DAEF39100515506 /* ServiceAccount.json in Resources */ = {isa = PBXBuildFile; fileRef = E2CF51321DAEF39100515506 /* ServiceAccount.json */; };
 		E2D10E5C1C87AA760099EA6E /* AirHideShowButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2D10E5B1C87AA760099EA6E /* AirHideShowButton.swift */; };
 		E2D12A711C0778C100DE507E /* AirScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2D12A701C0778C100DE507E /* AirScrollView.swift */; };
 		E2D12A751C08F85E00DE507E /* AirButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2D12A741C08F85E00DE507E /* AirButton.swift */; };
@@ -192,6 +190,204 @@
 		E2DA16D91DD0F7280096D86F /* AirUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2DA16D81DD0F7280096D86F /* AirUIView.swift */; };
 		E2DA16DB1DD114230096D86F /* AirStarButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2DA16DA1DD114230096D86F /* AirStarButton.swift */; };
 		E2DA16DD1DD11B7A0096D86F /* AirToggleImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2DA16DC1DD11B7A0096D86F /* AirToggleImage.swift */; };
+		E2DB42891EB4F2C400B1F78B /* UserListCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E25B0F471DCE7D7400021D5B /* UserListCell.swift */; };
+		E2DB428A1EB4F2C400B1F78B /* AirRuleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29730631C15090300B9433B /* AirRuleView.swift */; };
+		E2DB428B1EB4F2C400B1F78B /* ChannelListCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E23EC4CD1DBD44DB00EBCD42 /* ChannelListCell.swift */; };
+		E2DB428C1EB4F2C400B1F78B /* ChannelPickerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E207B4FF1E2936920019C2A1 /* ChannelPickerController.swift */; };
+		E2DB428D1EB4F2C400B1F78B /* AirLabelBanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2D12A841C0A592D00DE507E /* AirLabelBanner.swift */; };
+		E2DB428E1EB4F2C400B1F78B /* ExtensionsUi.swift in Sources */ = {isa = PBXBuildFile; fileRef = E26B0C881B456F8A00706F4A /* ExtensionsUi.swift */; };
+		E2DB428F1EB4F2C400B1F78B /* Log.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2C0D9301B6C415100E28CE9 /* Log.swift */; };
+		E2DB42901EB4F2C400B1F78B /* ThumbnailCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E24A87251B2DC0AB00E6F96B /* ThumbnailCollectionViewCell.swift */; };
+		E2DB42911EB4F2C400B1F78B /* GalleryGridViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E227294A1CEA743600913041 /* GalleryGridViewController.swift */; };
+		E2DB42921EB4F2C400B1F78B /* UnreadBackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2D654FC1E13365400714BA9 /* UnreadBackView.swift */; };
+		E2DB42931EB4F2C400B1F78B /* AirLabelStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = E25908311DC7B3AA00CB6C3F /* AirLabelStack.swift */; };
+		E2DB42941EB4F2C400B1F78B /* EmojiViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2EEE9111E9C82680085565E /* EmojiViewCell.swift */; };
+		E2DB42951EB4F2C400B1F78B /* Debouncer.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2FFD38A1DF32D3200FD75C7 /* Debouncer.swift */; };
+		E2DB42961EB4F2C400B1F78B /* Stopwatch.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20C3A841BE04BBC008CCED1 /* Stopwatch.swift */; };
+		E2DB42971EB4F2C400B1F78B /* PhotoBrowser.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2999EE41DC2CD3B005C69D8 /* PhotoBrowser.swift */; };
+		E2DB42981EB4F2C400B1F78B /* AirRadialMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2B8A4B51CE7875400A28D3A /* AirRadialMenu.swift */; };
+		E2DB42991EB4F2C400B1F78B /* JSONResponseSerializerWithData.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D01FA351A7024E200DD6DFA /* JSONResponseSerializerWithData.m */; };
+		E2DB429A1EB4F2C400B1F78B /* ChannelSwitcherController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2F5C5731E086AB900FCA59C /* ChannelSwitcherController.swift */; };
+		E2DB429B1EB4F2C400B1F78B /* UserHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29A92191DB1859E00B27093 /* UserHeaderView.swift */; };
+		E2DB429C1EB4F2C400B1F78B /* MessageListCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29A4CD91BD077520059D5B9 /* MessageListCell.swift */; };
+		E2DB429D1EB4F2C400B1F78B /* AirToggleButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2A28E6E1B4A602200B3A2FE /* AirToggleButton.swift */; };
+		E2DB429E1EB4F2C400B1F78B /* AirProgress.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2064BF41BC18A66009C7B6A /* AirProgress.swift */; };
+		E2DB429F1EB4F2C400B1F78B /* UIView+BorderLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = E241D1591B1B3FCE00702E01 /* UIView+BorderLayer.m */; };
+		E2DB42A01EB4F2C400B1F78B /* PresenceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2810BA51DC8E6930013AEA0 /* PresenceView.swift */; };
+		E2DB42A11EB4F2C400B1F78B /* AirNavigationBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = E24D84D21E8AF1D300BFE408 /* AirNavigationBar.swift */; };
+		E2DB42A21EB4F2C400B1F78B /* Theming.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2D12A7E1C0A090200DE507E /* Theming.swift */; };
+		E2DB42A31EB4F2C400B1F78B /* BaseEditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2B2CAB11C553A8900CAE183 /* BaseEditViewController.swift */; };
+		E2DB42A41EB4F2C400B1F78B /* MenuItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2FA133D1D8220DD0057F287 /* MenuItemView.swift */; };
+		E2DB42A51EB4F2C400B1F78B /* NGAParallaxMotion.m in Sources */ = {isa = PBXBuildFile; fileRef = E2BC533B1DE5E53600C97A2C /* NGAParallaxMotion.m */; };
+		E2DB42A61EB4F2C400B1F78B /* AirRadioButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E297305D1C136E8300B9433B /* AirRadioButton.swift */; };
+		E2DB42A71EB4F2C400B1F78B /* NavigationHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E25617EF1E01D08800E31240 /* NavigationHeaderView.swift */; };
+		E2DB42A81EB4F2C400B1F78B /* AirTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E256B4271BD3DDC900EBF894 /* AirTableViewCell.swift */; };
+		E2DB42A91EB4F2C400B1F78B /* GroupListCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E28DB2931DBBFA1C008B2E4B /* GroupListCell.swift */; };
+		E2DB42AA1EB4F2C400B1F78B /* AirImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E25327B51B1000C000990A81 /* AirImageView.swift */; };
+		E2DB42AB1EB4F2C400B1F78B /* EmptyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2999EE21DC25AAE005C69D8 /* EmptyViewController.swift */; };
+		E2DB42AC1EB4F2C400B1F78B /* DisplayPhoto.swift in Sources */ = {isa = PBXBuildFile; fileRef = E23C010E1CE4D73B009C56B2 /* DisplayPhoto.swift */; };
+		E2DB42AD1EB4F2C400B1F78B /* DrawerHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E25173C31E0982450030259A /* DrawerHeaderView.swift */; };
+		E2DB42AE1EB4F2C400B1F78B /* BingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2BC53321DE5D54600C97A2C /* BingController.swift */; };
+		E2DB42AF1EB4F2C400B1F78B /* ChannelTitleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2DA16D41DCFDF430096D86F /* ChannelTitleView.swift */; };
+		E2DB42B01EB4F2C400B1F78B /* ColorArray.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20555051DBC178F003C8398 /* ColorArray.swift */; };
+		E2DB42B11EB4F2C400B1F78B /* AirCheckBox.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2FFD38E1DF4817700FD75C7 /* AirCheckBox.swift */; };
+		E2DB42B21EB4F2C400B1F78B /* AudioController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E25327D11B13DEF800990A81 /* AudioController.swift */; };
+		E2DB42B31EB4F2C400B1F78B /* AirTextFieldCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2BC532A1DE20E6F00C97A2C /* AirTextFieldCell.swift */; };
+		E2DB42B41EB4F2C400B1F78B /* UserMiniHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E21B408F1E60A62A00C9143B /* UserMiniHeaderView.swift */; };
+		E2DB42B51EB4F2C400B1F78B /* AirReactionButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2EEE90D1E99470D0085565E /* AirReactionButton.swift */; };
+		E2DB42B61EB4F2C400B1F78B /* PHAsset+identifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = E26BBF961DB5734F00038754 /* PHAsset+identifier.swift */; };
+		E2DB42B71EB4F2C400B1F78B /* EmailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E200E62E1DDD2A3E00E3457F /* EmailViewController.swift */; };
+		E2DB42B81EB4F2C400B1F78B /* PhotoEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2A5A8841B703B9B006D6E81 /* PhotoEditView.swift */; };
+		E2DB42B91EB4F2C400B1F78B /* ChannelEditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20C74341DD934CC00D90A4D /* ChannelEditViewController.swift */; };
+		E2DB42BA1EB4F2C400B1F78B /* SideMenuViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E21B408D1E60A59E00C9143B /* SideMenuViewController.swift */; };
+		E2DB42BB1EB4F2C400B1F78B /* BaseSlackController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E26B0B301DEF7C130086FDAD /* BaseSlackController.swift */; };
+		E2DB42BC1EB4F2C400B1F78B /* AirTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20C3A7C1BD70DD2008CCED1 /* AirTableView.swift */; };
+		E2DB42BD1EB4F2C400B1F78B /* AirLabelBase.swift in Sources */ = {isa = PBXBuildFile; fileRef = E229CD111C1337A700F5BDAC /* AirLabelBase.swift */; };
+		E2DB42BE1EB4F2C400B1F78B /* BaseDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20C3A801BDC1D57008CCED1 /* BaseDetailView.swift */; };
+		E2DB42BF1EB4F2C400B1F78B /* UIBarButtonItem+Badge.m in Sources */ = {isa = PBXBuildFile; fileRef = E25173C61E09CB9D0030259A /* UIBarButtonItem+Badge.m */; };
+		E2DB42C01EB4F2C400B1F78B /* AirHideShowButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2D10E5B1C87AA760099EA6E /* AirHideShowButton.swift */; };
+		E2DB42C11EB4F2C400B1F78B /* AirSearchField.swift in Sources */ = {isa = PBXBuildFile; fileRef = E297305F1C14A7BC00B9433B /* AirSearchField.swift */; };
+		E2DB42C21EB4F2C400B1F78B /* FireProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29A921D1DB19A2600B27093 /* FireProfile.swift */; };
+		E2DB42C31EB4F2C400B1F78B /* CALayer+XibConfiguration.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D39D3C41ABA21B200275759 /* CALayer+XibConfiguration.m */; };
+		E2DB42C41EB4F2C400B1F78B /* GroupCreateController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E25603951DDE122B00961E10 /* GroupCreateController.swift */; };
+		E2DB42C51EB4F2C400B1F78B /* UIShared.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20C1FB61AFE462500A471E9 /* UIShared.swift */; };
+		E2DB42C61EB4F2C400B1F78B /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D3D39CE1A6F086F00A44CB2 /* AppDelegate.swift */; };
+		E2DB42C71EB4F2C400B1F78B /* SwiftyJSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D01FA3A1A705D8700DD6DFA /* SwiftyJSON.swift */; };
+		E2DB42C81EB4F2C400B1F78B /* PasswordEditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20004DE1B094ACA00425694 /* PasswordEditViewController.swift */; };
+		E2DB42C91EB4F2C400B1F78B /* LobbyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2D12A801C0A52D700DE507E /* LobbyViewController.swift */; };
+		E2DB42CA1EB4F2C400B1F78B /* ChannelDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2FB2C491DBFD33E00E97050 /* ChannelDetailView.swift */; };
+		E2DB42CB1EB4F2C400B1F78B /* AirLabelTitle.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2D12A821C0A58F000DE507E /* AirLabelTitle.swift */; };
+		E2DB42CC1EB4F2C400B1F78B /* GroupMiniHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E21B40911E60A65600C9143B /* GroupMiniHeaderView.swift */; };
+		E2DB42CD1EB4F2C400B1F78B /* GroupSwitcherController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2B756A41D84565F00C102EC /* GroupSwitcherController.swift */; };
+		E2DB42CE1EB4F2C400B1F78B /* MBProgressHUD+MBProgressHudAccessible.m in Sources */ = {isa = PBXBuildFile; fileRef = E227708C1C46C01800866733 /* MBProgressHUD+MBProgressHudAccessible.m */; };
+		E2DB42CF1EB4F2C400B1F78B /* AirLinkButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2D12A781C08FA0E00DE507E /* AirLinkButton.swift */; };
+		E2DB42D01EB4F2C400B1F78B /* FloatPhoneField.swift in Sources */ = {isa = PBXBuildFile; fileRef = E24773441DCA254F00EFB46F /* FloatPhoneField.swift */; };
+		E2DB42D11EB4F2C400B1F78B /* ImageResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2C7C5CA1B2CF2F80045038A /* ImageResult.swift */; };
+		E2DB42D21EB4F2C400B1F78B /* BaseTableController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E28A481E1DE72E0400A01B46 /* BaseTableController.swift */; };
+		E2DB42D31EB4F2C400B1F78B /* UIImage+ImageEffects.m in Sources */ = {isa = PBXBuildFile; fileRef = E2F85C731C31F0D700FC2364 /* UIImage+ImageEffects.m */; };
+		E2DB42D41EB4F2C400B1F78B /* Animation.swift in Sources */ = {isa = PBXBuildFile; fileRef = E26C80911C3AE246001514B3 /* Animation.swift */; };
+		E2DB42D51EB4F2C400B1F78B /* PasswordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D021ABD1A9409450047DAAE /* PasswordViewController.swift */; };
+		E2DB42D61EB4F2C400B1F78B /* FloatTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = E27F8A7D1DFB3A180020E852 /* FloatTextField.swift */; };
+		E2DB42D71EB4F2C400B1F78B /* AirMuteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2064BF01BBF3C26009C7B6A /* AirMuteView.swift */; };
+		E2DB42D81EB4F2C400B1F78B /* Http.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2BC533D1DE5E7EC00C97A2C /* Http.swift */; };
+		E2DB42D91EB4F2C400B1F78B /* AirScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2D12A701C0778C100DE507E /* AirScrollView.swift */; };
+		E2DB42DA1EB4F2C400B1F78B /* AirAddReactionButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29074A11E9D3554001E0609 /* AirAddReactionButton.swift */; };
+		E2DB42DB1EB4F2C400B1F78B /* WrapperTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2CC15A01C2C897800316356 /* WrapperTableViewCell.swift */; };
+		E2DB42DC1EB4F2C400B1F78B /* MemberPickerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E266A1BF1DEB4E8900C71C28 /* MemberPickerController.swift */; };
+		E2DB42DD1EB4F2C400B1F78B /* InviteListCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2539EA51E26A2B4000FFE40 /* InviteListCell.swift */; };
+		E2DB42DE1EB4F2C400B1F78B /* ContactPickerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E26A02FC1DF5BE0D00EE32D3 /* ContactPickerController.swift */; };
+		E2DB42DF1EB4F2C400B1F78B /* UnreadQuery.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2D654FA1E0C9EBB00714BA9 /* UnreadQuery.swift */; };
+		E2DB42E01EB4F2C400B1F78B /* AirButtonBase.swift in Sources */ = {isa = PBXBuildFile; fileRef = E23682841E1BFE3700F9FDFB /* AirButtonBase.swift */; };
+		E2DB42E11EB4F2C400B1F78B /* ChannelInviteController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E203BBCA1E69CDDA00589071 /* ChannelInviteController.swift */; };
+		E2DB42E21EB4F2C400B1F78B /* FireArray.swift in Sources */ = {isa = PBXBuildFile; fileRef = E25B4ABA1E00BA6B00D17613 /* FireArray.swift */; };
+		E2DB42E31EB4F2C400B1F78B /* TaskQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = E24D74531BBAED5F0061F339 /* TaskQueue.swift */; };
+		E2DB42E41EB4F2C400B1F78B /* AirNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2E9AAA61CEF86470057698F /* AirNavigationController.swift */; };
+		E2DB42E51EB4F2C400B1F78B /* AirButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2D12A741C08F85E00DE507E /* AirButton.swift */; };
+		E2DB42E61EB4F2C400B1F78B /* AirFeaturedButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2D12A761C08F9CE00DE507E /* AirFeaturedButton.swift */; };
+		E2DB42E71EB4F2C400B1F78B /* ChannelsHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2B756A81D84600E00C102EC /* ChannelsHeaderView.swift */; };
+		E2DB42E81EB4F2C400B1F78B /* FireUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29A921B1DB1988A00B27093 /* FireUser.swift */; };
+		E2DB42E91EB4F2C400B1F78B /* InviteViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29730651C16295300B9433B /* InviteViewController.swift */; };
+		E2DB42EA1EB4F2C400B1F78B /* BaseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2D12A7A1C091C4D00DE507E /* BaseViewController.swift */; };
+		E2DB42EB1EB4F2C400B1F78B /* Date.swift in Sources */ = {isa = PBXBuildFile; fileRef = E22489711E5C92B900A96F27 /* Date.swift */; };
+		E2DB42EC1EB4F2C400B1F78B /* ReactionPickerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2EEE90F1E9C7F720085565E /* ReactionPickerController.swift */; };
+		E2DB42ED1EB4F2C400B1F78B /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = E25327B11B0FCE9C00990A81 /* Constants.swift */; };
+		E2DB42EE1EB4F2C400B1F78B /* MemberDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E259082F1DC69C3F00CB6C3F /* MemberDetailView.swift */; };
+		E2DB42EF1EB4F2C400B1F78B /* AirToggleImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2DA16DC1DD11B7A0096D86F /* AirToggleImage.swift */; };
+		E2DB42F01EB4F2C400B1F78B /* FirePhoto.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29A921F1DB19A3C00B27093 /* FirePhoto.swift */; };
+		E2DB42F11EB4F2C400B1F78B /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84EF12AB1AA904700043EBBA /* Utils.swift */; };
+		E2DB42F21EB4F2C400B1F78B /* FireAttachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2CA16FE1DB95DDB00F99E1D /* FireAttachment.swift */; };
+		E2DB42F31EB4F2C400B1F78B /* CaptionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E23C01101CE4F771009C56B2 /* CaptionView.swift */; };
+		E2DB42F41EB4F2C400B1F78B /* DropdownTransitionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2AC5FAB1E37DC6400C95A60 /* DropdownTransitionManager.swift */; };
+		E2DB42F51EB4F2C400B1F78B /* DropdownButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E27CE27F1E632E4800149305 /* DropdownButton.swift */; };
+		E2DB42F61EB4F2C400B1F78B /* AirTokenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E26A02FE1DF5DC5800EE32D3 /* AirTokenView.swift */; };
+		E2DB42F71EB4F2C400B1F78B /* PHPhotoLibrary+PhotoAsset.swift in Sources */ = {isa = PBXBuildFile; fileRef = E26BBF971DB5734F00038754 /* PHPhotoLibrary+PhotoAsset.swift */; };
+		E2DB42F81EB4F2C400B1F78B /* BranchProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2E271281C5D1ED600E36804 /* BranchProvider.swift */; };
+		E2DB42F91EB4F2C400B1F78B /* PhotoChooserUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 844D6E361AA6550400EE71ED /* PhotoChooserUI.swift */; };
+		E2DB42FA1EB4F2C400B1F78B /* AirScrimButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E25617F31E02F8D000E31240 /* AirScrimButton.swift */; };
+		E2DB42FB1EB4F2C400B1F78B /* GroupEditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2BC53261DDF458700C97A2C /* GroupEditViewController.swift */; };
+		E2DB42FC1EB4F2C400B1F78B /* AirLabelDisplay.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2D12A7C1C0A03F100DE507E /* AirLabelDisplay.swift */; };
+		E2DB42FD1EB4F2C400B1F78B /* AirTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E297305B1C13644800B9433B /* AirTextView.swift */; };
+		E2DB42FE1EB4F2C400B1F78B /* MemberListController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E25B0F451DCE778B00021D5B /* MemberListController.swift */; };
+		E2DB42FF1EB4F2C400B1F78B /* AirLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2C720C61B4EDAFE00714B53 /* AirLabel.swift */; };
+		E2DB43001EB4F2C400B1F78B /* ImageUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = E238BB051B571AFF0094AF41 /* ImageUtils.swift */; };
+		E2DB43011EB4F2C400B1F78B /* Reporting.swift in Sources */ = {isa = PBXBuildFile; fileRef = E281776D1B5B0EE200D65AC1 /* Reporting.swift */; };
+		E2DB43021EB4F2C400B1F78B /* BaseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20C3A7A1BD6A717008CCED1 /* BaseView.swift */; };
+		E2DB43031EB4F2C400B1F78B /* AirStarButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2DA16DA1DD114230096D86F /* AirStarButton.swift */; };
+		E2DB43041EB4F2C400B1F78B /* InviteListController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2539EA31E269E45000FFE40 /* InviteListController.swift */; };
+		E2DB43051EB4F2C400B1F78B /* AwsS3.swift in Sources */ = {isa = PBXBuildFile; fileRef = E28177751B5C39E200D65AC1 /* AwsS3.swift */; };
+		E2DB43061EB4F2C400B1F78B /* ReachabilityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E28D565E1BB1849F00BFD433 /* ReachabilityManager.swift */; };
+		E2DB43071EB4F2C400B1F78B /* CKRadialMenu.m in Sources */ = {isa = PBXBuildFile; fileRef = E2B8A4B21CE7818B00A28D3A /* CKRadialMenu.m */; };
+		E2DB43081EB4F2C400B1F78B /* PhotoSearchController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FDCC06A84126B197626CEB2 /* PhotoSearchController.swift */; };
+		E2DB43091EB4F2C400B1F78B /* UserController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2BC53381DE5DE5600C97A2C /* UserController.swift */; };
+		E2DB430A1EB4F2C400B1F78B /* UserLobbyController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E24D84D01E89E16300BFE408 /* UserLobbyController.swift */; };
+		E2DB430B1EB4F2C400B1F78B /* GalleryViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E227294C1CEA7D0600913041 /* GalleryViewCell.swift */; };
+		E2DB430C1EB4F2C400B1F78B /* FireGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FDCC96E81DE7C49C64D3D9C /* FireGroup.swift */; };
+		E2DB430D1EB4F2C400B1F78B /* MemberViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E259082D1DC69BBE00CB6C3F /* MemberViewController.swift */; };
+		E2DB430E1EB4F2C400B1F78B /* FireChannel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FDCCDE61C162E20DE3909AC /* FireChannel.swift */; };
+		E2DB430F1EB4F2C400B1F78B /* FireMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FDCC985C0388C8C96A207CE /* FireMessage.swift */; };
+		E2DB43101EB4F2C400B1F78B /* ChannelViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FDCC7D2BF8341DCBB416DC4 /* ChannelViewController.swift */; };
+		E2DB43111EB4F2C400B1F78B /* MaterialColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FDCC7A62C9C1A632319795D /* MaterialColor.swift */; };
+		E2DB43121EB4F2C400B1F78B /* FireController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FDCC68ACDC02C764EE70B02 /* FireController.swift */; };
+		E2DB43131EB4F2C400B1F78B /* MainController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FDCCADB4957C2E128DDE9FF /* MainController.swift */; };
+		E2DB43141EB4F2C400B1F78B /* ProfileEditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FDCCE5E0AA449B739AD0137 /* ProfileEditViewController.swift */; };
+		E2DB43151EB4F2C400B1F78B /* AccountEditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FDCCBBC7BF1C0419007B9F9 /* AccountEditViewController.swift */; };
+		E2DB43161EB4F2C400B1F78B /* StateController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2BC53361DE5DE4500C97A2C /* StateController.swift */; };
+		E2DB43171EB4F2C400B1F78B /* ContainerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2274B001E8D53FB005F4CF7 /* ContainerController.swift */; };
+		E2DB43181EB4F2C400B1F78B /* AirUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2DA16D81DD0F7280096D86F /* AirUIView.swift */; };
+		E2DB43191EB4F2C400B1F78B /* SlideAnimationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FDCC87DC2923CE4A6F17C1E /* SlideAnimationController.swift */; };
+		E2DB431A1EB4F2C400B1F78B /* SlideBounceAnimationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FDCCE482E821C4491DB4117 /* SlideBounceAnimationController.swift */; };
+		E2DB431B1EB4F2C400B1F78B /* MessageQuery.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FDCCEFC8FC05526D291A77B /* MessageQuery.swift */; };
+		E2DB431C1EB4F2C400B1F78B /* UserQuery.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FDCC5452372EFCC98BA01BF /* UserQuery.swift */; };
+		E2DB431D1EB4F2C400B1F78B /* GroupQuery.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FDCC2AE42A7C32316E95CE2 /* GroupQuery.swift */; };
+		E2DB431E1EB4F2C400B1F78B /* ChannelQuery.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FDCCE483C7DF6C69EC46E17 /* ChannelQuery.swift */; };
+		E2DB431F1EB4F2C400B1F78B /* PhotoControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FDCC1090EAA7D7799F16058 /* PhotoControl.swift */; };
+		E2DB43201EB4F2C400B1F78B /* AboutViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FDCC3A31B4DE515C4C32CF9 /* AboutViewController.swift */; };
+		E2DB43211EB4F2C400B1F78B /* DevelopmentViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FDCCD7DF56E13112F3E35C6 /* DevelopmentViewController.swift */; };
+		E2DB43221EB4F2C400B1F78B /* MemberSettingsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FDCC6D9E7C9AADE45675174 /* MemberSettingsController.swift */; };
+		E2DB43231EB4F2C400B1F78B /* NotificationSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FDCCCCCF3108C93E4D09188 /* NotificationSettingsViewController.swift */; };
+		E2DB43241EB4F2C400B1F78B /* SettingsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FDCCA7AB0285558DFFDF2C1 /* SettingsTableViewController.swift */; };
+		E2DB43251EB4F2C400B1F78B /* AirReactionToolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FDCC3EBF074337408E968D0 /* AirReactionToolbar.swift */; };
+		E2DB43271EB4F2C400B1F78B /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = E25A73701C1C81D000688EDC /* libc++.tbd */; };
+		E2DB43281EB4F2C400B1F78B /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = E25A736D1C1C813900688EDC /* libz.tbd */; };
+		E2DB43291EB4F2C400B1F78B /* Accounts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E238BAD51B50907F0094AF41 /* Accounts.framework */; };
+		E2DB432A1EB4F2C400B1F78B /* AdSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E214A3A11E9FDFAF0040A04D /* AdSupport.framework */; };
+		E2DB432B1EB4F2C400B1F78B /* AdobeCreativeSDKCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E2FB81411B8640E8006B6690 /* AdobeCreativeSDKCore.framework */; };
+		E2DB432C1EB4F2C400B1F78B /* AdobeCreativeSDKImage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E2F182CF1B4B37BC0020F6BB /* AdobeCreativeSDKImage.framework */; };
+		E2DB432D1EB4F2C400B1F78B /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E238BACF1B5088A40094AF41 /* MobileCoreServices.framework */; };
+		E2DB432E1EB4F2C400B1F78B /* Social.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E238BAD71B5090870094AF41 /* Social.framework */; };
+		E2DB432F1EB4F2C400B1F78B /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E238BACB1B50888C0094AF41 /* SystemConfiguration.framework */; };
+		E2DB43301EB4F2C400B1F78B /* Pods_Patchr.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CAF3CBC8351F3118FD6F9491 /* Pods_Patchr.framework */; };
+		E2DB43321EB4F2C400B1F78B /* UserListCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E25B0F491DCE803B00021D5B /* UserListCell.xib */; };
+		E2DB43341EB4F2C400B1F78B /* AdobeCreativeSDKImageResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = E25A73771C1C87F500688EDC /* AdobeCreativeSDKImageResources.bundle */; };
+		E2DB43351EB4F2C400B1F78B /* ReactionCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E29074A31E9D5897001E0609 /* ReactionCell.xib */; };
+		E2DB43361EB4F2C400B1F78B /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = E2A603221CD97B7A00FBD55B /* InfoPlist.strings */; };
+		E2DB43371EB4F2C400B1F78B /* .xctool-args in Resources */ = {isa = PBXBuildFile; fileRef = E28915901C5A85CF005D7AA0 /* .xctool-args */; };
+		E2DB43381EB4F2C400B1F78B /* AdobeCreativeSDKCoreResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = E25A73751C1C87E200688EDC /* AdobeCreativeSDKCoreResources.bundle */; };
+		E2DB43391EB4F2C400B1F78B /* GroupListCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E23EC4CF1DBD45C800EBCD42 /* GroupListCell.xib */; };
+		E2DB433A1EB4F2C400B1F78B /* run-tests.sh in Resources */ = {isa = PBXBuildFile; fileRef = E27F80AE1C56C84700D436E3 /* run-tests.sh */; };
+		E2DB433B1EB4F2C400B1F78B /* ChannelSearchCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E28DB2911DBBF95D008B2E4B /* ChannelSearchCell.xib */; };
+		E2DB433C1EB4F2C400B1F78B /* test.sh in Resources */ = {isa = PBXBuildFile; fileRef = E2CA0C341C4FFEAF00E2F380 /* test.sh */; };
+		E2DB433D1EB4F2C400B1F78B /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7D3D39D51A6F086F00A44CB2 /* Images.xcassets */; };
+		E2DB433E1EB4F2C400B1F78B /* ThumbnailCollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E26B0C911B46D01E00706F4A /* ThumbnailCollectionViewCell.xib */; };
+		E2DB43411EB4F2C400B1F78B /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E28915921C5AD528005D7AA0 /* LaunchScreen.storyboard */; };
+		E2DB43421EB4F2C400B1F78B /* silence.caf in Resources */ = {isa = PBXBuildFile; fileRef = E2064BF21BC0212B009C7B6A /* silence.caf */; };
+		E2DB43431EB4F2C400B1F78B /* build.sh in Resources */ = {isa = PBXBuildFile; fileRef = E2CA0C331C4FFEAF00E2F380 /* build.sh */; };
+		E2DB43441EB4F2C400B1F78B /* InvitePendingListCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E2539EA71E26A2E7000FFE40 /* InvitePendingListCell.xib */; };
+		E2DB43451EB4F2C400B1F78B /* chirp.caf in Resources */ = {isa = PBXBuildFile; fileRef = E2CCAAE11B67EE2C0071170C /* chirp.caf */; };
+		E2DB43461EB4F2C400B1F78B /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 8468F8211A9D09D1007D6EE6 /* Localizable.strings */; };
+		E2DB43471EB4F2C400B1F78B /* notification_candi_discovered_soft.aac in Resources */ = {isa = PBXBuildFile; fileRef = E25327C71B13D34100990A81 /* notification_candi_discovered_soft.aac */; };
+		E2DB43481EB4F2C400B1F78B /* notification_carme.aac in Resources */ = {isa = PBXBuildFile; fileRef = E25327C81B13D34200990A81 /* notification_carme.aac */; };
+		E2DB43491EB4F2C400B1F78B /* EmojiCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E290749F1E9D2278001E0609 /* EmojiCell.xib */; };
+		E2DB434B1EB4F2C400B1F78B /* InviteAcceptedListCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E2539EA91E26A796000FFE40 /* InviteAcceptedListCell.xib */; };
+		E2DB434C1EB4F2C400B1F78B /* notification_pop.aac in Resources */ = {isa = PBXBuildFile; fileRef = E25327C91B13D34200990A81 /* notification_pop.aac */; };
+		E2DB434D1EB4F2C400B1F78B /* ChannelListCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E207B5011E2978140019C2A1 /* ChannelListCell.xib */; };
+		E2DB434E1EB4F2C400B1F78B /* notification_activity.aac in Resources */ = {isa = PBXBuildFile; fileRef = E25327C61B13D34100990A81 /* notification_activity.aac */; };
+		E2DB434F1EB4F2C400B1F78B /* Pods-acknowledgements.plist in Resources */ = {isa = PBXBuildFile; fileRef = E27C12081E6CD403003F052B /* Pods-acknowledgements.plist */; };
+		E2DB43501EB4F2C400B1F78B /* ChannelTitleView.xib in Resources */ = {isa = PBXBuildFile; fileRef = E2DA16D61DCFDF770096D86F /* ChannelTitleView.xib */; };
+		E2DB435D1EB4F89900B1F78B /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = E2DB435C1EB4F89900B1F78B /* GoogleService-Info.plist */; };
+		E2DB43601EB4F8B100B1F78B /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = E2DB435F1EB4F8B100B1F78B /* GoogleService-Info.plist */; };
+		E2DB43681EB62D9A00B1F78B /* ServiceAccountDev.json in Resources */ = {isa = PBXBuildFile; fileRef = E2DB43661EB62D9000B1F78B /* ServiceAccountDev.json */; };
+		E2DB436A1EB6347D00B1F78B /* ServiceAccountProd.json in Resources */ = {isa = PBXBuildFile; fileRef = E2DB43691EB6347D00B1F78B /* ServiceAccountProd.json */; };
 		E2E271291C5D1ED600E36804 /* BranchProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2E271281C5D1ED600E36804 /* BranchProvider.swift */; };
 		E2E9AAA71CEF86470057698F /* AirNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2E9AAA61CEF86470057698F /* AirNavigationController.swift */; };
 		E2EEE90E1E99470E0085565E /* AirReactionButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2EEE90D1E99470D0085565E /* AirReactionButton.swift */; };
@@ -406,7 +602,6 @@
 		E29A921D1DB19A2600B27093 /* FireProfile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FireProfile.swift; sourceTree = "<group>"; };
 		E29A921F1DB19A3C00B27093 /* FirePhoto.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FirePhoto.swift; sourceTree = "<group>"; };
 		E2A28E6E1B4A602200B3A2FE /* AirToggleButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirToggleButton.swift; sourceTree = "<group>"; };
-		E2A5A87F1B6FCE98006D6E81 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		E2A5A8841B703B9B006D6E81 /* PhotoEditView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = PhotoEditView.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		E2A603231CD97B7A00FBD55B /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		E2AC5FAB1E37DC6400C95A60 /* DropdownTransitionManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DropdownTransitionManager.swift; sourceTree = "<group>"; };
@@ -432,7 +627,6 @@
 		E2CA16FE1DB95DDB00F99E1D /* FireAttachment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FireAttachment.swift; sourceTree = "<group>"; };
 		E2CC15A01C2C897800316356 /* WrapperTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WrapperTableViewCell.swift; sourceTree = "<group>"; };
 		E2CCAAE11B67EE2C0071170C /* chirp.caf */ = {isa = PBXFileReference; lastKnownFileType = file; path = chirp.caf; sourceTree = "<group>"; };
-		E2CF51321DAEF39100515506 /* ServiceAccount.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = ServiceAccount.json; sourceTree = "<group>"; };
 		E2D10E5B1C87AA760099EA6E /* AirHideShowButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirHideShowButton.swift; sourceTree = "<group>"; };
 		E2D12A701C0778C100DE507E /* AirScrollView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirScrollView.swift; sourceTree = "<group>"; };
 		E2D12A741C08F85E00DE507E /* AirButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirButton.swift; sourceTree = "<group>"; };
@@ -451,6 +645,11 @@
 		E2DA16D81DD0F7280096D86F /* AirUIView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirUIView.swift; sourceTree = "<group>"; };
 		E2DA16DA1DD114230096D86F /* AirStarButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirStarButton.swift; sourceTree = "<group>"; };
 		E2DA16DC1DD11B7A0096D86F /* AirToggleImage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirToggleImage.swift; sourceTree = "<group>"; };
+		E2DB43591EB4F2C400B1F78B /* Patchr Dev.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Patchr Dev.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		E2DB435C1EB4F89900B1F78B /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		E2DB435F1EB4F8B100B1F78B /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		E2DB43661EB62D9000B1F78B /* ServiceAccountDev.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = ServiceAccountDev.json; path = ../ServiceAccountDev.json; sourceTree = "<group>"; };
+		E2DB43691EB6347D00B1F78B /* ServiceAccountProd.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = ServiceAccountProd.json; path = ../ServiceAccountProd.json; sourceTree = "<group>"; };
 		E2E271281C5D1ED600E36804 /* BranchProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = BranchProvider.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		E2E9AAA61CEF86470057698F /* AirNavigationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirNavigationController.swift; sourceTree = "<group>"; };
 		E2EEE90D1E99470D0085565E /* AirReactionButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirReactionButton.swift; sourceTree = "<group>"; };
@@ -489,6 +688,23 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		E2DB43261EB4F2C400B1F78B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E2DB43271EB4F2C400B1F78B /* libc++.tbd in Frameworks */,
+				E2DB43281EB4F2C400B1F78B /* libz.tbd in Frameworks */,
+				E2DB43291EB4F2C400B1F78B /* Accounts.framework in Frameworks */,
+				E2DB432A1EB4F2C400B1F78B /* AdSupport.framework in Frameworks */,
+				E2DB432B1EB4F2C400B1F78B /* AdobeCreativeSDKCore.framework in Frameworks */,
+				E2DB432C1EB4F2C400B1F78B /* AdobeCreativeSDKImage.framework in Frameworks */,
+				E2DB432D1EB4F2C400B1F78B /* MobileCoreServices.framework in Frameworks */,
+				E2DB432E1EB4F2C400B1F78B /* Social.framework in Frameworks */,
+				E2DB432F1EB4F2C400B1F78B /* SystemConfiguration.framework in Frameworks */,
+				E2DB43301EB4F2C400B1F78B /* Pods_Patchr.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -516,6 +732,7 @@
 			isa = PBXGroup;
 			children = (
 				7D3D39C91A6F086F00A44CB2 /* Patchr.app */,
+				E2DB43591EB4F2C400B1F78B /* Patchr Dev.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -527,9 +744,11 @@
 				E2E271271C5D1EAC00E36804 /* Providers */,
 				E26B0C8A1B4570BB00706F4A /* Components */,
 				E2D25DC61B22164300E51461 /* Controllers */,
+				E2DB435B1EB4F89900B1F78B /* Development */,
 				E26B0C861B44BD4000706F4A /* Docs */,
 				E26B0C871B44BD7900706F4A /* Extensions */,
 				7DA730701A71ACA5008C25FA /* Model */,
+				E2DB435E1EB4F8B100B1F78B /* Production */,
 				E215995A1AEFC193002C936F /* Resources */,
 				E2B976EA1C51272D0012FD40 /* Scripts */,
 				E2F618D71AFFB5430055D09C /* Shared */,
@@ -773,13 +992,13 @@
 			isa = PBXGroup;
 			children = (
 				7D3D39D51A6F086F00A44CB2 /* Images.xcassets */,
-				E2DA16D61DCFDF770096D86F /* ChannelTitleView.xib */,
-				E28DB2911DBBF95D008B2E4B /* ChannelSearchCell.xib */,
 				E207B5011E2978140019C2A1 /* ChannelListCell.xib */,
+				E28DB2911DBBF95D008B2E4B /* ChannelSearchCell.xib */,
+				E2DA16D61DCFDF770096D86F /* ChannelTitleView.xib */,
 				E290749F1E9D2278001E0609 /* EmojiCell.xib */,
 				E23EC4CF1DBD45C800EBCD42 /* GroupListCell.xib */,
-				E2539EA71E26A2E7000FFE40 /* InvitePendingListCell.xib */,
 				E2539EA91E26A796000FFE40 /* InviteAcceptedListCell.xib */,
+				E2539EA71E26A2E7000FFE40 /* InvitePendingListCell.xib */,
 				E28915921C5AD528005D7AA0 /* LaunchScreen.storyboard */,
 				E29074A31E9D5897001E0609 /* ReactionCell.xib */,
 				E26B0C911B46D01E00706F4A /* ThumbnailCollectionViewCell.xib */,
@@ -985,6 +1204,24 @@
 			name = Controllers;
 			sourceTree = "<group>";
 		};
+		E2DB435B1EB4F89900B1F78B /* Development */ = {
+			isa = PBXGroup;
+			children = (
+				E2DB43661EB62D9000B1F78B /* ServiceAccountDev.json */,
+				E2DB435C1EB4F89900B1F78B /* GoogleService-Info.plist */,
+			);
+			path = Development;
+			sourceTree = "<group>";
+		};
+		E2DB435E1EB4F8B100B1F78B /* Production */ = {
+			isa = PBXGroup;
+			children = (
+				E2DB43691EB6347D00B1F78B /* ServiceAccountProd.json */,
+				E2DB435F1EB4F8B100B1F78B /* GoogleService-Info.plist */,
+			);
+			path = Production;
+			sourceTree = "<group>";
+		};
 		E2E271271C5D1EAC00E36804 /* Providers */ = {
 			isa = PBXGroup;
 			children = (
@@ -1032,10 +1269,8 @@
 			isa = PBXGroup;
 			children = (
 				E27C12081E6CD403003F052B /* Pods-acknowledgements.plist */,
-				E2CF51321DAEF39100515506 /* ServiceAccount.json */,
 				E2A603221CD97B7A00FBD55B /* InfoPlist.strings */,
 				7D3D39EE1A6F09CC00A44CB2 /* BridgingHeader.h */,
-				E2A5A87F1B6FCE98006D6E81 /* GoogleService-Info.plist */,
 				7D3D39CD1A6F086F00A44CB2 /* Info.plist */,
 				E238BAEE1B5405380094AF41 /* Patchr.entitlements */,
 			);
@@ -1065,6 +1300,28 @@
 			name = Patchr;
 			productName = Patchr;
 			productReference = 7D3D39C91A6F086F00A44CB2 /* Patchr.app */;
+			productType = "com.apple.product-type.application";
+		};
+		E2DB42861EB4F2C400B1F78B /* Patchr Dev */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E2DB43551EB4F2C400B1F78B /* Build configuration list for PBXNativeTarget "Patchr Dev" */;
+			buildPhases = (
+				E2DB42871EB4F2C400B1F78B /* [CP] Check Pods Manifest.lock */,
+				E2DB42881EB4F2C400B1F78B /* Sources */,
+				E2DB43261EB4F2C400B1F78B /* Frameworks */,
+				E2DB43311EB4F2C400B1F78B /* Resources */,
+				E2DB43511EB4F2C400B1F78B /* Warn about TODO: and FIXME: */,
+				E2DB43521EB4F2C400B1F78B /* Upload Symbol Files for Firebase */,
+				E2DB43531EB4F2C400B1F78B /* [CP] Embed Pods Frameworks */,
+				E2DB43541EB4F2C400B1F78B /* [CP] Copy Pods Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Patchr Dev";
+			productName = Patchr;
+			productReference = E2DB43591EB4F2C400B1F78B /* Patchr Dev.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -1100,6 +1357,9 @@
 							};
 						};
 					};
+					E2DB42861EB4F2C400B1F78B = {
+						DevelopmentTeam = 7542324V6B;
+					};
 				};
 			};
 			buildConfigurationList = 7D3D39C41A6F086F00A44CB2 /* Build configuration list for PBXProject "Patchr" */;
@@ -1116,6 +1376,7 @@
 			projectRoot = "";
 			targets = (
 				7D3D39C81A6F086F00A44CB2 /* Patchr */,
+				E2DB42861EB4F2C400B1F78B /* Patchr Dev */,
 			);
 		};
 /* End PBXProject section */
@@ -1125,35 +1386,71 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E25B0F4A1DCE803B00021D5B /* UserListCell.xib in Resources */,
-				E25A73781C1C87F500688EDC /* AdobeCreativeSDKImageResources.bundle in Resources */,
-				E29074A41E9D5897001E0609 /* ReactionCell.xib in Resources */,
 				E2A603241CD97B7A00FBD55B /* InfoPlist.strings in Resources */,
-				E28915911C5A85CF005D7AA0 /* .xctool-args in Resources */,
-				E25A73761C1C87E200688EDC /* AdobeCreativeSDKCoreResources.bundle in Resources */,
-				E23EC4D01DBD45C800EBCD42 /* GroupListCell.xib in Resources */,
-				E27F80AF1C56C84700D436E3 /* run-tests.sh in Resources */,
-				E28DB2921DBBF95D008B2E4B /* ChannelSearchCell.xib in Resources */,
-				E2CA0C361C4FFEAF00E2F380 /* test.sh in Resources */,
+				E2DB43601EB4F8B100B1F78B /* GoogleService-Info.plist in Resources */,
+				E2DB436A1EB6347D00B1F78B /* ServiceAccountProd.json in Resources */,
 				7D3D39D61A6F086F00A44CB2 /* Images.xcassets in Resources */,
+				E25B0F4A1DCE803B00021D5B /* UserListCell.xib in Resources */,
+				E29074A41E9D5897001E0609 /* ReactionCell.xib in Resources */,
+				E23EC4D01DBD45C800EBCD42 /* GroupListCell.xib in Resources */,
+				E28DB2921DBBF95D008B2E4B /* ChannelSearchCell.xib in Resources */,
 				E26B0C921B46D01E00706F4A /* ThumbnailCollectionViewCell.xib in Resources */,
-				E2CF51331DAEF39100515506 /* ServiceAccount.json in Resources */,
 				E28915931C5AD528005D7AA0 /* LaunchScreen.storyboard in Resources */,
-				E2064BF31BC0212B009C7B6A /* silence.caf in Resources */,
-				E2CA0C351C4FFEAF00E2F380 /* build.sh in Resources */,
 				E2539EA81E26A2E7000FFE40 /* InvitePendingListCell.xib in Resources */,
+				E29074A01E9D2278001E0609 /* EmojiCell.xib in Resources */,
+				E2539EAA1E26A796000FFE40 /* InviteAcceptedListCell.xib in Resources */,
+				E207B5021E2978140019C2A1 /* ChannelListCell.xib in Resources */,
+				E2DA16D71DCFDF770096D86F /* ChannelTitleView.xib in Resources */,
+				E2064BF31BC0212B009C7B6A /* silence.caf in Resources */,
 				E2CCAAE21B67EE2C0071170C /* chirp.caf in Resources */,
-				8468F81F1A9D09D1007D6EE6 /* Localizable.strings in Resources */,
 				E25327CE1B13DB3000990A81 /* notification_candi_discovered_soft.aac in Resources */,
 				E25327CF1B13DB3000990A81 /* notification_carme.aac in Resources */,
-				E29074A01E9D2278001E0609 /* EmojiCell.xib in Resources */,
-				E2A5A8801B6FCE98006D6E81 /* GoogleService-Info.plist in Resources */,
-				E2539EAA1E26A796000FFE40 /* InviteAcceptedListCell.xib in Resources */,
 				E25327D01B13DB3000990A81 /* notification_pop.aac in Resources */,
-				E207B5021E2978140019C2A1 /* ChannelListCell.xib in Resources */,
 				E25327CD1B13DB2900990A81 /* notification_activity.aac in Resources */,
+				8468F81F1A9D09D1007D6EE6 /* Localizable.strings in Resources */,
 				E27C12091E6CD403003F052B /* Pods-acknowledgements.plist in Resources */,
-				E2DA16D71DCFDF770096D86F /* ChannelTitleView.xib in Resources */,
+				E25A73781C1C87F500688EDC /* AdobeCreativeSDKImageResources.bundle in Resources */,
+				E25A73761C1C87E200688EDC /* AdobeCreativeSDKCoreResources.bundle in Resources */,
+				E28915911C5A85CF005D7AA0 /* .xctool-args in Resources */,
+				E27F80AF1C56C84700D436E3 /* run-tests.sh in Resources */,
+				E2CA0C361C4FFEAF00E2F380 /* test.sh in Resources */,
+				E2CA0C351C4FFEAF00E2F380 /* build.sh in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E2DB43311EB4F2C400B1F78B /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E2DB43361EB4F2C400B1F78B /* InfoPlist.strings in Resources */,
+				E2DB435D1EB4F89900B1F78B /* GoogleService-Info.plist in Resources */,
+				E2DB43681EB62D9A00B1F78B /* ServiceAccountDev.json in Resources */,
+				E2DB433D1EB4F2C400B1F78B /* Images.xcassets in Resources */,
+				E2DB43321EB4F2C400B1F78B /* UserListCell.xib in Resources */,
+				E2DB43351EB4F2C400B1F78B /* ReactionCell.xib in Resources */,
+				E2DB43391EB4F2C400B1F78B /* GroupListCell.xib in Resources */,
+				E2DB433B1EB4F2C400B1F78B /* ChannelSearchCell.xib in Resources */,
+				E2DB433E1EB4F2C400B1F78B /* ThumbnailCollectionViewCell.xib in Resources */,
+				E2DB43411EB4F2C400B1F78B /* LaunchScreen.storyboard in Resources */,
+				E2DB43441EB4F2C400B1F78B /* InvitePendingListCell.xib in Resources */,
+				E2DB43491EB4F2C400B1F78B /* EmojiCell.xib in Resources */,
+				E2DB434B1EB4F2C400B1F78B /* InviteAcceptedListCell.xib in Resources */,
+				E2DB434D1EB4F2C400B1F78B /* ChannelListCell.xib in Resources */,
+				E2DB43501EB4F2C400B1F78B /* ChannelTitleView.xib in Resources */,
+				E2DB43421EB4F2C400B1F78B /* silence.caf in Resources */,
+				E2DB43451EB4F2C400B1F78B /* chirp.caf in Resources */,
+				E2DB43471EB4F2C400B1F78B /* notification_candi_discovered_soft.aac in Resources */,
+				E2DB43481EB4F2C400B1F78B /* notification_carme.aac in Resources */,
+				E2DB434C1EB4F2C400B1F78B /* notification_pop.aac in Resources */,
+				E2DB434E1EB4F2C400B1F78B /* notification_activity.aac in Resources */,
+				E2DB43461EB4F2C400B1F78B /* Localizable.strings in Resources */,
+				E2DB434F1EB4F2C400B1F78B /* Pods-acknowledgements.plist in Resources */,
+				E2DB43341EB4F2C400B1F78B /* AdobeCreativeSDKImageResources.bundle in Resources */,
+				E2DB43381EB4F2C400B1F78B /* AdobeCreativeSDKCoreResources.bundle in Resources */,
+				E2DB43371EB4F2C400B1F78B /* .xctool-args in Resources */,
+				E2DB433A1EB4F2C400B1F78B /* run-tests.sh in Resources */,
+				E2DB433C1EB4F2C400B1F78B /* test.sh in Resources */,
+				E2DB43431EB4F2C400B1F78B /* build.sh in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1231,7 +1528,80 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "GOOGLE_APP_ID=1:148529190495:ios:2e74793bf3076ad4\n\"${PODS_ROOT}\"/FirebaseCrash/upload-sym \"${SRCROOT}/Patchr/ServiceAccount.json\"";
+			shellScript = "GOOGLE_APP_ID=1:148529190495:ios:2e74793bf3076ad4\n\"${PODS_ROOT}\"/FirebaseCrash/upload-sym \"${SRCROOT}/Patchr/ServiceAccountProd.json\"";
+		};
+		E2DB42871EB4F2C400B1F78B /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		E2DB43511EB4F2C400B1F78B /* Warn about TODO: and FIXME: */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 8;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Warn about TODO: and FIXME:";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+			shellPath = /bin/sh;
+			shellScript = "KEYWORDS=\"TODO:|FIXME:|\\?\\?\\?:|\\!\\!\\!:\"\nfind \"${SRCROOT}\" -path \"${SRCROOT}\"/Pods -prune -o \\( -name \"*.h\" -or -name \"*.m\" -or -name \"*.swift\" \\) -print0 | xargs -0 egrep --with-filename --line-number --only-matching \"($KEYWORDS).*\\$\" | perl -p -e \"s/($KEYWORDS)/ warning: \\$1/\"";
+		};
+		E2DB43521EB4F2C400B1F78B /* Upload Symbol Files for Firebase */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 12;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Upload Symbol Files for Firebase";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "GOOGLE_APP_ID=1:919324191724:ios:2e74793bf3076ad4\n\"${PODS_ROOT}\"/FirebaseCrash/upload-sym \"${SRCROOT}/Patchr/ServiceAccountDev.json\"";
+		};
+		E2DB43531EB4F2C400B1F78B /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Patchr/Pods-Patchr-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		E2DB43541EB4F2C400B1F78B /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Patchr/Pods-Patchr-resources.sh\"\n";
+			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -1240,6 +1610,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E2DA16D51DCFDF430096D86F /* ChannelTitleView.swift in Sources */,
 				E25B0F481DCE7D7400021D5B /* UserListCell.swift in Sources */,
 				E29730641C15090300B9433B /* AirRuleView.swift in Sources */,
 				E23EC4CE1DBD44DB00EBCD42 /* ChannelListCell.swift in Sources */,
@@ -1278,7 +1649,6 @@
 				E23C010F1CE4D73B009C56B2 /* DisplayPhoto.swift in Sources */,
 				E25173C41E0982450030259A /* DrawerHeaderView.swift in Sources */,
 				E2BC53331DE5D54600C97A2C /* BingController.swift in Sources */,
-				E2DA16D51DCFDF430096D86F /* ChannelTitleView.swift in Sources */,
 				E20555061DBC178F003C8398 /* ColorArray.swift in Sources */,
 				E2FFD38F1DF4817700FD75C7 /* AirCheckBox.swift in Sources */,
 				E25327D21B13DEF800990A81 /* AudioController.swift in Sources */,
@@ -1397,6 +1767,170 @@
 				9FDCC5F52570C58229C8D971 /* NotificationSettingsViewController.swift in Sources */,
 				9FDCCEE8BA867A541B95EB3A /* SettingsTableViewController.swift in Sources */,
 				9FDCC02817FBC4B31C6CB796 /* AirReactionToolbar.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E2DB42881EB4F2C400B1F78B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E2DB42AF1EB4F2C400B1F78B /* ChannelTitleView.swift in Sources */,
+				E2DB42891EB4F2C400B1F78B /* UserListCell.swift in Sources */,
+				E2DB428A1EB4F2C400B1F78B /* AirRuleView.swift in Sources */,
+				E2DB428B1EB4F2C400B1F78B /* ChannelListCell.swift in Sources */,
+				E2DB428C1EB4F2C400B1F78B /* ChannelPickerController.swift in Sources */,
+				E2DB428D1EB4F2C400B1F78B /* AirLabelBanner.swift in Sources */,
+				E2DB428E1EB4F2C400B1F78B /* ExtensionsUi.swift in Sources */,
+				E2DB428F1EB4F2C400B1F78B /* Log.swift in Sources */,
+				E2DB42901EB4F2C400B1F78B /* ThumbnailCollectionViewCell.swift in Sources */,
+				E2DB42911EB4F2C400B1F78B /* GalleryGridViewController.swift in Sources */,
+				E2DB42921EB4F2C400B1F78B /* UnreadBackView.swift in Sources */,
+				E2DB42931EB4F2C400B1F78B /* AirLabelStack.swift in Sources */,
+				E2DB42941EB4F2C400B1F78B /* EmojiViewCell.swift in Sources */,
+				E2DB42951EB4F2C400B1F78B /* Debouncer.swift in Sources */,
+				E2DB42961EB4F2C400B1F78B /* Stopwatch.swift in Sources */,
+				E2DB42971EB4F2C400B1F78B /* PhotoBrowser.swift in Sources */,
+				E2DB42981EB4F2C400B1F78B /* AirRadialMenu.swift in Sources */,
+				E2DB42991EB4F2C400B1F78B /* JSONResponseSerializerWithData.m in Sources */,
+				E2DB429A1EB4F2C400B1F78B /* ChannelSwitcherController.swift in Sources */,
+				E2DB429B1EB4F2C400B1F78B /* UserHeaderView.swift in Sources */,
+				E2DB429C1EB4F2C400B1F78B /* MessageListCell.swift in Sources */,
+				E2DB429D1EB4F2C400B1F78B /* AirToggleButton.swift in Sources */,
+				E2DB429E1EB4F2C400B1F78B /* AirProgress.swift in Sources */,
+				E2DB429F1EB4F2C400B1F78B /* UIView+BorderLayer.m in Sources */,
+				E2DB42A01EB4F2C400B1F78B /* PresenceView.swift in Sources */,
+				E2DB42A11EB4F2C400B1F78B /* AirNavigationBar.swift in Sources */,
+				E2DB42A21EB4F2C400B1F78B /* Theming.swift in Sources */,
+				E2DB42A31EB4F2C400B1F78B /* BaseEditViewController.swift in Sources */,
+				E2DB42A41EB4F2C400B1F78B /* MenuItemView.swift in Sources */,
+				E2DB42A51EB4F2C400B1F78B /* NGAParallaxMotion.m in Sources */,
+				E2DB42A61EB4F2C400B1F78B /* AirRadioButton.swift in Sources */,
+				E2DB42A71EB4F2C400B1F78B /* NavigationHeaderView.swift in Sources */,
+				E2DB42A81EB4F2C400B1F78B /* AirTableViewCell.swift in Sources */,
+				E2DB42A91EB4F2C400B1F78B /* GroupListCell.swift in Sources */,
+				E2DB42AA1EB4F2C400B1F78B /* AirImageView.swift in Sources */,
+				E2DB42AB1EB4F2C400B1F78B /* EmptyViewController.swift in Sources */,
+				E2DB42AC1EB4F2C400B1F78B /* DisplayPhoto.swift in Sources */,
+				E2DB42AD1EB4F2C400B1F78B /* DrawerHeaderView.swift in Sources */,
+				E2DB42AE1EB4F2C400B1F78B /* BingController.swift in Sources */,
+				E2DB42B01EB4F2C400B1F78B /* ColorArray.swift in Sources */,
+				E2DB42B11EB4F2C400B1F78B /* AirCheckBox.swift in Sources */,
+				E2DB42B21EB4F2C400B1F78B /* AudioController.swift in Sources */,
+				E2DB42B31EB4F2C400B1F78B /* AirTextFieldCell.swift in Sources */,
+				E2DB42B41EB4F2C400B1F78B /* UserMiniHeaderView.swift in Sources */,
+				E2DB42B51EB4F2C400B1F78B /* AirReactionButton.swift in Sources */,
+				E2DB42B61EB4F2C400B1F78B /* PHAsset+identifier.swift in Sources */,
+				E2DB42B71EB4F2C400B1F78B /* EmailViewController.swift in Sources */,
+				E2DB42B81EB4F2C400B1F78B /* PhotoEditView.swift in Sources */,
+				E2DB42B91EB4F2C400B1F78B /* ChannelEditViewController.swift in Sources */,
+				E2DB42BA1EB4F2C400B1F78B /* SideMenuViewController.swift in Sources */,
+				E2DB42BB1EB4F2C400B1F78B /* BaseSlackController.swift in Sources */,
+				E2DB42BC1EB4F2C400B1F78B /* AirTableView.swift in Sources */,
+				E2DB42BD1EB4F2C400B1F78B /* AirLabelBase.swift in Sources */,
+				E2DB42BE1EB4F2C400B1F78B /* BaseDetailView.swift in Sources */,
+				E2DB42BF1EB4F2C400B1F78B /* UIBarButtonItem+Badge.m in Sources */,
+				E2DB42C01EB4F2C400B1F78B /* AirHideShowButton.swift in Sources */,
+				E2DB42C11EB4F2C400B1F78B /* AirSearchField.swift in Sources */,
+				E2DB42C21EB4F2C400B1F78B /* FireProfile.swift in Sources */,
+				E2DB42C31EB4F2C400B1F78B /* CALayer+XibConfiguration.m in Sources */,
+				E2DB42C41EB4F2C400B1F78B /* GroupCreateController.swift in Sources */,
+				E2DB42C51EB4F2C400B1F78B /* UIShared.swift in Sources */,
+				E2DB42C61EB4F2C400B1F78B /* AppDelegate.swift in Sources */,
+				E2DB42C71EB4F2C400B1F78B /* SwiftyJSON.swift in Sources */,
+				E2DB42C81EB4F2C400B1F78B /* PasswordEditViewController.swift in Sources */,
+				E2DB42C91EB4F2C400B1F78B /* LobbyViewController.swift in Sources */,
+				E2DB42CA1EB4F2C400B1F78B /* ChannelDetailView.swift in Sources */,
+				E2DB42CB1EB4F2C400B1F78B /* AirLabelTitle.swift in Sources */,
+				E2DB42CC1EB4F2C400B1F78B /* GroupMiniHeaderView.swift in Sources */,
+				E2DB42CD1EB4F2C400B1F78B /* GroupSwitcherController.swift in Sources */,
+				E2DB42CE1EB4F2C400B1F78B /* MBProgressHUD+MBProgressHudAccessible.m in Sources */,
+				E2DB42CF1EB4F2C400B1F78B /* AirLinkButton.swift in Sources */,
+				E2DB42D01EB4F2C400B1F78B /* FloatPhoneField.swift in Sources */,
+				E2DB42D11EB4F2C400B1F78B /* ImageResult.swift in Sources */,
+				E2DB42D21EB4F2C400B1F78B /* BaseTableController.swift in Sources */,
+				E2DB42D31EB4F2C400B1F78B /* UIImage+ImageEffects.m in Sources */,
+				E2DB42D41EB4F2C400B1F78B /* Animation.swift in Sources */,
+				E2DB42D51EB4F2C400B1F78B /* PasswordViewController.swift in Sources */,
+				E2DB42D61EB4F2C400B1F78B /* FloatTextField.swift in Sources */,
+				E2DB42D71EB4F2C400B1F78B /* AirMuteView.swift in Sources */,
+				E2DB42D81EB4F2C400B1F78B /* Http.swift in Sources */,
+				E2DB42D91EB4F2C400B1F78B /* AirScrollView.swift in Sources */,
+				E2DB42DA1EB4F2C400B1F78B /* AirAddReactionButton.swift in Sources */,
+				E2DB42DB1EB4F2C400B1F78B /* WrapperTableViewCell.swift in Sources */,
+				E2DB42DC1EB4F2C400B1F78B /* MemberPickerController.swift in Sources */,
+				E2DB42DD1EB4F2C400B1F78B /* InviteListCell.swift in Sources */,
+				E2DB42DE1EB4F2C400B1F78B /* ContactPickerController.swift in Sources */,
+				E2DB42DF1EB4F2C400B1F78B /* UnreadQuery.swift in Sources */,
+				E2DB42E01EB4F2C400B1F78B /* AirButtonBase.swift in Sources */,
+				E2DB42E11EB4F2C400B1F78B /* ChannelInviteController.swift in Sources */,
+				E2DB42E21EB4F2C400B1F78B /* FireArray.swift in Sources */,
+				E2DB42E31EB4F2C400B1F78B /* TaskQueue.swift in Sources */,
+				E2DB42E41EB4F2C400B1F78B /* AirNavigationController.swift in Sources */,
+				E2DB42E51EB4F2C400B1F78B /* AirButton.swift in Sources */,
+				E2DB42E61EB4F2C400B1F78B /* AirFeaturedButton.swift in Sources */,
+				E2DB42E71EB4F2C400B1F78B /* ChannelsHeaderView.swift in Sources */,
+				E2DB42E81EB4F2C400B1F78B /* FireUser.swift in Sources */,
+				E2DB42E91EB4F2C400B1F78B /* InviteViewController.swift in Sources */,
+				E2DB42EA1EB4F2C400B1F78B /* BaseViewController.swift in Sources */,
+				E2DB42EB1EB4F2C400B1F78B /* Date.swift in Sources */,
+				E2DB42EC1EB4F2C400B1F78B /* ReactionPickerController.swift in Sources */,
+				E2DB42ED1EB4F2C400B1F78B /* Constants.swift in Sources */,
+				E2DB42EE1EB4F2C400B1F78B /* MemberDetailView.swift in Sources */,
+				E2DB42EF1EB4F2C400B1F78B /* AirToggleImage.swift in Sources */,
+				E2DB42F01EB4F2C400B1F78B /* FirePhoto.swift in Sources */,
+				E2DB42F11EB4F2C400B1F78B /* Utils.swift in Sources */,
+				E2DB42F21EB4F2C400B1F78B /* FireAttachment.swift in Sources */,
+				E2DB42F31EB4F2C400B1F78B /* CaptionView.swift in Sources */,
+				E2DB42F41EB4F2C400B1F78B /* DropdownTransitionManager.swift in Sources */,
+				E2DB42F51EB4F2C400B1F78B /* DropdownButton.swift in Sources */,
+				E2DB42F61EB4F2C400B1F78B /* AirTokenView.swift in Sources */,
+				E2DB42F71EB4F2C400B1F78B /* PHPhotoLibrary+PhotoAsset.swift in Sources */,
+				E2DB42F81EB4F2C400B1F78B /* BranchProvider.swift in Sources */,
+				E2DB42F91EB4F2C400B1F78B /* PhotoChooserUI.swift in Sources */,
+				E2DB42FA1EB4F2C400B1F78B /* AirScrimButton.swift in Sources */,
+				E2DB42FB1EB4F2C400B1F78B /* GroupEditViewController.swift in Sources */,
+				E2DB42FC1EB4F2C400B1F78B /* AirLabelDisplay.swift in Sources */,
+				E2DB42FD1EB4F2C400B1F78B /* AirTextView.swift in Sources */,
+				E2DB42FE1EB4F2C400B1F78B /* MemberListController.swift in Sources */,
+				E2DB42FF1EB4F2C400B1F78B /* AirLabel.swift in Sources */,
+				E2DB43001EB4F2C400B1F78B /* ImageUtils.swift in Sources */,
+				E2DB43011EB4F2C400B1F78B /* Reporting.swift in Sources */,
+				E2DB43021EB4F2C400B1F78B /* BaseView.swift in Sources */,
+				E2DB43031EB4F2C400B1F78B /* AirStarButton.swift in Sources */,
+				E2DB43041EB4F2C400B1F78B /* InviteListController.swift in Sources */,
+				E2DB43051EB4F2C400B1F78B /* AwsS3.swift in Sources */,
+				E2DB43061EB4F2C400B1F78B /* ReachabilityManager.swift in Sources */,
+				E2DB43071EB4F2C400B1F78B /* CKRadialMenu.m in Sources */,
+				E2DB43081EB4F2C400B1F78B /* PhotoSearchController.swift in Sources */,
+				E2DB43091EB4F2C400B1F78B /* UserController.swift in Sources */,
+				E2DB430A1EB4F2C400B1F78B /* UserLobbyController.swift in Sources */,
+				E2DB430B1EB4F2C400B1F78B /* GalleryViewCell.swift in Sources */,
+				E2DB430C1EB4F2C400B1F78B /* FireGroup.swift in Sources */,
+				E2DB430D1EB4F2C400B1F78B /* MemberViewController.swift in Sources */,
+				E2DB430E1EB4F2C400B1F78B /* FireChannel.swift in Sources */,
+				E2DB430F1EB4F2C400B1F78B /* FireMessage.swift in Sources */,
+				E2DB43101EB4F2C400B1F78B /* ChannelViewController.swift in Sources */,
+				E2DB43111EB4F2C400B1F78B /* MaterialColor.swift in Sources */,
+				E2DB43121EB4F2C400B1F78B /* FireController.swift in Sources */,
+				E2DB43131EB4F2C400B1F78B /* MainController.swift in Sources */,
+				E2DB43141EB4F2C400B1F78B /* ProfileEditViewController.swift in Sources */,
+				E2DB43151EB4F2C400B1F78B /* AccountEditViewController.swift in Sources */,
+				E2DB43161EB4F2C400B1F78B /* StateController.swift in Sources */,
+				E2DB43171EB4F2C400B1F78B /* ContainerController.swift in Sources */,
+				E2DB43181EB4F2C400B1F78B /* AirUIView.swift in Sources */,
+				E2DB43191EB4F2C400B1F78B /* SlideAnimationController.swift in Sources */,
+				E2DB431A1EB4F2C400B1F78B /* SlideBounceAnimationController.swift in Sources */,
+				E2DB431B1EB4F2C400B1F78B /* MessageQuery.swift in Sources */,
+				E2DB431C1EB4F2C400B1F78B /* UserQuery.swift in Sources */,
+				E2DB431D1EB4F2C400B1F78B /* GroupQuery.swift in Sources */,
+				E2DB431E1EB4F2C400B1F78B /* ChannelQuery.swift in Sources */,
+				E2DB431F1EB4F2C400B1F78B /* PhotoControl.swift in Sources */,
+				E2DB43201EB4F2C400B1F78B /* AboutViewController.swift in Sources */,
+				E2DB43211EB4F2C400B1F78B /* DevelopmentViewController.swift in Sources */,
+				E2DB43221EB4F2C400B1F78B /* MemberSettingsController.swift in Sources */,
+				E2DB43231EB4F2C400B1F78B /* NotificationSettingsViewController.swift in Sources */,
+				E2DB43241EB4F2C400B1F78B /* SettingsTableViewController.swift in Sources */,
+				E2DB43251EB4F2C400B1F78B /* AirReactionToolbar.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1755,6 +2289,209 @@
 			};
 			name = Adhoc;
 		};
+		E2DB43561EB4F2C400B1F78B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = ED13DC8FAA3F0F42AF9C2AC5 /* Pods-Patchr.debug.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon3;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_MODULE_DEBUGGING = YES;
+				CODE_SIGN_ENTITLEMENTS = Patchr/Patchr.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = 7542324V6B;
+				ENABLE_BITCODE = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+					"$(PROJECT_DIR)/Frameworks",
+				);
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = NO;
+				INFOPLIST_FILE = Patchr/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PODS_ROOT)",
+				);
+				MOMC_NO_INVERSE_RELATIONSHIP_WARNINGS = YES;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+					"-all_load",
+					"-O3",
+					"-l\"c++\"",
+					"-l\"sqlite3\"",
+					"-l\"z\"",
+					"-framework",
+					"\"CoreData\"",
+					"-framework",
+					"\"CoreGraphics\"",
+					"-framework",
+					"\"CoreTelephony\"",
+					"-framework",
+					"\"Foundation\"",
+					"-framework",
+					"\"ImageIO\"",
+					"-framework",
+					"\"MessageUI\"",
+					"-framework",
+					"\"MobileCoreServices\"",
+					"-framework",
+					"\"QuartzCore\"",
+					"-framework",
+					"\"Security\"",
+					"-framework",
+					"\"SystemConfiguration\"",
+					"-framework",
+					"\"UIKit\"",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.3meters.patchr.ios;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = Patchr/BridgingHeader.h;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALID_ARCHS = "arm64 armv7 armv7s i386 x86_64";
+			};
+			name = Debug;
+		};
+		E2DB43571EB4F2C400B1F78B /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = F934DAF428AEDCA8C8D034E2 /* Pods-Patchr.release.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon3;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_MODULE_DEBUGGING = NO;
+				CODE_SIGN_ENTITLEMENTS = Patchr/Patchr.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				DEVELOPMENT_TEAM = 7542324V6B;
+				ENABLE_BITCODE = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+					"$(PROJECT_DIR)/Frameworks",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = NO;
+				INFOPLIST_FILE = Patchr/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PODS_ROOT)",
+				);
+				MOMC_NO_INVERSE_RELATIONSHIP_WARNINGS = YES;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+					"-all_load",
+					"-O3",
+					"-l\"c++\"",
+					"-l\"sqlite3\"",
+					"-l\"z\"",
+					"-framework",
+					"\"CoreData\"",
+					"-framework",
+					"\"CoreGraphics\"",
+					"-framework",
+					"\"CoreTelephony\"",
+					"-framework",
+					"\"Foundation\"",
+					"-framework",
+					"\"ImageIO\"",
+					"-framework",
+					"\"MessageUI\"",
+					"-framework",
+					"\"MobileCoreServices\"",
+					"-framework",
+					"\"QuartzCore\"",
+					"-framework",
+					"\"Security\"",
+					"-framework",
+					"\"SystemConfiguration\"",
+					"-framework",
+					"\"UIKit\"",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.3meters.patchr.ios;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = Patchr/BridgingHeader.h;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALID_ARCHS = "arm64 armv7 armv7s i386 x86_64";
+			};
+			name = Release;
+		};
+		E2DB43581EB4F2C400B1F78B /* Adhoc */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 2505D54896E52F9F80092D57 /* Pods-Patchr.adhoc.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon3;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_MODULE_DEBUGGING = NO;
+				CODE_SIGN_ENTITLEMENTS = Patchr/Patchr.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Distribution";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
+				DEVELOPMENT_TEAM = 7542324V6B;
+				ENABLE_BITCODE = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+					"$(PROJECT_DIR)/Frameworks",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = NO;
+				INFOPLIST_FILE = Patchr/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PODS_ROOT)",
+				);
+				MOMC_NO_INVERSE_RELATIONSHIP_WARNINGS = YES;
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+					"-all_load",
+					"-O3",
+					"-l\"c++\"",
+					"-l\"sqlite3\"",
+					"-l\"z\"",
+					"-framework",
+					"\"CoreData\"",
+					"-framework",
+					"\"CoreGraphics\"",
+					"-framework",
+					"\"CoreTelephony\"",
+					"-framework",
+					"\"Foundation\"",
+					"-framework",
+					"\"ImageIO\"",
+					"-framework",
+					"\"MessageUI\"",
+					"-framework",
+					"\"MobileCoreServices\"",
+					"-framework",
+					"\"QuartzCore\"",
+					"-framework",
+					"\"Security\"",
+					"-framework",
+					"\"SystemConfiguration\"",
+					"-framework",
+					"\"UIKit\"",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.3meters.patchr.ios;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = Patchr/BridgingHeader.h;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALID_ARCHS = "arm64 armv7 armv7s i386 x86_64";
+			};
+			name = Adhoc;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -1774,6 +2511,16 @@
 				7D3D39E91A6F087000A44CB2 /* Debug */,
 				7D3D39EA1A6F087000A44CB2 /* Release */,
 				E253C2E71D80A4AC00F8B7AB /* Adhoc */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		E2DB43551EB4F2C400B1F78B /* Build configuration list for PBXNativeTarget "Patchr Dev" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E2DB43561EB4F2C400B1F78B /* Debug */,
+				E2DB43571EB4F2C400B1F78B /* Release */,
+				E2DB43581EB4F2C400B1F78B /* Adhoc */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

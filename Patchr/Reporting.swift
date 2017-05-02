@@ -32,6 +32,6 @@ struct Reporting {
 	
 	static func track(_ event: String, properties: [String : Any]? = nil) {
         let event = event.lowercased().replacingOccurrences(of: " ", with: "_")
-        FIRAnalytics.logEvent(withName: event, parameters: nil)
+        FIRAnalytics.logEvent(withName: event, parameters: properties as! [String : NSObject]?)
 	}
 }
