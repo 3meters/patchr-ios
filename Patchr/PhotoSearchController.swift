@@ -391,21 +391,24 @@ extension PhotoSearchController {
         if let cell = collectionView.cellForItem(at: indexPath) as? ThumbnailCollectionViewCell {
             if self.inputImageType == .photo {
                 
-                let photo = DisplayPhoto(image: cell.thumbnail.image!)!
-                let browser = PhotoBrowser(photos: [photo] as [Any], animatedFrom: cell.thumbnail)!
-                
-                browser.mode = .preview
-                browser.usePopAnimation = true
-                browser.scaleImage = cell.thumbnail.image  // Used because final image might have different aspect ratio than initially
-                browser.useWhiteBackgroundColor = true
-                browser.disableVerticalSwipe = false
-                browser.browseDelegate = self.pickerDelegate  // Pass delegate through
-                browser.imageResult = self.imageForIndexPath(indexPath: indexPath as NSIndexPath)
-                Reporting.track("preview_search_photo")
-                present(browser, animated:true, completion:nil)
+                if cell.thumbnail.image != nil { // Ignore touches on placeholder images
+                    let photo = DisplayPhoto(image: cell.thumbnail.image!)!
+                    let browser = PhotoBrowser(photos: [photo] as [Any], animatedFrom: cell.thumbnail)!
+                    
+                    browser.mode = .preview
+                    browser.usePopAnimation = true
+                    browser.scaleImage = cell.thumbnail.image  // Used because final image might have different aspect ratio than initially
+                    browser.useWhiteBackgroundColor = true
+                    browser.disableVerticalSwipe = false
+                    browser.browseDelegate = self.pickerDelegate  // Pass delegate through
+                    browser.imageResult = self.imageForIndexPath(indexPath: indexPath as NSIndexPath)
+                    Reporting.track("preview_search_photo")
+                    present(browser, animated:true, completion:nil)
+                }
             }
             else if self.inputImageType == .animatedGif {
                 if let imageResult = self.imageForIndexPath(indexPath: indexPath as NSIndexPath) {
+                    
                     let photo = DisplayPhoto(url: URL(string:imageResult.contentUrl!))!
                     let browser = PhotoBrowser(photos: [photo] as [Any])
                     
