@@ -1,0 +1,6 @@
+framework module PonyDebugger {
+  umbrella header "PonyDebugger-umbrella.h"
+
+  export *
+  module * { export * }
+}
