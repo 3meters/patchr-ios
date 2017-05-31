@@ -9,7 +9,7 @@ import FirebaseAuth
 
 class UserQuery: NSObject {
 
-	var authHandle: FIRAuthStateDidChangeListenerHandle!
+	var authHandle: AuthStateDidChangeListenerHandle!
 	var onlineHandle: UInt!
 
 	var block: ((Error?, FireUser?) -> Swift.Void)!
@@ -56,7 +56,7 @@ class UserQuery: NSObject {
 
 		self.block = block
 
-		self.authHandle = FIRAuth.auth()?.addStateDidChangeListener() { [weak self] auth, user in
+		self.authHandle = Auth.auth().addStateDidChangeListener() { [weak self] auth, user in
 			guard let this = self else { return }
 			if auth.currentUser == nil {
 				this.remove()
@@ -196,7 +196,7 @@ class UserQuery: NSObject {
 
 	func remove() {
 		if self.authHandle != nil {
-			FIRAuth.auth()?.removeStateDidChangeListener(self.authHandle)
+			Auth.auth().removeStateDidChangeListener(self.authHandle)
 		}
 		if self.userHandle != nil {
 			FireController.db.child(self.userPath).removeObserver(withHandle: self.userHandle)

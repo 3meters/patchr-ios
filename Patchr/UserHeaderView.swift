@@ -94,7 +94,7 @@ class UserHeaderView: BaseDetailView {
             let fullName = self.fullName.text!
             
             if let photo = user!.profile?.photo {
-                let url = Cloudinary.url(prefix: photo.filename!, category: SizeCategory.profile)
+                let url = ImageProxy.url(photo: photo, category: SizeCategory.profile)
                 self.photoControl.bind(url: url, name: fullName, colorSeed: user!.id)
             }
             else {

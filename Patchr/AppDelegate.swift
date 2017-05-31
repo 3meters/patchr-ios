@@ -18,9 +18,10 @@ import Firebase
 import FirebaseInstanceID
 import FirebaseMessaging
 import FirebaseRemoteConfig
+import PonyDebugger
 
 @UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate, FIRMessagingDelegate {
+class AppDelegate: UIResponder, UIApplicationDelegate, MessagingDelegate {
 
     var window: UIWindow? // Photo browser expects this to be here
     var firstLaunch: Bool = false
@@ -36,27 +37,26 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FIRMessagingDelegate {
         Log.prepare()
         Log.i("Patchr launching...")
         
-        FIRApp.configure()
-        FIRDatabase.database().persistenceEnabled = true
-        FIRDatabase.setLoggingEnabled(false)
+        FirebaseApp.configure()
+        Database.database().isPersistenceEnabled = true
+        Database.setLoggingEnabled(false)
+        
+        PDDebugger.defaultInstance().enableNetworkTrafficDebugging()
+        PDDebugger.defaultInstance().forwardAllNetworkTraffic()
+        PDDebugger.defaultInstance().connect(to: URL(string: "ws://127.0.0.1:9000/device"))
         
         /* Remote notifications */
         if #available(iOS 10.0, *) {
             let authOptions: UNAuthorizationOptions = [.alert, .badge, .sound]
             UNUserNotificationCenter.current().requestAuthorization(options: authOptions, completionHandler: {_, _ in })
             UNUserNotificationCenter.current().delegate = self      // For iOS 10 display notification (sent via APNS)
-            FIRMessaging.messaging().remoteMessageDelegate = self   // For iOS 10 data message (sent via FCM)
+            Messaging.messaging().delegate = self   // For iOS 10 data message (sent via FCM)
         }
         else {
             /* Triggers permission UI if needed */
             application.registerUserNotificationSettings(UIUserNotificationSettings(types: [.alert, .badge, .sound], categories: nil))
         }
         
-        NotificationCenter.default.addObserver(self
-            , selector: #selector(tokenRefreshNotification)
-            , name: .firInstanceIDTokenRefresh
-            , object: nil)
-
         application.registerForRemoteNotifications() // Initiate the registration process with Apple Push Notification service.
         
         /* Default config and credentials for AWS */
@@ -76,7 +76,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FIRMessagingDelegate {
             UserDefaults.standard.set(true, forKey: Prefs.firstLaunch)
             self.firstLaunch = true
             self.showedLaunchOnboarding = false
-            try! FIRAuth.auth()!.signOut()  // Triggers cleanup by canned queries
+            try! Auth.auth().signOut()  // Triggers cleanup by canned queries
             Reporting.track("first_launch")
         }
         
@@ -133,14 +133,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FIRMessagingDelegate {
     }
 
     func applicationWillEnterForeground(_ application: UIApplication) {
-        Reporting.track(kFIREventAppOpen)
+        Reporting.track(AnalyticsEventAppOpen)
         Log.d("Application will enter foreground", breadcrumb: true)
     }
     
     func applicationDidBecomeActive(_ application: UIApplication) {
         Log.d("Application did become active", breadcrumb: true)
         connectToFcm()
-        FIRDatabase.database().goOnline()
+        Database.database().goOnline()
     }
 
     func applicationWillResignActive(_ application: UIApplication) {
@@ -148,10 +148,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FIRMessagingDelegate {
     }
 
     func applicationDidEnterBackground(_ application: UIApplication) {
-        Reporting.track(kFIREventAppOpen)
+        Reporting.track(AnalyticsEventAppOpen)
         Log.d("Application did enter background", breadcrumb: true)
         disconnectFromFcm()
-        FIRDatabase.database().goOffline()
+        Database.database().goOffline()
     }
     
     /*--------------------------------------------------------------------------------------------
@@ -184,7 +184,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FIRMessagingDelegate {
             }
         }
         
-        FIRMessaging.messaging().appDidReceiveMessage(userInfo)
+        Messaging.messaging().appDidReceiveMessage(userInfo)
         completionHandler(.noData)
     }
     
@@ -194,8 +194,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FIRMessagingDelegate {
     
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
         Log.d("Success registering for remote notifications: APNS: \(deviceToken.description)")
-        FIRInstanceID.instanceID().setAPNSToken(deviceToken, type: Config.isDebug ? .sandbox : .prod)
-        if let token = FIRInstanceID.instanceID().token(),
+        Messaging.messaging().setAPNSToken(deviceToken, type: Config.isDebug ? .sandbox : .prod)
+        if let token = InstanceID.instanceID().token(),
             let userId = UserController.instance.userId {
             Log.i("AppDelegate: setting firebase messaging token: \(userId)")
             FireController.db.child("installs/\(userId)/\(token)").setValue(true)
@@ -222,31 +222,29 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FIRMessagingDelegate {
      * MARK: - Firebase Messaging
      *--------------------------------------------------------------------------------------------*/
     
-    func applicationReceivedRemoteMessage(_ remoteMessage: FIRMessagingRemoteMessage) {
-        /* 
+    func messaging(_ messaging: Messaging, didReceive remoteMessage: MessagingRemoteMessage) {
+        /*
          * Receive data message on iOS 10 devices while app is in the foreground. Must
          * include data object in notification and NOT include notification object.
          */
         Log.d(remoteMessage.appData.description)
     }
     
-    func tokenRefreshNotification(_ notification: Notification) {
-        if let token = FIRInstanceID.instanceID().token(),
-            let userId = UserController.instance.userId {
+    func messaging(_ messaging: Messaging, didRefreshRegistrationToken fcmToken: String) {
+        if let userId = UserController.instance.userId {
             Log.i("AppDelegate: refreshing firebase messaging token: \(userId)")
-            FireController.db.child("installs/\(userId)/\(token)").setValue(true)
+            FireController.db.child("installs/\(userId)/\(fcmToken)").setValue(true)
             connectToFcm() /* Connect to FCM since connection may have failed when attempted before having a token. */
         }
     }
     
     func connectToFcm() {
-        FIRMessaging.messaging().connect { error in
-            Log.d((error != nil) ? "Unable to connect with FCM. \(error!)" : "Connected to FCM.")
-        }
+        Messaging.messaging().shouldEstablishDirectChannel = true
+        Log.d("Connected from FCM.")
     }
     
     func disconnectFromFcm() {
-        FIRMessaging.messaging().disconnect()
+        Messaging.messaging().shouldEstablishDirectChannel = false
         Log.d("Disconnected from FCM.")
     }
     

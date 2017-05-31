@@ -231,7 +231,7 @@ class ChannelDetailView: UIView {
     
     func displayPhoto() {
         let photo = self.photo!
-        let url = Cloudinary.url(prefix: photo.filename)
+        let url = ImageProxy.url(photo: photo, category: SizeCategory.standard)
         
         if !self.photoView.associated(withUrl: url) {
             self.photoView.setImageWithUrl(url: url) { success in

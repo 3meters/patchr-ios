@@ -31,7 +31,7 @@ class DrawerHeaderView: UIView {
     func bind(group: FireGroup!) {
         self.title?.text = group.title        
         if let photo = group.photo {
-            let photoUrl = Cloudinary.url(prefix: photo.filename!, category: SizeCategory.profile)
+            let photoUrl = ImageProxy.url(photo: photo, category: SizeCategory.profile)
             self.photoControl?.bind(url: photoUrl, name: nil, colorSeed: group.id)
         }
         else {

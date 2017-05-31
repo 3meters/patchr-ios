@@ -52,7 +52,7 @@ class GroupSwitcherController: BaseTableController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         if !UserController.instance.loginAlertShown {
-            if let email = FIRAuth.auth()?.currentUser?.email! {
+            if let email = Auth.auth().currentUser?.email! {
                 UIShared.toast(message: "Logged in using: \(email)", duration: 1.0)
             }
         }
@@ -257,7 +257,7 @@ class GroupSwitcherController: BaseTableController {
                 guard self != nil else { return cell }
                 
                 if let userId = UserController.instance.userId,
-                    let snap = data as? FIRDataSnapshot {
+                    let snap = data as? DataSnapshot {
                     
                     let groupId = snap.key
                     

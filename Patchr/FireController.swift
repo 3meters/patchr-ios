@@ -13,8 +13,8 @@ class FireController: NSObject {
 
     static let instance = FireController()
     
-    class var db: FIRDatabaseReference {
-        return FIRDatabase.database().reference()
+    class var db: DatabaseReference {
+        return Database.database().reference()
     }
     
     var serverOffset: Int?
@@ -325,7 +325,7 @@ class FireController: NSObject {
         let userId = UserController.instance.userId!
         let timestamp = getServerTimestamp()
         let ref = FireController.db.child("queue/join-group").childByAutoId()
-        let email = (FIRAuth.auth()?.currentUser?.email!)!
+        let email = (Auth.auth().currentUser?.email!)!
         var task: [String: Any] = [
             "created_at": timestamp,
             "created_by": userId,
@@ -361,7 +361,7 @@ class FireController: NSObject {
                         if !(snap.value is NSNull) && snap.hasChildren() {
                             var remaining = snap.childrenCount
                             for channelSnap in snap.children  {
-                                let channelFoo = channelSnap as! FIRDataSnapshot
+                                let channelFoo = channelSnap as! DataSnapshot
                                 let channelId = channelFoo.key
                                 self.removeUserFromChannel(userId: userId, groupId: groupId, channelId: channelId, channelName: nil) { success in
                                     if !success {
@@ -467,7 +467,7 @@ class FireController: NSObject {
         let joinedAt = Int(floorf(Float(timestamp / 1000)))// shorten to 10 digits
         let index = Int64("\(priority)\(joinedAt)")
         let indexReversed = Int64("-\(priorityReversed)\(joinedAt)")
-        let email = (FIRAuth.auth()?.currentUser?.email!)!
+        let email = (Auth.auth().currentUser?.email!)!
         
         let link: [String: Any] = [
             "created_at": timestamp,
@@ -610,7 +610,7 @@ class FireController: NSObject {
         
         query.observeSingleEvent(of: .value, with: { snap in
             if !(snap.value is NSNull) && snap.hasChildren() {
-                let channelId = (snap.children.nextObject() as! FIRDataSnapshot).key
+                let channelId = (snap.children.nextObject() as! DataSnapshot).key
                 next(channelId)
                 return
             }
@@ -627,7 +627,7 @@ class FireController: NSObject {
         
         query.observeSingleEvent(of: .value, with: { snap in
             if !(snap.value is NSNull) && snap.hasChildren() {
-                let channelId = (snap.children.nextObject() as! FIRDataSnapshot).key
+                let channelId = (snap.children.nextObject() as! DataSnapshot).key
                 next(channelId)
                 return
             }
@@ -715,10 +715,7 @@ class FireController: NSObject {
         /*
          * Can be called when the user is not authenticated.
          */
-        guard FIRAuth.auth() != nil else {
-            fatalError("Auth object should not be nil")
-        }
-        FIRAuth.auth()!.fetchProviders(forEmail: email, completion: { providers, error in
+        Auth.auth().fetchProviders(forEmail: email, completion: { providers, error in
             next(error, (error == nil && providers != nil && providers!.count > 0))
         })
     }
@@ -727,7 +724,7 @@ class FireController: NSObject {
      * MARK: - Utility
      *--------------------------------------------------------------------------------------------*/
     
-    func submitTask(task: [String: Any], ref: FIRDatabaseReference, then: @escaping ((ServiceError?, Any?) -> Void)) {
+    func submitTask(task: [String: Any], ref: DatabaseReference, then: @escaping ((ServiceError?, Any?) -> Void)) {
         var handle: UInt = 0
         ref.setValue(task) { error, ref in
             if error == nil {
@@ -826,7 +823,7 @@ protocol DataSourceDelegate: class {
 class FirebaseArray: NSObject {
     
     weak var delegate: DataSourceDelegate?
-    private var snapshots = [FIRDataSnapshot]()
+    private var snapshots = [DataSnapshot]()
     private var handles = Set<UInt>()
     private let query: FUIDataObservable
     private var isSendingUpdates = false
@@ -920,7 +917,7 @@ class FirebaseArray: NSObject {
         return NSNotFound
     }
     
-    func insert(_ snap: FIRDataSnapshot, withPreviousChildKey previous: String?) {
+    func insert(_ snap: DataSnapshot, withPreviousChildKey previous: String?) {
         var index: UInt = 0
         if previous != nil {
             index = UInt(self.index(forKey: previous!))
@@ -929,19 +926,19 @@ class FirebaseArray: NSObject {
         self.delegate?.array?(self, didAdd: snap, at: index)
     }
     
-    func remove(_ snap: FIRDataSnapshot, withPreviousChildKey previous: String?) {
+    func remove(_ snap: DataSnapshot, withPreviousChildKey previous: String?) {
         let index: UInt = UInt(self.index(forKey: snap.key))
         self.snapshots.remove(at: Int(index))
         self.delegate?.array?(self, didRemove: snap, at: index)
     }
     
-    func change(_ snap: FIRDataSnapshot, withPreviousChildKey previous: String?) {
+    func change(_ snap: DataSnapshot, withPreviousChildKey previous: String?) {
         let index: UInt = UInt(self.index(forKey: snap.key))
         self.snapshots[Int(index)] = snap
         self.delegate?.array?(self, didChange: snap, at: index)
     }
     
-    func move(_ snap: FIRDataSnapshot, withPreviousChildKey previous: String?) {
+    func move(_ snap: DataSnapshot, withPreviousChildKey previous: String?) {
         let fromIndex: UInt = UInt(self.index(forKey: snap.key))
         self.snapshots.remove(at: Int(fromIndex))
         var toIndex: UInt = 0

@@ -82,7 +82,7 @@ class GroupListCell: UITableViewCell {
         }
 
         if let photo = group.photo {
-            let url = Cloudinary.url(prefix: photo.filename!, category: SizeCategory.profile)
+            let url = ImageProxy.url(photo: photo, category: SizeCategory.profile)
             self.photoControl!.bind(url: url, name: nil, colorSeed: group.id)
         }
         else {

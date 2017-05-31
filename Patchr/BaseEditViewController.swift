@@ -10,6 +10,7 @@ import UIKit
 import AWSS3
 import Firebase
 import Photos
+import FirebaseStorage
 
 class BaseEditViewController: BaseViewController, UITextFieldDelegate, UITextViewDelegate {
 	
@@ -85,7 +86,7 @@ class BaseEditViewController: BaseViewController, UITextFieldDelegate, UITextVie
         var photoMap = [
             "width": Int(preparedImage.size.width), // width/height are in points...should be pixels?
             "height": Int(preparedImage.size.height),
-            "source": S3.instance.imageSource,
+            "source": GoogleStorage.imageSource,
             "filename": imageKey,
             "uploading": true ] as [String: Any]
         
@@ -109,19 +110,30 @@ class BaseEditViewController: BaseViewController, UITextFieldDelegate, UITextVie
         let imageData = UIImageJPEGRepresentation(image, /*compressionQuality*/ 0.70)!
         
         /* Prime the cache so offline has something to work with */
-        let photoUrlStandard = Cloudinary.url(prefix: imageKey, category: SizeCategory.standard)
-        let photoUrlProfile = Cloudinary.url(prefix: imageKey, category: SizeCategory.profile)
-        ImageUtils.storeImageDataToCache(imageData: imageData, key: photoUrlProfile.absoluteString)
-        ImageUtils.storeImageDataToCache(imageData: imageData, key: photoUrlStandard.absoluteString)
+//        let photoUrlStandard = ImageProxy.url(prefix: imageKey, category: SizeCategory.standard)
+//        let photoUrlProfile = ImageProxy.url(prefix: imageKey, category: SizeCategory.profile)
+//        ImageUtils.storeImageDataToCache(imageData: imageData, key: photoUrlProfile.absoluteString)
+//        ImageUtils.storeImageDataToCache(imageData: imageData, key: photoUrlStandard.absoluteString)
         
         /* Upload */
         DispatchQueue.global(qos: .userInitiated).async {
-            S3.instance.upload(imageData: imageData, imageKey: imageKey, progress: progress) { task, error in
-                Log.w(error != nil
-                    ? "*** S3 image upload stopped with error: \(error!.localizedDescription)"
-                    : "*** S3 image upload complete: \(imageKey)")
-                next?(error)
+            
+            GoogleStorage.instance.upload(imageData: imageData, imageKey: imageKey) { snapshot in
+                if snapshot.status == .failure {
+                    next?(snapshot.error)
+                }
+                else if snapshot.status == .success {
+                    Log.d("*** Google storage image upload complete: \(imageKey)")
+                    next?(nil)
+                }
             }
+
+//            S3.instance.upload(imageData: imageData, imageKey: imageKey, progress: progress) { task, error in
+//                Log.w(error != nil
+//                    ? "*** S3 image upload stopped with error: \(error!.localizedDescription)"
+//                    : "*** S3 image upload complete: \(imageKey)")
+//                next?(error)
+//            }
         }
         
         return photoMap

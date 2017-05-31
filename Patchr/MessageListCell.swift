@@ -218,7 +218,7 @@ class MessageListCell: UITableViewCell {
         
         if let profilePhoto = message.creator?.profile?.photo {
             if !self.template {
-                let url = Cloudinary.url(prefix: profilePhoto.filename, category: SizeCategory.profile)
+                let url = ImageProxy.url(photo: profilePhoto, category: SizeCategory.profile)
                 if !self.userPhotoControl.photoView.associated(withUrl: url) {
                     let fullName = message.creator?.fullName
                     self.userPhotoControl.photoView.image = nil
@@ -236,7 +236,7 @@ class MessageListCell: UITableViewCell {
         if let photo = message.attachments?.values.first?.photo {
             self.photoView?.isHidden = false
             if !self.template { // Don't fetch if acting as template
-                let url = Cloudinary.url(prefix: photo.filename!)
+                let url = ImageProxy.url(photo: photo, category: SizeCategory.standard)
                 if !self.photoView.associated(withUrl: url) {
                     self.photoView?.image = nil
                     self.photoView.setImageWithUrl(url: url, animate: true)

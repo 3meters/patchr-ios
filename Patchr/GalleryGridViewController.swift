@@ -80,11 +80,6 @@ class GalleryGridViewController: UICollectionViewController {
 		self.thumbnailWidth = requestedColumnWidth + (spaceLeftOver / numColumns)
 	}
     
-    deinit {
-        SDWebImagePrefetcher.shared().cancelPrefetching()
-        Log.v("Grid prefetch cancelled if active")
-    }
-
 	/*--------------------------------------------------------------------------------------------
 	 * Events
 	 *--------------------------------------------------------------------------------------------*/
@@ -115,7 +110,7 @@ class GalleryGridViewController: UICollectionViewController {
         /* Start prefetching photos to the disk cache if on wifi network */
         let urls = self.displayPhotosSorted.map { $0.photoURL! }
         if  ReachabilityManager.instance.isReachableViaWiFi() {
-            SDWebImagePrefetcher.shared().prefetchURLs(urls)
+            SDWebImagePrefetcher.shared().prefetchURLs(urls)    // method starts by clearing any ongoing prefetch
             SDWebImagePrefetcher.shared().delegate = self
         }
 		

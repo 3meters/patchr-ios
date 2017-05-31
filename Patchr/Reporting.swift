@@ -16,11 +16,11 @@ struct Reporting {
     
     static func updateCrashKeys() { }
 	
-    static func updateUser(user: FIRUser?) {
+    static func updateUser(user: User?) {
         
-        FIRAnalytics.setUserID(user?.uid)
-        FIRAnalytics.setUserPropertyString(user?.displayName, forName: "name")
-        FIRAnalytics.setUserPropertyString(user?.email, forName: "email") // TODO: Is this allowed?
+        Analytics.setUserID(user?.uid)
+        Analytics.setUserProperty(user?.displayName, forName: "name")
+        Analytics.setUserProperty(user?.email, forName: "email") // TODO: Is this allowed?
         
         if user != nil {
 			BranchProvider.setIdentity(identity: user!.uid)
@@ -32,6 +32,6 @@ struct Reporting {
 	
 	static func track(_ event: String, properties: [String : Any]? = nil) {
         let event = event.lowercased().replacingOccurrences(of: " ", with: "_")
-        FIRAnalytics.logEvent(withName: event, parameters: properties as! [String : NSObject]?)
+        Analytics.logEvent(event, parameters: properties as! [String : NSObject]?)
 	}
 }

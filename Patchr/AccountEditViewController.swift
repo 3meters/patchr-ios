@@ -60,7 +60,7 @@ class AccountEditViewController: BaseEditViewController {
                 
                 guard !self.processing else { return }
                 
-                if self.emailField.text != FIRAuth.auth()?.currentUser?.email {
+                if self.emailField.text != Auth.auth().currentUser?.email {
                     self.processing = true
                     Reporting.track("validate_email")
                     verifyEmail()
@@ -147,7 +147,7 @@ class AccountEditViewController: BaseEditViewController {
     }
     
     func bind() {
-        if let email = FIRAuth.auth()?.currentUser?.email {
+        if let email = Auth.auth().currentUser?.email {
             self.emailField.text = email
         }
         if let username = UserController.instance.user?.username {
@@ -180,12 +180,12 @@ class AccountEditViewController: BaseEditViewController {
     
     func updateEmail() {
         
-        if let authUser = FIRAuth.auth()?.currentUser,
+        if let authUser = Auth.auth().currentUser,
             let userId = UserController.instance.userId,
             let email = self.emailField.text {
             
             /* Update in firebase auth account */
-            authUser.updateEmail(email, completion: { [weak self] error in
+            authUser.updateEmail(to: email, completion: { [weak self] error in
                 guard let this = self else { return }
                 if error == nil {
                     authUser.sendEmailVerification()
@@ -295,7 +295,7 @@ class AccountEditViewController: BaseEditViewController {
     }
     
     func isDirty() -> Bool {
-        if let email = FIRAuth.auth()?.currentUser?.email, let username = UserController.instance.user?.username {
+        if let email = Auth.auth().currentUser?.email, let username = UserController.instance.user?.username {
             return (self.emailField.text! != email || self.userNameField.text! != username)
         }
         return false

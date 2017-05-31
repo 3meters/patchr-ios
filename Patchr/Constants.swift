@@ -33,7 +33,7 @@ func PerUserKey(key: String) -> String {
 
 struct Config {
 
-    static let logLevel: Int = LogLevel.debug
+    static let logLevel: Int = LogLevel.verbose
     static let device = UIDevice.current
     static let iosVersion = NSString(string: device.systemVersion).doubleValue
     static let iOS9 = iosVersion >= 9
@@ -176,12 +176,6 @@ public struct PhotoSource {
     static let bing = "bing"
     static let generic = "generic"
     static let facebook = "facebook"
-}
-
-public struct SizeCategory {
-    static let profile = "profile"
-    static let thumbnail = "thumbnail"
-    static let standard = "standard"
 }
 
 public struct LogLevel {

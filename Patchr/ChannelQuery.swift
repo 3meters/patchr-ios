@@ -8,7 +8,7 @@ import FirebaseAuth
 
 class ChannelQuery: NSObject {
 
-	var authHandle: FIRAuthStateDidChangeListenerHandle!
+	var authHandle: AuthStateDidChangeListenerHandle!
 
 	var block: ((Error?, FireChannel?) -> Swift.Void)!
 	var fired = false
@@ -34,7 +34,7 @@ class ChannelQuery: NSObject {
 
 		self.block = block
 
-		self.authHandle = FIRAuth.auth()?.addStateDidChangeListener() { [weak self] auth, user in
+		self.authHandle = Auth.auth().addStateDidChangeListener() { [weak self] auth, user in
 			guard let this = self else { return }
 			if auth.currentUser == nil {
 				this.remove()
@@ -145,7 +145,7 @@ class ChannelQuery: NSObject {
 
 	func remove() {
 		if self.authHandle != nil {
-			FIRAuth.auth()?.removeStateDidChangeListener(self.authHandle)
+			Auth.auth().removeStateDidChangeListener(self.authHandle)
 		}
 		if self.channelHandle != nil {
 			FireController.db.child(self.channelPath).removeObserver(withHandle: self.channelHandle)

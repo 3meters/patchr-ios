@@ -183,8 +183,8 @@ class PhotoEditView: UIView {
             }
             else {
                 let dimension = imageResult!.width! >= imageResult!.height! ? ResizeDimension.width : ResizeDimension.height
-                let url = URL(string: GooglePlusProxy.convert(uri: imageResult!.contentUrl!, size: Int(Config.imageDimensionMax), dimension: dimension))
-                self.imageView.setImageWithUrl(url: url!) { [weak self] success in
+                let url = GooglePlusProxy.url(url: imageResult!.contentUrl!, category: SizeCategory.profile, dimension: dimension)
+                self.imageView.setImageWithUrl(url: url) { [weak self] success in
                     guard let this = self else { return }
                     if success {
                         NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.PhotoDidChange), object: this)

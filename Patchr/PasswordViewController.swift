@@ -92,7 +92,7 @@ class PasswordViewController: BaseEditViewController {
     }
 
     func passwordResetAction(sender: AnyObject) {
-        FIRAuth.auth()?.sendPasswordReset(withEmail: self.inputEmail) { error in
+        Auth.auth().sendPasswordReset(withEmail: self.inputEmail) { error in
             if error == nil {
                 Reporting.track("request_password_reset")
                 self.alert(title: "A password reset email has been sent to your email address.")
@@ -175,16 +175,16 @@ class PasswordViewController: BaseEditViewController {
         let email = self.inputEmail!
         
         if self.branch == .login {
-            FIRAuth.auth()?.signIn(withEmail: email, password: password) { authUser, error in
+            Auth.auth().signIn(withEmail: email, password: password) { authUser, error in
                 if error == nil {
                     UserDefaults.standard.set(email, forKey: Prefs.lastUserEmail)
                 }
-                self.authenticated(user: authUser, email: email, error: error)
+                self.authenticated(user: authUser!, email: email, error: error)
             }
         }
         else {  // Only happens if creating group
             
-            FIRAuth.auth()?.createUser(withEmail: email, password: password, completion: { authUser, error in
+            Auth.auth().createUser(withEmail: email, password: password, completion: { authUser, error in
                 
                 self.processing = false
                 self.progress?.hide(true)
@@ -222,7 +222,7 @@ class PasswordViewController: BaseEditViewController {
         }
     }
     
-    func authenticated(user: FIRUser?, email: String?, error: Error?) {
+    func authenticated(user: User?, email: String?, error: Error?) {
         self.processing = false
         self.progress?.hide(true)
         
@@ -254,15 +254,15 @@ class PasswordViewController: BaseEditViewController {
         }
         else {
             var errorMessage = error?.localizedDescription
-            if error!._code == FIRAuthErrorCode.errorCodeEmailAlreadyInUse.rawValue {
+            if error!._code == AuthErrorCode.emailAlreadyInUse.rawValue {
                 Reporting.track("login_error", properties:["message": "email_already_used", "email": email!])
                 errorMessage = "Email already used"
             }
-            else if error!._code == FIRAuthErrorCode.errorCodeInvalidEmail.rawValue {
+            else if error!._code == AuthErrorCode.invalidEmail.rawValue {
                 Reporting.track("login_error", properties:["message": "email_address_not_valid", "email": email!])
                 errorMessage = "Email address is not valid"
             }
-            else if error!._code == FIRAuthErrorCode.errorCodeWrongPassword.rawValue {
+            else if error!._code == AuthErrorCode.wrongPassword.rawValue {
                 Reporting.track("login_error", properties:["message": "wrong_password"])
                 errorMessage = "Wrong email and password combination"
             }
@@ -274,10 +274,10 @@ class PasswordViewController: BaseEditViewController {
         
         guard !self.processing else { return }
         
-        if let user = FIRAuth.auth()?.currentUser, let email = user.email {
+        if let user = Auth.auth().currentUser, let email = user.email {
             self.processing = true
             let password = self.passwordField.text!
-            let credentials = FIREmailPasswordAuthProvider.credential(withEmail: email, password: password)
+            let credentials = EmailAuthProvider.credential(withEmail: email, password: password)
             user.reauthenticate(with: credentials, completion: { error in
                 
                 self.processing = false

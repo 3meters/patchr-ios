@@ -23,7 +23,7 @@ class DisplayPhoto: IDMPhoto {
         self.message = message
         
         if let photo = message.attachments?.values.first?.photo {
-            self.photoURL = Cloudinary.url(prefix: photo.filename!) // On base class
+            self.photoURL = ImageProxy.url(photo: photo, category: SizeCategory.standard) // On base class
             if photo.width != nil && photo.height != nil {
                 self.size = CGSize(width: CGFloat(photo.width!), height: CGFloat(photo.height!))
             }
@@ -36,7 +36,7 @@ class DisplayPhoto: IDMPhoto {
         if let creator = message.creator {
             self.creatorName = creator.username
             if let userPhoto = creator.profile?.photo {
-                self.creatorUrl = Cloudinary.url(prefix: userPhoto.filename!, category: SizeCategory.profile)
+                self.creatorUrl = ImageProxy.url(photo: userPhoto, category: SizeCategory.profile)
             }
         }
         

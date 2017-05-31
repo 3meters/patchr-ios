@@ -8,7 +8,7 @@ import FirebaseAuth
 
 class GroupQuery: NSObject {
 
-	var authHandle: FIRAuthStateDidChangeListenerHandle!
+	var authHandle: AuthStateDidChangeListenerHandle!
 
 	var block: ((Error?, Trigger?, FireGroup?) -> Swift.Void)!
 	var fired = false
@@ -34,7 +34,7 @@ class GroupQuery: NSObject {
 
 		self.block = block
 
-		self.authHandle = FIRAuth.auth()?.addStateDidChangeListener() { [weak self] auth, user in
+		self.authHandle = Auth.auth().addStateDidChangeListener() { [weak self] auth, user in
 			guard let this = self else { return }
 			if auth.currentUser == nil {
 				this.remove()
@@ -146,7 +146,7 @@ class GroupQuery: NSObject {
 
 	func remove() {
 		if self.authHandle != nil {
-			FIRAuth.auth()?.removeStateDidChangeListener(self.authHandle)
+			Auth.auth().removeStateDidChangeListener(self.authHandle)
 		}
 		if self.groupHandle != nil {
 			FireController.db.child(self.groupPath).removeObserver(withHandle: self.groupHandle)

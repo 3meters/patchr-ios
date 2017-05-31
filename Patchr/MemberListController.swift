@@ -166,7 +166,7 @@ class MemberListController: BaseTableController {
             cell.reset()
             guard let this = self else { return cell }
             
-            let snap = data as! FIRDataSnapshot
+            let snap = data as! DataSnapshot
             let userId = snap.key
             let groupId = StateController.instance.groupId!
             let channelId = StateController.instance.channelId!

@@ -8,7 +8,7 @@ import FirebaseAuth
 
 class MessageQuery: NSObject {
 
-    var authHandle: FIRAuthStateDidChangeListenerHandle!
+    var authHandle: AuthStateDidChangeListenerHandle!
 
     var block: ((Error?, FireMessage?) -> Swift.Void)!
     var fired = false
@@ -26,7 +26,7 @@ class MessageQuery: NSObject {
         
         self.block = block
         
-        self.authHandle = FIRAuth.auth()?.addStateDidChangeListener() { [weak self] auth, user in
+        self.authHandle = Auth.auth().addStateDidChangeListener() { [weak self] auth, user in
             guard let this = self else { return }
             if auth.currentUser == nil {
                 this.remove()
@@ -61,7 +61,7 @@ class MessageQuery: NSObject {
     
     func remove() {
         if self.authHandle != nil {
-            FIRAuth.auth()?.removeStateDidChangeListener(self.authHandle)
+            Auth.auth().removeStateDidChangeListener(self.authHandle)
         }
         if self.messageHandle != nil {
             FireController.db.child(self.messagePath).removeObserver(withHandle: self.messageHandle)

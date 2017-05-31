@@ -46,55 +46,63 @@ PODS:
   - DLRadioButton (1.4.9)
   - Emoji-swift (0.1.0)
   - Facade (1.1.1)
-  - Firebase/Auth (3.16.0):
+  - Firebase/Auth (4.0.0):
     - Firebase/Core
-    - FirebaseAuth (= 3.1.1)
-  - Firebase/Core (3.16.0):
-    - FirebaseAnalytics (= 3.8.0)
-    - FirebaseCore (= 3.6.0)
-  - Firebase/Crash (3.16.0):
+    - FirebaseAuth (= 4.0.0)
+  - Firebase/Core (4.0.0):
+    - FirebaseAnalytics (= 4.0.0)
+    - FirebaseCore (= 4.0.0)
+  - Firebase/Crash (4.0.0):
     - Firebase/Core
-    - FirebaseCrash (= 1.1.6)
-  - Firebase/Database (3.16.0):
+    - FirebaseCrash (= 2.0.0)
+  - Firebase/Database (4.0.0):
     - Firebase/Core
-    - FirebaseDatabase (= 3.1.2)
-  - Firebase/Messaging (3.16.0):
+    - FirebaseDatabase (= 4.0.0)
+  - Firebase/Messaging (4.0.0):
     - Firebase/Core
-    - FirebaseMessaging (= 1.2.3)
-  - Firebase/RemoteConfig (3.16.0):
+    - FirebaseMessaging (= 2.0.0)
+  - Firebase/RemoteConfig (4.0.0):
     - Firebase/Core
-    - FirebaseRemoteConfig (= 1.3.4)
-  - FirebaseAnalytics (3.8.0):
-    - FirebaseCore (~> 3.6)
-    - FirebaseInstanceID (~> 1.0)
+    - FirebaseRemoteConfig (= 2.0.0)
+  - Firebase/Storage (4.0.0):
+    - Firebase/Core
+    - FirebaseStorage (= 2.0.0)
+  - FirebaseAnalytics (4.0.0):
+    - FirebaseCore (~> 4.0)
+    - FirebaseInstanceID (~> 2.0)
     - GoogleToolboxForMac/NSData+zlib (~> 2.1)
-  - FirebaseAuth (3.1.1):
-    - FirebaseAnalytics (~> 3.7)
+  - FirebaseAuth (4.0.0):
+    - FirebaseAnalytics (~> 4.0)
     - GoogleToolboxForMac/NSDictionary+URLArguments (~> 2.1)
     - GTMSessionFetcher/Core (~> 1.1)
-  - FirebaseCore (3.6.0):
+  - FirebaseCore (4.0.0):
     - GoogleToolboxForMac/NSData+zlib (~> 2.1)
-  - FirebaseCrash (1.1.6):
-    - FirebaseAnalytics (~> 3.7)
-    - FirebaseInstanceID (~> 1.0)
+  - FirebaseCrash (2.0.0):
+    - FirebaseAnalytics (~> 4.0)
+    - FirebaseInstanceID (~> 2.0)
     - GoogleToolboxForMac/Logger (~> 2.1)
     - GoogleToolboxForMac/NSData+zlib (~> 2.1)
     - Protobuf (~> 3.1)
-  - FirebaseDatabase (3.1.2):
-    - FirebaseAnalytics (~> 3.7)
-  - FirebaseInstanceID (1.0.10):
-    - FirebaseCore (~> 3.6)
-  - FirebaseMessaging (1.2.3):
-    - FirebaseAnalytics (~> 3.8)
-    - FirebaseInstanceID (~> 1.0)
+  - FirebaseDatabase (4.0.0):
+    - FirebaseAnalytics (~> 4.0)
+  - FirebaseInstanceID (2.0.0):
+    - FirebaseCore (~> 4.0)
+  - FirebaseMessaging (2.0.0):
+    - FirebaseAnalytics (~> 4.0)
+    - FirebaseCore (~> 4.0)
+    - FirebaseInstanceID (~> 2.0)
     - GoogleToolboxForMac/Logger (~> 2.1)
     - Protobuf (~> 3.1)
-  - FirebaseRemoteConfig (1.3.4):
-    - FirebaseAnalytics (~> 3.7)
-    - FirebaseInstanceID (~> 1.0)
+  - FirebaseRemoteConfig (2.0.0):
+    - FirebaseAnalytics (~> 4.0)
+    - FirebaseInstanceID (~> 2.0)
     - GoogleToolboxForMac/NSData+zlib (~> 2.1)
     - Protobuf (~> 3.1)
-  - FirebaseUI/Database (3.1.0):
+  - FirebaseStorage (2.0.0):
+    - FirebaseAnalytics (~> 4.0)
+    - FirebaseCore (~> 4.0)
+    - GTMSessionFetcher/Core (~> 1.1)
+  - FirebaseUI/Database (4.0.0):
     - Firebase/Database
   - FLAnimatedImage (1.0.12)
   - GoogleToolboxForMac/DebugUtils (2.1.1):
@@ -109,7 +117,7 @@ PODS:
     - GoogleToolboxForMac/Defines (= 2.1.1)
     - GoogleToolboxForMac/NSString+URLArguments (= 2.1.1)
   - GoogleToolboxForMac/NSString+URLArguments (2.1.1)
-  - GTMSessionFetcher/Core (1.1.9)
+  - GTMSessionFetcher/Core (1.1.10)
   - IDMPhotoBrowser (1.7):
     - DACircularProgress
     - pop
@@ -125,9 +133,11 @@ PODS:
   - PhoneNumberKit/PhoneNumberKitCore (1.0.1)
   - PhoneNumberKit/UIKit (1.0.1):
     - PhoneNumberKit/PhoneNumberKitCore
+  - PonyDebugger (0.4.5):
+    - SocketRocket
   - pop (1.0.9)
   - PopupDialog (0.5.3)
-  - Protobuf (3.2.1)
+  - Protobuf (3.3.0)
   - ReachabilitySwift (3)
   - SDWebImage (4.0.0):
     - SDWebImage/Core (= 4.0.0)
@@ -138,6 +148,7 @@ PODS:
   - SkyFloatingLabelTextField (2.0.0)
   - SlackTextViewController (1.9.5)
   - SlideMenuControllerSwift (3.0.1)
+  - SocketRocket (0.5.1)
   - STPopup (1.8.2)
   - TTTAttributedLabel (2.0.0)
   - TwicketSegmentedControl (0.1.1)
@@ -163,6 +174,7 @@ DEPENDENCIES:
   - Firebase/Database
   - Firebase/Messaging
   - Firebase/RemoteConfig
+  - Firebase/Storage
   - FirebaseUI/Database
   - IDMPhotoBrowser (from `~/code/IDMPhotoBrowser`)
   - iRate (~> 1.11.6)
@@ -171,6 +183,7 @@ DEPENDENCIES:
   - NHBalancedFlowLayout (~> 0.2)
   - PBWebViewController (~> 0.5)
   - PhoneNumberKit (~> 1.0)
+  - PonyDebugger (from `https://github.com/square/PonyDebugger.git`)
   - pop (~> 1.0)
   - PopupDialog
   - ReachabilitySwift (~> 3)
@@ -192,6 +205,8 @@ EXTERNAL SOURCES:
     :path: ~/code/IDMPhotoBrowser
   Keys:
     :path: Pods/CocoaPodsKeys
+  PonyDebugger:
+    :git: https://github.com/square/PonyDebugger.git
   SlackTextViewController:
     :path: ~/code/SlackTextViewController
   SlideMenuControllerSwift:
@@ -201,6 +216,9 @@ CHECKOUT OPTIONS:
   DateTools:
     :commit: c36311e6c0b28103f32311b54f1d27a334785bcc
     :git: https://github.com/MatthewYork/DateTools
+  PonyDebugger:
+    :commit: 21e6c1f01afcad2632956372b83edc04ce316908
+    :git: https://github.com/square/PonyDebugger.git
 
 SPEC CHECKSUMS:
   AFNetworkActivityLogger: 121486778117d53b3ab1c61d264b88081d0c3eee
@@ -217,19 +235,20 @@ SPEC CHECKSUMS:
   DLRadioButton: 7bb8a6e3768b572469ace553391ab4d2af6f9c19
   Emoji-swift: 20010383183f4d85e6e5a2b9642b96ebdb4f06ae
   Facade: 3c5c6fb1ba042d20885cfe5a290050f5b9351ca2
-  Firebase: 21bf4a89d3f01bfbe11adc3a5d934a4a3d3a5fd6
-  FirebaseAnalytics: 920e46455f27b0a52a80907a6d9b73ee4bd1c635
-  FirebaseAuth: cc8a1824170adbd351edb7f994490a3fb5c18be6
-  FirebaseCore: 9691ee2ade70c098d7cf92440f4303f16d83ca75
-  FirebaseCrash: db4c05d9c75baa050744d31b36357c8f1efba481
-  FirebaseDatabase: 05c96d7b43a7368dc91c07791adb49683e1738d1
-  FirebaseInstanceID: b9eedd6846fb5e1f0f7279e1deaa7a7e4cf8392e
-  FirebaseMessaging: 753d05a925e9eb8eadd09a0ffc9b808578b72fac
-  FirebaseRemoteConfig: af3003f4e8daa2bd1d5cf90d3cccc1fe224f8ed9
-  FirebaseUI: d9e83c4c22dd922c661d85f041a771d1953405a9
+  Firebase: 284eea779b73fdff309791817da7c68bff8dd572
+  FirebaseAnalytics: 6f08e746f7d66f5452931bc2e822b5df9c66b64a
+  FirebaseAuth: ebb6abcbabae00fc47446d690c19ce68d8484fde
+  FirebaseCore: 85ad466044c2f013cdb167f85d426d15b128114a
+  FirebaseCrash: 600ec2cbd8e10c3064a42de2c6ee7687bd02a076
+  FirebaseDatabase: d829b3a8c3e2ac7a16773c5df226966b0805dfc2
+  FirebaseInstanceID: 9fbf536668f4d3f0880e7438456dabd1376e294b
+  FirebaseMessaging: 227406c05b0dc9290702d2e9f18ab5528f0c2cf2
+  FirebaseRemoteConfig: b1bde8c572a1ca13558b5b179f4563cb877aa34b
+  FirebaseStorage: 8110a1ed2034c8fbfd83890d2acc9cdbbd99afec
+  FirebaseUI: b9de05bfb4768db05f64ea90fc2f6a07b819118f
   FLAnimatedImage: 4a0b56255d9b05f18b6dd7ee06871be5d3b89e31
   GoogleToolboxForMac: 8e329f1b599f2512c6b10676d45736bcc2cbbeb0
-  GTMSessionFetcher: 5c046c76a1f859bc9c187e918f18e4fc7bb57b5e
+  GTMSessionFetcher: 30d874b96d0d76028f61fbd122801e3f030d47db
   IDMPhotoBrowser: bcd6cbc9ccaf7e945c3a5a065ffa1a4dee81b722
   iRate: 61e558919c4a7fde63b3c22ebbd6c114a1eee658
   Keys: 9c35bf00f612ee1d48556f4a4b9b4551e224e90f
@@ -237,20 +256,22 @@ SPEC CHECKSUMS:
   NHBalancedFlowLayout: fd253023c6754e605acdb180d50123e582cc62bb
   PBWebViewController: 6537990155ca850fb8d0563efbc12becebc953ef
   PhoneNumberKit: 0b5ea9a5454d201656db766343e9d768f8542496
+  PonyDebugger: 1c60f7c876bdb6a8b6bf0f0269087f8a234fafa7
   pop: f667631a5108a2e60d9e8797c9b32ddaf2080bce
   PopupDialog: 533dd564f8781633375505b9fbd406f8f146ccc9
-  Protobuf: 2ccbaf193f6c65adc67745453ca0c13234c32796
+  Protobuf: d582fecf68201eac3d79ed61369ef45734394b9c
   ReachabilitySwift: f5b9bb30a0777fac8f09ce8b067e32faeb29bb64
   SDWebImage: 76a6348bdc74eb5a55dd08a091ef298e56b55e41
   SkyFloatingLabelTextField: a81a0eaed2785d1599f11484c6ebc1c4eb5d1228
   SlackTextViewController: fbcdadbb8090673f604484ff5b6eb8d77baed42a
   SlideMenuControllerSwift: 08e93da4735d78038057ec636028d35ba24f0983
+  SocketRocket: d57c7159b83c3c6655745cd15302aa24b6bae531
   STPopup: b69b3e7484ef7d2baec5f9ab2939f8a7bcdfe218
   TTTAttributedLabel: 8cffe8e127e4e82ff3af1e5386d4cd0ad000b656
   TwicketSegmentedControl: bbb2d155792dbfcee7fea995a614d0c0a3de4a16
   UIDevice-Hardware: ecb52d9a7b223b31f81982358e2b0769ac1a7918
   VTAcknowledgementsViewController: e1de80f2c0ce31cc7e1c6f1c8aaeec2770371f09
 
-PODFILE CHECKSUM: ff02ccfa9feb9aa4c3e606b489fc1067c6827127
+PODFILE CHECKSUM: 52cdc2d9b182370e18a3e68ddc43cba59c6592a2
 
 COCOAPODS: 1.2.1

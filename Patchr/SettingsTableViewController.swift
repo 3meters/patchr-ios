@@ -211,7 +211,7 @@ class SettingsTableViewController: UITableViewController {
                     ]
                     FireController.db.updateChildValues(updates)
                 }
-                else if let email = FIRAuth.auth()?.currentUser?.email {
+                else if let email = Auth.auth().currentUser?.email {
                     Reporting.track("show_email")
                     let updates: [String: Any] = [
                         groupMembersPath: email,

@@ -3,7 +3,7 @@ source 'https://github.com/CocoaPods/Specs.git'
 
 plugin 'cocoapods-keys', {
   :project => "Patchr",
-  :targets => ["Patchr"],
+  :targets => ["Patchr","Patchr-Dev"],
   :keys => [
     "AwsS3Secret",              # p1
     "BingSubscriptionKey",      # p1
@@ -16,7 +16,7 @@ platform :ios, '9.0'
 inhibit_all_warnings!
 use_frameworks!
 
-target 'Patchr' do
+def shared_pods
     pod 'AFNetworking',             '~> 2.6'
     pod 'AFNetworkActivityLogger',  '~> 2.0'
     pod 'AWSS3',                    '2.4.9'
@@ -31,6 +31,7 @@ target 'Patchr' do
     pod 'pop',                      '~> 1.0'		# Animation library
     pod 'PhoneNumberKit',           '~> 1.0'
     pod 'PBWebViewController',      '~> 0.5'		# Used to show show web content for terms/policy/licensing
+    pod 'PonyDebugger',             :git => 'https://github.com/square/PonyDebugger.git'
     pod 'ReachabilitySwift',        '~> 3'
     pod 'SkyFloatingLabelTextField','~> 2.0.0'
     pod 'SlackTextViewController',  :path => '~/code/SlackTextViewController'
@@ -41,12 +42,13 @@ target 'Patchr' do
     pod 'CocoaLumberjack/Swift'
     pod 'CLTokenInputView'
     pod 'Emoji-swift'
-    pod 'Firebase/RemoteConfig'
+    pod 'Firebase/Auth'
     pod 'Firebase/Core'
     pod 'Firebase/Crash'
-    pod 'Firebase/Auth'
     pod 'Firebase/Database'
     pod 'Firebase/Messaging'
+    pod 'Firebase/RemoteConfig'
+    pod 'Firebase/Storage'
     pod 'FirebaseUI/Database'
     pod 'PopupDialog'
     pod 'SlideMenuControllerSwift', :path => '~/code/SlideMenuControllerSwift'
@@ -54,6 +56,14 @@ target 'Patchr' do
     pod 'TwicketSegmentedControl'
     pod 'TTTAttributedLabel'
     pod 'VTAcknowledgementsViewController'
+end
+
+target 'Patchr' do
+    shared_pods
+end
+
+target 'Patchr-Dev' do
+    shared_pods
 end
 
 plugin 'cocoapods-no-dev-schemes'

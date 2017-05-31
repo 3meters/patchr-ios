@@ -220,7 +220,7 @@ class ProfileEditViewController: BaseEditViewController {
         self.phoneField.text = self.user.profile?.phone
         
         if let photo = self.user.profile?.photo {
-            let photoUrl = Cloudinary.url(prefix: photo.filename)
+            let photoUrl = ImageProxy.url(photo: photo, category: SizeCategory.standard)
             self.photoEditView.bind(url: photoUrl)
         }
     }
@@ -233,7 +233,7 @@ class ProfileEditViewController: BaseEditViewController {
         let userId = self.user.id!
         
         if emptyToNil(self.firstNameField.text) != self.user.profile?.firstName {
-            let changeRequest = FIRAuth.auth()?.currentUser?.profileChangeRequest()
+            let changeRequest = Auth.auth().currentUser?.createProfileChangeRequest()
             changeRequest?.displayName = self.fullName
             changeRequest?.commitChanges()
             updates["first_name"] = emptyToNull(self.firstNameField.text)
@@ -241,7 +241,7 @@ class ProfileEditViewController: BaseEditViewController {
         }
         
         if emptyToNil(self.lastNameField.text) != self.user.profile?.lastName {
-            let changeRequest = FIRAuth.auth()?.currentUser?.profileChangeRequest()
+            let changeRequest = Auth.auth().currentUser?.createProfileChangeRequest()
             changeRequest?.displayName = self.fullName
             changeRequest?.commitChanges()
             updates["last_name"] = emptyToNull(self.lastNameField.text)
@@ -265,13 +265,16 @@ class ProfileEditViewController: BaseEditViewController {
                 })
                 
                 updates["photo"] = photoMap
-                let photoUrl = Cloudinary.url(prefix: (photoMap["filename"] as! String?)!, category: SizeCategory.profile)
-                let changeRequest = FIRAuth.auth()?.currentUser?.profileChangeRequest()
-                changeRequest?.photoURL = photoUrl
+                let source = (photoMap["source"] as! String?)!
+                let filename = (photoMap["filename"] as! String?)!
+                let imageSource = ImageProxy.lookupSource(source: source)
+                let photoUrl = imageSource.url(prefix: filename, category: nil)
+                let changeRequest = Auth.auth().currentUser?.createProfileChangeRequest()
+                changeRequest?.photoURL = URL(string: photoUrl)
                 changeRequest?.commitChanges()
             }
             else {
-                let changeRequest = FIRAuth.auth()?.currentUser?.profileChangeRequest()
+                let changeRequest = Auth.auth().currentUser?.createProfileChangeRequest()
                 changeRequest?.photoURL = nil
                 changeRequest?.commitChanges()
                 updates["photo"] = NSNull()

@@ -60,45 +60,9 @@ class LobbyViewController: UIViewController {
         }
 		
 		if self.firstLaunch {
-            
-            UIView.animate(withDuration: 0.3
-                , delay: 0
-                , animations: { [weak self] in
-                    guard let this = self else { return }
-                    this.imageLogo.transform = CGAffineTransform(scaleX: 0.5, y: 0.5)
-                }
-                , completion: { finished in
-                    
-                    UIView.animate(withDuration: 1.0
-                        , delay: 0
-                        , usingSpringWithDamping: 0.2
-                        , initialSpringVelocity: 6.0
-                        , options: []
-                        , animations: { [weak self] in
-                            guard let this = self else { return }
-                            this.imageLogo.transform = .identity
-                        }
-                        , completion: { finished in
-                            
-                            UIView.animate(withDuration: 1.0
-                                , delay: 0
-                                , usingSpringWithDamping: 0.4
-                                , initialSpringVelocity: 4.0
-                                , options: [.curveEaseIn]
-                                , animations: { [weak self] in
-                                    guard let this = self else { return }
-                                    this.imageLogo.transform = CGAffineTransform(translationX: 0, y: -156)
-                                }
-                                , completion: { finished in
-                                    if finished {
-                                        self.appName.fadeIn(duration: 0.3)
-                                        self.buttonGroup.fadeIn(duration: 0.7)
-                                        self.buttonOnboard.fadeIn(duration: 0.7)
-                                    }
-                            })
-                    })
-            })
-			self.firstLaunch = false
+            startScene() {
+                self.firstLaunch = false
+            }
 		}
 	}
 	
@@ -205,6 +169,47 @@ class LobbyViewController: UIViewController {
             self.buttonOnboard.alpha = 0.0
 		}
 	}
+    
+    func startScene(then: (() -> Void)? = nil) {
+        
+        UIView.animate(withDuration: 0.3
+            , delay: 0
+            , animations: { [weak self] in
+                guard let this = self else { return }
+                this.imageLogo.transform = CGAffineTransform(scaleX: 0.5, y: 0.5)
+            }
+            , completion: { finished in
+                
+                UIView.animate(withDuration: 1.0
+                    , delay: 0
+                    , usingSpringWithDamping: 0.2
+                    , initialSpringVelocity: 6.0
+                    , options: []
+                    , animations: { [weak self] in
+                        guard let this = self else { return }
+                        this.imageLogo.transform = .identity
+                    }
+                    , completion: { finished in
+                        
+                        UIView.animate(withDuration: 1.0
+                            , delay: 0
+                            , usingSpringWithDamping: 0.4
+                            , initialSpringVelocity: 4.0
+                            , options: [.curveEaseIn]
+                            , animations: { [weak self] in
+                                guard let this = self else { return }
+                                this.imageLogo.transform = CGAffineTransform(translationX: 0, y: -156)
+                            }
+                            , completion: { finished in
+                                if finished {
+                                    self.appName.fadeIn(duration: 0.3)
+                                    self.buttonGroup.fadeIn(duration: 0.7)
+                                    self.buttonOnboard.fadeIn(duration: 0.7)
+                                }
+                        })
+                })
+        })
+    }
     
     func showOnboarding(appFirstLaunch: Bool = false) {
         

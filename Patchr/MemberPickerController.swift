@@ -196,7 +196,7 @@ class MemberPickerController: BaseTableController, CLTokenInputViewDelegate {
                 this.bindCell(user: user, cell: cell)
             }
             else {
-                let snap = data as! FIRDataSnapshot
+                let snap = data as! DataSnapshot
                 let userId = snap.key
                 cell.userQuery = UserQuery(userId: userId)
                 cell.userQuery.once(with: { [weak this, weak cell] error, user in

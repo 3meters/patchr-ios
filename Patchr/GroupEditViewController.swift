@@ -208,7 +208,7 @@ class GroupEditViewController: BaseEditViewController {
         
         if let photo = self.group.photo {
             self.photoEditView.configureTo(photoMode: .photo)
-            let photoUrl = Cloudinary.url(prefix: photo.filename)
+            let photoUrl = ImageProxy.url(photo: photo, category: SizeCategory.standard)
             self.photoEditView.bind(url: photoUrl)
         }
     }

@@ -177,7 +177,7 @@ class InviteListController: BaseTableController, UITableViewDelegate {
         self.queryController = DataSourceController(name:"invite_list")
         self.queryController.bind(to: self.tableView, query: query) { [weak self] tableView, indexPath, data in
             
-            let snap = data as! FIRDataSnapshot
+            let snap = data as! DataSnapshot
             var invite = snap.value as! [String: Any]
             let status = invite["status"] as! String
             invite["id"] = snap.key

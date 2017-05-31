@@ -111,7 +111,7 @@ class MemberDetailView: UIView {
         let fullName = user.profile?.fullName ?? user.username
         
         if let photo = user.profile?.photo {
-            let url = Cloudinary.url(prefix: photo.filename)
+            let url = ImageProxy.url(photo: photo, category: SizeCategory.profile)
             if !self.photoView.associated(withUrl: url) {
                 self.photoView.gradientLayer.isHidden = true
                 self.photoView.setImageWithUrl(url: url) { success in

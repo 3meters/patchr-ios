@@ -76,7 +76,7 @@ class Log {
 	static func breadcrumb(message: String!) {
 		/* Requited to call on the main thread */
 		OperationQueue.main.addOperation {
-            FIRCrashMessage(message)
+            FirebaseCrashMessage(message)
 		}
 	}
 }

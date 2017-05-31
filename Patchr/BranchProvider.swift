@@ -39,7 +39,7 @@ class BranchProvider: NSObject {
         applink.metadata?["inviterName"] = inviterName
         
         if let photo = inviter!.profile?.photo {
-            let photoUrl = Cloudinary.url(prefix: photo.filename!, category: SizeCategory.profile)
+            let photoUrl = ImageProxy.url(photo: photo, category: SizeCategory.profile)
             applink.metadata?["inviterPhotoUrl"] = photoUrl
         }
         
@@ -50,7 +50,7 @@ class BranchProvider: NSObject {
         
         /* $og_image */
         if let photo = group?.photo {
-            let photoUrl = Cloudinary.url(prefix: photo.filename!, params: "w_250,q_auto,c_fill")
+            let photoUrl = ImageProxy.url(photo: photo, category: SizeCategory.profile)
             applink.imageUrl = photoUrl.absoluteString
         }
         
@@ -91,7 +91,7 @@ class BranchProvider: NSObject {
         applink.metadata?["inviterName"] = inviterName
         
         if let photo = inviter!.profile?.photo {
-            let photoUrl = Cloudinary.url(prefix: photo.filename!, category: SizeCategory.profile)
+            let photoUrl = ImageProxy.url(photo: photo, category: SizeCategory.profile)
             applink.metadata?["inviterPhotoUrl"] = photoUrl
         }
         

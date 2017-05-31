@@ -12,11 +12,12 @@ import SlackTextViewController
 import Photos
 import Firebase
 import FirebaseDatabaseUI
+import FirebaseStorage
 
 class BaseSlackController: SLKTextViewController {
 	
     var controllerIsActive = false
-    var authHandle: FIRAuthStateDidChangeListenerHandle!
+    var authHandle: AuthStateDidChangeListenerHandle!
     
     var queryController: DataSourceController!
     var channel: FireChannel!
@@ -78,10 +79,6 @@ class BaseSlackController: SLKTextViewController {
         NotificationCenter.default.removeObserver(self, name: NSNotification.Name.SLKTextInputbarDidMove, object: nil)
     }
 
-    deinit {
-        Log.v("\(self.className) released")
-    }
-	
 	/*--------------------------------------------------------------------------------------------
 	* Events
 	*--------------------------------------------------------------------------------------------*/
@@ -254,7 +251,7 @@ class BaseSlackController: SLKTextViewController {
         }
         
         if let photo = message.attachments?.values.first?.photo {
-            let photoUrl = Cloudinary.url(prefix: photo.filename)
+            let photoUrl = ImageProxy.url(photo: photo, category: SizeCategory.standard)
             self.photoEditView.configureTo(photoMode: .photo)
             self.photoEditView.bind(url: photoUrl, uploading: photo.uploading)
             showPhotoEdit()
@@ -380,7 +377,7 @@ class BaseSlackController: SLKTextViewController {
         var photoMap = [
             "filename": imageKey,
             "height": Int(preparedImage.size.height),
-            "source": S3.instance.imageSource,
+            "source": GoogleStorage.imageSource,
             "width": Int(preparedImage.size.width), // width/height are in points...should be pixels?
             "uploading": true] as [String: Any]
         
@@ -404,19 +401,29 @@ class BaseSlackController: SLKTextViewController {
         let imageData = UIImageJPEGRepresentation(image, /*compressionQuality*/ 0.70)!
         
         /* Prime the cache so offline has something to work with */
-        let photoUrlStandard = Cloudinary.url(prefix: imageKey, category: SizeCategory.standard)
-        let photoUrlProfile = Cloudinary.url(prefix: imageKey, category: SizeCategory.profile)
-        ImageUtils.storeImageDataToCache(imageData: imageData, key: photoUrlProfile.absoluteString)
-        ImageUtils.storeImageDataToCache(imageData: imageData, key: photoUrlStandard.absoluteString)
+//        let photoUrlStandard = ImageProxy.url(prefix: imageKey, category: SizeCategory.standard)
+//        let photoUrlProfile = ImageProxy.url(prefix: imageKey, category: SizeCategory.profile)
+//        ImageUtils.storeImageDataToCache(imageData: imageData, key: photoUrlProfile.absoluteString)
+//        ImageUtils.storeImageDataToCache(imageData: imageData, key: photoUrlStandard.absoluteString)
         
         /* Upload */
         DispatchQueue.global(qos: .userInitiated).async {
-            S3.instance.upload(imageData: imageData, imageKey: imageKey, progress: progress) { task, error in
-                Log.w(error != nil
-                    ? "*** S3 image upload stopped with error: \(error!.localizedDescription)"
-                    : "*** S3 image upload complete: \(imageKey)")
-                next?(error)
+            GoogleStorage.instance.upload(imageData: imageData, imageKey: imageKey) { snapshot in
+                if snapshot.status == .failure {
+                    next?(snapshot.error)
+                }
+                else if snapshot.status == .success {
+                    Log.d("*** Google storage image upload complete: \(imageKey)")
+                    next?(nil)
+                }
             }
+            
+//            S3.instance.upload(imageData: imageData, imageKey: imageKey, progress: progress) { task, error in
+//                Log.w(error != nil
+//                    ? "*** S3 image upload stopped with error: \(error!.localizedDescription)"
+//                    : "*** S3 image upload complete: \(imageKey)")
+//                next?(error)
+//            }
         }
         
         return photoMap

@@ -233,7 +233,7 @@ class ContactPickerController: BaseTableController, CLTokenInputViewDelegate {
         FireController.db.child("invites/\(groupId)/\(userId)").observeSingleEvent(of: .value, with: { snap in
             if !(snap.value is NSNull) && snap.hasChildren() {
                 for item in snap.children  {
-                    let snapInvite = item as! FIRDataSnapshot
+                    let snapInvite = item as! DataSnapshot
                     let map = snapInvite.value as! [String: Any]
                     if let role = map["role"] as? String {
                         if (self.inputRole == "members" && role == "member") ||

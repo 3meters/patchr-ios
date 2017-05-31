@@ -10,7 +10,7 @@ import AVFoundation
 
 class AudioController: NSObject {
 
-    static let instance                  = AudioController()
+    static let instance = AudioController()
     static let chirpSound: SystemSoundID = createChirpSound()
 
     var player: AVAudioPlayer! = nil

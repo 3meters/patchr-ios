@@ -14,7 +14,7 @@ import pop
 
 class ChannelSwitcherController: BaseTableController {
     
-    var handleAuthState: FIRAuthStateDidChangeListenerHandle!
+    var handleAuthState: AuthStateDidChangeListenerHandle!
     
     var groupQuery: GroupQuery!
 	var totalUnreadsQuery: UnreadQuery?
@@ -161,7 +161,7 @@ class ChannelSwitcherController: BaseTableController {
 	override func initialize() {
 		super.initialize()
         
-        self.handleAuthState = FIRAuth.auth()?.addStateDidChangeListener() { [weak self] auth, user in
+        self.handleAuthState = Auth.auth().addStateDidChangeListener() { [weak self] auth, user in
             guard let this = self else { return }
             if user == nil {
                 this.groupQuery?.remove()
@@ -328,7 +328,7 @@ class ChannelSwitcherController: BaseTableController {
                 
                 if let userId = UserController.instance.userId,
                     let groupId = StateController.instance.groupId,
-                    let snap = data as? FIRDataSnapshot {
+                    let snap = data as? DataSnapshot {
                     
                     let channelId = snap.key
                     
@@ -463,14 +463,14 @@ extension ChannelSwitcherController: UINavigationControllerDelegate {
 
 class SearchController: NSObject {
 
-    var authHandle: FIRAuthStateDidChangeListenerHandle!
+    var authHandle: AuthStateDidChangeListenerHandle!
 	var tableView: UITableView!
     var queryController: DataSourceController!
 
 	init(tableView: UITableView) {
         super.init()
 		self.tableView = tableView
-        self.authHandle = FIRAuth.auth()?.addStateDidChangeListener() { [weak self] auth, user in
+        self.authHandle = Auth.auth().addStateDidChangeListener() { [weak self] auth, user in
             guard let this = self else { return }
             if auth.currentUser == nil && this.queryController != nil {
                 this.queryController.unbind()
@@ -494,7 +494,7 @@ class SearchController: NSObject {
             self.queryController = DataSourceController(name:"channel_switcher_search")
             self.queryController.startEmpty = false
             self.queryController.matcher = { searchText, data in
-                let snap = data as! FIRDataSnapshot
+                let snap = data as! DataSnapshot
                 let dict = snap.value as! [String: Any]
                 let name = dict["name"] as! String
                 return name.lowercased().contains(searchText.lowercased())
@@ -522,7 +522,7 @@ class SearchController: NSObject {
             self.queryController.bind(to: self.tableView, query: query) { [weak self] tableView, indexPath, data in
                 let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! ChannelListCell
                 guard self != nil else { return cell }
-                let snap = data as! FIRDataSnapshot
+                let snap = data as! DataSnapshot
                 let channel = FireChannel(dict: snap.value as! [String: Any], id: snap.key)
                 cell.reset()
                 cell.bind(channel: channel, searching: true)

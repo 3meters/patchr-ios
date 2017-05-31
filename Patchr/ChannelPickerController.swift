@@ -167,7 +167,7 @@ class ChannelPickerController: BaseTableController, CLTokenInputViewDelegate {
         
         self.queryController = DataSourceController(name: "channel_picker")
         self.queryController.matcher = { searchText, data in
-            let snap = data as! FIRDataSnapshot
+            let snap = data as! DataSnapshot
             let dict = snap.value as! [String: Any]
             let name = dict["name"] as! String
             return name.lowercased().contains(searchText.lowercased())
@@ -176,7 +176,7 @@ class ChannelPickerController: BaseTableController, CLTokenInputViewDelegate {
         self.queryController.bind(to: self.tableView, query: query) { [weak self] tableView, indexPath, data in
             let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! ChannelListCell
             guard let this = self else { return cell }
-            let snap = data as! FIRDataSnapshot
+            let snap = data as! DataSnapshot
             let channel = FireChannel(dict: snap.value as! [String: Any], id: snap.key)
             let channelId = channel.id!
             cell.selectionStyle = .none

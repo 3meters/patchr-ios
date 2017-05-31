@@ -12,7 +12,7 @@ import FirebaseAuth
 
 class BaseTableController: UIViewController {
     
-    var handleAuth: FIRAuthStateDidChangeListenerHandle!
+    var handleAuth: AuthStateDidChangeListenerHandle!
 	
     var tableView = UITableView(frame: CGRect.zero, style: .plain)
     var queryController: DataSourceController!
@@ -61,7 +61,7 @@ class BaseTableController: UIViewController {
 	*--------------------------------------------------------------------------------------------*/
 	
 	func initialize() {
-        self.handleAuth = FIRAuth.auth()?.addStateDidChangeListener() { [weak self] auth, user in
+        self.handleAuth = Auth.auth().addStateDidChangeListener() { [weak self] auth, user in
             guard let this = self else { return }
             if user == nil && this.queryController != nil {
                 this.queryController.unbind()
@@ -141,7 +141,7 @@ class DataSourceController: NSObject, FUICollectionDelegate, UITableViewDataSour
     
     var populate: ((UITableView, IndexPath, Any) -> UITableViewCell)!
     var matcher: ((String, Any) -> Bool)?
-    var mapper: ((FIRDataSnapshot, @escaping ((Any?) -> Void)) -> Void)?
+    var mapper: ((DataSnapshot, @escaping ((Any?) -> Void)) -> Void)?
     
     var snapshots: FUIArray! // Contains snapshots
     private var dataScreened = [Any]() // Does NOT stay synchronized beyond initial pass
@@ -190,9 +190,9 @@ class DataSourceController: NSObject, FUICollectionDelegate, UITableViewDataSour
         self.snapshots?.invalidate()
     }
     
-    func snapshot(at index: Int) -> FIRDataSnapshot {
+    func snapshot(at index: Int) -> DataSnapshot {
         let item = self.items.at(index)
-        return item as! FIRDataSnapshot
+        return item as! DataSnapshot
     }
     
     func filter(searchText text: String?) {
@@ -245,7 +245,7 @@ class DataSourceController: NSObject, FUICollectionDelegate, UITableViewDataSour
             self.dataScreened.removeAll()
             var remaining = self.snapshots.count
             for snap in self.snapshots.items {
-                self.mapper!(snap as! FIRDataSnapshot) { any in
+                self.mapper!(snap as! DataSnapshot) { any in
                     if any != nil {
                         self.dataScreened.append(any!)
                     }

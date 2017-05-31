@@ -113,9 +113,9 @@ class PasswordEditViewController: BaseEditViewController {
         if processing { return }
         processing = true
 		
-        if let authUser = FIRAuth.auth()?.currentUser {
+        if let authUser = Auth.auth().currentUser {
             let password = self.passwordField.text!
-            authUser.updatePassword(password, completion: { error in
+            authUser.updatePassword(to: password, completion: { error in
                 self.progress?.hide(true)
                 if error == nil {
                     let _ = self.navigationController?.popToRootViewController(animated: true)

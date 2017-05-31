@@ -17,7 +17,7 @@ class StateController: NSObject {
 
     static let instance = StateController()
     
-    var handleAuth: FIRAuthStateDidChangeListenerHandle!
+    var handleAuth: AuthStateDidChangeListenerHandle!
 
     fileprivate(set) internal var groupId: String?
     fileprivate(set) internal var groupGeneralId: String?
@@ -30,7 +30,7 @@ class StateController: NSObject {
     
     private override init() {
         super.init()
-        FIRAuth.auth()?.addStateDidChangeListener() { auth, user in
+        Auth.auth().addStateDidChangeListener() { auth, user in
             if user == nil {
                 if let groupId = self.groupId {
                     FireController.db.child("group-members/\(groupId)").keepSynced(false)

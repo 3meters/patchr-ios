@@ -18,7 +18,7 @@ class UserController: NSObject {
     fileprivate(set) internal var user: FireUser?
     fileprivate(set) internal var unreads = 0 // Read interally by channel view controller to set nav button badge
 
-    fileprivate var counterRef: FIRDatabaseReference?
+    fileprivate var counterRef: DatabaseReference?
     fileprivate var counterHandle: UInt?
     
     var loginAlertShown = false
@@ -38,7 +38,7 @@ class UserController: NSObject {
         if userTitle == nil, let username = self.user?.username {
             userTitle = username
         }
-        if userTitle == nil, let displayName = FIRAuth.auth()?.currentUser?.displayName {
+        if userTitle == nil, let displayName = Auth.auth().currentUser?.displayName {
             userTitle = displayName
         }
         return userTitle
@@ -49,7 +49,7 @@ class UserController: NSObject {
         if let email = UserController.instance.user?.group?.email {
             userEmail = email
         }
-        if userEmail == nil, let authEmail = FIRAuth.auth()?.currentUser?.email {
+        if userEmail == nil, let authEmail = Auth.auth().currentUser?.email {
             userEmail = authEmail
         }
         return userEmail
@@ -64,7 +64,7 @@ class UserController: NSObject {
 
     func prepare(then: ((Bool) -> Void)? = nil) {
         
-        FIRAuth.auth()?.addStateDidChangeListener() { auth, user in
+        Auth.auth().addStateDidChangeListener() { auth, user in
             if user != nil {
                 let userId = user!.uid
                 FireController.db.child("unreads/\(userId)").keepSynced(true)
@@ -78,7 +78,7 @@ class UserController: NSObject {
             }
         }
         
-        if let user = FIRAuth.auth()?.currentUser {
+        if let user = Auth.auth().currentUser {
             
             /* Verify user account */
             user.reload(completion: { error in
@@ -93,7 +93,7 @@ class UserController: NSObject {
                     /* Network error: code = 17020, domain = FIRAuthErrorDomain */
                     if error.code != 17020 {
                         /* User account could have been deleted */
-                        try! FIRAuth.auth()!.signOut()
+                        try! Auth.auth().signOut()
                         StateController.instance.clearGroup() // Also clears channel
                         return
                     }
@@ -116,7 +116,7 @@ class UserController: NSObject {
             Log.i("User logged in: \(userId)")
             self.loginAlertShown = false
             
-            if let token = FIRInstanceID.instanceID().token() {
+            if let token = InstanceID.instanceID().token() {
                 Log.i("UserController: setting firebase messaging token: \(token)")
                 FireController.db.child("installs/\(userId)/\(token)").setValue(true)
             }
@@ -125,7 +125,7 @@ class UserController: NSObject {
             }
             
             self.userId = userId
-            Reporting.updateUser(user: FIRAuth.auth()?.currentUser)
+            Reporting.updateUser(user: Auth.auth().currentUser)
             NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.UserDidSwitch), object: nil, userInfo: nil)
             
             /* Per user defaults */
@@ -179,14 +179,14 @@ class UserController: NSObject {
     func logout() {
         let userId = UserController.instance.userId!
         
-        if let token = FIRInstanceID.instanceID().token() {
+        if let token = InstanceID.instanceID().token() {
             Log.i("Removing messaging token for user: \(userId)")
             FireController.db.child("installs/\(userId)/\(token)").removeValue()
         }
         
         self.counterRef?.removeObserver(withHandle: self.counterHandle!)
         
-        try! FIRAuth.auth()!.signOut()  // Triggers cleanup by canned queries including self.userQuery
+        try! Auth.auth().signOut()  // Triggers cleanup by canned queries including self.userQuery
 
         Reporting.updateUser(user: nil)
         
