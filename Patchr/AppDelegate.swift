@@ -43,7 +43,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, MessagingDelegate {
         
         PDDebugger.defaultInstance().enableNetworkTrafficDebugging()
         PDDebugger.defaultInstance().forwardAllNetworkTraffic()
-        PDDebugger.defaultInstance().connect(to: URL(string: "ws://127.0.0.1:9000/device"))
+        PDDebugger.defaultInstance().connect(to: URL(string: "ws://192.168.0.27:9000/device"))
         
         /* Remote notifications */
         if #available(iOS 10.0, *) {

@@ -23,11 +23,16 @@ class ImageUtils {
 		SDImageCache.shared().store(image, forKey: key, toDisk: true) { then?() }
 	}
 
-	static func storeImageDataToCache(imageData: Data, key: String) {
+	static func storeImageDataToCache(imageData: Data, key: String, then: (() -> Void)? = nil) {
 		DispatchQueue.global(qos: .userInitiated).async {
 			SDImageCache.shared().storeImageData(toDisk: imageData, forKey: key)    // Synchronous
+            then?()
 		}
 	}
+    
+    static func storeImageDataToCacheSync(imageData: Data, key: String) {
+        SDImageCache.shared().storeImageData(toDisk: imageData, forKey: key)    // Synchronous
+    }
 
 	static func imageFromDiskCache(key: String) -> UIImage? {
 		return SDImageCache.shared().imageFromCache(forKey: key)
@@ -65,6 +70,13 @@ class ImageUtils {
 		}
 		return image
 	}
+    
+    static func readStorageBucket() -> String {
+        let path = Bundle.main.path(forResource: "GoogleService-Info", ofType: "plist")
+        let dict = NSDictionary(contentsOfFile: path!) as? [String: AnyObject]
+        let storageBucket = dict!["STORAGE_BUCKET"] as! String
+        return storageBucket
+    }
 }
 
 class ImageProxy {
@@ -84,28 +96,28 @@ class ImageProxy {
 	}
 }
 
-class Cloudinary: ImageProxyType {
-
-	static func url(url: String, category: String = SizeCategory.standard, dimension: ResizeDimension? = nil) -> URL {
-		let encodedUrl = url.stringByAddingPercentEncodingForUrl()
-		let width = (category == SizeCategory.standard) ? 400 : 100
-		let dimen = (category == SizeCategory.profile) ? "w_\(width),h_\(width)" : "w_\(width)"
-		let path = "https://res.cloudinary.com/patchr/image/fetch/\(dimen),dpr_\(Config.pixelScale),q_auto,c_fill/\(encodedUrl!)"
-		return URL(string: path)!
-	}
+class GooglePlusProxy: ImageProxyType {
+    
+    static func url(url: String, category: String = SizeCategory.standard, dimension: ResizeDimension? = nil) -> URL {
+        /*
+         * - Used for images that are not currently stored in s3 like bing image search.
+         * - Setting refresh to 60 minutes by default.
+         */
+        let encodedUrl = url.stringByAddingPercentEncodingForUrl()
+        let size = ((category == SizeCategory.standard) ? 400 : 100) * Int(Config.pixelScale)
+        let dimen = (dimension == ResizeDimension.width) ? "resize_w=\(size)" : "resize_h=\(size)"
+        let path = "https://images-focus-opensocial.googleusercontent.com/gadgets/proxy?url=\(encodedUrl!)&container=focus&gadget=a&\(dimen)&no_expand=1&refresh=3600&rewriteMime=image/*"
+        return URL(string: path)!
+    }
 }
 
-class GooglePlusProxy: ImageProxyType {
+class CloudinaryProxy: ImageProxyType {
 
 	static func url(url: String, category: String = SizeCategory.standard, dimension: ResizeDimension? = nil) -> URL {
-		/*
-		* - Used for images that are not currently stored in s3 like bing image search.
-		* - Setting refresh to 60 minutes by default.
-		*/
 		let encodedUrl = url.stringByAddingPercentEncodingForUrl()
-        let size = ((category == SizeCategory.standard) ? 400 : 100) * Int(Config.pixelScale)
-		let dimen = (dimension == ResizeDimension.width) ? "resize_w=\(size)" : "resize_h=\(size)"
-		let path = "https://images1-focus-opensocial.googleusercontent.com/gadgets/proxy?url=\(encodedUrl!)&container=focus&\(dimen)&no_expand=1&refresh=3600"
+		let size = (category == SizeCategory.standard) ? 400 : 100
+		let dimen = (category == SizeCategory.profile) ? "w_\(size),h_\(size)" : "w_\(size)"
+		let path = "https://res.cloudinary.com/patchr/image/fetch/\(dimen),dpr_\(Config.pixelScale),q_auto,c_fill/\(encodedUrl!)"
 		return URL(string: path)!
 	}
 }
@@ -118,7 +130,8 @@ class S3ImageSource: ImageSourceType {
 
 class GoogleImageSource: ImageSourceType {
 	func url(prefix: String, category: String? = nil) -> String {
-		return "https://firebasestorage.googleapis.com/v0/b/patchr-images/o/\(prefix)?alt=media"
+        let storageBucket = ImageUtils.readStorageBucket()
+		return "https://firebasestorage.googleapis.com/v0/b/\(storageBucket)/o/images%2F\(prefix)?alt=media"
 	}
 }
 

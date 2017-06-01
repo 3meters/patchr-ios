@@ -135,7 +135,7 @@ class AirImageView: FLAnimatedImageView {
         }
     }
 	
-    func setImageWithUrl(url: URL, imageType: ImageType = .photo, animate: Bool = true, then: ((Bool) -> Void)? = nil) {
+    func setImageWithUrl(url: URL, imageType: ImageType = .photo, uploading: Bool = false, animate: Bool = true, then: ((Bool) -> Void)? = nil) {
         
 		/* Stash the url we are loading so we can check for a match later when download is completed. */
 		self.fromUrl = url
@@ -159,10 +159,12 @@ class AirImageView: FLAnimatedImageView {
             DispatchQueue.main.async() {
                 
                 if error != nil {
-                    this.progressView.progressLabel.text = "Image missing"
-                    this.progressView.progressLabel.textColor = Theme.colorTextSecondary
-                    Log.w("*** Image fetch failed: " + error!.localizedDescription)
-                    Log.w("*** Failed url: \(url.absoluteString)")
+                    if !uploading {
+                        this.progressView.progressLabel.text = "Image missing"
+                        this.progressView.progressLabel.textColor = Theme.colorTextSecondary
+                        Log.w("*** Image fetch failed: " + error!.localizedDescription)
+                        Log.w("*** Failed url: \(url.absoluteString)")
+                    }
                     this.fromUrl = nil
                     return
                 }

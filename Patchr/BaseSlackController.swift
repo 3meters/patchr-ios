@@ -41,7 +41,7 @@ class BaseSlackController: SLKTextViewController {
     }
     
 	/*--------------------------------------------------------------------------------------------
-	* Lifecycle
+	* MARK: - Lifecycle
 	*--------------------------------------------------------------------------------------------*/
     
     override class func tableViewStyle(for decoder: NSCoder) -> UITableViewStyle {
@@ -80,7 +80,7 @@ class BaseSlackController: SLKTextViewController {
     }
 
 	/*--------------------------------------------------------------------------------------------
-	* Events
+	* MARK: - Events
 	*--------------------------------------------------------------------------------------------*/
 
     func editPhotoAction(sender: AnyObject) {
@@ -158,7 +158,7 @@ class BaseSlackController: SLKTextViewController {
     }
 
     /*--------------------------------------------------------------------------------------------
-     * Notifications
+     * MARK: - Notifications
      *--------------------------------------------------------------------------------------------*/
 
     func photoDidChange(sender: NSNotification) {
@@ -195,7 +195,7 @@ class BaseSlackController: SLKTextViewController {
     }
 
 	/*--------------------------------------------------------------------------------------------
-	* Methods
+	* MARK: - Methods
 	*--------------------------------------------------------------------------------------------*/
 	
 	func initialize() {
@@ -268,25 +268,29 @@ class BaseSlackController: SLKTextViewController {
                 fatalError("Tried to send a message without complete state available")
         }
         
-        let attachmentId = "at-\(Utils.genRandomId())"
+        var task: [String: Any] = [:]
+        var message: [String: Any] = [:]
         let ref = FireController.db.child("group-messages/\(groupId)/\(channelId)").childByAutoId()
         
-        var photoMap: [String: Any]?
-        if let image = self.photoEditView.imageView.image {
+        if self.photoEditView.photoActive {
+            let attachmentId = "at-\(Utils.genRandomId())"
+            let image = self.photoEditView.imageView.image
             let asset = self.photoEditView.imageView.asset
-            photoMap = postPhoto(image: image, asset: asset, progress: self.photoEditView.progressBlock, next: { error in
+            var photoMap: [String: Any]?
+            photoMap = postPhoto(image: image!, asset: asset, progress: self.photoEditView.progressBlock) { error in
                 if error == nil {
                     photoMap!["uploading"] = NSNull()
                     ref.child("attachments/\(attachmentId)").setValue(["photo": photoMap!])
                     Log.d("*** Cleared uploading: \(photoMap!["filename"]!)")
                 }
-            })
+            }
+            message["attachments"] = [attachmentId: ["photo": photoMap!]]
+            task["photo"] = photoMap!
         }
         
         let timestamp = FireController.instance.getServerTimestamp()
         let timestampReversed = -1 * timestamp
         
-        var task: [String: Any] = [:]
         task["channel_id"] = channelId
         task["channelName"] = channelName
         task["created_at"] = timestamp
@@ -296,7 +300,6 @@ class BaseSlackController: SLKTextViewController {
         task["state"] = "waiting"
         task["username"] = username
         
-        var message: [String: Any] = [:]
         message["channel_id"] = channelId
         message["created_at"] = timestamp
         message["created_at_desc"] = timestampReversed
@@ -309,11 +312,6 @@ class BaseSlackController: SLKTextViewController {
         if let text = self.textInputbar.textView.text, !text.isEmpty {
             message["text"] = text
             task["text"] = text
-        }
-        
-        if photoMap != nil {
-            message["attachments"] = [attachmentId: ["photo": photoMap!]]
-            task["photo"] = photoMap!
         }
         
         ref.setValue(message)
@@ -336,19 +334,17 @@ class BaseSlackController: SLKTextViewController {
         let path = self.editingMessage.path
         
         if self.photoEditView.photoDirty {
-            var photoMap: [String: Any]?
-            let attachmentId = "at-\(Utils.genRandomId())"
-            if let image = self.photoEditView.imageView.image {
+            if self.photoEditView.photoActive {
+                let attachmentId = "at-\(Utils.genRandomId())"
+                let image = self.photoEditView.imageView.image
                 let asset = self.photoEditView.imageView.asset
-                photoMap = postPhoto(image: image, asset: asset, progress: self.photoEditView.progressBlock, next: { error in
+                var photoMap: [String: Any]?
+                photoMap = postPhoto(image: image!, asset: asset, progress: self.photoEditView.progressBlock) { error in
                     if error == nil {
                         photoMap!["uploading"] = NSNull()
                         FireController.db.child(path).child("attachments/\(attachmentId)").setValue(["photo": photoMap!])
                     }
-                })
-            }
-            
-            if photoMap != nil {
+                }
                 updateMap["attachments"] = [attachmentId: ["photo": photoMap!]]
             }
             else {
@@ -366,7 +362,7 @@ class BaseSlackController: SLKTextViewController {
     func postPhoto(image: UIImage
         , asset: Any?
         , progress: AWSS3TransferUtilityProgressBlock? = nil
-        , next: ((Any?) -> Void)? = nil) -> [String: Any] {
+        , then: ((Any?) -> Void)? = nil) -> [String: Any] {
         
         /* Ensure image is resized/rotated before upload */
         let preparedImage = ImageUtils.prepareImage(image: image)
@@ -398,32 +394,26 @@ class BaseSlackController: SLKTextViewController {
             }
         }
         
-        let imageData = UIImageJPEGRepresentation(image, /*compressionQuality*/ 0.70)!
+        let imageData = UIImageJPEGRepresentation(preparedImage, /*compressionQuality*/ 0.70)!
         
         /* Prime the cache so offline has something to work with */
-//        let photoUrlStandard = ImageProxy.url(prefix: imageKey, category: SizeCategory.standard)
-//        let photoUrlProfile = ImageProxy.url(prefix: imageKey, category: SizeCategory.profile)
-//        ImageUtils.storeImageDataToCache(imageData: imageData, key: photoUrlProfile.absoluteString)
-//        ImageUtils.storeImageDataToCache(imageData: imageData, key: photoUrlStandard.absoluteString)
+        let photo = FirePhoto(dict: photoMap)
+        let photoUrlStandard = ImageProxy.url(photo: photo, category: SizeCategory.standard)
+        let photoUrlProfile = ImageProxy.url(photo: photo, category: SizeCategory.profile)
+        ImageUtils.storeImageDataToCacheSync(imageData: imageData, key: photoUrlProfile.absoluteString)
+        ImageUtils.storeImageDataToCacheSync(imageData: imageData, key: photoUrlStandard.absoluteString)
         
         /* Upload */
         DispatchQueue.global(qos: .userInitiated).async {
             GoogleStorage.instance.upload(imageData: imageData, imageKey: imageKey) { snapshot in
                 if snapshot.status == .failure {
-                    next?(snapshot.error)
+                    then?(snapshot.error)
                 }
                 else if snapshot.status == .success {
                     Log.d("*** Google storage image upload complete: \(imageKey)")
-                    next?(nil)
+                    then?(nil)
                 }
             }
-            
-//            S3.instance.upload(imageData: imageData, imageKey: imageKey, progress: progress) { task, error in
-//                Log.w(error != nil
-//                    ? "*** S3 image upload stopped with error: \(error!.localizedDescription)"
-//                    : "*** S3 image upload complete: \(imageKey)")
-//                next?(error)
-//            }
         }
         
         return photoMap

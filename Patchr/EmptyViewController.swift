@@ -105,10 +105,12 @@ class EmptyViewController: UIViewController {
                                 guard let this = self else { return }
                                 this.imageLogo.transform = CGAffineTransform(translationX: 0, y: -156)
                             }
-                            , completion: { finished in
+                            , completion: { [weak self] finished in
                                 if finished {
-                                    self.appName.fadeIn(duration: 0.5) { finished in
-                                        self.scenePlayed = true
+                                    guard let this = self else { return }
+                                    this.appName.fadeIn(duration: 0.5) { [weak self] finished in
+                                        guard let this = self else { return }
+                                        this.scenePlayed = true
                                         then?()
                                     }
                                 }

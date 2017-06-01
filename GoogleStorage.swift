@@ -12,14 +12,13 @@ import FirebaseStorage
 public class GoogleStorage: NSObject {
     
     static internal let imageSource = "google-storage"
-    static internal let imageBucket = "patchr-images"
     
     static let instance: GoogleStorage = GoogleStorage()
     
     func upload(imageData: Data, imageKey: String, then: ((StorageTaskSnapshot) -> Void)?) {
         
-        let storage = Storage.storage(url: "gs://patchr-images")
-        let imageRef = storage.reference().child(imageKey)
+        let storage = Storage.storage()
+        let imageRef = storage.reference().child("images/\(imageKey)")
         let metadata = StorageMetadata()
         
         metadata.contentType = "image/jpeg"

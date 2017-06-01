@@ -237,9 +237,10 @@ class MessageListCell: UITableViewCell {
             self.photoView?.isHidden = false
             if !self.template { // Don't fetch if acting as template
                 let url = ImageProxy.url(photo: photo, category: SizeCategory.standard)
+                let uploading = (photo.uploading != nil)
                 if !self.photoView.associated(withUrl: url) {
                     self.photoView?.image = nil
-                    self.photoView.setImageWithUrl(url: url, animate: true)
+                    self.photoView.setImageWithUrl(url: url, uploading: uploading, animate: true)
                 }
             }
         }

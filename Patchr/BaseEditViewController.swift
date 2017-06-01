@@ -107,13 +107,14 @@ class BaseEditViewController: BaseViewController, UITextFieldDelegate, UITextVie
             }
         }
         
-        let imageData = UIImageJPEGRepresentation(image, /*compressionQuality*/ 0.70)!
+        let imageData = UIImageJPEGRepresentation(preparedImage, /*compressionQuality*/ 0.70)!
         
         /* Prime the cache so offline has something to work with */
-//        let photoUrlStandard = ImageProxy.url(prefix: imageKey, category: SizeCategory.standard)
-//        let photoUrlProfile = ImageProxy.url(prefix: imageKey, category: SizeCategory.profile)
-//        ImageUtils.storeImageDataToCache(imageData: imageData, key: photoUrlProfile.absoluteString)
-//        ImageUtils.storeImageDataToCache(imageData: imageData, key: photoUrlStandard.absoluteString)
+        let photo = FirePhoto(dict: photoMap)
+        let photoUrlStandard = ImageProxy.url(photo: photo, category: SizeCategory.standard)
+        let photoUrlProfile = ImageProxy.url(photo: photo, category: SizeCategory.profile)
+        ImageUtils.storeImageDataToCache(imageData: imageData, key: photoUrlProfile.absoluteString)
+        ImageUtils.storeImageDataToCache(imageData: imageData, key: photoUrlStandard.absoluteString)
         
         /* Upload */
         DispatchQueue.global(qos: .userInitiated).async {
@@ -127,13 +128,6 @@ class BaseEditViewController: BaseViewController, UITextFieldDelegate, UITextVie
                     next?(nil)
                 }
             }
-
-//            S3.instance.upload(imageData: imageData, imageKey: imageKey, progress: progress) { task, error in
-//                Log.w(error != nil
-//                    ? "*** S3 image upload stopped with error: \(error!.localizedDescription)"
-//                    : "*** S3 image upload complete: \(imageKey)")
-//                next?(error)
-//            }
         }
         
         return photoMap
