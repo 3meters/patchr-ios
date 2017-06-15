@@ -179,7 +179,7 @@ class PasswordViewController: BaseEditViewController {
                 if error == nil {
                     UserDefaults.standard.set(email, forKey: Prefs.lastUserEmail)
                 }
-                self.authenticated(user: authUser!, email: email, error: error)
+                self.authenticated(user: authUser, email: email, error: error)
             }
         }
         else {  // Only happens if creating group
@@ -194,7 +194,7 @@ class PasswordViewController: BaseEditViewController {
                     let email = authUser.email!
                     Reporting.track("create_user_account", properties:["uid": authUser.uid])
                     UserDefaults.standard.set(email, forKey: Prefs.lastUserEmail)
-                    FireController.instance.addUser(userId: authUser.uid, username: username, then: { [weak self] error, result in
+                    FireController.instance.addUser(userId: authUser.uid, username: username) { [weak self] error, result in
                         guard let this = self else { return }
                         if error == nil {
                             authUser.sendEmailVerification()
@@ -213,7 +213,7 @@ class PasswordViewController: BaseEditViewController {
                                 }
                             }
                         }
-                    })
+                    }
                 }
                 else {
                     self.passwordField.errorMessage = error?.localizedDescription

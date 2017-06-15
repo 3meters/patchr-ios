@@ -17,8 +17,9 @@ public class GoogleStorage: NSObject {
     
     func upload(imageData: Data, imageKey: String, then: ((StorageTaskSnapshot) -> Void)?) {
         
-        let storage = Storage.storage()
-        let imageRef = storage.reference().child("images/\(imageKey)")
+        let storageBucket = ImageUtils.readStorageBucket()
+        let storage = Storage.storage(url: "gs://\(storageBucket)/")
+        let imageRef = storage.reference().child(imageKey)
         let metadata = StorageMetadata()
         
         metadata.contentType = "image/jpeg"

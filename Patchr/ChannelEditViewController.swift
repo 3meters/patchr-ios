@@ -490,8 +490,8 @@ class ChannelEditViewController: BaseEditViewController {
     }
 
     func delete() {
-        self.close(animated: true)
         FireController.instance.deleteChannel(channelId: self.channel.id!, groupId: self.channel.groupId!)
+        self.close(animated: true)
     }
 
     func isDirty() -> Bool {

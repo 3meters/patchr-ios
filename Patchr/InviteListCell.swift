@@ -57,26 +57,22 @@ class InviteListCell: UITableViewCell {
             self.title?.text = user.profile?.fullName ?? user.username!
             
             if user.username != nil {
-                if user.group.email != nil {
-                    self.subtitle?.text = "@\(user.username!) • \(user.group.email!)"
-                }
-                else if user.group.role != nil {
-                    self.subtitle?.text = "@\(user.username!) • (email hidden)"
+                if user.group != nil {
+                    if user.group.email != nil {
+                        self.subtitle?.text = "@\(user.username!) • \(user.group.email!)"
+                    }
+                    else if user.group.role != nil {
+                        self.subtitle?.text = "@\(user.username!) • (email hidden)"
+                    }
                 }
                 else {
                     self.subtitle?.text = "@\(user.username!)"
                 }
             }
             
-            if let channels = invite["channels"] as? [String: Any] {
-                var channelsLabel = ""
-                for channelName in channels.values {
-                    if !channelsLabel.isEmpty {
-                        channelsLabel += ", "
-                    }
-                    channelsLabel += "#\(channelName as! String)"
-                }
-                self.invitedAs?.text = "Invited as guest of channels: \(channelsLabel)"
+            if let channel = invite["channel"] as? [String: Any] {
+                let channelName = channel["name"] as! String
+                self.invitedAs?.text = "Invited as guest of channel: #\(channelName)"
             }
             else {
                 let groupTitle = group["title"] as! String
@@ -90,6 +86,7 @@ class InviteListCell: UITableViewCell {
     }
     
     func bind(invite: [String: Any]) {
+        
         /* Pending */
         if let invitedAt = invite["invited_at"] as? Int64,
             let inviter = invite["inviter"] as? [String: Any],
@@ -100,15 +97,9 @@ class InviteListCell: UITableViewCell {
             self.iconImage?.tintColor = Colors.accentColor
             
             self.title?.text = email
-            if let channels = invite["channels"] as? [String: Any] {
-                var channelsLabel = ""
-                for channelName in channels.values {
-                    if !channelsLabel.isEmpty {
-                        channelsLabel += ", "
-                    }
-                    channelsLabel += "#\(channelName as! String)"
-                }
-                self.invitedAs?.text = "Invited as guest of channels: \(channelsLabel)"
+            if let channel = invite["channel"] as? [String: Any] {
+                let channelName = channel["name"] as! String
+                self.invitedAs?.text = "Invited as guest of channel: #\(channelName)"
             }
             else {
                 let groupTitle = group["title"] as! String

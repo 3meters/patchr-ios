@@ -262,13 +262,10 @@ class BaseSlackController: SLKTextViewController {
         
         guard let userId = UserController.instance.userId
             , let groupId = StateController.instance.groupId
-            , let channelId = StateController.instance.channelId
-            , let username = UserController.instance.user!.username
-            , let channelName = self.channel.name else {
+            , let channelId = StateController.instance.channelId else {
                 fatalError("Tried to send a message without complete state available")
         }
         
-        var task: [String: Any] = [:]
         var message: [String: Any] = [:]
         let ref = FireController.db.child("group-messages/\(groupId)/\(channelId)").childByAutoId()
         
@@ -285,20 +282,10 @@ class BaseSlackController: SLKTextViewController {
                 }
             }
             message["attachments"] = [attachmentId: ["photo": photoMap!]]
-            task["photo"] = photoMap!
         }
         
         let timestamp = FireController.instance.getServerTimestamp()
         let timestampReversed = -1 * timestamp
-        
-        task["channel_id"] = channelId
-        task["channelName"] = channelName
-        task["created_at"] = timestamp
-        task["created_by"] = userId
-        task["group_id"] = groupId
-        task["id"] = ref.key
-        task["state"] = "waiting"
-        task["username"] = username
         
         message["channel_id"] = channelId
         message["created_at"] = timestamp
@@ -311,20 +298,10 @@ class BaseSlackController: SLKTextViewController {
         
         if let text = self.textInputbar.textView.text, !text.isEmpty {
             message["text"] = text
-            task["text"] = text
         }
         
         ref.setValue(message)
         Reporting.track("send_message")
-        
-        let path = "queue/notifications/\(ref.key)"
-        FireController.db.child(path).setValue(task) { error, ref in
-            if error != nil {
-                Log.w("Permission denied: \(path)")
-            } else {
-                NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.MessageDidUpdate), object: self, userInfo: ["message_id":ref.key])
-            }
-        }
     }
     
     func updateMessage() {

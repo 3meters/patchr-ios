@@ -55,14 +55,24 @@ class InviteListController: BaseTableController, UITableViewDelegate {
     
     func resendInviteAction(sender: AnyObject?) {
         if let button = sender as? AirButton,
-            let invite = button.data as? [String: Any],
+            var invite = button.data as? [String: Any],
             let inviteId = invite["id"] as? String,
             let inviter = invite["inviter"] as? [String: Any],
             let inviterId = inviter["id"] as? String,
             let groupId = StateController.instance.groupId {
+            
+            let timestamp = FireController.instance.getServerTimestamp()
+            let timestampReversed = -1 * timestamp
+            invite.removeValue(forKey: "id")
+            invite["created_at"] = timestamp
+            invite["invited_at"] = timestamp
+            invite["invited_at_desc"] = timestampReversed
             Reporting.track("resend_invite")
-            FireController.instance.deleteInvite(groupId: groupId, inviterId: inviterId, inviteId: inviteId)
-                resendInvite(invite: invite)
+            FireController.instance.deleteInvite(groupId: groupId, inviterId: inviterId, inviteId: inviteId) { success in
+                if success {
+                    self.resendInvite(inviteId: inviteId, invite: invite)
+                }
+            }
         }
     }
     
@@ -214,32 +224,18 @@ class InviteListController: BaseTableController, UITableViewDelegate {
         }
     }
     
-    func resendInvite(invite: [String: Any]) {
-
-        let userId = UserController.instance.userId!
-        let email = invite["email"] as! String
-        let role = invite["role"] as! String
-        let type = (role == "member") ? "invite-members" : "invite-guests"
-        let ref = FireController.db.child("queue/invites").childByAutoId()
-        let timestamp = FireController.instance.getServerTimestamp()
+    func resendInvite(inviteId: String, invite: [String: Any]) {
         
-        var task: [String: Any] = [:]
-        if invite["channels"] != nil {
-            task["channels"] = invite["channels"]
+        let inviter = invite["inviter"] as! [String: Any]
+        let inviterId = inviter["id"] as! String
+        let groupId = StateController.instance.groupId
+        
+        FireController.db.child("invites/\(groupId!)/\(inviterId)/\(inviteId)").setValue(invite) { error, ref in
+            if error == nil {
+                UIShared.toast(message: "Invite re-sent")
+                Log.d("Invite re-sent")
+            }
         }
-        task["created_at"] = timestamp
-        task["created_by"] = userId
-        task["group"] = invite["group"]
-        task["inviter"] = invite["inviter"]
-        task["invite_id"] = invite["id"]
-        task["link"] = invite["link"]
-        task["id"] = ref.key
-        task["recipients"] = [email]
-        task["state"] = "waiting"
-        task["type"] = type
-        
-        ref.setValue(task)
-        UIShared.toast(message: "Invite re-sent")
     }
     
     func showInviteActions(invite: [String: Any], sourceView: UIView?) {

@@ -14,10 +14,12 @@ import FirebaseDatabase
 import Branch
 import PopupDialog
 import SDWebImage
+import MBProgressHUD
 
 class MainController: NSObject, iRateDelegate {
 
     static let instance = MainController()
+    var progress: AirProgress?
     var window: UIWindow?
     var upgradeRequired = false
     var link: [AnyHashable: Any]?
@@ -359,12 +361,13 @@ class MainController: NSObject, iRateDelegate {
         
         if let topController = UIViewController.topMostViewController() {
             
-            let groupId = (link["group_id"] as! String)
-            let groupTitle = link["groupTitle"] as! String
-            let inviterName = link["inviterName"] as! String
-            let inviteId = (link["invite_id"] as! String)
-            let inviterId = (link["invited_by"] as! String)
-            let channels = link["channels"] as? [String: String]
+            let groupId = link["group_id"] as! String
+            let groupTitle = link["group_title"] as! String
+            let inviterName = link["inviter_name"] as! String
+            let inviteId = link["invite_id"] as! String
+            let inviterId = link["invited_by"] as! String
+            let channelId = link["channel_id"] as? String
+            let channelName = link["channel_name"] as? String
             var role = link["role"] as! String
             
             let isGroupMember = (memberRole != nil && memberRole! != "guest")
@@ -373,9 +376,8 @@ class MainController: NSObject, iRateDelegate {
             }
             
             /* Check if already a member and not a channel invite */
-            if isGroupMember && (channels == nil || channels!.count == 0) {
+            if isGroupMember && channelId == nil {
                 if let topController = UIViewController.topMostViewController() {
-                    let groupTitle = link["groupTitle"] as! String
                     let popup = PopupDialog(title: "Already a Member", message: "You are currently a member of the \(groupTitle) Patchr group!")
                     let button = DefaultButton(title: "OK") {
                         if flow == .onboardInvite {
@@ -390,17 +392,8 @@ class MainController: NSObject, iRateDelegate {
             }
             
             var message = "\(inviterName) has invited you to join the \"\(groupTitle)\" Patchr group."
-            if channels != nil && channels!.count > 0 {
-                if channels!.count > 1 {
-                    message = "\(inviterName) has invited you to join these channels in the \(groupTitle) Patchr group.\n"
-                    for channelName in channels!.values {
-                        message += "\n#\(channelName)"
-                    }
-                }
-                else {
-                    let channelName = channels!.first!.value
-                    message = "\(inviterName) has invited you to join the #\(channelName) channel in the \(groupTitle) Patchr group."
-                }
+            if channelId != nil {
+                message = "\(inviterName) has invited you to join the #\(channelName!) channel in the \(groupTitle) Patchr group."
             }
             
             let popup = PopupDialog(title: "Invitation", message: message)
@@ -415,20 +408,30 @@ class MainController: NSObject, iRateDelegate {
             
             let joinButton = DefaultButton(title: "Join".uppercased(), height: 48) {
                 Reporting.track("accept_invite")
-                FireController.instance.addUserToGroup(groupId: groupId, channels: channels, role: role, inviteId: inviteId, invitedBy: inviterId) { [weak self] error, result in
+                self.progress = AirProgress.showAdded(to: MainController.instance.window!, animated: true)
+                self.progress!.mode = MBProgressHUDMode.indeterminate
+                self.progress!.styleAs(progressStyle: .activityWithText)
+                self.progress!.minShowTime = 0.5
+                self.progress!.labelText = "Joining..."
+                self.progress!.removeFromSuperViewOnHide = true
+                self.progress!.show(true)
+
+                FireController.instance.addUserToGroup(groupId: groupId, channelId: channelId, role: role, inviteId: inviteId, invitedBy: inviterId) { [weak self] error, result in
                     guard let this = self else { return }
+                    this.progress?.hide(true)
                     if error == nil {
-                        if channels != nil {
-                            this.afterChannelInvite(groupId: groupId, groupTitle: groupTitle, channels: channels)
+                        if channelId != nil {
+                            this.afterChannelInvite(groupId: groupId, groupTitle: groupTitle, channelId: channelId!, channelName: channelName!)
                         } else {
                             this.afterGroupInvite(groupId: groupId, groupTitle: groupTitle)
                         }
                     }
                     else {
                         if let topController = UIViewController.topMostViewController() {
-                            Reporting.track((error!.code == 404.2) ? "error_invite_used" : "error_invite_invalid")
-                            let title = (error!.code == 404.2) ? "Used Invitation" : "Unusable Invitation"
-                            let message = (error!.code == 404.2) ? "The invitation has already been used." : "The invitation has been used or revoked."
+                            let inviteInvalid = (error?.message.contains("404.2"))!
+                            Reporting.track(inviteInvalid ? "error_invite_used" : "error_invite_invalid")
+                            let title = inviteInvalid ? "Used Invitation" : "Unusable Invitation"
+                            let message = inviteInvalid ? "The invitation has already been used." : "The invitation has been used or revoked."
                             let popup = PopupDialog(title: title, message: message)
                             let button = DefaultButton(title: "OK") {
                                 if flow == .onboardInvite {
@@ -479,18 +482,13 @@ class MainController: NSObject, iRateDelegate {
         }
     }
     
-    func afterChannelInvite(groupId: String, groupTitle: String, channels: [String: Any]?) {
+    func afterChannelInvite(groupId: String, groupTitle: String, channelId: String, channelName: String) {
         
-        let channelId = channels!.first!.key
-        let channelName = channels!.first!.value as! String
         StateController.instance.setChannelId(channelId: channelId, groupId: groupId)
         self.showChannel(channelId: channelId, groupId: groupId) { // User permissions are in place
             Utils.delay(0.5) {
                 if let topController = UIViewController.topMostViewController() {
-                    var message = "You have joined the #\(channelName) channel in the \(groupTitle) Patchr group. Use the message bar to send your first message."
-                    if channels!.count > 1 {
-                        message = "You have joined multiple channels in the \(groupTitle) Patchr group. Use the message bar to send your first message."
-                    }
+                    let message = "You have joined the #\(channelName) channel in the \(groupTitle) Patchr group. Use the message bar to send your first message."
                     let popup = PopupDialog(title: "Welcome!", message: message)
                     popup.buttonAlignment = .horizontal
                     let showButton = DefaultButton(title: "Show Me".uppercased(), height: 48) {

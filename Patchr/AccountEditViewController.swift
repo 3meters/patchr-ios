@@ -221,6 +221,7 @@ class AccountEditViewController: BaseEditViewController {
     func verifyUsername() {
         
         let username = self.userNameField.text!
+        let userId = UserController.instance.userId!
         
         FireController.instance.usernameExists(username: username, next: { [weak self] error, exists in
             guard let this = self else { return }
@@ -235,14 +236,13 @@ class AccountEditViewController: BaseEditViewController {
                 this.userNameField.errorMessage = "Choose another username"
             }
             else {
-                let userId = UserController.instance.userId!
-                FireController.instance.updateUsername(userId: userId, username: username) { [weak self] error, result in
+                FireController.instance.updateUsername(userId: userId, username: username) { [weak self] error in
                     guard let this = self else { return }
                     if error == nil {
                         let _ = this.navigationController?.popToRootViewController(animated: true)
                     }
                     else {
-                        this.userNameField.errorMessage = error!.message
+                        this.userNameField.errorMessage = error!.localizedDescription
                     }
                 }
             }

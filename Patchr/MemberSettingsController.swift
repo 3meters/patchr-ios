@@ -229,7 +229,7 @@ class MemberSettingsController: UITableViewController {
             for channelId in self.channelsBefore.keys {
                 if self.channelsAfter[channelId] == nil {
                     let channelName = self.channelsBefore[channelId] as! String
-                    FireController.instance.removeUserFromChannel(userId: userId, groupId: groupId, channelId: channelId, channelName: channelName)
+                    FireController.instance.removeUserFromChannel(userId: userId, groupId: groupId, channelId: channelId, channelName: channelName) 
                 }
             }
 
@@ -301,10 +301,10 @@ class MemberSettingsController: UITableViewController {
                 let userId = self.inputUser.id!
                 let groupId = StateController.instance.groupId!
                 if self.target == .group {
-                    FireController.instance.removeUserFromGroup(userId: userId, groupId: groupId) { [weak self] success in
+                    FireController.instance.removeUserFromGroup(userId: userId, groupId: groupId) { [weak self] error, result in
                         guard let this = self else { return }
                         this.progress?.hide(true)
-                        if success {
+                        if error == nil {
                             this.closeAction(sender: nil)
                         }
                     }
@@ -312,10 +312,10 @@ class MemberSettingsController: UITableViewController {
                 else {
                     let channelId = self.inputChannel.id!
                     let channelName = self.inputChannel.name!
-                    FireController.instance.removeUserFromChannel(userId: userId, groupId: groupId, channelId: channelId, channelName: channelName) { [weak self] success in
+                    FireController.instance.removeUserFromChannel(userId: userId, groupId: groupId, channelId: channelId, channelName: channelName) { [weak self] error, result in
                         guard let this = self else { return }
                         this.progress?.hide(true)
-                        if success {
+                        if error == nil {
                             this.closeAction(sender: nil)
                         }
                     }

@@ -382,123 +382,111 @@ class ContactPickerController: BaseTableController, CLTokenInputViewDelegate {
             let groupId = self.inputGroupId ?? StateController.instance.groupId!
             let groupTitle = self.inputGroupTitle ?? StateController.instance.group!.title!
             let username = UserController.instance.user!.username!
+            let userTitle = UserController.instance.userTitle
+            let userEmail = UserController.instance.userEmail
+            let userId = UserController.instance.userId!
+            let timestamp = FireController.instance.getServerTimestamp()
+            let timestampReversed = -1 * timestamp
             
             for key in self.picks.keys {
+                let inviteId = "in-\(Utils.genRandomId())"
                 var email: String!
                 if let contact = self.picks[key] as? CNContact {
                     email = contact.emailAddresses.first?.value as? String
                 } else if let contact = self.picks[key] as? String {
                     email = contact
                 }
-                let inviteId = "in-\(Utils.genRandomId())"
                 
-                BranchProvider.inviteMember(groupId: groupId, groupTitle: groupTitle, username: username, email: email!, inviteId: inviteId, completion: { response, error in
+                BranchProvider.inviteMember(groupId: groupId
+                    , groupTitle: groupTitle
+                    , username: username
+                    , email: email!
+                    , inviteId: inviteId) { response, error in
                     
                     if error == nil {
-                        
-                        let invite = response as! InviteItem
-                        let inviteUrl = invite.url
-                        let userTitle = UserController.instance.userTitle
-                        let userEmail = UserController.instance.userEmail
-                        let userId = UserController.instance.userId!
-                        let username = UserController.instance.user?.username
-                        let ref = FireController.db.child("queue/invites").childByAutoId()
-                        let timestamp = FireController.instance.getServerTimestamp()
-                        
-                        var task: [String: Any] = [:]
-                        task["created_at"] = timestamp
-                        task["created_by"] = userId
-                        task["group"] = ["id": groupId, "title": groupTitle]
-                        task["id"] = ref.key
-                        task["inviter"] = ["id": userId, "title": userTitle, "username": username, "email": userEmail]
-                        task["invite_id"] = inviteId
-                        task["link"] = inviteUrl
-                        task["recipient"] = email
-                        task["state"] = "waiting"
-                        task["type"] = "invite-members"
-                        
-                        ref.setValue(task) { error, ref in
-                            if error != nil {
-                                Log.w("Error queueing invite task: \(error!)")
-                            }
-                            else {
-                                UIShared.toast(message: "Invites sent")
-                            }
-                            if self.flow == .onboardCreate || self.flow == .internalCreate {
-                                self.navigateToGroup()
-                            }
-                            else {
-                                self.close()
-                            }
-                        }
+                        let inviteItem = response as! InviteItem
+                        let inviteUrl = inviteItem.url
+                        let invite: [String: Any] = [
+                            "created_at": timestamp,
+                            "created_by": userId,
+                            "email": email!,
+                            "group": ["id": groupId, "title": groupTitle],
+                            "invited_at": timestamp,
+                            "invited_at_desc": timestampReversed,
+                            "inviter": ["id": userId, "title": userTitle, "username": username, "email": userEmail],
+                            "link": inviteUrl,
+                            "role": "member",
+                            "status": "pending"]
+                        FireController.db.child("invites/\(groupId)/\(userId)/\(inviteId)").setValue(invite)
                     }
-                })
+                }
+            }
+            
+            UIShared.toast(message: "Invites sent")
+            if self.flow == .onboardCreate || self.flow == .internalCreate {
+                self.navigateToGroup()
+            }
+            else {
+                self.close()
             }
         }
         else if self.inputRole == "guests" {
             
             Reporting.track("invite_channel_guests")
             
-            let channels = [self.inputChannelId!: self.inputChannelName!]
+            let channel = [
+                "id": self.inputChannelId!,
+                "name": self.inputChannelName!]
+            let group = StateController.instance.group!
+            let groupTitle = group.title!
+            let groupId = StateController.instance.group?.id ?? self.inputGroupId!
+            let userTitle = UserController.instance.userTitle
+            let userEmail = UserController.instance.userEmail
+            let userId = UserController.instance.userId!
+            let username = UserController.instance.user?.username
+            let timestamp = FireController.instance.getServerTimestamp()
+            let timestampReversed = -1 * timestamp
             
             for key in self.picks.keys {
-                
                 let inviteId = "in-\(Utils.genRandomId())"
                 var email: String!
-                
                 if let contact = self.picks[key] as? CNContact {
                     email = contact.emailAddresses.first?.value as? String
-                }
-                else if let contact = self.picks[key] as? String {
+                } else if let contact = self.picks[key] as? String {
                     email = contact
                 }
                 
-                BranchProvider.inviteGuest(group: StateController.instance.group, channels: channels, email: email!, inviteId: inviteId, completion: { response, error in
+                BranchProvider.inviteGuest(group: group
+                    , channel: channel
+                    , email: email!
+                    , inviteId: inviteId) { response, error in
                     
                     if error == nil {
-                        
-                        let invite = response as! InviteItem
-                        let inviteUrl = invite.url
-                        let userTitle = UserController.instance.userTitle
-                        let userEmail = UserController.instance.userEmail
-                        let userId = UserController.instance.userId!
-                        let username = UserController.instance.user?.username
-                        
-                        let group = StateController.instance.group!
-                        let groupTitle = group.title!
-                        let groupId = StateController.instance.group?.id ?? self.inputGroupId!
-                        let timestamp = FireController.instance.getServerTimestamp()
-                        let ref = FireController.db.child("queue/invites").childByAutoId()
-                        
-                        var task: [String: Any] = [:]
-                        task["channels"] = channels
-                        task["created_at"] = timestamp
-                        task["created_by"] = userId
-                        task["group"] = ["id": groupId, "title": groupTitle]
-                        task["id"] = ref.key
-                        task["inviter"] = ["id": userId, "title": userTitle, "username": username, "email": userEmail]
-                        task["invite_id"] = inviteId
-                        task["link"] = inviteUrl
-                        task["recipient"] = email
-                        task["state"] = "waiting"
-                        task["type"] = "invite-guests"
-                        
-                        ref.setValue(task) { error, ref in
-                            if error != nil {
-                                Log.w("Error queueing invite task: \(error!)")
-                            }
-                            else {
-                                UIShared.toast(message: "Invites sent")
-                            }
-                            if self.flow == .internalCreate {
-                                self.navigateToChannel()
-                            }
-                            else {
-                                self.close()
-                            }
-                        }
+                        let inviteItem = response as! InviteItem
+                        let inviteUrl = inviteItem.url
+                        let invite: [String: Any] = [
+                            "channel": channel,
+                            "created_at": timestamp,
+                            "created_by": userId,
+                            "email": email!,
+                            "group": ["id": groupId, "title": groupTitle],
+                            "invited_at": timestamp,
+                            "invited_at_desc": timestampReversed,
+                            "inviter": ["id": userId, "title": userTitle, "username": username, "email": userEmail],
+                            "link": inviteUrl,
+                            "role": "guest",
+                            "status": "pending"]
+                        FireController.db.child("invites/\(groupId)/\(userId)/\(inviteId)").setValue(invite)
                     }
-                })
+                }
+            }
+            
+            UIShared.toast(message: "Invites sent")
+            if self.flow == .internalCreate {
+                self.navigateToChannel()
+            }
+            else {
+                self.close()
             }
         }
     }

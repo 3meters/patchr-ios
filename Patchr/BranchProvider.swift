@@ -33,14 +33,14 @@ class BranchProvider: NSObject {
         applink.metadata?["created_at"] = DateUtils.now()
         applink.metadata?["email"] = email
         applink.metadata?["group_id"] = groupId
-        applink.metadata?["groupTitle"] = groupTitle
+        applink.metadata?["group_title"] = groupTitle
         applink.metadata?["invite_id"] = inviteId
         applink.metadata?["invited_by"] = inviterId
-        applink.metadata?["inviterName"] = inviterName
+        applink.metadata?["inviter_name"] = inviterName
         
         if let photo = inviter!.profile?.photo {
             let photoUrl = ImageProxy.url(photo: photo, category: SizeCategory.profile)
-            applink.metadata?["inviterPhotoUrl"] = photoUrl
+            applink.metadata?["inviter_photo_url"] = photoUrl
         }
         
         applink.metadata?["role"] = "member"
@@ -73,7 +73,7 @@ class BranchProvider: NSObject {
         })
     }
     
-    static func inviteGuest(group: FireGroup, channels: [String: Any], email: String, inviteId: String, completion: @escaping CompletionBlock) {
+    static func inviteGuest(group: FireGroup, channel: [String: Any], email: String, inviteId: String, completion: @escaping CompletionBlock) {
         
         let inviter = UserController.instance.user
         let inviterId = UserController.instance.userId!
@@ -81,30 +81,25 @@ class BranchProvider: NSObject {
         let path = "group/\(group.id!)"
         let applink = BranchUniversalObject(canonicalIdentifier: path)
         
-        applink.metadata?["channels"] = channels
+        applink.metadata?["channel_id"] = channel["id"]
+        applink.metadata?["channel_name"] = channel["name"]
         applink.metadata?["created_at"] = DateUtils.now()
         applink.metadata?["email"] = email
         applink.metadata?["group_id"] = group.id!
-        applink.metadata?["groupTitle"] = group.title!
+        applink.metadata?["group_title"] = group.title!
         applink.metadata?["invite_id"] = inviteId
         applink.metadata?["invited_by"] = inviterId
-        applink.metadata?["inviterName"] = inviterName
+        applink.metadata?["inviter_name"] = inviterName
         
         if let photo = inviter!.profile?.photo {
             let photoUrl = ImageProxy.url(photo: photo, category: SizeCategory.profile)
-            applink.metadata?["inviterPhotoUrl"] = photoUrl
+            applink.metadata?["inviter_photo_url"] = photoUrl
         }
         
         applink.metadata?["role"] = "guest"
         
         /* $og_title */
-        let channelName = channels.first?.value as! String
-        if channels.count == 1 {
-            applink.title = "Invite by \(inviterName!) to the \(channelName) channel"
-        }
-        else {
-            applink.title = "Invite by \(inviterName!) to the \(channelName) channel plus more"
-        }
+        applink.title = "Invite by \(inviterName!) to the \(channel["name"]) channel"
         
         /* $og_description */
         applink.contentDescription = "Group messaging for control freaks."

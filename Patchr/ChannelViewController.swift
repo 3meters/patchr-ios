@@ -245,8 +245,9 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
 				let userId = UserController.instance.userId!
 				let channelName = self.channel.name!
 				Reporting.track("leave_open_channel")
-				FireController.instance.removeUserFromChannel(userId: userId, groupId: group.id!, channelId: self.channel.id!, channelName: channelName, then: { success in
-					if success {
+				FireController.instance.removeUserFromChannel(userId: userId, groupId: group.id!, channelId: self.channel.id!, channelName: channelName, then: { [weak self] error, result in
+                    guard self != nil else { return }
+					if error == nil {
 						UIShared.toast(message: "You have left this channel.")
 						StateController.instance.clearChannel() // Only clears last channel default
 						if UserDefaults.standard.bool(forKey: PerUserKey(key: Prefs.soundEffects)) {
@@ -277,9 +278,9 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
 						else {
 							Reporting.track("leave_private_channel")
 						}
-						FireController.instance.removeUserFromChannel(userId: userId, groupId: groupId, channelId: channelId, channelName: channelName, then: { [weak self] success in
+						FireController.instance.removeUserFromChannel(userId: userId, groupId: groupId, channelId: channelId, channelName: channelName, then: { [weak self] error, result in
 							guard self != nil else { return }
-							if success {
+							if error == nil {
 								/* Channel query handles fixup when channel is deleted. */
 								UIShared.toast(message: "You have left this channel.")
 								StateController.instance.clearChannel()
@@ -658,9 +659,9 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
 								MainController.instance.showChannel(channelId: channelId!, groupId: groupId)
 							}
 							else { // User is member of group but not any of the group channels.
-								FireController.instance.removeUserFromGroup(userId: userId, groupId: groupId) { [weak this] success in
+								FireController.instance.removeUserFromGroup(userId: userId, groupId: groupId) { [weak this] error, result in
 									guard this != nil else { return }
-									if success {
+									if error == nil {
 										MainController.instance.showGroupSwitcher()
 									}
 								}

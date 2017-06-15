@@ -74,7 +74,7 @@ class ImageUtils {
     static func readStorageBucket() -> String {
         let path = Bundle.main.path(forResource: "GoogleService-Info", ofType: "plist")
         let dict = NSDictionary(contentsOfFile: path!) as? [String: AnyObject]
-        let storageBucket = dict!["STORAGE_BUCKET"] as! String
+        let storageBucket = dict!["STORAGE_BUCKET_IMAGES"] as! String
         return storageBucket
     }
 }
@@ -131,7 +131,7 @@ class S3ImageSource: ImageSourceType {
 class GoogleImageSource: ImageSourceType {
 	func url(prefix: String, category: String? = nil) -> String {
         let storageBucket = ImageUtils.readStorageBucket()
-		return "https://firebasestorage.googleapis.com/v0/b/\(storageBucket)/o/images%2F\(prefix)?alt=media"
+		return "https://firebasestorage.googleapis.com/v0/b/\(storageBucket)/o/\(prefix)?alt=media"
 	}
 }
 
