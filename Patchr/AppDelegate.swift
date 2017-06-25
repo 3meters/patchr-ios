@@ -18,7 +18,6 @@ import Firebase
 import FirebaseInstanceID
 import FirebaseMessaging
 import FirebaseRemoteConfig
-import PonyDebugger
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate, MessagingDelegate {
@@ -61,9 +60,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate, MessagingDelegate {
         AWSServiceManager.default().defaultServiceConfiguration = serviceConfig
         
         #if DEBUG
-        PDDebugger.defaultInstance().enableNetworkTrafficDebugging()
-        PDDebugger.defaultInstance().forwardAllNetworkTraffic()
-        PDDebugger.defaultInstance().connect(to: URL(string: "ws://192.168.0.27:9000/device"))
+//        PDDebugger.defaultInstance().enableNetworkTrafficDebugging()
+//        PDDebugger.defaultInstance().forwardAllNetworkTraffic()
+//        PDDebugger.defaultInstance().connect(to: URL(string: "ws://192.168.0.27:9000/device"))
         AFNetworkActivityLogger.shared().startLogging()
         AFNetworkActivityLogger.shared().level = AFHTTPRequestLoggerLevel.AFLoggerLevelFatal
         #endif        
