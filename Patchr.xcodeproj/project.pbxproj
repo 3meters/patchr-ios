@@ -386,8 +386,8 @@
 		E2DB434E1EB4F2C400B1F78B /* notification_activity.aac in Resources */ = {isa = PBXBuildFile; fileRef = E25327C61B13D34100990A81 /* notification_activity.aac */; };
 		E2DB434F1EB4F2C400B1F78B /* Pods-acknowledgements.plist in Resources */ = {isa = PBXBuildFile; fileRef = E27C12081E6CD403003F052B /* Pods-acknowledgements.plist */; };
 		E2DB43501EB4F2C400B1F78B /* ChannelTitleView.xib in Resources */ = {isa = PBXBuildFile; fileRef = E2DA16D61DCFDF770096D86F /* ChannelTitleView.xib */; };
-		E2DB435D1EB4F89900B1F78B /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = E2DB435C1EB4F89900B1F78B /* GoogleService-Info.plist */; };
-		E2DB43601EB4F8B100B1F78B /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = E2DB435F1EB4F8B100B1F78B /* GoogleService-Info.plist */; };
+		E2DB435D1EB4F89900B1F78B /* GoogleService-Info-Dev.plist in Resources */ = {isa = PBXBuildFile; fileRef = E2DB435C1EB4F89900B1F78B /* GoogleService-Info-Dev.plist */; };
+		E2DB43601EB4F8B100B1F78B /* GoogleService-Info-Prod.plist in Resources */ = {isa = PBXBuildFile; fileRef = E2DB435F1EB4F8B100B1F78B /* GoogleService-Info-Prod.plist */; };
 		E2DB43681EB62D9A00B1F78B /* ServiceAccountDev.json in Resources */ = {isa = PBXBuildFile; fileRef = E2DB43661EB62D9000B1F78B /* ServiceAccountDev.json */; };
 		E2DB436A1EB6347D00B1F78B /* ServiceAccountProd.json in Resources */ = {isa = PBXBuildFile; fileRef = E2DB43691EB6347D00B1F78B /* ServiceAccountProd.json */; };
 		E2E271291C5D1ED600E36804 /* BranchProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2E271281C5D1ED600E36804 /* BranchProvider.swift */; };
@@ -657,8 +657,8 @@
 		E2DA16DA1DD114230096D86F /* AirStarButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirStarButton.swift; sourceTree = "<group>"; };
 		E2DA16DC1DD11B7A0096D86F /* AirToggleImage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirToggleImage.swift; sourceTree = "<group>"; };
 		E2DB43591EB4F2C400B1F78B /* Patchr-Dev.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Patchr-Dev.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		E2DB435C1EB4F89900B1F78B /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
-		E2DB435F1EB4F8B100B1F78B /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		E2DB435C1EB4F89900B1F78B /* GoogleService-Info-Dev.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info-Dev.plist"; path = "../GoogleService-Info-Dev.plist"; sourceTree = "<group>"; };
+		E2DB435F1EB4F8B100B1F78B /* GoogleService-Info-Prod.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info-Prod.plist"; path = "../GoogleService-Info-Prod.plist"; sourceTree = "<group>"; };
 		E2DB43661EB62D9000B1F78B /* ServiceAccountDev.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = ServiceAccountDev.json; path = ../ServiceAccountDev.json; sourceTree = "<group>"; };
 		E2DB43691EB6347D00B1F78B /* ServiceAccountProd.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = ServiceAccountProd.json; path = ../ServiceAccountProd.json; sourceTree = "<group>"; };
 		E2E271281C5D1ED600E36804 /* BranchProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = BranchProvider.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
@@ -1226,7 +1226,7 @@
 			isa = PBXGroup;
 			children = (
 				E2DB43661EB62D9000B1F78B /* ServiceAccountDev.json */,
-				E2DB435C1EB4F89900B1F78B /* GoogleService-Info.plist */,
+				E2DB435C1EB4F89900B1F78B /* GoogleService-Info-Dev.plist */,
 			);
 			path = Development;
 			sourceTree = "<group>";
@@ -1235,7 +1235,7 @@
 			isa = PBXGroup;
 			children = (
 				E2DB43691EB6347D00B1F78B /* ServiceAccountProd.json */,
-				E2DB435F1EB4F8B100B1F78B /* GoogleService-Info.plist */,
+				E2DB435F1EB4F8B100B1F78B /* GoogleService-Info-Prod.plist */,
 			);
 			path = Production;
 			sourceTree = "<group>";
@@ -1405,7 +1405,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E2A603241CD97B7A00FBD55B /* InfoPlist.strings in Resources */,
-				E2DB43601EB4F8B100B1F78B /* GoogleService-Info.plist in Resources */,
+				E2DB43601EB4F8B100B1F78B /* GoogleService-Info-Prod.plist in Resources */,
 				E2DB436A1EB6347D00B1F78B /* ServiceAccountProd.json in Resources */,
 				7D3D39D61A6F086F00A44CB2 /* Images.xcassets in Resources */,
 				E25B0F4A1DCE803B00021D5B /* UserListCell.xib in Resources */,
@@ -1441,7 +1441,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E2DB43361EB4F2C400B1F78B /* InfoPlist.strings in Resources */,
-				E2DB435D1EB4F89900B1F78B /* GoogleService-Info.plist in Resources */,
+				E2DB435D1EB4F89900B1F78B /* GoogleService-Info-Dev.plist in Resources */,
 				E2DB43681EB62D9A00B1F78B /* ServiceAccountDev.json in Resources */,
 				E2DB433D1EB4F2C400B1F78B /* Images.xcassets in Resources */,
 				E2DB43321EB4F2C400B1F78B /* UserListCell.xib in Resources */,
