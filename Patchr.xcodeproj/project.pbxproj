@@ -386,10 +386,6 @@
 		E2DB434E1EB4F2C400B1F78B /* notification_activity.aac in Resources */ = {isa = PBXBuildFile; fileRef = E25327C61B13D34100990A81 /* notification_activity.aac */; };
 		E2DB434F1EB4F2C400B1F78B /* Pods-acknowledgements.plist in Resources */ = {isa = PBXBuildFile; fileRef = E27C12081E6CD403003F052B /* Pods-acknowledgements.plist */; };
 		E2DB43501EB4F2C400B1F78B /* ChannelTitleView.xib in Resources */ = {isa = PBXBuildFile; fileRef = E2DA16D61DCFDF770096D86F /* ChannelTitleView.xib */; };
-		E2DB435D1EB4F89900B1F78B /* GoogleService-Info-Dev.plist in Resources */ = {isa = PBXBuildFile; fileRef = E2DB435C1EB4F89900B1F78B /* GoogleService-Info-Dev.plist */; };
-		E2DB43601EB4F8B100B1F78B /* GoogleService-Info-Prod.plist in Resources */ = {isa = PBXBuildFile; fileRef = E2DB435F1EB4F8B100B1F78B /* GoogleService-Info-Prod.plist */; };
-		E2DB43681EB62D9A00B1F78B /* ServiceAccountDev.json in Resources */ = {isa = PBXBuildFile; fileRef = E2DB43661EB62D9000B1F78B /* ServiceAccountDev.json */; };
-		E2DB436A1EB6347D00B1F78B /* ServiceAccountProd.json in Resources */ = {isa = PBXBuildFile; fileRef = E2DB43691EB6347D00B1F78B /* ServiceAccountProd.json */; };
 		E2E271291C5D1ED600E36804 /* BranchProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2E271281C5D1ED600E36804 /* BranchProvider.swift */; };
 		E2E9AAA71CEF86470057698F /* AirNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2E9AAA61CEF86470057698F /* AirNavigationController.swift */; };
 		E2EEE90E1E99470E0085565E /* AirReactionButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2EEE90D1E99470D0085565E /* AirReactionButton.swift */; };
@@ -657,10 +653,6 @@
 		E2DA16DA1DD114230096D86F /* AirStarButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirStarButton.swift; sourceTree = "<group>"; };
 		E2DA16DC1DD11B7A0096D86F /* AirToggleImage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirToggleImage.swift; sourceTree = "<group>"; };
 		E2DB43591EB4F2C400B1F78B /* Patchr-Dev.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Patchr-Dev.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		E2DB435C1EB4F89900B1F78B /* GoogleService-Info-Dev.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info-Dev.plist"; path = "../GoogleService-Info-Dev.plist"; sourceTree = "<group>"; };
-		E2DB435F1EB4F8B100B1F78B /* GoogleService-Info-Prod.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info-Prod.plist"; path = "../GoogleService-Info-Prod.plist"; sourceTree = "<group>"; };
-		E2DB43661EB62D9000B1F78B /* ServiceAccountDev.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = ServiceAccountDev.json; path = ../ServiceAccountDev.json; sourceTree = "<group>"; };
-		E2DB43691EB6347D00B1F78B /* ServiceAccountProd.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = ServiceAccountProd.json; path = ../ServiceAccountProd.json; sourceTree = "<group>"; };
 		E2E271281C5D1ED600E36804 /* BranchProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = BranchProvider.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		E2E9AAA61CEF86470057698F /* AirNavigationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirNavigationController.swift; sourceTree = "<group>"; };
 		E2EEE90D1E99470D0085565E /* AirReactionButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirReactionButton.swift; sourceTree = "<group>"; };
@@ -755,11 +747,9 @@
 				E2E271271C5D1EAC00E36804 /* Providers */,
 				E26B0C8A1B4570BB00706F4A /* Components */,
 				E2D25DC61B22164300E51461 /* Controllers */,
-				E2DB435B1EB4F89900B1F78B /* Development */,
 				E26B0C861B44BD4000706F4A /* Docs */,
 				E26B0C871B44BD7900706F4A /* Extensions */,
 				7DA730701A71ACA5008C25FA /* Model */,
-				E2DB435E1EB4F8B100B1F78B /* Production */,
 				E215995A1AEFC193002C936F /* Resources */,
 				E2B976EA1C51272D0012FD40 /* Scripts */,
 				E2F618D71AFFB5430055D09C /* Shared */,
@@ -1222,24 +1212,6 @@
 			name = Controllers;
 			sourceTree = "<group>";
 		};
-		E2DB435B1EB4F89900B1F78B /* Development */ = {
-			isa = PBXGroup;
-			children = (
-				E2DB43661EB62D9000B1F78B /* ServiceAccountDev.json */,
-				E2DB435C1EB4F89900B1F78B /* GoogleService-Info-Dev.plist */,
-			);
-			path = Development;
-			sourceTree = "<group>";
-		};
-		E2DB435E1EB4F8B100B1F78B /* Production */ = {
-			isa = PBXGroup;
-			children = (
-				E2DB43691EB6347D00B1F78B /* ServiceAccountProd.json */,
-				E2DB435F1EB4F8B100B1F78B /* GoogleService-Info-Prod.plist */,
-			);
-			path = Production;
-			sourceTree = "<group>";
-		};
 		E2E271271C5D1EAC00E36804 /* Providers */ = {
 			isa = PBXGroup;
 			children = (
@@ -1405,8 +1377,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				E2A603241CD97B7A00FBD55B /* InfoPlist.strings in Resources */,
-				E2DB43601EB4F8B100B1F78B /* GoogleService-Info-Prod.plist in Resources */,
-				E2DB436A1EB6347D00B1F78B /* ServiceAccountProd.json in Resources */,
 				7D3D39D61A6F086F00A44CB2 /* Images.xcassets in Resources */,
 				E25B0F4A1DCE803B00021D5B /* UserListCell.xib in Resources */,
 				E29074A41E9D5897001E0609 /* ReactionCell.xib in Resources */,
@@ -1441,8 +1411,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				E2DB43361EB4F2C400B1F78B /* InfoPlist.strings in Resources */,
-				E2DB435D1EB4F89900B1F78B /* GoogleService-Info-Dev.plist in Resources */,
-				E2DB43681EB62D9A00B1F78B /* ServiceAccountDev.json in Resources */,
 				E2DB433D1EB4F2C400B1F78B /* Images.xcassets in Resources */,
 				E2DB43321EB4F2C400B1F78B /* UserListCell.xib in Resources */,
 				E2DB43351EB4F2C400B1F78B /* ReactionCell.xib in Resources */,
