@@ -270,7 +270,7 @@ class MemberPickerController: BaseTableController, CLTokenInputViewDelegate {
             
             if self.flow == .internalCreate {
                 for userId in self.picks.keys {
-                    FireController.instance.addUserToChannel(userId: userId, groupId: groupId, channelId: channelId, channelName: channelName)
+                    FireController.instance.addUserToChannel(userId: userId, groupId: groupId, channelId: channelId)
                 }
                 StateController.instance.setChannelId(channelId: channelId, groupId: groupId) // We know it's good
                 MainController.instance.showChannel(channelId: channelId, groupId: groupId)
@@ -287,7 +287,7 @@ class MemberPickerController: BaseTableController, CLTokenInputViewDelegate {
                     if doit {
                         Reporting.track("add_members_to_channel")
                         for userId in self.picks.keys {
-                            FireController.instance.addUserToChannel(userId: userId, groupId: groupId, channelId: channelId, channelName: channelName)
+                            FireController.instance.addUserToChannel(userId: userId, groupId: groupId, channelId: channelId)
                         }
                         self.close(animated: true)
                     }

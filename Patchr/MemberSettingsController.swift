@@ -215,7 +215,7 @@ class MemberSettingsController: UITableViewController {
                                 if let channelIds = snap.value as? [String] {
                                     for channelId in channelIds {
                                         if self.channelsAfter[channelId] == nil {
-                                            FireController.instance.addUserToChannel(userId: userId, groupId: groupId, channelId: channelId, channelName: nil)
+                                            FireController.instance.addUserToChannel(userId: userId, groupId: groupId, channelId: channelId)
                                         }
                                     }
                                 }
@@ -236,8 +236,7 @@ class MemberSettingsController: UITableViewController {
             /* Find channel additions */
             for channelId in self.channelsAfter.keys {
                 if self.channelsBefore[channelId] == nil {
-                    let channelName = self.channelsAfter[channelId] as! String
-                    FireController.instance.addUserToChannel(userId: userId, groupId: groupId, channelId: channelId, channelName: channelName)
+                    FireController.instance.addUserToChannel(userId: userId, groupId: groupId, channelId: channelId)
                 }
             }
             closeAction(sender: nil)

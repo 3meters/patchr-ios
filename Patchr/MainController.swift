@@ -37,7 +37,7 @@ class MainController: NSObject, iRateDelegate {
         NotificationCenter.default.removeObserver(self, name: NSNotification.Name(rawValue: Events.StateInitialized), object: nil)
         Log.d("State initialized - app state: \(Config.appState())")
         checkCompatibility() { compatible in
-            if compatible || Config.appConfiguration == .debug {
+            if compatible {
                 self.route()
             }
         }

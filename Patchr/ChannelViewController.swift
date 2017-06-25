@@ -223,13 +223,13 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
 	}
 
 	func joinChannelAction(sender: AnyObject?) {
+        /* User is already a group member so no invite involved */
 		let groupId = StateController.instance.groupId!
 		let channelId = self.channel.id!
-		let channelName = self.channel.name!
 		let userId = UserController.instance.userId!
 		Reporting.track("join_channel")
-		FireController.instance.addUserToChannel(userId: userId, groupId: groupId, channelId: channelId, channelName: channelName, then: { success in
-			if success {
+		FireController.instance.addUserToChannel(userId: userId, groupId: groupId, channelId: channelId, then: { error, success in
+			if success != nil {
 				UIShared.toast(message: "You have joined this channel")
 				if UserDefaults.standard.bool(forKey: PerUserKey(key: Prefs.soundEffects)) {
 					AudioController.instance.play(sound: Sound.pop.rawValue)

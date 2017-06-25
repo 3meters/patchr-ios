@@ -51,155 +51,29 @@ class FireController: NSObject {
     }
     
     func addGroup(groupId: String, title: String, then: ((Bool) -> Void)? = nil) {
-        
         let userId = UserController.instance.userId!
         let timestamp = getServerTimestamp()
-        let groupPriority = 3   // owner
-        let membership = self.groupMemberMap(userId: userId, timestamp: timestamp, priorityIndex: groupPriority, role: "owner")
-        
-        let generalId = "ch-\(Utils.genRandomId())"
-        let generalName = "general"
-        let chatterId = "ch-\(Utils.genRandomId())"
-        let chatterName = "chatter"
-        
-        let queue = TaskQueue()
-        
-        /* Add group */
-        queue.tasks += { [weak queue] _, next in
-            guard let queue = queue else { return }
-            var groupMap = [String: Any]()
-            groupMap["title"] = title
-            groupMap["created_at"] = timestamp
-            groupMap["created_by"] = userId
-            groupMap["modified_at"] = timestamp
-            groupMap["modified_by"] = userId
-            groupMap["owned_by"] = userId
-            groupMap["default_channels"] = [generalId, chatterId]
-            FireController.db.child("groups/\(groupId)").setValue(groupMap) { [weak queue] error, ref in
-                guard let queue = queue else { return }
-                if error != nil {
-                    queue.cancel()
-                    then?(false)
-                }
-                next(nil)
+        var groupMap = [String: Any]()
+        groupMap["title"] = title
+        groupMap["created_at"] = timestamp
+        groupMap["created_by"] = userId
+        groupMap["modified_at"] = timestamp
+        groupMap["modified_by"] = userId
+        groupMap["owned_by"] = userId
+        FireController.db.child("groups/\(groupId)").setValue(groupMap) { error, ref in
+            if error != nil {
+                Log.w("Error creating group: \(error!.localizedDescription)")
             }
-        }
-        
-        /* Add creator as member of group with owner role */
-        queue.tasks += { [weak queue] _, next in
-            guard let queue = queue else { return }
-            FireController.db.child("group-members/\(groupId)/\(userId)").setValue(membership) { [weak queue] error, ref in
-                guard let queue = queue else { return }
-                if error != nil {
-                    queue.cancel()
-                    then?(false)
-                }
-                next(nil)
-            }
-        }
-        
-        /* Add creator as member of group with owner role */
-        queue.tasks += { [weak queue] _, next in
-            guard let queue = queue else { return }
-            FireController.db.child("member-groups/\(userId)/\(groupId)").setValue(membership) { [weak queue] error, ref in
-                guard let queue = queue else { return }
-                if error != nil {
-                    queue.cancel()
-                    then?(false)
-                }
-                next(nil)
-            }
-        }
-        
-        /* Add default general channel */
-        queue.tasks += { [weak self, weak queue] _, next in
-            
-            guard let this = self else { return }
-            guard let queue = queue else { return }
-            let generalMap: [String: Any] = [
-                "archived": false,
-                "created_at": timestamp,
-                "created_by": userId,
-                "general": true,
-                "group_id": groupId,
-                "name": generalName,
-                "owned_by": userId,
-                "purpose": "This channel is for messaging and announcements to the whole group. All group members are in this channel.",
-                "type": "channel",
-                "visibility": "open"]
-            
-            this.addChannelToGroup(channelId: generalId, channelMap: generalMap, groupId: groupId) { [weak queue] success in
-                guard let queue = queue else { return }
-                if !success {
-                    queue.cancel()
-                    then?(false)
-                }
-                next(nil)
-            }
-        }
-        
-        /* Add default chatter channel */
-        queue.tasks += { [weak self, weak queue] _, next in
-            
-            guard let this = self else { return }
-            guard let queue = queue else { return }
-            let chatterMap: [String: Any] = [
-                "archived": false,
-                "created_at": timestamp,
-                "created_by": userId,
-                "general": false,
-                "group_id": groupId,
-                "name": chatterName,
-                "owned_by": userId,
-                "purpose": "The perfect place for crazy talk that you\'d prefer to keep off the other channels.",
-                "type": "channel",
-                "visibility": "open"]
-            
-            this.addChannelToGroup(channelId: chatterId, channelMap: chatterMap, groupId: groupId) { [weak queue] success in
-                guard let queue = queue else { return }
-                if !success {
-                    queue.cancel()
-                    then?(false)
-                }
-                next(nil)
-            }
-        }
-        
-        queue.run() {
-            then?(true)
+            then?(error == nil)
         }
     }
     
     func addChannelToGroup(channelId: String, channelMap: [String: Any], groupId: String, then: ((Bool) -> Void)? = nil) {
-        
-        let userId = UserController.instance.userId!
-        let channelName = channelMap["name"] as! String
-        let visibility = channelMap["visibility"] as! String
-        
-        /* Claim the channel name first */
-        let path = "channel-names/\(groupId)/\(channelName)"
-        FireController.db.child(path).setValue(channelId) { error, ref in
+        FireController.db.child("group-channels/\(groupId)/\(channelId)").setValue(channelMap) { error, ref in
             if error != nil {
-                Log.w("Error claiming channel name: \(error!.localizedDescription)")
-                then?(false)
-                return
+                Log.w("Error creating channel: \(error!.localizedDescription)")
             }
-            FireController.db.child("group-channels/\(groupId)/\(channelId)").setValue(channelMap) { error, ref in
-                if error != nil {
-                    Log.w("Error creating channel: \(error!.localizedDescription)")
-                    then?(false)
-                    return
-                }
-                /* Add creator as first member of channel (open or private) */
-                self.addUserToChannel(userId: userId, groupId: groupId, channelId: channelId, channelName: channelName, role: "owner") { [weak self] success in
-                    guard let this = self else { return }
-                    if visibility == "open", let generalId = StateController.instance.groupGeneralId { // If guest then generalId is nil
-                        let text = "created the #\(channelName) channel."
-                        this.sendAdminMessage(channelId: generalId, groupId: groupId, userId: userId, text: text)
-                    }
-                    then?(success)
-                }
-            }
+            then?(error == nil)
         }
     }
     
@@ -247,93 +121,76 @@ class FireController: NSObject {
      * MARK: - Membership
      *--------------------------------------------------------------------------------------------*/
 
-    func addUserToChannel(userId: String, groupId: String, channelId: String, channelName: String?, role: String! = "member",
-                          invite: [String: Any]? = nil, inviterName: String? = nil, adminId: String? = nil,
-                          then: ((Bool) -> Void)? = nil) {
+    func addUserToChannel(userId: String, groupId: String, channelId: String, role: String! = "member",
+                          inviteId: String? = nil, invitedBy: String? = nil,
+                          then: ((ServiceError?, Any?) -> Void)? = nil) {
         
         let timestamp = getServerTimestamp()
         var membership = channelMemberMap(userId: userId, timestamp: timestamp, priorityIndex: 4, role: role /* neutral */)
         
-        var inviterName: String!
-        if invite != nil {
-            let inviteId = invite!["id"] as! String
-            let inviter = invite!["inviter"] as! [String: Any]
-            let inviterId = inviter["id"] as! String
-            inviterName = inviter["username"] as! String?
+        if inviteId != nil {
             membership["invite_id"] = inviteId
-            membership["invited_by"] = inviterId
+            membership["invited_by"] = invitedBy
         }
         
-        let queue = TaskQueue()
-        
-        /* Add creator as member of group with owner role */
-        queue.tasks += { [weak queue] _, next in
-            guard let queue = queue else { return }
-            FireController.db.child("group-channel-members/\(groupId)/\(channelId)/\(userId)").setValue(membership) { [weak queue] error, ref in
-                guard let queue = queue else { return }
-                if error != nil {
-                    queue.cancel()
-                    then?(false)
-                }
-                next(nil)
+        FireController.db.child("group-channel-members/\(groupId)/\(channelId)/\(userId)").setValue(membership) { error, ref in
+            if error != nil {
+                Log.w("Permission denied adding group member")
+                then?(ServiceError(code: 403, message: "Permission denied"), nil)  // permission denied
+                return
             }
-        }
-                
-        queue.tasks += { [weak self, weak queue] _, next in
-            guard let this = self else { return }
-            guard let queue = queue else { return }
-            var text = channelName != nil ? "joined #\(channelName!)." : "joined."
-            if invite != nil {
-                text = channelName != nil ? "joined #\(channelName!) by invitation from @\(inviterName!)." : "joined by invitation from @\(inviterName!)."
-            }
-            let adminId = adminId ?? userId
-            this.sendAdminMessage(channelId: channelId, groupId: groupId, userId: adminId, text: text) { [weak queue] success in
-                guard let queue = queue else { return }
-                if !success {
-                    queue.cancel()
-                    then?(false)
-                }
-                next(nil)
-            }
-        }
-        
-        queue.run() {
-            then?(true)
+            then?(nil, true)
         }
     }
     
     func addUserToGroup(groupId: String, channelId: String?, role: String,
-                        inviteId: String?, invitedBy: String?, then: @escaping (ServiceError?, Any?) -> Void) {
+                        inviteId: String?, invitedBy: String?,
+                        then: ((ServiceError?, Any?) -> Void)? = nil) {
+        
         let userId = UserController.instance.userId!
         let timestamp = getServerTimestamp()
-        let ref = FireController.db.child("tasks/join-group").childByAutoId()
-        let email = (Auth.auth().currentUser?.email!)!
-        var request: [String: Any] = [
-            "email": email,
-            "group_id": groupId,
-            "role": role,
-            "user_id": userId,
-            ]
+        var membership = groupMemberMap(userId: userId, timestamp: timestamp, priorityIndex: 4, role: role /* neutral */)
+        
         if inviteId != nil {
-            request["invite_id"] = inviteId
-            request["invited_by"] = invitedBy
+            membership["invite_id"] = inviteId
+            membership["invited_by"] = invitedBy
         }
-        if channelId != nil {
-            request["channel_id"] = channelId
+
+        FireController.db.child("group-members/\(groupId)/\(channelId)/\(userId)").setValue(membership) { error, ref in
+            if error != nil {
+                Log.w("Permission denied adding group member")
+                then?(ServiceError(code: 403, message: "Permission denied"), nil)  // permission denied
+                return
+                
+                /* If permission failure then check the invite
+                 
+                 if (req.invite_id) {
+                    const path = `invites/${req.group_id}/${req.invited_by}/${req.invite_id}`
+                    const snap: DataSnapshot = await shared.database.ref(path).once('value')
+                    if (!snap.exists()) {
+                        throw new Error(errors.not_found_invite.message)
+                    }
+                    const invite = snap.val()
+                    /* Revalidate */
+                    if (invite.status !== 'pending') {
+                        throw new Error(errors.invalid_invite.message)
+                    }
+                    else if (invite.group.id !== req.group_id) {
+                        throw new Error(errors.invalid_invite.message)
+                    }
+                    if (invite.channel) {
+                        req.channel_id = invite.channel.id
+                    }
+                 }*/
+            }
+            then?(nil, true)
         }
-        let task: [String: Any] = [
-            "created_at": timestamp,
-            "created_by": userId,
-            "request": request,
-        ]
-        submitTask(task: task, ref: ref, then: then) // Error used, result ignored
     }
 
     func removeUserFromGroup(userId: String, groupId: String, then: ((ServiceError?, Any?) -> Void)? = nil) {
         
         var updates: [String: Any] = [:]
         updates["group-members/\(groupId)/\(userId)"] = NSNull() // delete requires group owner or creator
-        
         FireController.db.updateChildValues(updates) { error, ref in
             if error != nil {
                 Log.w("Permission denied removing group member")
@@ -346,12 +203,8 @@ class FireController: NSObject {
 
     func removeUserFromChannel(userId: String, groupId: String, channelId: String, channelName: String?, then: ((ServiceError?, Any?) -> Void)? = nil) {
         
-        let text = channelName != nil ? "left #\(channelName!)." : "left."
-        self.sendAdminMessage(channelId: channelId, groupId: groupId, userId: userId, text: text)
-        
         var updates: [String: Any] = [:]
         updates["group-channel-members/\(groupId)/\(channelId)/\(userId)"] = NSNull() // delete requires creator or owner (channel or group)
-        
         FireController.db.updateChildValues(updates) { error, ref in
             if error != nil {
                 Log.w("Permission denied removing channel member")
@@ -457,16 +310,6 @@ class FireController: NSObject {
     /*--------------------------------------------------------------------------------------------
      * MARK: - Clear
      *--------------------------------------------------------------------------------------------*/
-    
-    func clearChannelUnreads(channelId: String, groupId: String) {
-        let userId = UserController.instance.userId!
-        let unreadPath = "unreads/\(userId)/\(groupId)/\(channelId)"
-        FireController.db.child(unreadPath).setValue(NSNull()) { err, ref in
-            if err != nil {
-                Log.d("No unreads to clear for current channel")
-            }
-        }
-    }
     
     func clearMessageUnread(messageId: String, channelId: String, groupId: String) {
         let userId = UserController.instance.userId!
@@ -650,30 +493,6 @@ class FireController: NSObject {
                been revoked (deleted). */
             Log.w("Permission denied submitting task: \(ref.url)")
             then?(ServiceError(code: 403, message: "Permission denied"), nil)  // permission denied
-        }
-    }
-    
-    func sendAdminMessage(channelId: String, groupId: String, userId: String, text: String, then: ((Bool) -> Void)? = nil) {
-        
-        /* Security rules prevent this if the user is no longer a group member */
-        
-        let ref = FireController.db.child("group-messages/\(groupId)/\(channelId)").childByAutoId()
-        let timestamp = getServerTimestamp()
-        let timestampReversed = -1 * timestamp
-        
-        var messageMap: [String: Any] = [:]
-        messageMap["created_at"] = timestamp
-        messageMap["created_at_desc"] = timestampReversed
-        messageMap["created_by"] = userId
-        messageMap["modified_at"] = timestamp
-        messageMap["modified_by"] = userId
-        messageMap["source"] = "system"
-        messageMap["group_id"] = groupId
-        messageMap["channel_id"] = channelId
-        messageMap["text"] = text
-        
-        ref.setValue(messageMap) { error, ref in
-            then?(error == nil)
         }
     }
     

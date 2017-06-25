@@ -41,10 +41,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, MessagingDelegate {
         Database.database().isPersistenceEnabled = true
         Database.setLoggingEnabled(false)
         
-        PDDebugger.defaultInstance().enableNetworkTrafficDebugging()
-        PDDebugger.defaultInstance().forwardAllNetworkTraffic()
-        PDDebugger.defaultInstance().connect(to: URL(string: "ws://192.168.0.27:9000/device"))
-        
         /* Remote notifications */
         if #available(iOS 10.0, *) {
             let authOptions: UNAuthorizationOptions = [.alert, .badge, .sound]
@@ -65,6 +61,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate, MessagingDelegate {
         AWSServiceManager.default().defaultServiceConfiguration = serviceConfig
         
         #if DEBUG
+        PDDebugger.defaultInstance().enableNetworkTrafficDebugging()
+        PDDebugger.defaultInstance().forwardAllNetworkTraffic()
+        PDDebugger.defaultInstance().connect(to: URL(string: "ws://192.168.0.27:9000/device"))
         AFNetworkActivityLogger.shared().startLogging()
         AFNetworkActivityLogger.shared().level = AFHTTPRequestLoggerLevel.AFLoggerLevelFatal
         #endif        
