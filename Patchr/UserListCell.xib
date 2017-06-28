@@ -16,7 +16,7 @@
             <rect key="frame" x="0.0" y="0.0" width="495" height="68"/>
             <autoresizingMask key="autoresizingMask"/>
             <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="LTM-Mi-qV7" id="f05-yI-zfl">
-                <rect key="frame" x="0.0" y="0.0" width="462" height="67.5"/>
+                <rect key="frame" x="0.0" y="0.0" width="462" height="67"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <view clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="X0K-3n-IIP" customClass="PhotoControl" customModule="Patchr" customModuleProvider="target">
@@ -63,7 +63,7 @@
                         <nil key="highlightedColor"/>
                     </label>
                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Bca-gN-N9j" customClass="PresenceView" customModule="Patchr" customModuleProvider="target">
-                        <rect key="frame" x="174" y="20.5" width="12" height="12"/>
+                        <rect key="frame" x="174" y="21" width="12" height="12"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstAttribute="height" constant="12" id="bWQ-qf-XRY"/>
@@ -94,7 +94,7 @@
                         </userDefinedRuntimeAttributes>
                     </view>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="3h" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="S8e-20-N5N" userLabel="Ago">
-                        <rect key="frame" x="194" y="16.5" width="16" height="20"/>
+                        <rect key="frame" x="194" y="17" width="16" height="20"/>
                         <constraints>
                             <constraint firstAttribute="height" constant="20" id="JHv-Ik-mqT"/>
                         </constraints>
