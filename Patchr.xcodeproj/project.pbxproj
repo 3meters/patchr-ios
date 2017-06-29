@@ -127,9 +127,9 @@
 		E2816B3A1F003D700049E84B /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = E2816B391F003D700049E84B /* GoogleService-Info.plist */; };
 		E2816B3B1F003E1C0049E84B /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = E2816B361F003D580049E84B /* GoogleService-Info.plist */; };
 		E2816B3C1F003ED40049E84B /* ServiceAccountDev.json in Resources */ = {isa = PBXBuildFile; fileRef = E2816B311F003A650049E84B /* ServiceAccountDev.json */; };
+		E2816C1E1F0468740049E84B /* GoogleStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2816C1D1F0468740049E84B /* GoogleStorage.swift */; };
+		E2816C1F1F046D9F0049E84B /* GoogleStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2816C1D1F0468740049E84B /* GoogleStorage.swift */; };
 		E281776E1B5B0EE200D65AC1 /* Reporting.swift in Sources */ = {isa = PBXBuildFile; fileRef = E281776D1B5B0EE200D65AC1 /* Reporting.swift */; };
-		E288DA041EDC87C3001855FD /* GoogleStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = E288DA031EDC87C3001855FD /* GoogleStorage.swift */; };
-		E288DA051EDC87C3001855FD /* GoogleStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = E288DA031EDC87C3001855FD /* GoogleStorage.swift */; };
 		E289158A1C5839E8005D7AA0 /* AdobeCreativeSDKCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E2FB81411B8640E8006B6690 /* AdobeCreativeSDKCore.framework */; };
 		E289158B1C5839FA005D7AA0 /* AdobeCreativeSDKImage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E2F182CF1B4B37BC0020F6BB /* AdobeCreativeSDKImage.framework */; };
 		E28915911C5A85CF005D7AA0 /* .xctool-args in Resources */ = {isa = PBXBuildFile; fileRef = E28915901C5A85CF005D7AA0 /* .xctool-args */; };
@@ -590,10 +590,9 @@
 		E2816B321F003A650049E84B /* ServiceAccountProd.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = ServiceAccountProd.json; sourceTree = "<group>"; };
 		E2816B361F003D580049E84B /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "Dev/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		E2816B391F003D700049E84B /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "Prod/GoogleService-Info.plist"; sourceTree = "<group>"; };
-		E2816B3D1F003F6F0049E84B /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "Patchr/Prod/GoogleService-Info.plist"; sourceTree = "<group>"; };
+		E2816C1D1F0468740049E84B /* GoogleStorage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = GoogleStorage.swift; path = Patchr/GoogleStorage.swift; sourceTree = "<group>"; };
 		E281776D1B5B0EE200D65AC1 /* Reporting.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Reporting.swift; sourceTree = "<group>"; };
 		E28177751B5C39E200D65AC1 /* S3Storage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = S3Storage.swift; path = Patchr/S3Storage.swift; sourceTree = "<group>"; };
-		E288DA031EDC87C3001855FD /* GoogleStorage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GoogleStorage.swift; sourceTree = "<group>"; };
 		E28915901C5A85CF005D7AA0 /* .xctool-args */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ".xctool-args"; sourceTree = "<group>"; };
 		E28915921C5AD528005D7AA0 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		E28A481E1DE72E0400A01B46 /* BaseTableController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseTableController.swift; sourceTree = "<group>"; };
@@ -722,13 +721,12 @@
 		7D3D39C01A6F086F00A44CB2 = {
 			isa = PBXGroup;
 			children = (
-				E2816B3D1F003F6F0049E84B /* GoogleService-Info.plist */,
 				7D3D39CB1A6F086F00A44CB2 /* Patchr */,
 				7D3D39CE1A6F086F00A44CB2 /* AppDelegate.swift */,
 				E25327D11B13DEF800990A81 /* AudioController.swift */,
 				E2BC53321DE5D54600C97A2C /* BingController.swift */,
 				9FDCC68ACDC02C764EE70B02 /* FireController.swift */,
-				E288DA031EDC87C3001855FD /* GoogleStorage.swift */,
+				E2816C1D1F0468740049E84B /* GoogleStorage.swift */,
 				9FDCCADB4957C2E128DDE9FF /* MainController.swift */,
 				E28D565E1BB1849F00BFD433 /* ReachabilityManager.swift */,
 				E28177751B5C39E200D65AC1 /* S3Storage.swift */,
@@ -1256,6 +1254,7 @@
 				E26C80911C3AE246001514B3 /* Animation.swift */,
 				E20555051DBC178F003C8398 /* ColorArray.swift */,
 				E25327B11B0FCE9C00990A81 /* Constants.swift */,
+				E22489711E5C92B900A96F27 /* Date.swift */,
 				E2BC533D1DE5E7EC00C97A2C /* Http.swift */,
 				E238BB051B571AFF0094AF41 /* ImageUtils.swift */,
 				E2C0D9301B6C415100E28CE9 /* Log.swift */,
@@ -1264,7 +1263,6 @@
 				E2D12A7E1C0A090200DE507E /* Theming.swift */,
 				E20C1FB61AFE462500A471E9 /* UIShared.swift */,
 				84EF12AB1AA904700043EBBA /* Utils.swift */,
-				E22489711E5C92B900A96F27 /* Date.swift */,
 			);
 			name = Shared;
 			sourceTree = "<group>";
@@ -1655,7 +1653,6 @@
 				E241D15A1B1B3FCE00702E01 /* UIView+BorderLayer.m in Sources */,
 				E2810BA61DC8E6930013AEA0 /* PresenceView.swift in Sources */,
 				E24D84D31E8AF1D300BFE408 /* AirNavigationBar.swift in Sources */,
-				E288DA041EDC87C3001855FD /* GoogleStorage.swift in Sources */,
 				E2D12A7F1C0A090200DE507E /* Theming.swift in Sources */,
 				E2B2CAB21C553A8900CAE183 /* BaseEditViewController.swift in Sources */,
 				E2FA133E1D8220DD0057F287 /* MenuItemView.swift in Sources */,
@@ -1723,6 +1720,7 @@
 				E25B4ABB1E00BA6B00D17613 /* FireArray.swift in Sources */,
 				E24D74541BBAED5F0061F339 /* TaskQueue.swift in Sources */,
 				E2E9AAA71CEF86470057698F /* AirNavigationController.swift in Sources */,
+				E2816C1E1F0468740049E84B /* GoogleStorage.swift in Sources */,
 				E2D12A751C08F85E00DE507E /* AirButton.swift in Sources */,
 				E2D12A771C08F9CE00DE507E /* AirFeaturedButton.swift in Sources */,
 				E2B756A91D84600E00C102EC /* ChannelsHeaderView.swift in Sources */,
@@ -1820,7 +1818,6 @@
 				E2DB429F1EB4F2C400B1F78B /* UIView+BorderLayer.m in Sources */,
 				E2DB42A01EB4F2C400B1F78B /* PresenceView.swift in Sources */,
 				E2DB42A11EB4F2C400B1F78B /* AirNavigationBar.swift in Sources */,
-				E288DA051EDC87C3001855FD /* GoogleStorage.swift in Sources */,
 				E2DB42A21EB4F2C400B1F78B /* Theming.swift in Sources */,
 				E2DB42A31EB4F2C400B1F78B /* BaseEditViewController.swift in Sources */,
 				E2DB42A41EB4F2C400B1F78B /* MenuItemView.swift in Sources */,
@@ -1842,6 +1839,7 @@
 				E2DB42B51EB4F2C400B1F78B /* AirReactionButton.swift in Sources */,
 				E2DB42B61EB4F2C400B1F78B /* PHAsset+identifier.swift in Sources */,
 				E2DB42B71EB4F2C400B1F78B /* EmailViewController.swift in Sources */,
+				E2816C1F1F046D9F0049E84B /* GoogleStorage.swift in Sources */,
 				E2DB42B81EB4F2C400B1F78B /* PhotoEditView.swift in Sources */,
 				E2DB42B91EB4F2C400B1F78B /* ChannelEditViewController.swift in Sources */,
 				E2DB42BA1EB4F2C400B1F78B /* SideMenuViewController.swift in Sources */,
