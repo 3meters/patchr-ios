@@ -11,35 +11,38 @@ import AVFoundation
 class AudioController: NSObject {
 
     static let instance = AudioController()
-    static let chirpSound: SystemSoundID = createChirpSound()
 
     var player: AVAudioPlayer! = nil
+    
+    func playSystemSound(soundId: Int) {
+        let systemSoundId: SystemSoundID = UInt32(soundId)
+        AudioServicesPlaySystemSound(systemSoundId)
+    }
 
     func play(sound: String) {
+        
         do {
+            /* Make app ready to takeover the device audio */
+            try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryAmbient)
+            try AVAudioSession.sharedInstance().setActive(true)
+            
             player = try AVAudioPlayer(contentsOf: self.uriForFile(fileName: sound) as URL, fileTypeHint: nil)
             if sound == Sound.notification.rawValue {
                 player.volume = 0.10
             }
             player.prepareToPlay()
             player.play()
-        } catch {
+        }
+        catch {
             print("Error creating AVAudioPlayer: \(error)")
         }
     }
 
     private func uriForFile(fileName: String) -> NSURL {
-        let path           = Bundle.main.path(forResource: fileName, ofType: "aac")
+        let path = Bundle.main.path(forResource: fileName, ofType: "aac")
         let fileUri: NSURL = NSURL(fileURLWithPath: path!)
         return fileUri
     }
-}
-
-func createChirpSound() -> SystemSoundID {
-    var soundID: SystemSoundID = 0
-    let soundURL               = CFBundleCopyResourceURL(CFBundleGetMainBundle(), "chirp" as CFString!, "caf" as CFString!, nil)
-    AudioServicesCreateSystemSoundID(soundURL!, &soundID)
-    return soundID
 }
 
 extension AudioController: AVAudioPlayerDelegate {
@@ -52,4 +55,5 @@ enum Sound: String {
     case greeting     = "notification_candi_discovered_soft"
     case notification = "notification_activity"
     case pop          = "notification_pop"
+    case messageSent
 }
