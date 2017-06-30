@@ -22,6 +22,7 @@ class MessageListCell: UITableViewCell {
     var createdDate = AirLabelDisplay()
     var edited = AirLabelDisplay()
     var unread = AirLabelDisplay()
+    var actionsButton: AirButtonBase!
     var hitInsets: UIEdgeInsets = UIEdgeInsets.zero
 
     var reactionToolbar: AirReactionToolbar!
@@ -75,6 +76,7 @@ class MessageListCell: UITableViewCell {
         self.userName.align(toTheRightOf: self.userPhotoControl, matchingTopWithLeftPadding: 8, width: self.userName.width(), height: 22)
         self.createdDate.align(toTheRightOf: self.userName, matchingBottomWithLeftPadding: 8, width: self.createdDate.width(), height: self.createdDate.height())
         self.unread.align(toTheRightOf: self.createdDate, matchingBottomWithLeftPadding: 8, width: self.unread.width(), height: self.unread.height())
+        self.actionsButton.anchorTopRight(withRightPadding: 0, topPadding: 0, width: 20, height: 20)
 
         /* Body */
 
@@ -174,6 +176,13 @@ class MessageListCell: UITableViewCell {
         self.unread.textAlignment = .left
         self.unread.isHidden = true
         
+        self.actionsButton = AirLinkButton(frame: .zero, hitInsets: UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0))
+        self.actionsButton.setImage(UIImage(named: "imgOverflowVerticalLight"), for: .normal)
+        self.actionsButton.showsTouchWhenHighlighted = true
+        self.actionsButton.isHidden = true
+        
+        self.selectionStyle = .none
+        
         self.reactionToolbar = AirReactionToolbar()
         
         self.contentView.addSubview(self.reactionToolbar)
@@ -184,6 +193,7 @@ class MessageListCell: UITableViewCell {
         self.contentView.addSubview(self.createdDate)
         self.contentView.addSubview(self.edited)
         self.contentView.addSubview(self.unread)
+        self.contentView.addSubview(self.actionsButton)
     }
 
     func bind(message: FireMessage) {
@@ -249,6 +259,10 @@ class MessageListCell: UITableViewCell {
             self.photoView?.image = nil
         }
         
+        /* Actions button */
+        self.actionsButton.data = message
+        self.actionsButton.isHidden = true
+        
         /* Created date and edited flag */
 
         let createdAt = DateUtils.from(timestamp: message.createdAt!)
@@ -271,6 +285,7 @@ class MessageListCell: UITableViewCell {
         self.description_!.font = Theme.fontTextList
         self.unread.isHidden = true
         self.edited.isHidden = true
+        self.actionsButton.isHidden = true
         self.userQuery?.remove()
         self.userQuery = nil
         self.unreadQuery?.remove()

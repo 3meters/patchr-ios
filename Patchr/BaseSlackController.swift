@@ -126,12 +126,10 @@ class BaseSlackController: SLKTextViewController {
         hidePhotoEdit()
         self.photoEditView.reset()
         
-        if self.queryController.items.count > 0 {
-            let indexPath = IndexPath(row: 0, section: 0)
-            let scrollPosition: UITableViewScrollPosition = self.isInverted ? .bottom : .bottom
-            self.tableView.scrollToRow(at: indexPath, at: scrollPosition, animated: true)
+        if UserDefaults.standard.bool(forKey: PerUserKey(key: Prefs.soundEffects)) {
+            AudioController.instance.playSystemSound(soundId: 1004)
         }
-        
+
         if let controller = self as? ChannelViewController {
             controller.isTyping = false
         }

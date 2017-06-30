@@ -29,6 +29,8 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
 	var unreads = [String: Bool]()
 	var displayPhotos = [String: DisplayPhoto]()
 	var displayPhotosSorted: [Any]!
+    
+    var selectedRow: Int?
 
 	var headerHeight = CGFloat(0)
 
@@ -188,10 +190,15 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
 
 	func browsePhotoAction(sender: AnyObject?) {
 		if let recognizer = sender as? UITapGestureRecognizer,
-		   let control = recognizer.view as? AirImageView,
-		   let url = control.fromUrl {
-			 Reporting.track("view_photos")
-			 showPhotos(mode: .browse, fromView: control, initialUrl: url)
+            let control = recognizer.view as? AirImageView,
+            let url = control.fromUrl {
+            Reporting.track("view_photos")
+            let point = recognizer.location(in: self.tableView)
+            if let indexPath = self.tableView.indexPathForRow(at: point) {
+                self.tableView.selectRow(at: indexPath, animated: true, scrollPosition: .none)
+                self.tableView(self.tableView, didSelectRowAt: indexPath)
+            }
+			showPhotos(mode: .browse, fromView: control, initialUrl: url)
 		}
 	}
 
@@ -294,6 +301,15 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
 			}
 		}
 	}
+    
+    func showActions(sender: AnyObject?) {
+        if let button = sender as? AirButtonBase {
+            if let message = button.data as? FireMessage {
+                Reporting.track("view_message_actions")
+                showMessageActions(message: message, sourceView: button)
+            }
+        }
+    }
 
 	func longPressAction(sender: UILongPressGestureRecognizer) {
 		if sender.state == UIGestureRecognizerState.began {
@@ -394,32 +410,10 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
 	}
 
 	func unreadChange(notification: NSNotification?) {
-
 		/* Sent two ways:
 		   - when counter observer in user controller get a callback with changed count.
 		   - app delegate receives new message notification and app is active. */
-
 		self.navButton.badgeValue = "\(UserController.instance.unreads)"
-
-		/* Turn on unread indicator if we already have the message */
-
-		//        if let channelId = notification?.userInfo?["channel_id"] as? String,
-		//            let messageId = notification?.userInfo?["message_id"] as? String,
-		//            channelId == self.channel.id {
-		//
-		//            var index = 0
-		//            for data in self.queryController.items {
-		//                let snap = data as! FIRDataSnapshot
-		//                if snap.key == messageId {
-		////                    self.tableView.beginUpdates()
-		////                    self.tableView.reloadRows(at: [IndexPath(row: index, section: 0)], with: .automatic)
-		////                    self.tableView.endUpdates()
-		//                    return
-		//                }
-		//                index += 1
-		//            }
-		//            self.tableView.reloadData()
-		//        }
 	}
 
 	func userDidUpdate(notification: NSNotification) {
@@ -472,7 +466,6 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
 		self.tableView.backgroundColor = Theme.colorBackgroundTable
 		self.tableView.separatorInset = UIEdgeInsets.zero
 		self.tableView.tableFooterView = UIView()
-		self.tableView.allowsSelection = false
 		self.tableView.delegate = self
 		self.tableView.contentInset = UIEdgeInsets(top: self.headerHeight + chromeHeight, left: 0, bottom: 0, right: 0)
 		self.tableView.contentOffset = CGPoint(x: 0, y: -(self.headerHeight + chromeHeight))
@@ -513,11 +506,11 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
 
 		/* Menu button */
 		button = UIButton(type: .custom)
-		button.frame = CGRect(x: 0, y: 0, width: 36, height: 36)
+		button.frame = CGRect(x: 0, y: 0, width: 30, height: 36)
 		button.addTarget(self, action: #selector(openMenuAction(sender:)), for: .touchUpInside)
 		button.showsTouchWhenHighlighted = true
 		button.setImage(UIImage(named: "imgOverflowVerticalLight"), for: .normal)
-		button.imageEdgeInsets = UIEdgeInsetsMake(8, 16, 8, 0)
+		button.imageEdgeInsets = UIEdgeInsetsMake(8, 10, 8, 0)
 		let moreButton = UIBarButtonItem(customView: button)
 
 		self.navigationItem.setLeftBarButtonItems([self.navButton, Ui.spacerFixed, self.titleButton], animated: true)
@@ -585,7 +578,7 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
 			guard message.createdBy != nil else {
 				return cell
 			}
-
+            
 			cell.userQuery = UserQuery(userId: message.createdBy!, groupId: groupId)
 			cell.userQuery.once(with: { [weak this, weak cell] error, user in
 
@@ -603,18 +596,20 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
 					if let label = cell.description_ as? TTTAttributedLabel {
 						label.delegate = this
 					}
+                    
 					cell.photoView?.isUserInteractionEnabled = true
 					cell.photoView?.addGestureRecognizer(UITapGestureRecognizer(target: this, action: #selector(this.browsePhotoAction(sender:))))
+                    cell.actionsButton.addTarget(this, action: #selector(this.showActions(sender:)), for: .touchUpInside)
 					cell.decorated = true
 				}
 
-				cell.bind(message: message)
+                cell.bind(message: message) // Handles hide/show of actions button based on message.selected
 
 				if message.creator != nil {
 					cell.userPhotoControl.target = message.creator
 					cell.userPhotoControl.addTarget(this, action: #selector(this.browseMemberAction(sender:)), for: .touchUpInside)
 				}
-
+                
 				/* Unread handling */
 
 				let messageId = message.id!
@@ -1202,6 +1197,17 @@ extension ChannelViewController {
 
 		return viewHeight
 	}
+    
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        for visibleCell in tableView.visibleCells {
+            if let cell = visibleCell as? MessageListCell {
+                cell.actionsButton.isHidden = true
+            }
+        }
+        if let cell = self.tableView.cellForRow(at: indexPath) as? MessageListCell {
+            cell.actionsButton.isHidden = false
+        }
+    }
 }
 
 extension ChannelViewController: FUICollectionDelegate {
