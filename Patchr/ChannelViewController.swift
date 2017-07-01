@@ -1199,14 +1199,14 @@ extension ChannelViewController {
 	}
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        for visibleCell in tableView.visibleCells {
-            if let cell = visibleCell as? MessageListCell {
-                cell.actionsButton.isHidden = true
-            }
-        }
-        if let cell = self.tableView.cellForRow(at: indexPath) as? MessageListCell {
-            cell.actionsButton.isHidden = false
-        }
+//        for visibleCell in tableView.visibleCells {
+//            if let cell = visibleCell as? MessageListCell {
+//                cell.actionsButton.isHidden = true
+//            }
+//        }
+//        if let cell = self.tableView.cellForRow(at: indexPath) as? MessageListCell {
+//            cell.actionsButton.isHidden = false
+//        }
     }
 }
 
