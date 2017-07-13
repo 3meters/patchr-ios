@@ -28,7 +28,7 @@
       "filter": "channel",
       "background": "./background.png",
       "title": {
-        "text": "Free group messaging\nwith awesome sharing controls."
+        "text": "Group messaging\nwith awesome sharing controls."
       }
     },
     {
