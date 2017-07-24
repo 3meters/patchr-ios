@@ -109,11 +109,13 @@ class BaseSlackController: SLKTextViewController {
                         Reporting.track("chose_photo")
                         this.photoEditView.photoChosen(image: image, imageResult: imageResult, asset: asset)
                         this.showPhotoEdit()
+                        this.presentKeyboard(true)
                     }
                 }
             }
             else {
                 Reporting.track("cancel_photo_selection")
+                this.presentKeyboard(true)
             }
         }
     }
@@ -243,7 +245,9 @@ class BaseSlackController: SLKTextViewController {
     
     func editMessage(message: FireMessage) {
         self.editingMessage = message
+        self.presentKeyboard(true)
         self.textInputbar.beginTextEditing()
+        
         if message.text != nil {
             self.editText(message.text!)
         }
@@ -259,16 +263,15 @@ class BaseSlackController: SLKTextViewController {
     func sendMessage() {
         
         guard let userId = UserController.instance.userId
-            , let groupId = StateController.instance.groupId
             , let channelId = StateController.instance.channelId else {
                 fatalError("Tried to send a message without complete state available")
         }
         
         var message: [String: Any] = [:]
-        let ref = FireController.db.child("group-messages/\(groupId)/\(channelId)").childByAutoId()
+        let ref = FireController.db.child("channel-messages/\(channelId)").childByAutoId()
         
         if self.photoEditView.photoActive {
-            let attachmentId = "at-\(Utils.genRandomId())"
+            let attachmentId = "at-\(Utils.genRandomId(digits: 9))"
             let image = self.photoEditView.imageView.image
             let asset = self.photoEditView.imageView.asset
             var photoMap: [String: Any]?
@@ -289,10 +292,8 @@ class BaseSlackController: SLKTextViewController {
         message["created_at"] = timestamp
         message["created_at_desc"] = timestampReversed
         message["created_by"] = userId
-        message["group_id"] = groupId
         message["modified_at"] = timestamp
         message["modified_by"] = userId
-        message["source"] = "user"
         
         if let text = self.textInputbar.textView.text, !text.isEmpty {
             message["text"] = text
@@ -310,7 +311,7 @@ class BaseSlackController: SLKTextViewController {
         
         if self.photoEditView.photoDirty {
             if self.photoEditView.photoActive {
-                let attachmentId = "at-\(Utils.genRandomId())"
+                let attachmentId = "at-\(Utils.genRandomId(digits: 9))"
                 let image = self.photoEditView.imageView.image
                 let asset = self.photoEditView.imageView.asset
                 var photoMap: [String: Any]?

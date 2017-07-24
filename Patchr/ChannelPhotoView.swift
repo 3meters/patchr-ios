@@ -5,20 +5,13 @@
 
 import UIKit
 
-class ChannelDetailView: UIView {
+class ChannelPhotoView: UIView {
     
     var contentGroup = UIView()
-    var titleGroup = UIView()
-    var infoGroup = AirRuleView()
-    
     var photoView = AirImageView(frame: CGRect.zero)
-    var titleLabel = AirLabelDisplay()
-    var starButton = AirStarButton(frame: CGRect.zero)
-    var purposeLabel = AirLabelDisplay(frame: CGRect.zero)
-    
     var photo: FirePhoto!
     var needsPhoto = false
-
+    
     /*--------------------------------------------------------------------------------------------
     * Lifecycle
     *--------------------------------------------------------------------------------------------*/
@@ -35,7 +28,8 @@ class ChannelDetailView: UIView {
     }
 
     required init?(coder aDecoder: NSCoder) {
-        fatalError("This view should never be loaded from storyboard")
+        super.init(coder: aDecoder)
+        initialize()
     }
 
     /*--------------------------------------------------------------------------------------------
@@ -48,31 +42,9 @@ class ChannelDetailView: UIView {
          */
         super.layoutSubviews()
 
-        let viewWidth = self.bounds.size.width
-        
-        if self.infoGroup.superview != nil {
-            self.purposeLabel.bounds.size.width = viewWidth - 32
-            self.purposeLabel.sizeToFit()
-            self.contentGroup.fillSuperview(withLeftPadding: 0, rightPadding: 0, topPadding: 0, bottomPadding: self.purposeLabel.height() + 24)
-        }
-        else {
-            self.contentGroup.fillSuperview()
-        }
-
+        self.contentGroup.fillSuperview()
         self.photoView.fillSuperview(withLeftPadding: -24, rightPadding: -24, topPadding: -36, bottomPadding: -36)
         self.photoView.progressView.anchorInCenter(withWidth: 150, height: 20)
-        self.titleGroup.anchorBottomLeft(withLeftPadding: 12, bottomPadding: 16, width: viewWidth - 72, height: 72)
-
-        self.titleLabel.bounds.size.width = self.titleGroup.width() - CGFloat(28)
-        self.titleLabel.sizeToFit()
-        self.titleLabel.anchorBottomLeft(withLeftPadding: 0, bottomPadding: 0, width: self.titleLabel.width(), height: self.titleLabel.height())
-        self.starButton.align(toTheRightOf: self.titleLabel, matchingCenterWithLeftPadding: 5, width: !self.starButton.isHidden ? 24 : 0, height: 24, topPadding: -4)
-
-        /* Purpose */
-        if self.infoGroup.superview != nil {
-            self.purposeLabel.anchorTopLeft(withLeftPadding: 12, topPadding: 12, width: self.purposeLabel.width(), height: self.purposeLabel.height())
-            self.infoGroup.alignUnder(self.contentGroup, matchingLeftAndRightWithTopPadding: 0, height: self.purposeLabel.height() + 24)
-        }
     }
 
     /*--------------------------------------------------------------------------------------------
@@ -84,9 +56,6 @@ class ChannelDetailView: UIView {
         self.clipsToBounds = false
         self.backgroundColor = Theme.colorBackgroundForm
         
-        self.infoGroup.backgroundColor = Theme.colorBackgroundTile
-        self.infoGroup.addSubview(self.purposeLabel)
-        
         self.photoView.parallaxIntensity = -40
         self.photoView.clipsToBounds = true
         self.photoView.contentMode = .scaleAspectFill
@@ -94,57 +63,24 @@ class ChannelDetailView: UIView {
         self.photoView.showGradient = true
         self.photoView.gradientLayer.isHidden = true
         
-        self.titleLabel.font = UIFont(name: "HelveticaNeue-Light", size: 28)!
-        self.titleLabel.textColor = Colors.white
-        self.titleLabel.numberOfLines = 2
-
-        self.purposeLabel.numberOfLines = 0
-        
+        self.contentGroup.clipsToBounds = true
         self.contentGroup.addSubview(self.photoView)
         self.addSubview(contentGroup)
         
-        self.contentGroup.clipsToBounds = true
     }
     
     func bind(channel: FireChannel!) {
         
-        if self.titleGroup.superview == nil {
-            self.titleGroup.addSubview(self.titleLabel)
-            self.titleGroup.addSubview(self.starButton)
-            self.contentGroup.addSubview(self.titleGroup)
-        }
-        
         /* Name, type and photo */
-        
-        let nameString = "\(channel.title!)"
-        let attrString = NSMutableAttributedString(string: nameString)
-        let paragraphStyle = NSMutableParagraphStyle()
-        paragraphStyle.lineHeightMultiple = 0.8
-        attrString.addAttribute(NSParagraphStyleAttributeName, value: paragraphStyle, range: NSMakeRange(0, attrString.length))
-        
-        self.titleLabel.attributedText = attrString
-        
-        if channel.purpose != nil && !channel.purpose!.isEmpty {
-            self.addSubview(self.infoGroup)
-            self.purposeLabel.text = channel.purpose!
-        }
-        else {
-            if self.infoGroup.superview != nil {
-                self.infoGroup.removeFromSuperview()
-            }
-        }
-        
         if let photo = channel.photo {
             self.photo = photo
             self.needsPhoto = true
-            self.starButton.tintColor = Colors.white
             self.photoView.backgroundColor = Theme.colorBackgroundImage
             displayPhoto()
         }
         else {
             self.photoView.image = nil
             self.photoView.gradientLayer.isHidden = true
-            self.starButton.tintColor = Colors.white
             if channel.name == "general" || channel.general! {
                 self.photoView.backgroundColor = Colors.brandColorLight
             }
@@ -157,9 +93,6 @@ class ChannelDetailView: UIView {
             }
         }
 
-        self.starButton.isHidden = (channel.joinedAt == nil)
-        self.starButton.bind(channel: channel)
-
         self.setNeedsLayout()    // Needed because binding can change element layout
         self.layoutIfNeeded()
         self.sizeToFit()
@@ -167,7 +100,6 @@ class ChannelDetailView: UIView {
     
     func reset() {
         self.photoView.reset()
-        self.titleLabel.text = nil
     }
     
     func displayPhoto() {

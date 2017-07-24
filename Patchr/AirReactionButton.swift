@@ -76,12 +76,11 @@ class AirReactionButton: UIControl {
         if sender.state == UIGestureRecognizerState.began {
             if let message = self.message {
                 let messageId = message.id!
-                let groupId = message.groupId!
                 let channelId = message.channelId!
                 let emojiCode = self.emojiCode!
                 let emojiCount = message.getReactionCount(emoji: emojiCode)
                 let emoji = self.emojiLabel.text
-                let path = "group-messages/\(groupId)/\(channelId)/\(messageId)/reactions/\(emojiCode)"
+                let path = "channel-messages/\(channelId)/\(messageId)/reactions/\(emojiCode)"
                 let controller = MemberListController()
                 
                 controller.scope = .reaction

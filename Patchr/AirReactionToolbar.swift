@@ -34,10 +34,9 @@ class AirReactionToolbar: AirScrollView {
         
         self.layout(message: message, animate: false)
         
-        let groupId = message.groupId!
         let channelId = message.channelId!
         let messageId = message.id!
-        self.messageQuery = MessageQuery(channelId: channelId, groupId: groupId, messageId: messageId)
+        self.messageQuery = MessageQuery(channelId: channelId, messageId: messageId)
         self.messageQuery.observe { [weak self] error, message in
             guard let this = self else { return }
             guard let message = message else { return }

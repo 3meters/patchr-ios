@@ -77,8 +77,8 @@ class EmailViewController: BaseEditViewController {
         else if self.flow == .onboardInvite {
             self.message.text = "Welcome."
         }
-        else {
-            self.message.text = "Patchr groups are perfect for control freaks."
+        else if self.flow == .onboardSignup {
+            self.message.text = "Patchr channels are perfect for control freaks."
         }
 
         self.message.textColor = Theme.colorTextTitle
@@ -97,10 +97,6 @@ class EmailViewController: BaseEditViewController {
         
         self.contentHolder.addSubview(self.message)
         self.contentHolder.addSubview(self.emailField)
-        
-        if self.flow == .onboardCreate {
-            self.navigationItem.title = "Step 1 of 3"
-        }
         
         /* Navigation bar buttons */
         let nextButton = UIBarButtonItem(title: "Next", style: UIBarButtonItemStyle.plain, target: self, action: #selector(doneAction(sender:)))
@@ -148,7 +144,7 @@ class EmailViewController: BaseEditViewController {
                 controller.inputInviteLink = self.inputInviteLink
                 self.navigationController?.pushViewController(controller, animated: true)
             }
-            else if self.flow == .onboardCreate {
+            else if self.flow == .onboardSignup {
                 Reporting.track("view_password_entry")
                 let controller = PasswordViewController()
                 controller.flow = self.flow

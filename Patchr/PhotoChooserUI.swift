@@ -44,7 +44,7 @@ class PhotoChooserUI: NSObject, UINavigationControllerDelegate {
 		
 		self.completion = completion
         
-		let cameraAvailable       = UIImagePickerController.isSourceTypeAvailable(.camera)
+		let cameraAvailable = UIImagePickerController.isSourceTypeAvailable(.camera)
 		let photoLibraryAvailable = UIImagePickerController.isSourceTypeAvailable(.photoLibrary)
 		
 		let sheet = UIAlertController(title: nil, message: nil, preferredStyle: UIAlertControllerStyle.actionSheet)

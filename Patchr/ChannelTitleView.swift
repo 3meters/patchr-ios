@@ -9,5 +9,4 @@ import UIKit
 class ChannelTitleView: UIView {
 
     @IBOutlet weak var title           : UILabel?
-    @IBOutlet weak var subtitle        : UILabel?
 }

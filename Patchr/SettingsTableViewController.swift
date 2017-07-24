@@ -18,26 +18,20 @@ class SettingsTableViewController: UITableViewController {
     var progress: AirProgress?
 
     /* Section 1: Global settings */
-    var editProfileCell = AirTableViewCell()
+    var soundEffectsCell = AirTableViewCell()
 
-    /* Section 2: User settings for group */
-    var notificationsCell = AirTableViewCell()
-    var hideEmailCell = AirTableViewCell()
-    var leaveGroupCell = AirTableViewCell()
-
-    /* Section 3: Informational */
+    /* Section 2: Informational */
     var sendFeedbackCell = AirTableViewCell()
     var rateCell = AirTableViewCell()
     var aboutCell = AirTableViewCell()
     var developmentCell = AirTableViewCell()
 
-    /* Section 4: Actions */
+    /* Section 3: Actions */
     var clearHistoryCell = AirTableViewCell()
     var logoutCell = AirTableViewCell()
 
     var logoutButton = AirLinkButton()
     var clearHistoryButton = AirLinkButton()
-    var leaveGroupButton = AirLinkButton()
 
     /*--------------------------------------------------------------------------------------------
     * Lifecycle
@@ -68,47 +62,10 @@ class SettingsTableViewController: UITableViewController {
 
         let viewWidth = min(Config.contentWidthMax, self.tableView.bounds.size.width)
         self.tableView.bounds.size.width = viewWidth
-
         self.logoutButton.fillSuperview()
         self.clearHistoryButton.fillSuperview()
-        self.leaveGroupButton.fillSuperview()
     }
     
-    func leaveGroupAction(sender: AnyObject) {
-        
-        DeleteConfirmationAlert(
-            title: "Confirm",
-            message: "Are you sure you want to leave this group? An invitation may be required to rejoin.",
-            actionTitle: "Leave", cancelTitle: "Cancel", delegate: self) { doIt in
-                if doIt {
-                    Reporting.track("leave_group")
-                    self.progress = AirProgress.showAdded(to: MainController.instance.window!, animated: true)
-                    self.progress!.mode = MBProgressHUDMode.indeterminate
-                    self.progress!.styleAs(progressStyle: .activityWithText)
-                    self.progress!.minShowTime = 0.5
-                    self.progress!.labelText = "Leaving..."
-                    self.progress!.removeFromSuperViewOnHide = true
-                    self.progress!.show(true)
-                    
-                    if let group = StateController.instance.group {
-                        let userId = UserController.instance.userId!
-                        FireController.instance.removeUserFromGroup(userId: userId, groupId: group.id!) { [weak self] error, result in
-                            guard let this = self else { return }
-                            this.progress?.hide(true)
-                            if error == nil {
-                                this.dismiss(animated: true)
-                                StateController.instance.clearGroup()   // Make sure group and channel are both unset
-                                let controller = GroupSwitcherController()
-                                let wrapper = AirNavigationController()
-                                wrapper.viewControllers = [controller]
-                                UIViewController.topMostViewController()?.present(wrapper, animated: true, completion: nil)
-                            }
-                        }
-                    }
-                }
-        }
-    }
-
     func logoutAction(sender: AnyObject) {
         self.dismiss(animated: true) {
             Reporting.track("logout")
@@ -149,35 +106,26 @@ class SettingsTableViewController: UITableViewController {
         self.tableView.tableFooterView = UIView()
         self.tableView.backgroundColor = Colors.gray95pcntColor
         self.tableView.sectionFooterHeight = 0
-
-        self.clearHistoryCell.contentView.addSubview(self.clearHistoryButton)
-        self.logoutCell.contentView.addSubview(self.logoutButton)
-        self.leaveGroupCell.contentView.addSubview(self.leaveGroupButton)
-        self.clearHistoryCell.accessoryType = .none
-        self.logoutCell.accessoryType = .none
-        self.leaveGroupCell.accessoryType = .none
-
-        self.editProfileCell.textLabel!.text = "Edit Profile"
-
-        self.notificationsCell.textLabel!.text = "Notifications and Sounds"
-        self.hideEmailCell.textLabel!.text = "Hide Email"
+        
+        self.soundEffectsCell.accessoryView = makeSwitch(notificationType: .playSoundEffects
+            , state: UserDefaults.standard.bool(forKey: PerUserKey(key: Prefs.soundEffects)))
+        self.soundEffectsCell.textLabel!.text = "Play sound effects"
 
         self.sendFeedbackCell.textLabel!.text = "Send feedback"
         self.rateCell.textLabel!.text = "Rate Patchr"
         self.aboutCell.textLabel!.text = "About"
         self.developmentCell.textLabel!.text = "Developer"
 
+        self.clearHistoryCell.contentView.addSubview(self.clearHistoryButton)
+        self.logoutCell.contentView.addSubview(self.logoutButton)
+        self.clearHistoryCell.accessoryType = .none
+        self.logoutCell.accessoryType = .none
+
         self.clearHistoryButton.setTitle("Clear search history".uppercased(), for: .normal)
         self.logoutButton.setTitle("Log out".uppercased(), for: .normal)
-        self.leaveGroupButton.setTitle("Leave group".uppercased(), for: .normal)
-        
-        if StateController.instance.group?.ownedBy == UserController.instance.userId! {
-            self.leaveGroupCell.isHidden = true
-        }
         
         self.logoutButton.addTarget(self, action: #selector(SettingsTableViewController.logoutAction(sender:)), for: .touchUpInside)
         self.clearHistoryButton.addTarget(self, action: #selector(SettingsTableViewController.clearHistoryAction(sender:)), for: .touchUpInside)
-        self.leaveGroupButton.addTarget(self, action: #selector(SettingsTableViewController.leaveGroupAction(sender:)), for: .touchUpInside)
         
         if self.presented {
             let closeButton = UIBarButtonItem(barButtonSystemItem: .stop, target: self, action: #selector(self.closeAction(sender:)))
@@ -186,9 +134,6 @@ class SettingsTableViewController: UITableViewController {
     }
     
     func bind() {
-        if let group = StateController.instance.group {
-            self.hideEmailCell.accessoryView = makeSwitch(notificationType: .hideEmail, state: (group.email == nil))
-        }
     }
 
     func makeSwitch(notificationType: Setting, state: Bool = false) -> UISwitch {
@@ -201,33 +146,11 @@ class SettingsTableViewController: UITableViewController {
 
     func toggleAction(sender: AnyObject?) {
         if let switcher = sender as? UISwitch {
-            if switcher.tag == Setting.hideEmail.rawValue {
-                let groupId = StateController.instance.groupId!
-                let userId = UserController.instance.userId!
-                let memberGroupsPath = "member-groups/\(userId)/\(groupId)/email"
-                let groupMembersPath = "group-members/\(groupId)/\(userId)/email"
-                if switcher.isOn {
-                    Reporting.track("hide_email")
-                    let updates: [String: Any] = [
-                        groupMembersPath: NSNull(),
-                        memberGroupsPath: NSNull()
-                    ]
-                    FireController.db.updateChildValues(updates)
-                }
-                else if let email = Auth.auth().currentUser?.email {
-                    Reporting.track("show_email")
-                    let updates: [String: Any] = [
-                        groupMembersPath: email,
-                        memberGroupsPath: email
-                    ]
-                    FireController.db.updateChildValues(updates)
-                }
+            if switcher.tag == Setting.playSoundEffects.rawValue {
+                Reporting.track(switcher.isOn ? "enable_sound_effects" : "disable_sound_effects")
+                UserDefaults.standard.set(switcher.isOn, forKey: PerUserKey(key: Prefs.soundEffects))
             }
         }
-    }
-    
-    override var prefersStatusBarHidden: Bool {
-        return UserDefaults.standard.bool(forKey: Prefs.statusBarHidden)
     }
 }
 
@@ -239,27 +162,15 @@ extension SettingsTableViewController {
 
         let selectedCell = tableView.cellForRow(at: indexPath)
         
-        if selectedCell == self.editProfileCell {
-            Reporting.track("view_profile_edit")
-            let controller = ProfileEditViewController()
-            self.navigationController?.pushViewController(controller, animated: true)
-        }
-
-        if selectedCell == self.notificationsCell {
-            Reporting.track("view_notification_settings")
-            let controller = NotificationSettingsViewController()
-            self.navigationController?.pushViewController(controller, animated: true)
-        }
-        
         if selectedCell == self.sendFeedbackCell {
             Reporting.track("view_feedback_compose")
             let email = "feedback@patchr.com"
             let subject = "Feedback for Patchr iOS"
             if MFMailComposeViewController.canSendMail() {
-                Ui.mailComposer!.mailComposeDelegate = self
-                Ui.mailComposer!.setToRecipients([email])
-                Ui.mailComposer!.setSubject(subject)
-                self.present(Ui.mailComposer!, animated: true, completion: nil)
+                UI.mailComposer!.mailComposeDelegate = self
+                UI.mailComposer!.setToRecipients([email])
+                UI.mailComposer!.setSubject(subject)
+                self.present(UI.mailComposer!, animated: true, completion: nil)
             }
             else {
                 var emailURL = "mailto:\(email)"
@@ -295,13 +206,7 @@ extension SettingsTableViewController {
 
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         
-        if indexPath.section == 1 && indexPath.row == 2 {
-            if StateController.instance.group?.ownedBy == UserController.instance.userId! {
-                return CGFloat(0)
-            }
-        }
-        
-        if indexPath.section == 2 && indexPath.row == 3 {
+        if indexPath.section == 1 && indexPath.row == 3 {
             developmentCell.isHidden = true
             if let developer = UserController.instance.user?.developer {
                 if developer {
@@ -312,7 +217,7 @@ extension SettingsTableViewController {
             return CGFloat(0)
         }
         
-        if indexPath.section == 4 && indexPath.row == 0 {
+        if indexPath.section == 3 && indexPath.row == 0 {
             return CGFloat(64)
         }
 
@@ -323,17 +228,10 @@ extension SettingsTableViewController {
         switch (indexPath.section) {
             case 0:
                 switch (indexPath.row) {
-                    case 0: return self.editProfileCell
+                    case 0: return self.soundEffectsCell
                     default: fatalError("Unknown row in section 1")
                 }
             case 1:
-                switch (indexPath.row) {
-                    case 0: return self.notificationsCell
-                    case 1: return self.hideEmailCell
-                    case 2: return self.leaveGroupCell
-                    default: fatalError("Unknown row in section 2")
-                }
-            case 2:
                 switch (indexPath.row) {
                     case 0: return self.sendFeedbackCell
                     case 1: return self.rateCell
@@ -341,7 +239,7 @@ extension SettingsTableViewController {
                     case 3: return self.developmentCell
                     default: fatalError("Unknown row in section 3")
                 }
-            case 3:
+            case 2:
                 switch (indexPath.row) {
                     case 0: return self.clearHistoryCell
                     case 1: return self.logoutCell
@@ -353,33 +251,26 @@ extension SettingsTableViewController {
 
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         switch (section) {
-            case 0: return nil
-            case 1:
-                if let group = StateController.instance.group {
-                    return "Your settings for group: \(group.title!)".uppercased()
-                }
-                return "Group settings".uppercased()
+            case 0: return "Settings".uppercased()
+            case 1: return nil
             case 2: return nil
-            case 3: return nil
-            case 4: return nil
             default: fatalError("Unknown number of sections")
         }
     }
 
     override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return (section == 1) ? 48 : 24
+        return (section == 0) ? 48 : 24
     }
 
     override func numberOfSections(in tableView: UITableView) -> Int {
-        return 4
+        return 3
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch (section) {
             case 0: return 1
-            case 1: return 3
-            case 2: return 4
-            case 3: return 2
+            case 1: return 4
+            case 2: return 2
             default: fatalError("Unknown number of sections")
         }
     }
@@ -411,8 +302,8 @@ extension SettingsTableViewController: MFMailComposeViewControllerDelegate {
         }
 
         self.dismiss(animated: true) {
-            Ui.mailComposer = nil
-            Ui.mailComposer = MFMailComposeViewController()
+            UI.mailComposer = nil
+            UI.mailComposer = MFMailComposeViewController()
         }
     }
 }

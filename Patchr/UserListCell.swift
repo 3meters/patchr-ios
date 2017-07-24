@@ -53,7 +53,7 @@ class UserListCell: UITableViewCell {
         self.userQuery = nil
     }
     
-    func bind(contact: CNContact, status: String) {
+    func bind(contact: CNContact) {
         
         self.roleLabel?.isHidden = true
         self.actionButton?.isHidden = true
@@ -64,16 +64,6 @@ class UserListCell: UITableViewCell {
         self.photoControl?.initialsCount = 2
         self.photoControl?.nameLabel.font = Theme.fontText
         self.contact = contact
-        
-        self.roleLabel?.isHidden = (status == "none")
-        if status == "accepted" {
-            self.roleLabel?.text = "invite accepted"
-            self.roleLabel?.textColor = MaterialColor.lightGreen.darken1
-        }
-        else if status == "pending" {
-            self.roleLabel?.text = "invited"
-            self.roleLabel?.textColor = MaterialColor.lightBlue.base
-        }
         
         let email = contact.emailAddresses.first?.value as String!
         let fullName = CNContactFormatter.string(from: contact, style: .fullName)
@@ -90,7 +80,7 @@ class UserListCell: UITableViewCell {
         self.subtitle?.text = email!
     }
     
-    func bind(user: FireUser, target: String = "group") {
+    func bind(user: FireUser, target: String = "channel") {
         
         self.user = user
         self.presenceView?.bind(online: user.presence)
@@ -111,44 +101,17 @@ class UserListCell: UITableViewCell {
             self.subtitle?.text = "@\(user.username!)"
         }
         
-        if target == "group" {
-            if user.group.role == "owner" {
-                self.roleLabel?.text = "group owner"
+        if target == "channel" {
+            if user.channel.role == "owner" {
+                self.roleLabel?.text = "owner"
                 self.roleLabel?.textColor = MaterialColor.deepOrange.base
             }
-            else if user.group.role == "member" {
-                self.roleLabel?.text = ""
+            else if user.channel.role == "editor" {
+                self.roleLabel?.text = "editor"
                 self.roleLabel?.textColor = MaterialColor.lightGreen.base
             }
-            else if user.group.role == "guest" {
-                self.roleLabel?.text = "guest member"
-                self.roleLabel?.textColor = MaterialColor.lightBlue.base
-            }
-        }
-        else if target == "channel" {
-            if user.channel.role == "owner" {
-                self.roleLabel?.text = "channel owner"
-                self.roleLabel?.textColor = MaterialColor.deepOrange.base
-            }
-            else if user.channel.role == "member" {
-                if user.group.role == "guest" {
-                    self.roleLabel?.text = "guest member"
-                    self.roleLabel?.textColor = MaterialColor.lightGreen.base
-                }
-                else {
-                    self.roleLabel?.text = ""
-                    self.roleLabel?.textColor = MaterialColor.lightGreen.base
-                }
-            }
-            else if user.channel.role == "visitor" {
-                if user.group.role == "guest" {
-                    self.roleLabel?.text = "guest visitor"
-                    self.roleLabel?.textColor = MaterialColor.purple.base
-                }
-                else {
-                    self.roleLabel?.text = "visitor"
-                    self.roleLabel?.textColor = MaterialColor.purple.base
-                }
+            else if user.channel.role == "reader" {
+                self.roleLabel?.isHidden = true
             }
         }
         else if target == "reaction" {

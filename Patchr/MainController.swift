@@ -70,9 +70,17 @@ class MainController: NSObject, iRateDelegate {
         self.window?.backgroundColor = Theme.colorBackgroundWindow
         self.window?.tintColor = Theme.colorTint
         UIToolbar.appearance().tintColor = Theme.colorTint
-        UINavigationBar.appearance().tintColor = Theme.colorTint
         UITabBar.appearance().tintColor = Theme.colorTabBarTint
         UISwitch.appearance().onTintColor = Theme.colorTint
+        
+        UIApplication.shared.statusBarStyle = .lightContent
+        if UserDefaults.standard.bool(forKey: Prefs.statusBarHidden) {
+            UIApplication.shared.isStatusBarHidden = true
+        }
+        
+        UINavigationBar.appearance().isTranslucent = false
+        UINavigationBar.appearance().tintColor = Theme.colorNavBarTint
+        UINavigationBar.appearance().barTintColor = Theme.colorNavBarBackground
         
         let dialogAppearance = PopupDialogDefaultView.appearance()
         
@@ -99,12 +107,6 @@ class MainController: NSObject, iRateDelegate {
         buttonAppearance.buttonColor = Colors.clear
         buttonAppearance.separatorColor = Theme.colorRule
         CancelButton.appearance().titleFont = Theme.fontButtonTitle
-
-        /* Get the primary ui components ready */
-        SlideMenuOptions.leftViewWidth = Config.navigationDrawerWidth
-        SlideMenuOptions.rightViewWidth = Config.sideMenuWidth
-        SlideMenuOptions.animationDuration = CGFloat(0.2)
-        SlideMenuOptions.simultaneousGestureRecognizers = false
         
         /* We always begin with the empty controller */
         self.containerController = ContainerController()
@@ -146,7 +148,6 @@ class MainController: NSObject, iRateDelegate {
 
     func route() {
         
-        let groupId = StateController.instance.groupId
         let channelId = StateController.instance.channelId
         
         if self.upgradeRequired {
@@ -162,33 +163,18 @@ class MainController: NSObject, iRateDelegate {
                 }
             }
         }
-        else if groupId == nil || channelId == nil {
-            let userId = UserController.instance.userId!
-            FireController.instance.findFirstGroup(userId: userId) { groupId in
-                if groupId == nil {
-                    self.showUserLobby() {
-                        self.bootstrapping = false
-                        if let link = MainController.instance.link {
-                            Reporting.track("resume_invite")
-                            MainController.instance.link = nil
-                            MainController.instance.routeDeepLink(link: link, error: nil)
-                        }
-                    }
-                }
-                else {
-                    self.showGroupSwitcher() {
-                        self.bootstrapping = false
-                        if let link = MainController.instance.link {
-                            Reporting.track("resume_invite")
-                            MainController.instance.link = nil
-                            MainController.instance.routeDeepLink(link: link, error: nil)
-                        }
-                    }
+        else if channelId == nil {
+            showMain() {
+                self.bootstrapping = false
+                if let link = MainController.instance.link {
+                    Reporting.track("resume_invite")
+                    MainController.instance.link = nil
+                    MainController.instance.routeDeepLink(link: link, error: nil)
                 }
             }
         }
         else {
-            showChannel(channelId: channelId!, groupId: groupId!) {
+            showChannel(channelId: channelId!) {
                 self.bootstrapping = false
             }
         }
@@ -199,13 +185,14 @@ class MainController: NSObject, iRateDelegate {
         /* If onboarding via invite, passed in controller is email form */
         Reporting.track("view_lobby")
 
-        if StateController.instance.groupId != nil {
-            StateController.instance.clearGroup()   // Make sure group and channel are both unset
+        if StateController.instance.channelId != nil {
+            StateController.instance.clearChannel()   // Make sure channel is unset
         }
         
         let controller = controller ?? LobbyViewController()
         let wrapper = AirNavigationController(rootViewController: controller)
         
+        /* If empty controller is the root then animate scene before the switch */
         if let emptyController = self.containerController.controller as? EmptyViewController {
             if !(controller is LobbyViewController) {
                 emptyController.startScene() {
@@ -220,83 +207,14 @@ class MainController: NSObject, iRateDelegate {
         then?()
     }
     
-    func showUserLobby(then: (() -> Void)? = nil) {
-        
-        Reporting.track("view_user_lobby")
-        
-        if StateController.instance.groupId != nil {
-            StateController.instance.clearGroup()   // Make sure group and channel are both unset
-        }
-        
-        let controller = UserLobbyController()
-        let wrapper = AirNavigationController(rootViewController: controller)
-        
-        if let emptyController = self.containerController.controller as? EmptyViewController {
-            emptyController.startScene() {
-                self.containerController.changeController(controller: wrapper)
-                then?()
-            }
-            return
-        }
-        
-        self.containerController.changeController(controller: wrapper)
-        then?()
-    }
-    
-    func showGroupSwitcher(then: (() -> Void)? = nil) {
-        Reporting.track("view_group_switcher")
-        let controller = GroupSwitcherController()
-        let wrapper = AirNavigationController(rootViewController: controller)
-        self.containerController.changeController(controller: wrapper)
-        then?()
-    }
-    
-    func showMain(then: (() -> Void)? = nil) {
-        
-        if self.containerController.controller is SlideMenuController {
-            then?()
-            return
-        }
-        
-        let mainWrapper = AirNavigationController(navigationBarClass: AirNavigationBar.self, toolbarClass: nil)
-        let mainBar = mainWrapper.navigationBar as! AirNavigationBar
-        let menuController = SideMenuViewController()
-        let drawerWrapper = AirNavigationController(navigationBarClass: AirNavigationBar.self, toolbarClass: nil)
-        let drawerBar = drawerWrapper.navigationBar as! AirNavigationBar
-        let channelSwitcher = ChannelSwitcherController()
-        
-        mainBar.navigationBarHeight = 54
-        drawerBar.navigationBarHeight = UserDefaults.standard.bool(forKey: Prefs.statusBarHidden) ? 74 : 54
-
-        let slideController = SlideMenuController(mainViewController: mainWrapper
-            , leftMenuViewController: drawerWrapper
-            , rightMenuViewController: menuController)
-        
-        drawerWrapper.viewControllers = [channelSwitcher]
-        drawerWrapper.view.backgroundColor = Theme.colorBackgroundTable
-        
-        if let emptyController = self.containerController.controller as? EmptyViewController,
-            !emptyController.scenePlayed {
-            emptyController.startScene() {
-                self.containerController.changeController(controller: slideController)
-                then?()
-            }
-            return
-        }
-        
-        self.containerController.changeController(controller: slideController)
-        then?()
-    }
-
-    func showChannel(channelId: String, groupId: String, then: (() -> Void)? = nil) {
+    func showChannel(channelId: String, animated: Bool = false, then: (() -> Void)? = nil) {
         showMain {
-            if let slide = self.containerController.controller as? SlideMenuController {
-                if let wrapper = slide.mainViewController as? AirNavigationController {
+            if let tabBarController = self.containerController.controller as? UITabBarController {
+                if let wrapper = tabBarController.viewControllers?[0] as? AirNavigationController {
                     Reporting.track("view_channel")
-                    let controller = ChannelViewController()
-                    controller.inputGroupId = groupId
+                    let controller = ChannelViewController(channelId: channelId)
                     controller.inputChannelId = channelId
-                    wrapper.setViewControllers([controller], animated: true)
+                    wrapper.pushViewController(controller, animated: animated)
                 }
             }
             then?()
@@ -311,6 +229,29 @@ class MainController: NSObject, iRateDelegate {
             }
             then?()
         }
+    }
+    
+    func showMain(then: (() -> Void)? = nil) {
+        
+        if self.containerController.controller is UITabBarController {
+            then?()
+            return
+        }
+        
+        let tabBarController = TabBarController()
+        tabBarController.selectedIndex = 0
+        
+        if let emptyController = self.containerController.controller as? EmptyViewController,
+            !emptyController.scenePlayed {
+            emptyController.startScene() {
+                self.containerController.changeController(controller: tabBarController)
+                then?()
+            }
+            return
+        }
+        
+        self.containerController.changeController(controller: tabBarController)
+        then?()
     }
     
     func routeDeepLink(link: [AnyHashable: Any], flow: Flow = .none, error: Error?) {
@@ -361,27 +302,25 @@ class MainController: NSObject, iRateDelegate {
         
         if let topController = UIViewController.topMostViewController() {
             
-            let groupId = link["group_id"] as! String
-            let groupTitle = link["group_title"] as! String
+            let userId = UserController.instance.userId!
             let inviterName = link["inviter_name"] as! String
-            let inviteId = link["invite_id"] as! String
-            let inviterId = link["invited_by"] as! String
-            let channelId = link["channel_id"] as? String
-            let channelName = link["channel_name"] as? String
+            let channelId = link["channel_id"] as! String
+            let channelTitle = link["channel_title"] as! String
+            let code = link["code"] as! String
             var role = link["role"] as! String
             
-            let isGroupMember = (memberRole != nil && memberRole! != "guest")
-            if isGroupMember { // Retain full group member status even if invite role is guest.
-                role = "member"
+            let isChannelMember = (memberRole != nil && memberRole! != "reader")
+            if isChannelMember { // Retain full group member status even if invite role is guest.
+                role = "editor"
             }
             
             /* Check if already a member and not a channel invite */
-            if isGroupMember && channelId == nil {
+            if isChannelMember {
                 if let topController = UIViewController.topMostViewController() {
-                    let popup = PopupDialog(title: "Already a Member", message: "You are currently a member of the \(groupTitle) Patchr group!")
+                    let popup = PopupDialog(title: "Already a Member", message: "You are currently a member of the \(channelTitle) channel!")
                     let button = DefaultButton(title: "OK") {
                         if flow == .onboardInvite {
-                            self.showGroupSwitcher()
+                            self.showMain()
                         }
                     }
                     button.buttonHeight = 48
@@ -391,17 +330,12 @@ class MainController: NSObject, iRateDelegate {
                 return
             }
             
-            var message = "\(inviterName) has invited you to join the \"\(groupTitle)\" Patchr group."
-            if channelId != nil {
-                message = "\(inviterName) has invited you to join the #\(channelName!) channel in the \(groupTitle) Patchr group."
-            }
-            
+            let message = "\(inviterName) has invited you to join the \(channelTitle) channel."
             let popup = PopupDialog(title: "Invitation", message: message)
-            
             let cancelButton = CancelButton(title: "Cancel".uppercased(), height: 48) {
                 // If we don't have a currrent group|channel then we are in the lobby
                 Reporting.track("cancel_invite")
-                if StateController.instance.groupId == nil || StateController.instance.channelId == nil {
+                if StateController.instance.channelId == nil {
                     self.route()
                 }
             }
@@ -416,35 +350,11 @@ class MainController: NSObject, iRateDelegate {
                 self.progress!.removeFromSuperViewOnHide = true
                 self.progress!.show(true)
 
-                FireController.instance.addUserToGroup(groupId: groupId, channelId: channelId, role: role, inviteId: inviteId, invitedBy: inviterId) { [weak self] error, result in
+                FireController.instance.addUserToChannel(userId: userId, channelId: channelId, code: code, role: role) { [weak self] error, result in
                     guard let this = self else { return }
                     this.progress?.hide(true)
                     if error == nil {
-                        if channelId != nil {
-                            this.afterChannelInvite(groupId: groupId, groupTitle: groupTitle, channelId: channelId!, channelName: channelName!)
-                        } else {
-                            this.afterGroupInvite(groupId: groupId, groupTitle: groupTitle)
-                        }
-                    }
-                    else {
-                        if let topController = UIViewController.topMostViewController() {
-                            let inviteInvalid = (error?.message.contains("404.2"))!
-                            Reporting.track(inviteInvalid ? "error_invite_used" : "error_invite_invalid")
-                            let title = inviteInvalid ? "Used Invitation" : "Unusable Invitation"
-                            let message = inviteInvalid ? "The invitation has already been used." : "The invitation has been used or revoked."
-                            let popup = PopupDialog(title: title, message: message)
-                            let button = DefaultButton(title: "OK") {
-                                if flow == .onboardInvite {
-                                    // If we don't have a current group|channel then we are in the lobby
-                                    if StateController.instance.groupId == nil || StateController.instance.channelId == nil {
-                                        this.route()
-                                    }
-                                }
-                            }
-                            button.buttonHeight = 48
-                            popup.addButton(button)
-                            topController.present(popup, animated: true)
-                        }
+                        this.afterChannelInvite(channelId: channelId, channelTitle: channelTitle)
                     }
                 }
             }
@@ -455,40 +365,13 @@ class MainController: NSObject, iRateDelegate {
         }
     }
     
-    func afterGroupInvite(groupId: String, groupTitle: String) {
+    func afterChannelInvite(channelId: String, channelTitle: String) {
         
-        FireController.instance.autoPickChannel(groupId: groupId, role: "member") { channelId in
-            if channelId != nil {
-                StateController.instance.setChannelId(channelId: channelId!, groupId: groupId)
-                self.showChannel(channelId: channelId!, groupId: groupId)
-                Utils.delay(1.0) {
-                    if let topController = UIViewController.topMostViewController() {
-                        let popup = PopupDialog(title: "Welcome!", message: "You are now a member of the \(groupTitle) Patchr group. Use the navigation drawer to discover and join channels.")
-                        popup.buttonAlignment = .horizontal
-                        let showButton = DefaultButton(title: "Show Me".uppercased(), height: 48) {
-                            Reporting.track("invite_show_me")
-                            if let slideController = self.containerController.controller as? SlideMenuController {
-                                slideController.openLeft()
-                            }
-                        }
-                        let doneButton = DefaultButton(title: "Carry On".uppercased(), height: 48) {
-                            Reporting.track("invite_carry_on")
-                        }
-                        popup.addButtons([showButton, doneButton])
-                        topController.present(popup, animated: true)
-                    }
-                }
-            }
-        }
-    }
-    
-    func afterChannelInvite(groupId: String, groupTitle: String, channelId: String, channelName: String) {
-        
-        StateController.instance.setChannelId(channelId: channelId, groupId: groupId)
-        self.showChannel(channelId: channelId, groupId: groupId) { // User permissions are in place
+        StateController.instance.setChannelId(channelId: channelId)
+        self.showChannel(channelId: channelId) { // User permissions are in place
             Utils.delay(0.5) {
                 if let topController = UIViewController.topMostViewController() {
-                    let message = "You have joined the #\(channelName) channel in the \(groupTitle) Patchr group. Use the message bar to send your first message."
+                    let message = "You have joined the \(channelTitle) channel. Use the message bar to send your first message."
                     let popup = PopupDialog(title: "Welcome!", message: message)
                     popup.buttonAlignment = .horizontal
                     let showButton = DefaultButton(title: "Show Me".uppercased(), height: 48) {
@@ -549,7 +432,7 @@ extension MainController {
 
 enum Flow: Int {
     case onboardLogin
-    case onboardCreate
+    case onboardSignup
     case onboardInvite
     case internalCreate
     case internalInvite

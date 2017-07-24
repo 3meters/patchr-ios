@@ -22,11 +22,11 @@ class ChannelQuery: NSObject {
 	var linkMap: [String: Any]!
 	var linkMapMiss = false
 
-	init(groupId: String, channelId: String, userId: String?) {
+	init(channelId: String, userId: String?) {
 		super.init()
-		self.channelPath = "group-channels/\(groupId)/\(channelId)"
+		self.channelPath = "channels/\(channelId)"
 		if userId != nil {
-			self.linkPath = "group-channel-members/\(groupId)/\(channelId)/\(userId!)"
+			self.linkPath = "channel-members/\(channelId)/\(userId!)"
 		}
 	}
 

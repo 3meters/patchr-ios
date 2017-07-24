@@ -21,8 +21,6 @@ class UserController: NSObject {
     fileprivate var counterRef: DatabaseReference?
     fileprivate var counterHandle: UInt?
     
-    var loginAlertShown = false
-
     var authenticated: Bool {
         return (self.userId != nil)
     }
@@ -55,8 +53,7 @@ class UserController: NSObject {
         return userEmail
     }
 
-    private override init() {
-    }
+    private override init() {}
 
     /*--------------------------------------------------------------------------------------------
      * Methods
@@ -68,12 +65,10 @@ class UserController: NSObject {
             if user != nil {
                 let userId = user!.uid
                 FireController.db.child("unreads/\(userId)").keepSynced(true)
-                FireController.db.child("member-groups/\(userId)").keepSynced(true)
                 FireController.db.child("member-channels/\(userId)").keepSynced(true)
             }
             else if let userId = self.userId {
                 FireController.db.child("unreads/\(userId)").keepSynced(false)
-                FireController.db.child("member-groups/\(userId)").keepSynced(false)
                 FireController.db.child("member-channels/\(userId)").keepSynced(false)
             }
         }
@@ -94,7 +89,7 @@ class UserController: NSObject {
                     if error.code != 17020 {
                         /* User account could have been deleted */
                         try! Auth.auth().signOut()
-                        StateController.instance.clearGroup() // Also clears channel
+                        StateController.instance.clearChannel()
                         return
                     }
                 }
@@ -114,7 +109,6 @@ class UserController: NSObject {
         if userId != self.userId {
             
             Log.i("User logged in: \(userId)")
-            self.loginAlertShown = false
             
             if let token = InstanceID.instanceID().token() {
                 Log.i("UserController: setting firebase messaging token: \(token)")
@@ -192,7 +186,7 @@ class UserController: NSObject {
         
         Log.i("User logged out")
 
-        StateController.instance.clearGroup() // Also clears channel
+        StateController.instance.clearChannel()
         self.user = nil
         self.userId = nil
         

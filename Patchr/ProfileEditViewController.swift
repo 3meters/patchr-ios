@@ -46,7 +46,7 @@ class ProfileEditViewController: BaseEditViewController {
     }
 
     /*--------------------------------------------------------------------------------------------
-    * Lifecycle
+    * MARK: - Lifecycle
     *--------------------------------------------------------------------------------------------*/
 
     override func viewDidLoad() {
@@ -79,7 +79,7 @@ class ProfileEditViewController: BaseEditViewController {
     }
     
     /*--------------------------------------------------------------------------------------------
-     * Events
+     * MARK: - Events
      *--------------------------------------------------------------------------------------------*/
     
     func accountAction(sender: AnyObject) {
@@ -128,7 +128,7 @@ class ProfileEditViewController: BaseEditViewController {
     }
     
     /*--------------------------------------------------------------------------------------------
-     * Notifications
+     * MARK: - Notifications
      *--------------------------------------------------------------------------------------------*/
     
     override func photoDidChange(sender: NSNotification) {
@@ -142,7 +142,7 @@ class ProfileEditViewController: BaseEditViewController {
     }
 
     /*--------------------------------------------------------------------------------------------
-     * Methods
+     * MARK: - Methods
      *--------------------------------------------------------------------------------------------*/
 
     override func initialize() {

@@ -5,7 +5,7 @@
 
 import UIKit
 
-class GroupMiniHeaderView: BaseDetailView {
+class MiniHeaderView: BaseDetailView {
 
     var photoControl = PhotoControl()
     var title = AirLabelTitle()
@@ -34,7 +34,6 @@ class GroupMiniHeaderView: BaseDetailView {
         self.backgroundColor = Theme.colorBackgroundForm
         
         let gradient = CAGradientLayer()
-        gradient.frame = CGRect(x: 0, y: 0, width: Config.navigationDrawerWidth, height: 24)
         gradient.colors = [Colors.accentColor.cgColor, Colors.brandColor.cgColor]
         gradient.startPoint = CGPoint(x: 0.0, y: 0.5)
         gradient.endPoint = CGPoint(x: 1.0, y: 0.5)
@@ -91,28 +90,27 @@ class GroupMiniHeaderView: BaseDetailView {
         }
     }
     
-    func bind(group: FireGroup?) {
+    func bind(channel: FireChannel?) {
         
         self.title.text?.removeAll(keepingCapacity: false)
         self.subtitle.text?.removeAll(keepingCapacity: false)
 
-        if group != nil {
-            self.title.text = group!.title
-            if group!.role != nil {
-                self.subtitle.text = "as \(group!.role!)"
+        if channel != nil {
+            self.title.text = channel!.title
+            if channel!.role != nil {
+                self.subtitle.text = "as \(channel!.role!)"
             }
-            if let photo = group!.photo {
+            if let photo = channel!.photo {
                 let url = ImageProxy.url(photo: photo, category: SizeCategory.profile)
-                self.photoControl.bind(url: url, name: nil, colorSeed: group!.id)
+                self.photoControl.bind(url: url, name: nil, colorSeed: channel!.id)
             }
             else {
-                self.photoControl.bind(url: nil, name: group!.title, colorSeed: group!.id)
+                self.photoControl.bind(url: nil, name: channel!.title, colorSeed: channel!.id)
             }
         }
         else {
             self.photoControl.bind(url: nil, name: nil, colorSeed: nil, color: Theme.colorBackgroundImage)
         }
-        
         self.setNeedsLayout()
     }
 }

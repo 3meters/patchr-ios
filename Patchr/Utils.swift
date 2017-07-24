@@ -54,12 +54,11 @@ struct Utils {
         return imageKey
     }
     
-    static func genRandomId() -> String {
-        let charCount = 9
+    static func genRandomId(digits: Int) -> String {
         let charSet = "abcdefghijklmnopqrstuvwxyz0123456789"
         let charSetSize = charSet.length
         var id = ""
-        for _ in 1...charCount {
+        for _ in 1...digits {
             let randPos = floorf(Float(arc4random_uniform(UInt32(charSetSize))))
             id += charSet[Int(randPos)]
         }

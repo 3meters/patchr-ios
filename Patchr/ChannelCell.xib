@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="11762" systemVersion="15G31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11757"/>
+        <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <collectionViewCell opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" id="LTM-Mi-qV7" customClass="ChannelCell" customModule="Patchr" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="224" height="259"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
+                <rect key="frame" x="0.0" y="0.0" width="224" height="259"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="F9S-ez-8WB" userLabel="PhotoView" customClass="AirImageView" customModule="Patchr" customModuleProvider="target">
+                        <rect key="frame" x="0.0" y="0.0" width="224" height="126"/>
+                        <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
+                        <constraints>
+                            <constraint firstAttribute="width" secondItem="F9S-ez-8WB" secondAttribute="height" multiplier="16:9" id="ipn-Lu-lEg"/>
+                        </constraints>
+                    </view>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Jay's Really Long Birthday Week 2017" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gaB-Un-1Af" userLabel="Title">
+                        <rect key="frame" x="8" y="130" width="208" height="33.5"/>
+                        <fontDescription key="fontDescription" name="HelveticaNeue-Light" family="Helvetica Neue" pointSize="14"/>
+                        <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="2" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="h5i-BT-PQD" userLabel="Badge">
+                        <rect key="frame" x="8" y="8" width="22" height="22"/>
+                        <color key="backgroundColor" red="1" green="0.50196078430000002" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="22" id="2UZ-ZK-HE8"/>
+                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="22" id="twK-8X-jD4"/>
+                        </constraints>
+                        <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="14"/>
+                        <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                        <nil key="highlightedColor"/>
+                        <userDefinedRuntimeAttributes>
+                            <userDefinedRuntimeAttribute type="color" keyPath="borderColor">
+                                <color key="value" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                            </userDefinedRuntimeAttribute>
+                            <userDefinedRuntimeAttribute type="number" keyPath="borderWidth">
+                                <real key="value" value="0.75"/>
+                            </userDefinedRuntimeAttribute>
+                        </userDefinedRuntimeAttributes>
+                    </label>
+                </subviews>
+            </view>
+            <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+            <constraints>
+                <constraint firstItem="F9S-ez-8WB" firstAttribute="leading" secondItem="LTM-Mi-qV7" secondAttribute="leading" id="1rk-lL-gCu"/>
+                <constraint firstItem="gaB-Un-1Af" firstAttribute="top" secondItem="F9S-ez-8WB" secondAttribute="bottom" constant="4" id="Czt-VW-B72"/>
+                <constraint firstItem="F9S-ez-8WB" firstAttribute="top" secondItem="LTM-Mi-qV7" secondAttribute="top" id="SJV-iK-aL4"/>
+                <constraint firstItem="h5i-BT-PQD" firstAttribute="leading" secondItem="LTM-Mi-qV7" secondAttribute="leading" constant="8" id="YUH-6f-MMg"/>
+                <constraint firstItem="gaB-Un-1Af" firstAttribute="leading" secondItem="LTM-Mi-qV7" secondAttribute="leading" constant="8" id="erf-sR-gn6"/>
+                <constraint firstItem="gaB-Un-1Af" firstAttribute="bottom" relation="lessThanOrEqual" secondItem="LTM-Mi-qV7" secondAttribute="bottom" id="gL4-Ip-8nZ"/>
+                <constraint firstItem="gaB-Un-1Af" firstAttribute="trailing" secondItem="LTM-Mi-qV7" secondAttribute="trailing" constant="-8" id="ih5-KA-YMf"/>
+                <constraint firstItem="F9S-ez-8WB" firstAttribute="trailing" secondItem="LTM-Mi-qV7" secondAttribute="trailing" id="wpa-4j-gWa"/>
+                <constraint firstItem="h5i-BT-PQD" firstAttribute="top" secondItem="LTM-Mi-qV7" secondAttribute="top" constant="8" id="zRj-f1-ZTd"/>
+            </constraints>
+            <size key="customSize" width="201" height="259"/>
+            <connections>
+                <outlet property="badge" destination="h5i-BT-PQD" id="8G7-1q-Elb"/>
+                <outlet property="photoView" destination="F9S-ez-8WB" id="xiI-Dk-K02"/>
+                <outlet property="titleLabel" destination="gaB-Un-1Af" id="OtB-eC-pvp"/>
+            </connections>
+            <point key="canvasLocation" x="-283" y="-103.5"/>
+        </collectionViewCell>
+    </objects>
+</document>

@@ -5,7 +5,6 @@ plugin 'cocoapods-keys', {
   :project => "Patchr",
   :targets => ["Patchr","Patchr-Dev"],
   :keys => [
-    "AwsS3Secret",              # p1
     "BingSubscriptionKey",      # p1
     "CreativeSdkClientSecret",  # p2
     "BranchKey"                 # p3

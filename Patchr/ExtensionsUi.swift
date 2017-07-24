@@ -52,6 +52,17 @@ extension UIImage {
         UIGraphicsEndImageContext();
         return normalizedImage;
     }
+    
+    class func imageWithColor(color: UIColor) -> UIImage {
+        let rect = CGRect(origin: CGPoint(x: 0, y:0), size: CGSize(width: 1, height: 1))
+        UIGraphicsBeginImageContext(rect.size)
+        let context = UIGraphicsGetCurrentContext()!
+        context.setFillColor(color.cgColor)
+        context.fill(rect)
+        let image = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        return image!
+    }
 }
 
 extension UIAlertController {
@@ -277,6 +288,12 @@ extension UIViewController {
         return NSStringFromClass(self.classForCoder).components(separatedBy: ".").last!
     }
     
+    var chromeHeight: CGFloat {
+        let statusHeight = UIApplication.shared.statusBarFrame.size.height
+        let navigationHeight = self.navigationController?.navigationBar.height() ?? 44
+        return (statusHeight + navigationHeight)
+    }
+    
     // Returns the most recently presented UIViewController (visible)
     class func topMostViewController() -> UIViewController? {
         
@@ -469,17 +486,6 @@ extension UITabBarController {
             return selected.shouldAutorotate
         }
         return super.shouldAutorotate
-    }
-}
-
-extension SlideMenuController {
-    
-    override open var prefersStatusBarHidden: Bool {
-        return mainViewController?.prefersStatusBarHidden ?? false
-    }
-    
-    override open var preferredStatusBarUpdateAnimation: UIStatusBarAnimation {
-        return mainViewController?.preferredStatusBarUpdateAnimation ?? .none
     }
 }
 

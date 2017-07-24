@@ -181,7 +181,6 @@ class AccountEditViewController: BaseEditViewController {
     func updateEmail() {
         
         if let authUser = Auth.auth().currentUser,
-            let userId = UserController.instance.userId,
             let email = self.emailField.text {
             
             /* Update in firebase auth account */
@@ -189,25 +188,6 @@ class AccountEditViewController: BaseEditViewController {
                 guard let this = self else { return }
                 if error == nil {
                     authUser.sendEmailVerification()
-                    
-                    /* Update in memberships that share email */
-                    FireController.instance.updateEmail(userId: userId, email: email) { [weak self] error in
-                        guard let this = self else { return }
-                        if error == nil {
-                            if this.userNameField.text != UserController.instance.user?.username {
-                                this.verifyUsername()
-                                return
-                            }
-                            this.progress?.hide(true)
-                            this.processing = false
-                            let _ = this.navigationController?.popToRootViewController(animated: true)
-                        }
-                        else {
-                            this.progress?.hide(true)
-                            this.processing = false
-                            this.emailField.errorMessage = error!.localizedDescription
-                        }
-                    }
                 }
                 else {
                     this.progress?.hide(true)

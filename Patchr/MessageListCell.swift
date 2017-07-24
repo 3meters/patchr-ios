@@ -207,16 +207,9 @@ class MessageListCell: UITableViewCell {
         if let description = message.text {
             self.description_?.isHidden = false
             let label = self.description_ as! TTTAttributedLabel
-            if message.source == "system" {
-                label.textInsets = UIEdgeInsets(top: 0, left: 2, bottom: 0, right: 2)
-                self.description_.textColor = Colors.accentColorTextLight
-                self.description_!.font = Theme.fontTextListItalic
-            }
-            else {
-                label.textInsets = UIEdgeInsets.zero
-                self.description_?.textColor = Colors.black
-                self.description_!.font = Theme.fontTextList
-            }
+            label.textInsets = UIEdgeInsets.zero
+            self.description_?.textColor = Colors.black
+            self.description_!.font = Theme.fontTextList
             self.description_?.text = description
         }
         

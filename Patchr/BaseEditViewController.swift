@@ -84,10 +84,10 @@ class BaseEditViewController: BaseViewController, UITextFieldDelegate, UITextVie
         let imageKey = "\(Utils.genImageKey()).jpg"
         
         var photoMap = [
-            "width": Int(preparedImage.size.width), // width/height are in points...should be pixels?
+            "filename": imageKey,
             "height": Int(preparedImage.size.height),
             "source": GoogleStorage.imageSource,
-            "filename": imageKey,
+            "width": Int(preparedImage.size.width), // width/height are in points...should be pixels?
             "uploading": true ] as [String: Any]
         
         if let asset = asset as? PHAsset {
@@ -118,7 +118,6 @@ class BaseEditViewController: BaseViewController, UITextFieldDelegate, UITextVie
         
         /* Upload */
         DispatchQueue.global(qos: .userInitiated).async {
-            
             GoogleStorage.instance.upload(imageData: imageData, imageKey: imageKey) { snapshot in
                 if snapshot.status == .failure {
                     next?(snapshot.error)

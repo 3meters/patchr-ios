@@ -1,0 +1,323 @@
+//
+//  NavigationController.swift
+//
+//  Copyright (c) 2015 3meters. All rights reserved.
+//
+
+import UIKit
+import AVFoundation
+import Firebase
+import FirebaseDatabaseUI
+import FirebaseAuth
+import SlideMenuControllerSwift
+import pop
+
+class ChannelGridController: UICollectionViewController {
+    
+    var handleAuthState: AuthStateDidChangeListenerHandle!
+    
+	var totalUnreadsQuery: UnreadQuery?
+    var searchController = UISearchController(searchResultsController: nil)
+    var queryController: DataSourceController!
+    var titles: [String: String] = [:]
+
+	var searchBar: UISearchBar!
+	var searchBarHolder = UIView()
+	var searchOn = false
+    
+	var searchBarButton: UIBarButtonItem!
+	var searchButton: UIBarButtonItem!
+    var addButton: UIBarButtonItem!
+	var titleButton: UIBarButtonItem!
+    
+    fileprivate var sectionInsets: UIEdgeInsets?
+    fileprivate var cellWidth: CGFloat?
+    fileprivate var cellHeight: CGFloat?
+    fileprivate var availableWidth: CGFloat?
+
+	/*--------------------------------------------------------------------------------------------
+	* MARK: - Lifecycle
+	*--------------------------------------------------------------------------------------------*/
+
+	override func viewDidLoad() {
+		super.viewDidLoad()
+		initialize()
+		bind()
+	}
+
+	override func viewWillAppear(_ animated: Bool) {
+		super.viewWillAppear(animated)
+	}
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+    }
+
+	override func viewWillLayoutSubviews() {
+		super.viewWillLayoutSubviews()
+        self.view.fillSuperview()
+        self.collectionView?.fillSuperview()
+	}
+
+	/*--------------------------------------------------------------------------------------------
+	* MARK: - Events
+	*--------------------------------------------------------------------------------------------*/
+
+	func addAction(sender: AnyObject?) {
+
+		FireController.instance.isConnected() { connected in
+			if connected == nil || !connected! {
+				let message = "Creating a channel requires a network connection."
+				self.alert(title: "Not connected", message: message, cancelButtonTitle: "OK")
+			}
+			else {
+                Reporting.track("view_channel_new")
+				let controller = ChannelEditViewController()
+				let wrapper = AirNavigationController(rootViewController: controller)
+				controller.mode = .insert
+				self.present(wrapper, animated: true, completion: nil)
+			}
+		}
+	}
+
+	func searchAction(sender: AnyObject?) {
+		search(on: true)
+	}
+
+	/*--------------------------------------------------------------------------------------------
+	* MARK: - Notifications
+	*--------------------------------------------------------------------------------------------*/
+
+	func userDidSwitch(notification: NSNotification?) {
+		bind()
+	}
+
+	/*--------------------------------------------------------------------------------------------
+	* MARK: - Methods
+	*--------------------------------------------------------------------------------------------*/
+
+	func initialize() {
+        
+        self.handleAuthState = Auth.auth().addStateDidChangeListener() { [weak self] auth, user in
+            guard let this = self else { return }
+            if user == nil {
+                this.totalUnreadsQuery?.remove()
+            }
+            if user == nil && this.queryController != nil {
+                this.queryController.unbind()
+            }
+        }
+        
+        self.view.backgroundColor = Theme.colorBackgroundForm
+        
+        self.automaticallyAdjustsScrollViewInsets = false
+        
+        self.searchController.dimsBackgroundDuringPresentation = false
+        self.definesPresentationContext = true
+        
+        /* Search bar when toggled on */
+		self.searchBar = UISearchBar(frame: CGRect.zero)
+		self.searchBar.autocapitalizationType = .none
+		self.searchBar.backgroundColor = Colors.clear
+		self.searchBar.delegate = self
+		self.searchBar.placeholder = "Search"
+		self.searchBar.searchBarStyle = .prominent
+        if !self.searchBar!.isDescendant(of: self.view) {
+            self.view.addSubview(self.searchBar!)
+        }
+
+		for subview in self.searchBar.subviews[0].subviews {
+			if subview is UITextField {
+				subview.tintColor = Colors.accentColor
+			}
+			if subview.isKind(of: NSClassFromString("UISearchBarBackground")!) {
+				subview.alpha = 0.0
+			}
+		}
+
+		self.searchBarHolder.addSubview(self.searchBar)
+        self.searchBarButton = UIBarButtonItem(customView: self.searchBarHolder) // Used when search is visible
+        
+        /* Scroll inset */
+        self.sectionInsets = UIEdgeInsets(top: self.searchBar!.frame.size.height + 12, left: 8, bottom: 16, right: 8)
+        
+        /* Calculate desired cell size */
+        self.availableWidth = Config.screenWidth - (self.sectionInsets!.left + self.sectionInsets!.right)
+        let requestedColumnWidth: CGFloat = 100
+        let numColumns: CGFloat = floor(CGFloat(self.availableWidth!) / CGFloat(requestedColumnWidth))
+        let spaceLeftOver = self.availableWidth! - (numColumns * requestedColumnWidth) - ((numColumns - 1) * 8)
+        self.cellWidth = requestedColumnWidth + (spaceLeftOver / numColumns)
+        self.cellHeight = (self.cellWidth! * 0.65) + 32
+        
+        let layout = UICollectionViewFlowLayout()
+        layout.itemSize = CGSize(width: self.cellWidth!, height: self.cellHeight!)
+        layout.sectionInset = self.sectionInsets!
+        layout.minimumInteritemSpacing = 8
+        layout.minimumLineSpacing = 8
+        
+        self.collectionView!.collectionViewLayout = layout
+        
+        self.collectionView!.backgroundColor = Theme.colorBackgroundForm
+        self.collectionView!.contentInset = UIEdgeInsets(top: self.chromeHeight, left: 0, bottom: 44, right: 0)
+        self.collectionView!.contentOffset = CGPoint(x: 0, y: -self.chromeHeight)
+        self.collectionView!.register(UINib(nibName: "ChannelCell", bundle: nil), forCellWithReuseIdentifier: "cell")
+        
+        /* Buttons (*/
+		self.searchButton = UIBarButtonItem(barButtonSystemItem: .search, target: self, action: #selector(searchAction(sender:)))
+        self.addButton = UIBarButtonItem(title: "Create", style: .plain, target: self, action: #selector(addAction(sender:)))
+
+        self.navigationItem.title = "Channels"
+		self.navigationItem.leftBarButtonItem = self.searchButton
+        self.navigationItem.rightBarButtonItem = self.addButton
+
+		NotificationCenter.default.addObserver(self, selector: #selector(userDidSwitch(notification:)), name: NSNotification.Name(rawValue: Events.UserDidSwitch), object: nil)
+	}
+
+	func bind() {
+
+		if let userId = UserController.instance.userId {
+
+			let query = FireController.db.child("member-channels/\(userId)").queryOrdered(byChild: "activity_at_desc")
+            
+            self.queryController = DataSourceController(name: "channel_switcher")
+            self.queryController.delegate = self
+            self.queryController.matcher = { [weak self] searchText, data in
+                guard let this = self else { return false }
+                let snap = data as! DataSnapshot
+                let key = snap.key
+                let title = this.titles[key]! as String
+                return title.lowercased().contains(searchText.lowercased())
+            }
+            
+            self.queryController.bind(to: self.collectionView!, query: query) { [weak self] scrollView, indexPath, data in
+                
+                let collectionView = scrollView as! UICollectionView
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as! ChannelCell
+                cell.reset()    // Releases previous data observers
+                
+                guard self != nil else { return cell }
+                
+                if let snap = data as? DataSnapshot {
+                    let channelId = snap.key
+                    cell.channelQuery = ChannelQuery(channelId: channelId, userId: userId)    // Just channel lookup
+                    cell.channelQuery!.observe(with: { [weak cell] error, channel in
+                        guard let cell = cell else { return }
+                        if channel != nil {
+                            cell.bind(channel: channel!)
+                            
+                            cell.unreadQuery = UnreadQuery(level: .channel, userId: userId, channelId: channelId)
+                            cell.unreadQuery!.observe(with: { [weak cell] error, total in
+                                guard let cell = cell else { return }
+                                if total != nil && total! > 0 {
+                                    cell.badge?.text = "\(total!)"
+                                    cell.badge?.isHidden = false
+                                }
+                                else {
+                                    cell.badge?.isHidden = true
+                                }
+                            })
+                        }
+                    })
+                    
+                }
+                return cell
+            }
+			self.view.setNeedsLayout()
+		}
+	}
+
+	func search(on: Bool) {
+		self.searchOn = on
+		if on {
+            self.queryController.filterActive = true
+			self.navigationItem.setLeftBarButton(self.searchBarButton, animated: true)
+			self.navigationItem.setRightBarButtonItems(nil, animated: true)
+			self.searchBarHolder.frame = CGRect(x: 0, y: 0, width: (self.navigationController?.navigationBar.width())! - 24, height: 44)
+			self.searchBar.fillSuperview()
+			self.searchBar.becomeFirstResponder()
+		}
+		else {
+            self.searchBar?.setShowsCancelButton(false, animated: true)
+            self.searchBar?.endEditing(true)
+            self.queryController.filterActive = false
+            self.queryController.filter(searchText: nil)
+			self.navigationItem.setLeftBarButton(self.searchButton, animated: true)
+			self.navigationItem.setRightBarButton(self.addButton, animated: true)
+			self.searchBar.resignFirstResponder()
+		}
+	}
+    
+    func scrollToFirstRow(animated: Bool = true) {
+        let indexPath = IndexPath(row: 0, section: 0)
+        self.collectionView?.scrollToItem(at: indexPath, at: .top, animated: true)
+    }
+}
+
+extension ChannelGridController: FUICollectionDelegate {
+    
+    func arrayDidEndUpdates(_ collection: FUICollection) {
+        self.titles.removeAll()
+        for data in self.queryController.items {
+            let snap = data as! DataSnapshot // Membership
+            let channelId = snap.key
+            let path = "channels/\(channelId)"
+            FireController.db.child(path).observeSingleEvent(of: .value, with: { snap in
+                let channel = FireChannel(dict: snap.value as! [String: Any], id: snap.key)
+                self.titles[channel.id!] = channel.title!
+            })
+        }
+    }
+}
+
+extension ChannelGridController {
+    
+    override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) -> Void {
+        /*
+         * Create browser (must be done each time photo browser is displayed. Photo
+         * browser objects cannot be re-used)
+         */
+        Reporting.track("select_channel")
+        
+        let cell = collectionView.cellForItem(at: indexPath) as! ChannelCell
+        let channelId = cell.channel.id!
+        if channelId != StateController.instance.channelId {
+            StateController.instance.setChannelId(channelId: channelId)
+            MainController.instance.showChannel(channelId: channelId, animated: true)
+        }
+        
+        if let indexPath = self.collectionView?.indexPathsForSelectedItems?[0] {
+            self.collectionView?.deselectItem(at: indexPath, animated: false)
+        }
+    }
+    
+    func collectionView(_ collectionView: UICollectionView
+        , layout collectionViewLayout: UICollectionViewLayout
+        , sizeForItemAt indexPath: IndexPath) -> CGSize {
+        return CGSize(width: self.cellWidth!, height: self.cellHeight!)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView
+        , layout collectionViewLayout: UICollectionViewLayout
+        , insetForSectionAt section: Int) -> UIEdgeInsets {
+        return self.sectionInsets!
+    }
+}
+
+extension ChannelGridController: UISearchBarDelegate {
+
+	func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
+		self.searchBar?.setShowsCancelButton(true, animated: true)
+	}
+
+	func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        self.queryController.filter(searchText: searchText.isEmpty ? nil : searchText)
+	}
+
+	func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
+		self.searchBar?.text = nil
+	}
+
+	func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+		search(on: false)
+	}
+}

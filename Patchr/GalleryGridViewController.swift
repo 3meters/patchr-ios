@@ -47,7 +47,6 @@ class GalleryGridViewController: UICollectionViewController {
         }
     }
     
-    fileprivate let reuseIdentifier = "ThumbnailCell"
     fileprivate var sectionInsets: UIEdgeInsets?
     fileprivate var thumbnailWidth: CGFloat?
     fileprivate var availableWidth: CGFloat?
@@ -95,7 +94,7 @@ class GalleryGridViewController: UICollectionViewController {
 	func initialize() {
 		
 		self.collectionView!.backgroundColor = Theme.colorBackgroundForm
-		self.collectionView!.register(GalleryViewCell.self, forCellWithReuseIdentifier: reuseIdentifier)
+		self.collectionView!.register(GalleryViewCell.self, forCellWithReuseIdentifier: "ThumbnailCell")
         
 		if let layout = self.collectionViewLayout as? UICollectionViewFlowLayout {
 			layout.minimumLineSpacing = 4
@@ -186,7 +185,7 @@ extension GalleryGridViewController { /* UICollectionViewDelegate, UICollectionV
     
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
 		
-		var cell = collectionView.dequeueReusableCell(withReuseIdentifier: self.reuseIdentifier, for: indexPath) as? GalleryViewCell
+		var cell = collectionView.dequeueReusableCell(withReuseIdentifier: "ThumbnailCell", for: indexPath) as? GalleryViewCell
 		
 		if cell == nil {
 			cell = GalleryViewCell()

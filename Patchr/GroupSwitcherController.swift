@@ -183,7 +183,7 @@ class GroupSwitcherController: BaseTableController {
             self.navigationItem.leftBarButtonItems = [self.titleView]
             
             let addButton = UIBarButtonItem(title: "New Group", style: .plain, target: self, action: #selector(addAction(sender:)))
-            self.toolbarItems = [Ui.spacerFlex, addButton, Ui.spacerFlex]
+            self.toolbarItems = [UI.spacerFlex, addButton, UI.spacerFlex]
             
             return
         }
@@ -224,7 +224,7 @@ class GroupSwitcherController: BaseTableController {
                 self.view.addSubview(self.tableView)
                 
                 let addButton = UIBarButtonItem(title: "New Group", style: .plain, target: self, action: #selector(self.addAction(sender:)))
-                self.toolbarItems = [Ui.spacerFlex, addButton, Ui.spacerFlex]
+                self.toolbarItems = [UI.spacerFlex, addButton, UI.spacerFlex]
                 
                 if self.presented {
                     let closeButton = UIBarButtonItem(barButtonSystemItem: .stop, target: self, action: #selector(self.closeAction(sender:)))

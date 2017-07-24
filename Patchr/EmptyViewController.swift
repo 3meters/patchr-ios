@@ -118,8 +118,4 @@ class EmptyViewController: UIViewController {
                 })
         })
     }
-    
-    override var preferredStatusBarStyle: UIStatusBarStyle {
-        return UIStatusBarStyle.lightContent
-    }
 }

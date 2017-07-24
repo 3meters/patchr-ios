@@ -46,6 +46,23 @@ struct UIShared {
 			}
 		}
 	}
+    
+    static func styleChrome(navigationBar: UINavigationBar, translucent: Bool) {
+        if translucent {
+            navigationBar.isTranslucent = true
+            navigationBar.setBackgroundImage(UIImage(), for: .default)
+            navigationBar.shadowImage = UIImage()
+            navigationBar.tintColor = Colors.white
+            navigationBar.barTintColor = Colors.clear
+        }
+        else {
+            navigationBar.isTranslucent = false
+            navigationBar.setBackgroundImage(nil, for: .default)
+            navigationBar.shadowImage = nil
+            navigationBar.tintColor = Theme.colorNavBarTint
+            navigationBar.barTintColor = Theme.colorNavBarBackground
+        }
+    }
 	
 	static func versionIsValid(versionMin: Int) -> Bool {
 		let clientVersionCode = Int(Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as! String)!

@@ -25,8 +25,8 @@ class AirMuteView: AirToggleImage {
     }
 
     func bind(channel: FireChannel) {
-        toggle(on: (channel.muted != nil && channel.muted!), animate: false)
-        self.isHidden = (channel.muted == nil || !channel.muted!)
+        toggle(on: (channel.notifications != "none"), animate: false)
+        self.isHidden = (channel.notifications == "none")
         self.superview?.superview?.superview?.setNeedsLayout() /* Don't love this hack to reach up the view heirarchy */
     }
 }

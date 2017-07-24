@@ -73,14 +73,6 @@ class BaseViewController: UIViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(viewDidBecomeActive(sender:)), name: NSNotification.Name.UIApplicationDidBecomeActive, object: nil)
 	}
 	
-    override var preferredStatusBarUpdateAnimation: UIStatusBarAnimation {
-        return UIStatusBarAnimation.slide
-    }
-    
-    override var prefersStatusBarHidden: Bool {
-        return UserDefaults.standard.bool(forKey: Prefs.statusBarHidden)
-    }
-	
 	func dismissKeyboard(sender: NSNotification) {
 		self.view.endEditing(true)
 	}

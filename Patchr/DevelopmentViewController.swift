@@ -95,8 +95,4 @@ class DevelopmentViewController: BaseViewController {
 		self.statusBarHiddenSwitch.addTarget(self, action: #selector(DevelopmentViewController.statusBarHiddenAction(sender:)), for: .touchUpInside)
 		self.clearImageCacheButton.addTarget(self, action: #selector(DevelopmentViewController.clearImageCacheAction(sender:)), for: .touchUpInside)
 	}
-    
-    override var prefersStatusBarHidden: Bool {
-        return UserDefaults.standard.bool(forKey: Prefs.statusBarHidden)
-    }
 }

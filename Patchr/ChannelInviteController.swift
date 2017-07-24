@@ -18,18 +18,16 @@ class ChannelInviteController: BaseEditViewController {
 	var heading = AirLabelTitle()
     var message = AirLabelDisplay()
     
-	var inviteMembersButton = AirButton()
-    var inviteMembersComment = AirLabelDisplay()
-	var inviteGuestsButton = AirButton()
-    var inviteGuestsComment = AirLabelDisplay()
-    var inviteListButton = AirLinkButton()
+	var inviteEditorsButton = AirButton()
+    var inviteEditorsComment = AirLabelDisplay()
+	var inviteReadersButton = AirButton()
+    var inviteReadersComment = AirLabelDisplay()
 
-    var channels: [String: Any] = [:]
     var inputChannelId: String!
-    var inputChannelName: String!
+    var inputChannelTitle: String!
     var inputAsOwner = false
     
-    var validateFor = "member"
+    var validateFor = "reader"
 	
     /*--------------------------------------------------------------------------------------------
     * Lifecycle
@@ -48,10 +46,9 @@ class ChannelInviteController: BaseEditViewController {
 		self.heading.anchorTopCenter(withTopPadding: 0, width: Config.contentWidth, height: headingSize.height)
         self.message.alignUnder(self.heading, matchingCenterWithTopPadding: 16, width: Config.contentWidth, height: messageSize.height)
         
-		self.inviteGuestsButton.alignUnder(self.message, matchingCenterWithTopPadding: 24, width: Config.contentWidth, height: 48)
-		self.inviteMembersButton.alignUnder(self.inviteGuestsButton, matchingCenterWithTopPadding: 16, width: Config.contentWidth, height: 48)
-        self.inviteListButton.alignUnder(self.inviteMembersButton, matchingCenterWithTopPadding: 16, width: Config.contentWidth, height: 48)
-		
+		self.inviteReadersButton.alignUnder(self.message, matchingCenterWithTopPadding: 24, width: Config.contentWidth, height: 48)
+		self.inviteEditorsButton.alignUnder(self.inviteReadersButton, matchingCenterWithTopPadding: 16, width: Config.contentWidth, height: 48)
+
         super.viewWillLayoutSubviews()
 	}
 	
@@ -59,19 +56,15 @@ class ChannelInviteController: BaseEditViewController {
     * Events
     *--------------------------------------------------------------------------------------------*/
     
-	func inviteMembersAction(sender: AnyObject?) {
-        self.validateFor = "members"
-		inviteMembers()
+	func inviteReadersAction(sender: AnyObject?) {
+        self.validateFor = "readers"
+        invite(role: "reader")
 	}
 	
-	func inviteGuestsAction(sender: AnyObject?) {
-        self.validateFor = "guests"
-		inviteGuests()
+	func inviteEditorsAction(sender: AnyObject?) {
+        self.validateFor = "editors"
+        invite(role: "editor")
 	}
-    
-    func inviteListAction(sender: AnyObject?) {
-        inviteList()
-    }
     
     func closeAction(sender: AnyObject?) {
         close()
@@ -79,10 +72,9 @@ class ChannelInviteController: BaseEditViewController {
     
     func doneAction(sender: AnyObject?) {
         /* Only called if part of channel create flow */
-        let groupId = StateController.instance.groupId!
         let channelId = self.inputChannelId!
-        StateController.instance.setChannelId(channelId: channelId, groupId: groupId) // We know it's good
-        MainController.instance.showChannel(channelId: channelId, groupId: groupId)
+        StateController.instance.setChannelId(channelId: channelId) // We know it's good
+        MainController.instance.showChannel(channelId: channelId)
         self.close(animated: true)
     }
 	
@@ -93,9 +85,7 @@ class ChannelInviteController: BaseEditViewController {
 	override func initialize() {
 		super.initialize()
 		
-        self.channels[self.inputChannelId] = self.inputChannelName
-        
-        self.heading.text = "Invite people to #\(self.inputChannelName!)."
+        self.heading.text = "Invite people to #\(self.inputChannelTitle!)."
 		self.heading.textAlignment = NSTextAlignment.center
 		self.heading.numberOfLines = 0
         
@@ -106,76 +96,56 @@ class ChannelInviteController: BaseEditViewController {
         
         if self.flow == .internalCreate {
             
-            self.inviteGuestsButton.setTitle("Invite contacts as guests".uppercased(), for: .normal)
-            self.inviteGuestsButton.imageRight = UIImageView(image: UIImage(named: "imgArrowRightLight"))
-            self.inviteGuestsButton.imageRight?.bounds.size = CGSize(width: 10, height: 14)
-            self.inviteGuestsButton.rightPadding = 12
-            self.inviteGuestsButton.addTarget(self, action: #selector(inviteGuestsAction(sender:)), for: .touchUpInside)
+            self.inviteReadersButton.setTitle("Invite contacts as readers".uppercased(), for: .normal)
+            self.inviteReadersButton.imageRight = UIImageView(image: UIImage(named: "imgArrowRightLight"))
+            self.inviteReadersButton.imageRight?.bounds.size = CGSize(width: 10, height: 14)
+            self.inviteReadersButton.rightPadding = 12
+            self.inviteReadersButton.addTarget(self, action: #selector(inviteReadersAction(sender:)), for: .touchUpInside)
             
-            self.inviteMembersButton.setTitle("Invite group members".uppercased(), for: .normal)
-            self.inviteMembersButton.imageRight = UIImageView(image: UIImage(named: "imgArrowRightLight"))
-            self.inviteMembersButton.imageRight?.bounds.size = CGSize(width: 10, height: 14)
-            self.inviteMembersButton.rightPadding = 12
-            self.inviteMembersButton.addTarget(self, action: #selector(inviteMembersAction(sender:)), for: .touchUpInside)
+            self.inviteEditorsButton.setTitle("Invite contacts as editors".uppercased(), for: .normal)
+            self.inviteEditorsButton.imageRight = UIImageView(image: UIImage(named: "imgArrowRightLight"))
+            self.inviteEditorsButton.imageRight?.bounds.size = CGSize(width: 10, height: 14)
+            self.inviteEditorsButton.rightPadding = 12
+            self.inviteEditorsButton.addTarget(self, action: #selector(inviteEditorsAction(sender:)), for: .touchUpInside)
             
             self.contentHolder.addSubview(self.heading)
             self.contentHolder.addSubview(self.message)
-            self.contentHolder.addSubview(self.inviteGuestsButton)
-            self.contentHolder.addSubview(self.inviteMembersButton)
+            self.contentHolder.addSubview(self.inviteReadersButton)
+            self.contentHolder.addSubview(self.inviteEditorsButton)
             
             let doneButton = UIBarButtonItem(title: "Done", style: UIBarButtonItemStyle.plain, target: self, action: #selector(doneAction(sender:)))
             self.navigationItem.rightBarButtonItems = [doneButton]
         }
         else {
             
-            self.inviteGuestsButton.setTitle("Invite contacts as guests".uppercased(), for: .normal)
-            self.inviteGuestsButton.imageRight = UIImageView(image: UIImage(named: "imgArrowRightLight"))
-            self.inviteGuestsButton.imageRight?.bounds.size = CGSize(width: 10, height: 14)
-            self.inviteGuestsButton.rightPadding = 12
-            self.inviteGuestsButton.addTarget(self, action: #selector(inviteGuestsAction(sender:)), for: .touchUpInside)
+            self.inviteReadersButton.setTitle("Invite contacts as readers".uppercased(), for: .normal)
+            self.inviteReadersButton.imageRight = UIImageView(image: UIImage(named: "imgArrowRightLight"))
+            self.inviteReadersButton.imageRight?.bounds.size = CGSize(width: 10, height: 14)
+            self.inviteReadersButton.rightPadding = 12
+            self.inviteReadersButton.addTarget(self, action: #selector(inviteReadersAction(sender:)), for: .touchUpInside)
             
-            self.inviteMembersButton.setTitle("Invite group members".uppercased(), for: .normal)
-            self.inviteMembersButton.imageRight = UIImageView(image: UIImage(named: "imgArrowRightLight"))
-            self.inviteMembersButton.imageRight?.bounds.size = CGSize(width: 10, height: 14)
-            self.inviteMembersButton.rightPadding = 12
-            self.inviteMembersButton.addTarget(self, action: #selector(inviteMembersAction(sender:)), for: .touchUpInside)
-            
-            self.inviteListButton.setTitle("Pending invites".uppercased(), for: .normal)
-            self.inviteListButton.addTarget(self, action: #selector(inviteListAction(sender:)), for: .touchUpInside)
-            
+            self.inviteEditorsButton.setTitle("Invite contacts as editors".uppercased(), for: .normal)
+            self.inviteEditorsButton.imageRight = UIImageView(image: UIImage(named: "imgArrowRightLight"))
+            self.inviteEditorsButton.imageRight?.bounds.size = CGSize(width: 10, height: 14)
+            self.inviteEditorsButton.rightPadding = 12
+            self.inviteEditorsButton.addTarget(self, action: #selector(inviteEditorsAction(sender:)), for: .touchUpInside)
+
             self.contentHolder.addSubview(self.heading)
             self.contentHolder.addSubview(self.message)
-            self.contentHolder.addSubview(self.inviteGuestsButton)
-            self.contentHolder.addSubview(self.inviteMembersButton)
-            self.contentHolder.addSubview(self.inviteListButton)
-            
+            self.contentHolder.addSubview(self.inviteReadersButton)
+            self.contentHolder.addSubview(self.inviteEditorsButton)
+
             let closeButton = UIBarButtonItem(barButtonSystemItem: .stop, target: self, action: #selector(closeAction(sender:)))
             self.navigationItem.leftBarButtonItems = [closeButton]
         }
 	}
-    
-    func inviteList() {
-        let controller = InviteListController()
-        self.navigationController?.pushViewController(controller, animated: true)
-    }
-    
-    func inviteGuests() {
+
+    func invite(role: String) {
         let controller = ContactPickerController()
         controller.flow = self.flow
-        controller.inputRole = "guests"
+        controller.inputRole = role
         controller.inputChannelId = self.inputChannelId
-        controller.inputChannelName = self.inputChannelName
-        controller.inputGroupId = StateController.instance.groupId!
-        controller.inputGroupTitle = StateController.instance.group.title
-        self.navigationController?.pushViewController(controller, animated: true)
-    }
-    
-    func inviteMembers() {
-        let controller = MemberPickerController()
-        controller.flow = self.flow
-        controller.inputAsOwner = self.inputAsOwner
-        controller.inputChannelId = self.inputChannelId
-        controller.inputChannelName = self.inputChannelName
+        controller.inputChannelTitle = self.inputChannelTitle
         self.navigationController?.pushViewController(controller, animated: true)
     }
 }

@@ -13,12 +13,11 @@ typealias CompletionBlock = (_ response: Any?, _ error: NSError?) -> Void
 
 struct Ids {
     static let appleAppId = "983436323"
-    static let awsAccessKey = "AKIAIYU2FPHC2AOUG3CA"
     static let creativeClientId = "924463f8481c4941a773fc9610fac9dd"
     static let keychainGroup = "7542324V6B.com.3meters.patchr.ios"// Team id + bundle id
 }
 
-struct Ui {
+struct UI {
     static var mailComposer: MFMailComposeViewController? = MFMailComposeViewController()
     static let spacerFlex = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
     static let spacerFixed = UIBarButtonItem(barButtonSystemItem: .fixedSpace, target: nil, action: nil)
@@ -51,14 +50,6 @@ struct Config {
     static let imageDimensionMax = CGFloat(1600)
     static let contentWidthMax = CGFloat(462)
     static let contentWidth = CGFloat(288)
-    static let sideMenuWidth = CGFloat(260)
-    
-    static var navigationDrawerWidth: CGFloat {
-        if isWidthNarrow {
-            return CGFloat(300)
-        }
-        return min((screenWidth - 96), CGFloat(384))
-    }
     
     static let typingInterval = CGFloat(12.0)
 
@@ -118,8 +109,7 @@ public struct Prefs {
     
     /* Per user */
     static let soundEffects = "sound_effects"
-    static let lastGroupId = "last_group_id"
-    static let lastChannelIds = "last_channel_ids"
+    static let lastChannelId = "last_channel_id"
     static let searchHistory = "search_history"
     
     /* Developer */
@@ -128,14 +118,9 @@ public struct Prefs {
 }
 
 public struct Events {
-    static let ChannelDidSwitch = "ChannelDidSwitch"
     static let ChannelDidUpdate = "ChannelDidUpdate"
     static let ChannelConnected = "ChannelConnected"
     static let ChannelDisconnected = "ChannelDisconnected"
-    static let GroupDidSwitch = "GroupDidSwitch"
-    static let GroupDidUpdate = "GroupDidUpdate"
-    static let GroupConnected = "GroupConnected"
-    static let GroupDisconnected = "GroupDisconnected"
     static let LeftDidClose = "LeftDidClose"
     static let LeftWillOpen = "LeftWillOpen"
     static let RightDidClose = "RightDidClose"

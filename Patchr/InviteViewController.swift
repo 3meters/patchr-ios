@@ -103,7 +103,7 @@ class InviteViewController: BaseEditViewController {
 		self.heading.textAlignment = NSTextAlignment.center
 		self.heading.numberOfLines = 0
         
-        if self.flow == .onboardCreate || self.flow == .internalCreate {
+        if self.flow == .onboardSignup || self.flow == .internalCreate {
             /*
              * Invite dialog doesn't show if user is already a member or pending.
              */

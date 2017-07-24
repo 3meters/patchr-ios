@@ -55,8 +55,6 @@ class Snow {
     
 	let colorRule                   = Colors.gray85pcntColor
 	let colorRuleActive             = Colors.accentColorRule
-	let colorTint                   = Colors.brandColorTextLight
-	let colorTabBarTint             = Colors.brandColorTextLight
 	let colorShadow					= Colors.gray80pcntColor
 	let colorSeparator				= Colors.gray90pcntColor
 	let colorScrimInvite            = UIColor(red: CGFloat(0), green: CGFloat(0), blue: CGFloat(0), alpha: CGFloat(0.15))
@@ -67,6 +65,12 @@ class Snow {
 	let colorActionOff              = Colors.brandColorTextDark
 	let colorActivityIndicator      = Colors.brandColor
 	let colorActivityIndicatorImage = Colors.brandColor
+    
+    let colorTint                   = Colors.brandColorTextLight
+    let colorTabBarTint             = Colors.brandColor
+    let colorTabBarBackground       = Colors.accentColor
+    let colorNavBarTint             = Colors.white
+    let colorNavBarBackground       = Colors.accentColor
 
 	let colorButtonRadioTitle				= Colors.black
 	let colorButtonRadioIcon				= Colors.black
@@ -116,6 +120,8 @@ class Snow {
 	let dimenButtonCornerRadius = CGFloat(4)
 	let dimenButtonBorderWidth = CGFloat(0.5)
 	let dimenRuleThickness = CGFloat(1.0)
+    
+    let styleStatusBar = UIStatusBarStyle.lightContent
 }
 
 public struct Colors {

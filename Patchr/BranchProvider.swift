@@ -21,73 +21,19 @@ class BranchProvider: NSObject {
     
     typealias CompletionBlock = (_ response: AnyObject?, _ error: NSError?) -> Void
     
-    static func inviteMember(groupId: String, groupTitle: String, username: String?, email: String, inviteId: String, completion: @escaping CompletionBlock) {
-        
-        let group = StateController.instance.group
-        let inviter = UserController.instance.user
-        let inviterId = UserController.instance.userId!
-        let inviterName = inviter!.profile?.fullName ?? username
-        let path = "group/\(groupId)"
-        let applink = BranchUniversalObject(canonicalIdentifier: path)
-        
-        applink.metadata?["created_at"] = DateUtils.now()
-        applink.metadata?["email"] = email
-        applink.metadata?["group_id"] = groupId
-        applink.metadata?["group_title"] = groupTitle
-        applink.metadata?["invite_id"] = inviteId
-        applink.metadata?["invited_by"] = inviterId
-        applink.metadata?["inviter_name"] = inviterName
-        
-        if let photo = inviter!.profile?.photo {
-            let photoUrl = ImageProxy.url(photo: photo, category: SizeCategory.profile)
-            applink.metadata?["inviter_photo_url"] = photoUrl
-        }
-        
-        applink.metadata?["role"] = "member"
-        
-        /* $og_title */
-        applink.title = "Invite by \(inviterName!) to the \(groupTitle) group"
-        
-        /* $og_image */
-        if let photo = group?.photo {
-            let photoUrl = ImageProxy.url(photo: photo, category: SizeCategory.profile)
-            applink.imageUrl = photoUrl.absoluteString
-        }
-        
-        /* $og_description */
-        applink.contentDescription = "Group messaging for control freaks."
-        
-        let linkProperties = BranchLinkProperties()
-        linkProperties.channel = "patchr-ios"
-        linkProperties.feature = BRANCH_FEATURE_TAG_INVITE
-        
-        applink.getShortUrl(with: linkProperties, andCallback: { url, error in
-            if error != nil {
-                completion(nil, error as NSError?)
-            }
-            else {
-                Log.d("Branch member invite link created: \(url!)", breadcrumb: true)
-                let invite: InviteItem = InviteItem(group: nil, url: url!)
-                completion(invite, nil)
-            }
-        })
-    }
-    
-    static func inviteGuest(group: FireGroup, channel: [String: Any], email: String, inviteId: String, completion: @escaping CompletionBlock) {
+    static func invite(channel: [String: Any], email: String, role: String, message: String?) {
         
         let inviter = UserController.instance.user
         let inviterId = UserController.instance.userId!
         let inviterName = inviter!.profile?.fullName ?? UserController.instance.user?.username
-        let path = "group/\(group.id!)"
+        let path = "channel/\(channel["id"]!)"
         let applink = BranchUniversalObject(canonicalIdentifier: path)
         
         applink.metadata?["channel_id"] = channel["id"]
-        applink.metadata?["channel_name"] = channel["name"]
+        applink.metadata?["channel_title"] = channel["title"]
         applink.metadata?["created_at"] = DateUtils.now()
+        applink.metadata?["code"] = channel["code"]
         applink.metadata?["email"] = email
-        applink.metadata?["group_id"] = group.id!
-        applink.metadata?["group_title"] = group.title!
-        applink.metadata?["invite_id"] = inviteId
         applink.metadata?["invited_by"] = inviterId
         applink.metadata?["inviter_name"] = inviterName
         
@@ -96,13 +42,13 @@ class BranchProvider: NSObject {
             applink.metadata?["inviter_photo_url"] = photoUrl
         }
         
-        applink.metadata?["role"] = "guest"
+        applink.metadata?["role"] = role
         
         /* $og_title */
-        applink.title = "Invite by \(inviterName!) to the \(channel["name"]) channel"
+        applink.title = "Invite by \(inviterName!) to the \(channel["title"]) channel"
         
         /* $og_description */
-        applink.contentDescription = "Group messaging for control freaks."
+        applink.contentDescription = message ?? "\(inviterName!) has invited you to the \(channel["title"]) channel."
         
         let linkProperties = BranchLinkProperties()
         linkProperties.channel = "patchr-ios"
@@ -110,12 +56,10 @@ class BranchProvider: NSObject {
         
         applink.getShortUrl(with: linkProperties, andCallback: { url, error in
             if error != nil {
-                completion(nil, error as NSError?)
+                Log.d("Error creating invite link", breadcrumb: true)
             }
             else {
-                Log.d("Branch guest invite link created: \(url)", breadcrumb: true)
-                let invite: InviteItem = InviteItem(group: nil, url: url!)
-                completion(invite, nil)
+                Log.d("Branch invite link created: \(url)", breadcrumb: true)
             }
         })
     }
@@ -123,11 +67,11 @@ class BranchProvider: NSObject {
 
 class InviteItem: NSObject, UIActivityItemSource {
     
-    var group: FireGroup?
+    var channel: FireChannel?
     var url: String
     
-    init(group: FireGroup?, url: String) {
-        self.group = group
+    init(channel: FireChannel?, url: String) {
+        self.channel = channel
         self.url = url
     }
     
@@ -142,7 +86,7 @@ class InviteItem: NSObject, UIActivityItemSource {
     }
     
     func activityViewController(_ activityViewController: UIActivityViewController, itemForActivityType activityType: UIActivityType) -> Any? {
-        let text = "\(UserController.instance.user?.profile?.fullName) has invited you to the \(self.group?.title!) group!"
+        let text = "\(UserController.instance.user?.profile?.fullName) has invited you to the \(self.channel?.title!) channel!"
         return text
     }
     
@@ -154,7 +98,7 @@ class InviteItem: NSObject, UIActivityItemSource {
          * Apple message calls this (I believe as an alternative if nothing provided via itemForActivityType).
          */
         if activityType == UIActivityType.mail {
-            return "Invitation to the \(self.group!.title!) group"
+            return "Invitation to the \(self.channel!.title!) channel"
         }
         return ""
     }

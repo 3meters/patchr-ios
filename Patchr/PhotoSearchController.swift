@@ -111,7 +111,7 @@ class PhotoSearchController: UICollectionViewController, UITableViewDelegate, UI
 			let statusHeight = UIApplication.shared.statusBarFrame.size.height
 
             self.searchBarBoundsY = navHeight + statusHeight
-            self.searchBar = UISearchBar(frame: CGRect(x:0, y:self.searchBarBoundsY!, width: Config.screenWidth, height:44))
+            self.searchBar = UISearchBar(frame: CGRect(x:0, y:0, width: Config.screenWidth, height:44))
             self.searchBar!.autocapitalizationType = .none
             self.searchBar!.delegate = self
             self.searchBar!.placeholder = "Search for photos"

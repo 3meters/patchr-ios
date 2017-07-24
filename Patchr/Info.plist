@@ -151,7 +151,7 @@
 	<key>UIRequiresPersistentWiFi</key>
 	<true/>
 	<key>UIStatusBarHidden</key>
-	<true/>
+	<false/>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
@@ -159,7 +159,7 @@
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
-	<true/>
+	<false/>
 	<key>branch_app_domain</key>
 	<string>bvvb.app.link</string>
 	<key>branch_key</key>

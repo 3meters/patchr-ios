@@ -13,8 +13,13 @@ class AirImageView: FLAnimatedImageView {
 
     var progressView: DALabeledCircularProgressView!
     
-    var gradientHeightPcnt = CGFloat(0.35)
+    var gradientColorTop = UIColor(red: CGFloat(0), green: CGFloat(0), blue: CGFloat(0), alpha: CGFloat(0.33))
+    var gradientColorMiddle1 = UIColor(red: CGFloat(0), green: CGFloat(0), blue: CGFloat(0), alpha: CGFloat(0.0))
+    var gradientColorMiddle2 = UIColor(red: CGFloat(0), green: CGFloat(0), blue: CGFloat(0), alpha: CGFloat(0.0))
+    var gradientColorBottom = UIColor(red: CGFloat(0), green: CGFloat(0), blue: CGFloat(0), alpha: CGFloat(0.66))
+    var gradientHeightPcnt = CGFloat(1.0)
     var gradientLayer: CAGradientLayer!
+    
     var asset: Any? // Holds extra metadata when image is from device library
     var fromUrl: URL! {
         didSet {
@@ -36,11 +41,11 @@ class AirImageView: FLAnimatedImageView {
             if showGradient {
                 if self.gradientLayer == nil {
                     self.gradientLayer = CAGradientLayer()
-                    let topColor: UIColor = UIColor(red: CGFloat(0), green: CGFloat(0), blue: CGFloat(0), alpha: CGFloat(0.0))        // Top
-                    let stop2Color: UIColor = UIColor(red: CGFloat(0), green: CGFloat(0), blue: CGFloat(0), alpha: CGFloat(0.33))    // Middle
-                    let bottomColor: UIColor = UIColor(red: CGFloat(0), green: CGFloat(0), blue: CGFloat(0), alpha: CGFloat(0.66))        // Bottom
-                    self.gradientLayer.colors = [topColor.cgColor, stop2Color.cgColor, bottomColor.cgColor]
-                    self.gradientLayer.locations = [0.0, 0.5, 1.0]
+                    self.gradientLayer.colors = [self.gradientColorTop.cgColor
+                        , self.gradientColorMiddle1.cgColor
+                        , self.gradientColorMiddle2.cgColor
+                        , self.gradientColorBottom.cgColor]
+                    self.gradientLayer.locations = [0.0, 0.33, 0.66, 1.0]
                     
                     /* Travels from top to bottom */
                     self.gradientLayer.startPoint = CGPoint(x: 0.5, y: 0.0)    // (0,0) upper left corner, (1,1) lower right corner
@@ -95,7 +100,7 @@ class AirImageView: FLAnimatedImageView {
     override func layoutSublayers(of layer: CALayer) {
         if layer == self.layer {
             if self.gradientLayer != nil {
-                let gradientHeight = self.height() * 0.35
+                let gradientHeight = self.height() * self.gradientHeightPcnt
                 var rect = layer.bounds
                 rect.origin.y = rect.size.height - gradientHeight
                 rect.size.height = gradientHeight

@@ -115,10 +115,6 @@ class PasswordViewController: BaseEditViewController {
             ? "Password confirmation"
             : "Almost to the good stuff."
         
-        if self.flow == .onboardCreate {
-            self.navigationItem.title = "Step 2 of 3"
-        }
-
         self.message.textColor = Theme.colorTextTitle
         self.message.numberOfLines = 0
         self.message.textAlignment = .center
@@ -182,7 +178,7 @@ class PasswordViewController: BaseEditViewController {
                 self.authenticated(user: authUser, email: email, error: error)
             }
         }
-        else {  // Only happens if creating group
+        else if self.branch == .signup {
             
             Auth.auth().createUser(withEmail: email, password: password, completion: { authUser, error in
                 
@@ -194,24 +190,12 @@ class PasswordViewController: BaseEditViewController {
                     let email = authUser.email!
                     Reporting.track("create_user_account", properties:["uid": authUser.uid])
                     UserDefaults.standard.set(email, forKey: Prefs.lastUserEmail)
+                    
                     FireController.instance.addUser(userId: authUser.uid, username: username) { [weak self] error, result in
                         guard let this = self else { return }
                         if error == nil {
                             authUser.sendEmailVerification()
-                            UserController.instance.setUserId(userId: authUser.uid) { result in
-                                if this.flow == .onboardCreate {
-                                    Reporting.track("view_group_new")
-                                    let controller = GroupCreateController()
-                                    controller.flow = this.flow
-                                    this.navigationController?.pushViewController(controller, animated: true)
-                                }
-                                else if this.flow == .onboardInvite {
-                                    Reporting.track("resume_invite")
-                                    let controller = EmptyViewController()
-                                    this.navigationController?.setViewControllers([controller], animated: true)
-                                    MainController.instance.routeDeepLink(link: (this.inputInviteLink)!, flow: this.flow, error: nil)
-                                }
-                            }
+                            this.authenticated(user: authUser, email: email, error: error)
                         }
                     }
                 }
@@ -230,19 +214,9 @@ class PasswordViewController: BaseEditViewController {
             Reporting.track("login", properties:["uid": user!.uid])
             UserController.instance.setUserId(userId: (user?.uid)!) { [weak self] result in
                 guard let this = self else { return }
-                if this.flow == .onboardLogin {
-                    Reporting.track("view_group_switcher")
-                    let controller = GroupSwitcherController()
-                    controller.flow = this.flow
-                    controller.navigationItem.backBarButtonItem = nil
-                    controller.navigationItem.hidesBackButton = true
-                    this.navigationController?.pushViewController(controller, animated: true)
-                }
-                else if this.flow == .onboardCreate {
-                    Reporting.track("view_group_new")
-                    let controller = GroupCreateController()
-                    controller.flow = this.flow
-                    this.navigationController?.pushViewController(controller, animated: true)
+                if this.flow == .onboardLogin || this.flow == .onboardSignup {
+                    Reporting.track("view_channels")
+                    MainController.instance.showMain()
                 }
                 else if this.flow == .onboardInvite {
                     Reporting.track("resume_invite")

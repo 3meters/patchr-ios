@@ -66,16 +66,4 @@ class ContainerController: UIViewController {
             controller.removeFromParentViewController()
         }
     }
-    
-    override var preferredStatusBarUpdateAnimation: UIStatusBarAnimation {        
-        return UIStatusBarAnimation.slide
-    }
-    
-    override var prefersStatusBarHidden: Bool {
-        return UserDefaults.standard.bool(forKey: Prefs.statusBarHidden)
-    }
-    
-    override var preferredStatusBarStyle: UIStatusBarStyle {
-        return self.controller.preferredStatusBarStyle
-    }
 }

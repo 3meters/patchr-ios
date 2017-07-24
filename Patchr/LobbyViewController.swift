@@ -88,23 +88,14 @@ class LobbyViewController: UIViewController {
 	}
 	
 	func signupAction(sender: AnyObject?) {
-
 		if MainController.instance.upgradeRequired {
 			UIShared.compatibilityUpgrade()
 		}
 		else {
-			FireController.instance.isConnected() { connected in
-				if connected == nil || !connected! {
-					let message = "Creating a group requires a network connection."
-					self.alert(title: "Not connected", message: message, cancelButtonTitle: "OK")
-				}
-				else {
-                    Reporting.track("view_email_form")
-					let controller = EmailViewController()
-					controller.flow = .onboardCreate
-					self.navigationController?.pushViewController(controller, animated: true)
-				}
-			}
+            Reporting.track("view_email_form")
+            let controller = EmailViewController()
+            controller.flow = .onboardSignup
+            self.navigationController?.pushViewController(controller, animated: true)
 		}
 	}
 	
@@ -135,14 +126,14 @@ class LobbyViewController: UIViewController {
 		self.appName.textAlignment = NSTextAlignment.center
 		self.view.addSubview(self.appName)
 		
-		self.buttonLogin.setTitle("Log in to an existing group", for: .normal)
+		self.buttonLogin.setTitle("Log in", for: .normal)
 		self.buttonLogin.setTitleColor(Colors.white, for: .normal)
 		self.buttonLogin.setTitleColor(Theme.colorTint, for: .highlighted)
 		self.buttonLogin.borderColor = Colors.white
 		self.buttonLogin.borderWidth = Theme.dimenButtonBorderWidth
 		self.buttonLogin.cornerRadius = Theme.dimenButtonCornerRadius
 		
-		self.buttonSignup.setTitle("Create a new Patchr group", for: .normal)
+		self.buttonSignup.setTitle("Sign up", for: .normal)
 		self.buttonSignup.setTitleColor(Colors.white, for: .normal)
 		self.buttonSignup.setTitleColor(Theme.colorTint, for: .highlighted)
 		self.buttonSignup.borderColor = Colors.white
@@ -226,15 +217,15 @@ class LobbyViewController: UIViewController {
             ]
             
             var descriptions = [
-                "Bring together the important people in your life with a Patchr group: family, work or school buddies, fantasy league, book club, you get the idea.",
-                "Select members from your contacts and we handle the rest! We will email them an invite, help them install Patchr and gently launch them into your amazing group.",
+                "Share just the right content with just the right people using Patchr channels.",
+                "Select people from your contacts and we handle the rest! We will email them an invite, help them install Patchr and gently launch them into your amazing channel.",
                 "Patchr has brilliant messaging features: photo search and editing, emoji reactions, realtime notifications, offline posting plus much more."
             ]
             
             if appFirstLaunch {
                 images.insert("imgGroupChat", at: 0)
                 titles.insert("Welcome!".uppercased(), at: 0)
-                descriptions.insert("Patchr groups are a modern way to organize all your group messaging for free!", at: 0)
+                descriptions.insert("Patchr channels are a modern and simple way to share with just the right people!", at: 0)
             }
             
             self.alertView = AlertOnboarding(arrayOfImage: images, arrayOfTitle: titles, arrayOfDescription: descriptions)
@@ -251,10 +242,6 @@ class LobbyViewController: UIViewController {
         }
         
         self.alertView.show()
-    }
-    
-    override var preferredStatusBarStyle: UIStatusBarStyle {
-        return UIStatusBarStyle.lightContent
     }
 }
 

@@ -17,18 +17,15 @@ class UnreadQuery: NSObject {
     var total: Int!
     var level: UnreadLevel!
     
-    init(level: UnreadLevel, userId: String, groupId: String? = nil, channelId: String? = nil, messageId: String? = nil) {
+    init(level: UnreadLevel, userId: String, channelId: String? = nil, messageId: String? = nil) {
         super.init()
         self.level = level
         self.path = "unreads/\(userId)"
-        if level == .group {
-            self.path = "unreads/\(userId)/\(groupId!)"
-        }
-        else if level == .channel {
-            self.path = "unreads/\(userId)/\(groupId!)/\(channelId!)"
+        if level == .channel {
+            self.path = "unreads/\(userId)/\(channelId!)"
         }
         else if level == .message {
-            self.path = "unreads/\(userId)/\(groupId!)/\(channelId!)/\(messageId!)"
+            self.path = "unreads/\(userId)/\(channelId!)/\(messageId!)"
         }
     }
     
@@ -55,22 +52,11 @@ class UnreadQuery: NSObject {
                         total = messages.count
                     }
                 }
-                else if this.level == .group {
+                else if this.level == .user {
                     let channels = snap.value as! [String: Any]
                     for channelId in channels.keys {
                         if let messages = channels[channelId] as? [String: Any] {
                             total += messages.count
-                        }
-                    }
-                }
-                else if this.level == .user {
-                    let groups = snap.value as! [String: Any]
-                    for groupId in groups.keys {
-                        let channels = groups[groupId] as! [String: Any]
-                        for channelId in channels.keys {
-                            if let messages = channels[channelId] as? [String: Any] {
-                                total += messages.count
-                            }
                         }
                     }
                 }
@@ -101,7 +87,6 @@ class UnreadQuery: NSObject {
 
 enum UnreadLevel: Int {
     case user
-    case group
     case channel
     case message
 }

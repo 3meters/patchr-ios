@@ -20,25 +20,17 @@ class UserQuery: NSObject {
 	var userId: String!
 	var user: FireUser!
 
-	var groupMembershipPath: String!
-	var groupMembershipHandle: UInt!
-	var groupMembershipMap: [String: Any]!
-	var groupMapMiss = false
-
 	var channelMembershipPath: String!
 	var channelMembershipHandle: UInt!
 	var channelMembershipMap: [String: Any]!
 	var channelMapMiss = false
 
-	init(userId: String, groupId: String? = nil, channelId: String? = nil, trackPresence: Bool = false) {
+	init(userId: String, channelId: String? = nil, trackPresence: Bool = false) {
 		super.init()
 		self.userId = userId
 		self.userPath = "users/\(userId)"
-		if groupId != nil {
-			self.groupMembershipPath = "group-members/\(groupId!)/\(userId)"
-		}
 		if channelId != nil {
-			self.channelMembershipPath = "group-channel-members/\(groupId!)/\(channelId!)/\(userId)"
+			self.channelMembershipPath = "channel-members/\(channelId!)/\(userId)"
 		}
 		if trackPresence {
 			self.onlineHandle = FireController.db.child(".info/connected").observe(.value, with: { [weak self] snap in
@@ -74,26 +66,6 @@ class UserQuery: NSObject {
 			Log.v("Permission denied trying to read user: \(this.userPath!)")
 			this.block(error, nil)
 		})
-
-		if self.groupMembershipPath != nil {
-			self.groupMembershipHandle = FireController.db.child(self.groupMembershipPath).observe(.value, with: { [weak self] snap in
-				guard let this = self else { return }
-				if let value = snap.value as? [String: Any] {
-					this.groupMembershipMap = value
-					this.notify()
-				}
-				else {
-					/* User might be fine but group was deleted */
-					this.groupMapMiss = true
-					this.user?.group?.clear()
-					this.notify()
-				}
-			}, withCancel: { [weak self] error in
-				guard let this = self else { return }
-				Log.v("Permission denied trying to read user group membership: \(this.groupMembershipPath!)")
-				this.block(error, nil)
-			})
-		}
 
 		if self.channelMembershipPath != nil {
 			self.channelMembershipHandle = FireController.db.child(self.channelMembershipPath).observe(.value, with: { [weak self] snap in
@@ -138,26 +110,6 @@ class UserQuery: NSObject {
 			this.block(error, nil)
 		})
 
-		if self.groupMembershipPath != nil {
-			FireController.db.child(self.groupMembershipPath).observeSingleEvent(of: .value, with: { [weak self] snap in
-				guard let this = self else { return }
-				if !this.fired {
-					if let value = snap.value as? [String: Any] {
-                        this.groupMembershipMap = value
-                        this.notify()
-					}
-					else {
-						this.groupMapMiss = true
-                        this.notify()
-					}
-				}
-			}, withCancel: { [weak self] error in
-				guard let this = self else { return }
-				Log.v("Permission denied trying to read user membership: \(this.groupMembershipPath!)")
-				this.block(error, nil)
-			})
-		}
-        
         if self.channelMembershipPath != nil {
             FireController.db.child(self.channelMembershipPath).observeSingleEvent(of: .value, with: { [weak self] snap in
                 guard let this = self else { return }
@@ -173,7 +125,7 @@ class UserQuery: NSObject {
                 }
                 }, withCancel: { [weak self] error in
                     guard let this = self else { return }
-                    Log.v("Permission denied trying to read user membership: \(this.groupMembershipPath!)")
+                    Log.v("Permission denied trying to read user membership: \(this.channelMembershipPath!)")
                     this.block(error, nil)
             })
         }
@@ -182,13 +134,9 @@ class UserQuery: NSObject {
     func notify() {
         guard self.user != nil else { return }
         guard self.channelMembershipPath == nil || (self.channelMembershipMap != nil || self.channelMapMiss) else { return }
-        guard self.groupMembershipPath == nil || (self.groupMembershipMap != nil || self.groupMapMiss) else { return }
         
         if self.channelMembershipMap != nil {
             self.user!.channel = ChannelMembership(dict: self.channelMembershipMap)
-        }
-        if self.groupMembershipMap != nil {
-            self.user!.group = GroupMembership(dict: self.groupMembershipMap)
         }
         self.fired = true
         self.block(nil, self.user)
@@ -200,9 +148,6 @@ class UserQuery: NSObject {
 		}
 		if self.userHandle != nil {
 			FireController.db.child(self.userPath).removeObserver(withHandle: self.userHandle)
-		}
-		if self.groupMembershipHandle != nil {
-			FireController.db.child(self.groupMembershipPath).removeObserver(withHandle: self.groupMembershipHandle)
 		}
 		if self.onlineHandle != nil {
 			FireController.db.child(".info/connected").removeObserver(withHandle: self.onlineHandle)

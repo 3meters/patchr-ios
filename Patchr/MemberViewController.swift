@@ -22,6 +22,7 @@ class MemberViewController: BaseViewController, UIScrollViewDelegate, UITextFiel
     var headerView = MemberDetailView()
     var email = AirLabelStack()
     var phone = AirLabelStack()
+    var settingsButton = AirButton()
     var editButton = AirButton()
     var callButton = AirButton()
     var messageButton = AirButton()
@@ -29,6 +30,7 @@ class MemberViewController: BaseViewController, UIScrollViewDelegate, UITextFiel
     var profileGroup = UIView()
     
     var headerHeight: CGFloat!
+    var authenticatedUser = false
     /*
      * Buttons
      * Logged in user: Message, Edit Profile
@@ -38,17 +40,38 @@ class MemberViewController: BaseViewController, UIScrollViewDelegate, UITextFiel
 	 * Lifecycle
 	 *--------------------------------------------------------------------------------------------*/
 	
+    init(userId: String?) {
+        self.inputUserId = userId
+        super.init(nibName: nil, bundle: nil) // Must call designated inititializer for super class
+    }
+    
+    required init?(coder decoder: NSCoder) {
+        fatalError("NSCoding (storyboards) not supported")
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
         initialize()
+        
+        UIShared.styleChrome(navigationBar: (self.navigationController?.navigationBar)!, translucent: true)
+        if let navigationController = self.navigationController as? AirNavigationController {
+            navigationController.statusBarView.backgroundColor = Colors.clear
+        }
+
         let userId = self.inputUserId!
-        let groupId = StateController.instance.groupId!
-        self.queryUser = UserQuery(userId: userId, groupId: groupId)
+        self.queryUser = UserQuery(userId: userId)
         self.queryUser?.observe(with: { [weak self] error, user in
             guard let this = self else { return }
             this.user = user
             this.bind()
         })
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        if self.isMovingFromParentViewController {
+            UIShared.styleChrome(navigationBar: self.navigationController!.navigationBar, translucent: false)
+        }
     }
     
 	override func viewWillLayoutSubviews() {
@@ -60,10 +83,16 @@ class MemberViewController: BaseViewController, UIScrollViewDelegate, UITextFiel
         self.contentHolder.bounds.size.width = viewWidth
         
         self.scrollView.anchorTopCenter(withTopPadding: 0, width: viewWidth, height: self.view.bounds.height)
-
         self.buttonGroup.anchorTopCenterFillingWidth(withLeftAndRightPadding: 16, topPadding: 8, height: self.buttonGroup.isHidden ? 0 : 56)
-        self.callButton.anchorCenterLeft(withLeftPadding: 0, width: self.callButton.isHidden ? 0 : buttonWidth, height: 40)
-        self.editButton.align(toTheRightOf: self.callButton, matchingCenterWithLeftPadding: 16, width: self.editButton.isHidden ? 0 : buttonWidth, height: 40)
+        
+        if self.authenticatedUser {
+            self.settingsButton.anchorCenterLeft(withLeftPadding: 0, width: buttonWidth, height: 40)
+            self.editButton.align(toTheRightOf: self.settingsButton, matchingCenterWithLeftPadding: 16, width: self.editButton.isHidden ? 0 : buttonWidth, height: 40)
+        }
+        else {
+            self.callButton.anchorCenterLeft(withLeftPadding: 0, width: self.callButton.isHidden ? 0 : buttonWidth, height: 40)
+            self.editButton.align(toTheRightOf: self.callButton, matchingCenterWithLeftPadding: 16, width: self.editButton.isHidden ? 0 : buttonWidth, height: 40)
+        }
 
         self.profileGroup.alignUnder(self.buttonGroup, matchingLeftAndRightFillingHeightWithTopPadding: 8, bottomPadding: 0)
         self.phone.anchorTopCenterFillingWidth(withLeftAndRightPadding: 0, topPadding: 0, height: self.phone.isHidden ? 0 : 64)
@@ -81,9 +110,9 @@ class MemberViewController: BaseViewController, UIScrollViewDelegate, UITextFiel
         self.queryUser?.remove()
     }
 	
-	/*--------------------------------------------------------------------------------------------
-	 * Events
-	 *--------------------------------------------------------------------------------------------*/
+    /*--------------------------------------------------------------------------------------------
+     * MARK: - Events
+     *--------------------------------------------------------------------------------------------*/
     
     func editAction(sender: AnyObject?) {
         Reporting.track("view_profile_edit")
@@ -93,13 +122,20 @@ class MemberViewController: BaseViewController, UIScrollViewDelegate, UITextFiel
         UIViewController.topMostViewController()?.present(wrapper, animated: true, completion: nil)
     }
     
+    func settingsAction(sender: AnyObject?) {
+        Reporting.track("view_settings")
+        let controller = SettingsTableViewController()
+        let wrapper = AirNavigationController(rootViewController: controller)
+        UIViewController.topMostViewController()?.present(wrapper, animated: true, completion: nil)
+    }
+    
     func emailAction(sender: AnyObject?) {
         Reporting.track("view_email_compose")
         if let email = self.user!.group.email {
             if MFMailComposeViewController.canSendMail() {
-                Ui.mailComposer!.mailComposeDelegate = self
-                Ui.mailComposer!.setToRecipients([email])
-                self.present(Ui.mailComposer!, animated: true, completion: nil)
+                UI.mailComposer!.mailComposeDelegate = self
+                UI.mailComposer!.setToRecipients([email])
+                self.present(UI.mailComposer!, animated: true, completion: nil)
             }
             else {
                 var emailURL = "mailto:\(email)"
@@ -128,30 +164,24 @@ class MemberViewController: BaseViewController, UIScrollViewDelegate, UITextFiel
     }
     
 	/*--------------------------------------------------------------------------------------------
-	* Notifications
+	* MARK: - Notifications
 	*--------------------------------------------------------------------------------------------*/
 
-
 	/*--------------------------------------------------------------------------------------------
-	* Methods
+	* MARK: - Methods
 	*--------------------------------------------------------------------------------------------*/
 	
 	override func initialize() {
 		super.initialize()
         
+        UIShared.styleChrome(navigationBar: self.navigationController!.navigationBar, translucent: true)
+        
         self.automaticallyAdjustsScrollViewInsets = false
-        let inPopup = (self.popupController != nil)
         let viewWidth = min(Config.contentWidthMax, self.view.bounds.size.width)
-        let statusHeight = UIApplication.shared.statusBarFrame.size.height
-        let navigationHeight = self.navigationController?.navigationBar.height() ?? 44
-        var chromeHeight = statusHeight + navigationHeight
-        if inPopup {
-            chromeHeight = 0
-        }
         
         self.headerHeight = viewWidth * 0.625
-        self.scrollView.contentInset = UIEdgeInsets(top: self.headerHeight + chromeHeight, left: 0, bottom: 0, right: 0)
-        self.scrollView.contentOffset = CGPoint(x: 0, y: -(self.headerHeight + chromeHeight))
+        self.scrollView.contentInset = UIEdgeInsets(top: self.headerHeight, left: 0, bottom: 0, right: 0)
+        self.scrollView.contentOffset = CGPoint(x: 0, y: -(self.headerHeight))
         updateHeaderView()
         
         self.phone.caption.text = "Phone"
@@ -166,11 +196,16 @@ class MemberViewController: BaseViewController, UIScrollViewDelegate, UITextFiel
         
         self.editButton.setTitle("Edit profile".uppercased(), for: .normal)
         self.editButton.addTarget(self, action: #selector(editAction(sender:)), for: .touchUpInside)
+        
+        self.settingsButton.setTitle("Settings".uppercased(), for: .normal)
+        self.settingsButton.addTarget(self, action: #selector(settingsAction(sender:)), for: .touchUpInside)
+
         self.callButton.setTitle("Call".uppercased(), for: .normal)
         self.callButton.addTarget(self, action: #selector(phoneAction(sender:)), for: .touchUpInside)
         
         self.buttonGroup.addSubview(self.editButton)
         self.buttonGroup.addSubview(self.callButton)
+        self.buttonGroup.addSubview(self.settingsButton)
         self.profileGroup.addSubview(self.phone)
         self.profileGroup.addSubview(self.email)
         
@@ -179,9 +214,11 @@ class MemberViewController: BaseViewController, UIScrollViewDelegate, UITextFiel
         self.contentHolder.addSubview(self.profileGroup)
         
         self.scrollView.delegate = self
+        self.authenticatedUser = (self.inputUserId == UserController.instance.userId)
         
         if self.presented {
-            let closeButton = UIBarButtonItem(barButtonSystemItem: .stop, target: self, action: #selector(closeAction(sender:)))
+            let closeButton = UIBarButtonItem(barButtonSystemItem: .stop, target: self, action: #selector(self.closeAction(sender:)))
+            closeButton.tintColor = Theme.colorNavBarTint
             self.navigationItem.leftBarButtonItems = [closeButton]
         }
 	}
@@ -202,9 +239,11 @@ class MemberViewController: BaseViewController, UIScrollViewDelegate, UITextFiel
         }
         
         self.email.isHidden = true
-        if self.user?.group.email != nil && !self.user!.group.email!.isEmpty {
-            self.email.isHidden = false
-            self.email.label.text = self.user!.group.email!
+        if self.authenticatedUser {
+            if let email = Auth.auth().currentUser?.email! {
+                self.email.isHidden = false
+                self.email.label.text = email
+            }
         }
         
         self.view?.setNeedsLayout() // Does NOT trigger layoutSubviews for header view
@@ -212,18 +251,9 @@ class MemberViewController: BaseViewController, UIScrollViewDelegate, UITextFiel
     
     func updateHeaderView() {
         var headerRect = CGRect(x: 0, y: -self.headerHeight, width: self.view.width(), height: self.headerHeight)
-        
-        let inPopup = (self.popupController != nil)
-        let statusHeight = UIApplication.shared.statusBarFrame.size.height
-        let navigationHeight = self.navigationController?.navigationBar.height() ?? 44
-        var chromeHeight = statusHeight + navigationHeight
-        if inPopup {
-            chromeHeight = 0
-        }
-
-        if self.scrollView.contentOffset.y < -(self.headerHeight + chromeHeight) {
-            headerRect.origin.y = (self.scrollView.contentOffset.y + chromeHeight)
-            headerRect.size.height = -(self.scrollView.contentOffset.y + chromeHeight)
+        if self.scrollView.contentOffset.y < -(self.headerHeight) {
+            headerRect.origin.y = (self.scrollView.contentOffset.y)
+            headerRect.size.height = -(self.scrollView.contentOffset.y)
         }
         self.headerView.frame = headerRect
     }
@@ -257,8 +287,8 @@ extension MemberViewController: MFMailComposeViewControllerDelegate {
 		}
 		
 		self.dismiss(animated: true) {
-			Ui.mailComposer = nil
-			Ui.mailComposer = MFMailComposeViewController()
+			UI.mailComposer = nil
+			UI.mailComposer = MFMailComposeViewController()
 		}
 	}
 }

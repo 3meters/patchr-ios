@@ -54,15 +54,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, MessagingDelegate {
         
         application.registerForRemoteNotifications() // Initiate the registration process with Apple Push Notification service.
         
-        /* Default config and credentials for AWS */
-        let credProvider = AWSStaticCredentialsProvider(accessKey: Ids.awsAccessKey, secretKey: PatchrKeys().awsS3Secret)
-        let serviceConfig = AWSServiceConfiguration(region: AWSRegionType(rawValue: 3/*'us-west-2'*/)!, credentialsProvider: credProvider)
-        AWSServiceManager.default().defaultServiceConfiguration = serviceConfig
-        
         #if DEBUG
-//        PDDebugger.defaultInstance().enableNetworkTrafficDebugging()
-//        PDDebugger.defaultInstance().forwardAllNetworkTraffic()
-//        PDDebugger.defaultInstance().connect(to: URL(string: "ws://192.168.0.27:9000/device"))
         AFNetworkActivityLogger.shared().startLogging()
         AFNetworkActivityLogger.shared().level = AFHTTPRequestLoggerLevel.AFLoggerLevelFatal
         #endif        
@@ -89,7 +81,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, MessagingDelegate {
         /* Setup master UI */
         MainController.instance.prepare(launchOptions: launchOptions)
         
-        /* Auto login user, initialize current group and channel state */
+        /* Auto login user, initialize current channel state */
         StateController.instance.prepare()
 
         return true
@@ -209,9 +201,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate, MessagingDelegate {
     
     func showChannel(notification: [AnyHashable: Any]?) {
         if notification != nil {
-            if let channelId = notification!["channel_id"] as? String, let groupId = notification!["group_id"] as? String {
-                StateController.instance.setChannelId(channelId: channelId, groupId: groupId)
-                MainController.instance.showChannel(channelId: channelId, groupId: groupId)
+            if let channelId = notification!["channel_id"] as? String {
+                StateController.instance.setChannelId(channelId: channelId)
+                MainController.instance.showChannel(channelId: channelId)
             }
         }
     }

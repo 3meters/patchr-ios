@@ -11,22 +11,15 @@ import CLTokenInputView
 import Contacts
 
 /* Routes
- * - Group create flow: password->groupcreate->contactpicker (.onboardCreate)
- * - Group create flow (authorized): groupswitcher->groupcreate->contactpicker (.internalCreate)
- * - Group create flow (not authorized): groupswitcher->groupcreate->invite->contactpicker (.internalCreate)
- * - Invite group member flow: memberlist->contactpicker (.internalInvite)
- * - Invite group member flow: sidemenu->contactpicker (.internalInvite)
- *
  * - Channel create flow: channelswitcher->channeledit->channelinvite->contactpicker (.internalCreate)
  * - Invite channel member flow: channelview->channelinvite->contactpicker (.none)
  */
 class ContactPickerController: BaseTableController, CLTokenInputViewDelegate {
 
-    var inputGroupId: String!
-    var inputGroupTitle: String!
     var inputChannelId: String?
-    var inputChannelName: String?
-    var inputRole: String!
+    var inputChannelTitle: String?
+    var inputRole: String! // reader || editor
+    var inputCode: String!
 
     var tokenView: AirTokenView!
     var doneButton: UIBarButtonItem!
@@ -43,7 +36,6 @@ class ContactPickerController: BaseTableController, CLTokenInputViewDelegate {
 
     var picks = [AnyHashable: Any]()
     
-    var invitedEmails = [AnyHashable: [[String: Any]]]()    // From existing invites
     var sectionTitles: [String]?
 
     let keysToFetch = [
@@ -61,10 +53,10 @@ class ContactPickerController: BaseTableController, CLTokenInputViewDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        guard self.inputGroupId != nil,
-            self.inputGroupTitle != nil,
+        guard self.inputChannelId != nil,
+            self.inputChannelTitle != nil,
             self.inputRole != nil else {
-            assertionFailure("inputGroupId, inputGroupTitle, inputRole must be set")
+            assertionFailure("inputChannelId, inputChannelTitle, inputRole must be set")
             return
         }
         initialize()
@@ -80,7 +72,6 @@ class ContactPickerController: BaseTableController, CLTokenInputViewDelegate {
         
         let navHeight = self.navigationController?.navigationBar.height() ?? 0
         let statusHeight = UIApplication.shared.statusBarFrame.size.height
-        
         self.tokenView.anchorTopCenterFillingWidth(withLeftAndRightPadding: 0, topPadding: (navHeight + statusHeight), height: tokenView.height())
         self.tableView.alignUnder(self.tokenView, matchingLeftAndRightFillingHeightWithTopPadding: 0, bottomPadding: 0)
     }
@@ -103,15 +94,8 @@ class ContactPickerController: BaseTableController, CLTokenInputViewDelegate {
         if self.picks.count > 0 {
             invite()
         }
-        else if self.flow == .onboardCreate {
-            self.navigateToGroup()
-        }
         else if self.flow == .internalCreate {
-            if self.inputChannelId != nil {
-                self.navigateToChannel()
-            } else {
-                self.navigateToGroup()
-            }
+            self.navigateToChannel()
         }
     }
     
@@ -121,10 +105,6 @@ class ContactPickerController: BaseTableController, CLTokenInputViewDelegate {
         }
     }
     
-    func inviteListAction(sender: AnyObject?) {
-        inviteList()
-    }
-
     func closeAction(sender: AnyObject?) {
         self.close()
     }
@@ -146,6 +126,10 @@ class ContactPickerController: BaseTableController, CLTokenInputViewDelegate {
     func keyboardWillHide(notification: Notification) {
         self.tableView.contentInset = UIEdgeInsetsMake(self.tableView.contentInset.top, 0, 0, 0)
         self.tableView.scrollIndicatorInsets = self.tableView.contentInset
+    }
+    
+    func dismissKeyboard(sender: NSNotification) {
+        self.view.endEditing(true)
     }
     
     /*--------------------------------------------------------------------------------------------
@@ -194,28 +178,11 @@ class ContactPickerController: BaseTableController, CLTokenInputViewDelegate {
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(notification:)), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(notification:)), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
         
-        let doneTitle = (self.flow == .internalCreate || self.flow == .onboardCreate) ? "Done" : "Invite"
+        let doneTitle = (self.flow == .internalCreate) ? "Done" : "Invite"
         self.doneButton = UIBarButtonItem(title: doneTitle, style: .plain, target: self, action: #selector(doneAction(sender:)))
-        self.doneButton.isEnabled = (self.flow == .internalCreate || self.flow == .onboardCreate) ? true : false
-        
-        if self.flow == .none {
-            let button = UIButton(type: .custom)
-            button.frame = CGRect(x:0, y:0, width:36, height:36)
-            button.addTarget(self, action: #selector(inviteListAction(sender:)), for: .touchUpInside)
-            button.showsTouchWhenHighlighted = true
-            button.setImage(UIImage(named: "imgEnvelopeLight"), for: .normal)
-            button.imageEdgeInsets = UIEdgeInsetsMake(4, 4, 4, 4)
+        self.doneButton.isEnabled = (self.flow == .internalCreate) ? true : false
+        self.navigationItem.rightBarButtonItems = [doneButton]
 
-            let invitesButton = UIBarButtonItem(title: "Pending invites", style: .plain, target: self, action: #selector(inviteListAction(sender:)))
-            let invitesIconButton = UIBarButtonItem(customView: button)
-            invitesButton.tintColor = Colors.brandColor
-            self.toolbarItems = [Ui.spacerFlex, invitesIconButton, invitesButton,  Ui.spacerFlex]
-            self.navigationItem.rightBarButtonItems = [doneButton]
-        }
-        else {
-            self.navigationItem.rightBarButtonItems = [doneButton]
-        }
-        
         if self.flow == .none {
             if self.presented {
                 let closeButton = UIBarButtonItem(barButtonSystemItem: .stop, target: self, action: #selector(closeAction(sender:)))
@@ -225,65 +192,29 @@ class ContactPickerController: BaseTableController, CLTokenInputViewDelegate {
     }
     
     func bind() {
-        
-        let groupId = StateController.instance.group?.id ?? self.inputGroupId!
-        let userId = UserController.instance.userId!
-        
-        self.invitedEmails.removeAll()
-        FireController.db.child("invites/\(groupId)/\(userId)").observeSingleEvent(of: .value, with: { snap in
-            if !(snap.value is NSNull) && snap.hasChildren() {
-                for item in snap.children  {
-                    let snapInvite = item as! DataSnapshot
-                    let map = snapInvite.value as! [String: Any]
-                    if let role = map["role"] as? String {
-                        if (self.inputRole == "members" && role == "member") ||
-                            (self.inputRole == "guests" && role == "guest") {
-                            let email = map["email"] as! String
-                            if self.invitedEmails[email] == nil {
-                                self.invitedEmails[email] = []
-                            }
-                            self.invitedEmails[email]?.append(map)
-                        }
+        if CNContactStore.authorizationStatus(for: .contacts) == .notDetermined {
+            CNContactStore().requestAccess(for: .contacts) { authorized, error in
+                if authorized {
+                    DispatchQueue.global().async {
+                        self.loadContacts()
                     }
                 }
-            }
-            
-            if CNContactStore.authorizationStatus(for: .contacts) == .notDetermined {
-                CNContactStore().requestAccess(for: .contacts) { authorized, error in
-                    if authorized {
-                        DispatchQueue.global().async {
-                            self.loadContacts()
-                        }
-                    }
-                }
-            }
-            else if CNContactStore.authorizationStatus(for: .contacts) == .authorized {
-                DispatchQueue.global().async {
-                    self.loadContacts()
-                }
-            }
-            else {
-                self.alert(title: "Access to contacts has been denied. Check your privacy settings to allow access.")
-            }
-        })
-    }
-    
-    func navigateToGroup() {
-        let groupId = self.inputGroupId!
-        FireController.instance.findGeneralChannel(groupId: groupId) { channelId in
-            if channelId != nil {
-                StateController.instance.setChannelId(channelId: channelId!, groupId: groupId)
-                MainController.instance.showChannel(channelId: channelId!, groupId: groupId)
-                self.navigationController?.close()
             }
         }
+        else if CNContactStore.authorizationStatus(for: .contacts) == .authorized {
+            DispatchQueue.global().async {
+                self.loadContacts()
+            }
+        }
+        else {
+            self.alert(title: "Access to contacts has been denied. Check your privacy settings to allow access.")
+        }
     }
-
+    
     func navigateToChannel() {
-        let groupId = self.inputGroupId!
         let channelId = self.inputChannelId!
-        StateController.instance.setChannelId(channelId: channelId, groupId: groupId)
-        MainController.instance.showChannel(channelId: channelId, groupId: groupId)
+        StateController.instance.setChannelId(channelId: channelId)
+        MainController.instance.showChannel(channelId: channelId)
         self.navigationController?.close()
     }
 
@@ -310,11 +241,6 @@ class ContactPickerController: BaseTableController, CLTokenInputViewDelegate {
         catch {
             Log.w("Error enumerating contacts: \(error.localizedDescription)")
         }
-    }
-    
-    func inviteList() {
-        let controller = InviteListController()
-        self.navigationController?.pushViewController(controller, animated: true)
     }
     
     func filterContacts() {
@@ -375,119 +301,34 @@ class ContactPickerController: BaseTableController, CLTokenInputViewDelegate {
     
     func invite() {
         
-        if self.inputRole == "members" {
-            
-            Reporting.track("invite_group_members")
-            
-            let groupId = self.inputGroupId ?? StateController.instance.groupId!
-            let groupTitle = self.inputGroupTitle ?? StateController.instance.group!.title!
-            let username = UserController.instance.user!.username!
-            let userTitle = UserController.instance.userTitle
-            let userEmail = UserController.instance.userEmail
-            let userId = UserController.instance.userId!
-            let timestamp = FireController.instance.getServerTimestamp()
-            let timestampReversed = -1 * timestamp
-            
-            for key in self.picks.keys {
-                let inviteId = "in-\(Utils.genRandomId())"
-                var email: String!
-                if let contact = self.picks[key] as? CNContact {
-                    email = contact.emailAddresses.first?.value as? String
-                } else if let contact = self.picks[key] as? String {
-                    email = contact
-                }
-                
-                BranchProvider.inviteMember(groupId: groupId
-                    , groupTitle: groupTitle
-                    , username: username
-                    , email: email!
-                    , inviteId: inviteId) { response, error in
-                    
-                    if error == nil {
-                        let inviteItem = response as! InviteItem
-                        let inviteUrl = inviteItem.url
-                        let invite: [String: Any] = [
-                            "created_at": timestamp,
-                            "created_by": userId,
-                            "email": email!,
-                            "group": ["id": groupId, "title": groupTitle],
-                            "invited_at": timestamp,
-                            "invited_at_desc": timestampReversed,
-                            "inviter": ["id": userId, "title": userTitle, "username": username, "email": userEmail],
-                            "link": inviteUrl,
-                            "role": "member",
-                            "status": "pending"]
-                        FireController.db.child("invites/\(groupId)/\(userId)/\(inviteId)").setValue(invite)
-                    }
-                }
+        Reporting.track("invite_channel_readers")
+        
+        let channel = [
+            "id": self.inputChannelId!,
+            "title": self.inputChannelTitle!,
+            "code": self.inputCode]
+        
+        for key in self.picks.keys {
+            var email: String!
+            if let contact = self.picks[key] as? CNContact {
+                email = contact.emailAddresses.first?.value as? String
+            }
+            else if let contact = self.picks[key] as? String {
+                email = contact
             }
             
-            UIShared.toast(message: "Invites sent")
-            if self.flow == .onboardCreate || self.flow == .internalCreate {
-                self.navigateToGroup()
-            }
-            else {
-                self.close()
-            }
+            BranchProvider.invite(channel: channel
+                , email: email!
+                , role: self.inputRole
+                , message: nil)
         }
-        else if self.inputRole == "guests" {
-            
-            Reporting.track("invite_channel_guests")
-            
-            let channel = [
-                "id": self.inputChannelId!,
-                "name": self.inputChannelName!]
-            let group = StateController.instance.group!
-            let groupTitle = group.title!
-            let groupId = StateController.instance.group?.id ?? self.inputGroupId!
-            let userTitle = UserController.instance.userTitle
-            let userEmail = UserController.instance.userEmail
-            let userId = UserController.instance.userId!
-            let username = UserController.instance.user?.username
-            let timestamp = FireController.instance.getServerTimestamp()
-            let timestampReversed = -1 * timestamp
-            
-            for key in self.picks.keys {
-                let inviteId = "in-\(Utils.genRandomId())"
-                var email: String!
-                if let contact = self.picks[key] as? CNContact {
-                    email = contact.emailAddresses.first?.value as? String
-                } else if let contact = self.picks[key] as? String {
-                    email = contact
-                }
-                
-                BranchProvider.inviteGuest(group: group
-                    , channel: channel
-                    , email: email!
-                    , inviteId: inviteId) { response, error in
-                    
-                    if error == nil {
-                        let inviteItem = response as! InviteItem
-                        let inviteUrl = inviteItem.url
-                        let invite: [String: Any] = [
-                            "channel": channel,
-                            "created_at": timestamp,
-                            "created_by": userId,
-                            "email": email!,
-                            "group": ["id": groupId, "title": groupTitle],
-                            "invited_at": timestamp,
-                            "invited_at_desc": timestampReversed,
-                            "inviter": ["id": userId, "title": userTitle, "username": username, "email": userEmail],
-                            "link": inviteUrl,
-                            "role": "guest",
-                            "status": "pending"]
-                        FireController.db.child("invites/\(groupId)/\(userId)/\(inviteId)").setValue(invite)
-                    }
-                }
-            }
-            
-            UIShared.toast(message: "Invites sent")
-            if self.flow == .internalCreate {
-                self.navigateToChannel()
-            }
-            else {
-                self.close()
-            }
+        
+        UIShared.toast(message: "Invites sent")
+        if self.flow == .internalCreate {
+            self.navigateToChannel()
+        }
+        else {
+            self.close()
         }
     }
 }
@@ -534,10 +375,7 @@ extension ContactPickerController: UITableViewDataSource {
             }
         }
         
-        let email = contact.emailAddresses.first?.value as String!
-        let invites: [[String: Any]]? = self.invitedEmails[email!]
-        let status = statusFromInvites(invites: invites)
-        cell.bind(contact: contact, status: status)
+        cell.bind(contact: contact)
         
         cell.checkBox?.on = false
         if let contact = cell.contact {
@@ -546,47 +384,6 @@ extension ContactPickerController: UITableViewDataSource {
         }
         
         return cell
-    }
-    
-    func statusFromInvites(invites: [[String: Any]]?) -> String {
-        
-        guard invites != nil && invites!.count > 0 else {
-            return "none"
-        }
-        
-        if self.inputRole == "members" {
-            for invite in invites! {
-                let inviteStatus = (invite["status"] as? String) ?? "none"
-                if inviteStatus == "accepted" {
-                    return "accepted"
-                }
-            }
-            return "pending"
-        }
-        else if self.inputRole == "guests" {
-            /* Do current invites cover all the targeted channels */
-            var status = "accepted"
-            let channelId = self.inputChannelId!
-            var hit = false
-            for invite in invites! {
-                let inviteStatus = invite["status"] as! String
-                if let inviteChannels = invite["channels"] as? [String: String] {
-                    for inviteChannelId in inviteChannels.keys {
-                        if inviteChannelId == channelId {
-                            hit = true
-                            if inviteStatus == "pending" {
-                                status = "pending"
-                            }
-                        }
-                    }
-                }
-            }
-            if !hit {
-                return "none"
-            }
-            return status
-        }
-        return "none"
     }
 }
 
@@ -639,7 +436,7 @@ extension ContactPickerController {
     
     func tokenInputView(_ view: CLTokenInputView, didAdd token: CLToken) {
         if self.tokenView.allTokens.count == 0 {
-            if self.flow == .internalCreate || self.flow == .onboardCreate {
+            if self.flow == .internalCreate || self.flow == .onboardSignup {
                 self.doneButton.title = "Done"
             }
             else {
@@ -647,7 +444,7 @@ extension ContactPickerController {
             }
         }
         else {
-            if self.flow == .internalCreate || self.flow == .onboardCreate {
+            if self.flow == .internalCreate || self.flow == .onboardSignup {
                 self.doneButton.title = "Invite"
             }
             else {
@@ -662,7 +459,7 @@ extension ContactPickerController {
         if self.tokenView.allTokens.count == 0 {
             self.tokenView.searchImage.fadeIn(duration: 0.1)
             self.tokenView.placeholder.fadeIn(duration: 0.1)
-            if self.flow == .internalCreate || self.flow == .onboardCreate {
+            if self.flow == .internalCreate || self.flow == .onboardSignup {
                 self.doneButton.title = "Done"
             }
             else {
@@ -670,7 +467,7 @@ extension ContactPickerController {
             }
         }
         else {
-            if self.flow == .internalCreate || self.flow == .onboardCreate {
+            if self.flow == .internalCreate || self.flow == .onboardSignup {
                 self.doneButton.title = "Invite"
             }
             else {

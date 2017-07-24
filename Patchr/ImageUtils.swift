@@ -89,7 +89,7 @@ class ImageProxy {
 	}
 
 	static func url(photo: FirePhoto, category: String) -> URL {
-		let dimension = (photo.width == nil || photo.width! >= photo.height!) ? ResizeDimension.width : ResizeDimension.height
+		let dimension = (photo.width == nil || (photo.height != nil && photo.width! >= photo.height!)) ? ResizeDimension.width : ResizeDimension.height
 		let imageSource = ImageProxy.lookupSource(source: photo.source!)
 		let url = imageSource.url(prefix: photo.filename!, category: nil)
 		return GooglePlusProxy.url(url: url, category: category, dimension: dimension)

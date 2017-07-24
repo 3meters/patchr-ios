@@ -14,18 +14,17 @@ import FirebaseDatabase
 class FireMessage: NSObject {
     
     var path: String {
-        return "group-messages/\(self.groupId!)/\(self.channelId!)/\(self.id!)"
+        return "channel-messages/\(self.channelId!)/\(self.id!)"
     }
     
     var attachments: [String: FireAttachment]?
     var channelId: String?
+    var messageId: String?
     var createdAt: Int64?
     var createdBy: String?
-    var groupId: String?
     var modifiedAt: Int64?
     var modifiedBy: String?
     var reactions: [String: [String: Bool]]?
-    var source: String? // 'system' or nil
     var text: String?
     
     // Local
@@ -41,16 +40,15 @@ class FireMessage: NSObject {
             }
         }
         self.channelId = dict["channel_id"] as? String
+        self.messageId = dict["message_id"] as? String
         self.createdAt = dict["created_at"] as? Int64
         self.createdBy = dict["created_by"] as? String
-        self.groupId = dict["group_id"] as? String
         self.id = id
         self.modifiedAt = dict["modified_at"] as? Int64
         self.modifiedBy = dict["modified_by"] as? String
         if let reactions = dict["reactions"] as? [String:[String: Bool]] {
             self.reactions = reactions
         }
-        self.source = dict["source"] as? String
         self.text = dict["text"] as? String
     }
     
@@ -65,7 +63,7 @@ class FireMessage: NSObject {
     
     func addReaction(emoji: String) {
         let userId = UserController.instance.userId!
-        let path = "group-messages/\(self.groupId!)/\(self.channelId!)/\(self.id!)/reactions/\(emoji)/\(userId)"
+        let path = "channel-messages/\(self.channelId!)/\(self.id!)/reactions/\(emoji)/\(userId)"
         FireController.db.child(path).setValue(true) { error, ref in
             if error != nil {
                 Log.w("Permission denied: \(path)")
@@ -75,7 +73,7 @@ class FireMessage: NSObject {
     
     func removeReaction(emoji: String) {
         let userId = UserController.instance.userId!
-        let path = "group-messages/\(self.groupId!)/\(self.channelId!)/\(self.id!)/reactions/\(emoji)/\(userId)"
+        let path = "channel-messages/\(self.channelId!)/\(self.id!)/reactions/\(emoji)/\(userId)"
         FireController.db.child(path).removeValue() { error, ref in
             if error != nil {
                 Log.w("Permission denied: \(path)")

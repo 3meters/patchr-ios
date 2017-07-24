@@ -17,9 +17,9 @@ class MessageQuery: NSObject {
     var messageHandle: UInt!
     var message: FireMessage!
     
-    init(channelId: String, groupId: String, messageId: String) {
+    init(channelId: String, messageId: String) {
         super.init()
-        self.messagePath = "group-messages/\(groupId)/\(channelId)/\(messageId)"
+        self.messagePath = "channel-messages/\(channelId)/\(messageId)"
     }
     
     func observe(with block: @escaping (Error?, FireMessage?) -> Swift.Void) {
@@ -46,6 +46,9 @@ class MessageQuery: NSObject {
     }
     
     func once(with block: @escaping (Error?, FireMessage?) -> Swift.Void) {
+        
+        self.block = block
+
         FireController.db.child(self.messagePath).observeSingleEvent(of: .value, with: { [weak self] snap in
             guard let this = self else { return }
             if let value = snap.value as? [String: Any] {
