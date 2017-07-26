@@ -31,21 +31,10 @@ class LobbyViewController: UIViewController {
 		initialize()
 	}
     
-	override func viewWillLayoutSubviews() {
-		super.viewWillLayoutSubviews()
-		
-		self.imageBackground.fillSuperview()
-		self.buttonGroup.anchorInCenter(withWidth: 240, height: 96)
-		self.buttonSignup.anchorTopCenterFillingWidth(withLeftAndRightPadding: 0, topPadding: 0, height: 44)
-		self.buttonLogin.anchorBottomCenterFillingWidth(withLeftAndRightPadding: 0, bottomPadding: 0, height: 44)
-        self.buttonOnboard.alignUnder(self.buttonGroup, matchingCenterWithTopPadding: 36, width: 240, height: 44)
-		self.appName.align(above: self.buttonGroup, matchingCenterWithBottomPadding: 20, width: 228, height: 48)
-	}
-	
 	override func viewWillAppear(_ animated: Bool) {
 		super.viewWillAppear(animated)
 		self.view.endEditing(true)
-		self.navigationController?.setNavigationBarHidden(true, animated: animated)
+        self.navigationController?.setNavigationBarHidden(true, animated: false)
 		if self.firstLaunch {
 			self.imageLogo.anchorInCenter(withWidth: 72, height: 72)
 		}
@@ -58,7 +47,6 @@ class LobbyViewController: UIViewController {
             showOnboarding(appFirstLaunch: true)
             appDelegate.showedLaunchOnboarding = true
         }
-		
 		if self.firstLaunch {
             startScene() {
                 self.firstLaunch = false
@@ -68,9 +56,20 @@ class LobbyViewController: UIViewController {
 	
 	override func viewWillDisappear(_ animated: Bool) {
 		super.viewWillDisappear(animated)
-		self.navigationController?.setNavigationBarHidden(false, animated: animated)
+		self.navigationController?.setNavigationBarHidden(false, animated: false)
 	}
-	
+
+    override func viewWillLayoutSubviews() {
+        super.viewWillLayoutSubviews()
+        
+        self.imageBackground.fillSuperview()
+        self.buttonGroup.anchorInCenter(withWidth: 240, height: 96)
+        self.buttonSignup.anchorTopCenterFillingWidth(withLeftAndRightPadding: 0, topPadding: 0, height: 44)
+        self.buttonLogin.anchorBottomCenterFillingWidth(withLeftAndRightPadding: 0, bottomPadding: 0, height: 44)
+        self.buttonOnboard.alignUnder(self.buttonGroup, matchingCenterWithTopPadding: 36, width: 240, height: 44)
+        self.appName.align(above: self.buttonGroup, matchingCenterWithBottomPadding: 20, width: 228, height: 48)
+    }
+    
     /*--------------------------------------------------------------------------------------------
     * Events
     *--------------------------------------------------------------------------------------------*/
@@ -116,14 +115,15 @@ class LobbyViewController: UIViewController {
         
 		self.imageBackground.image = UIImage(named: "imgLobbyBackground")
 		self.imageBackground.contentMode = UIViewContentMode.scaleToFill
-		self.view.addSubview(self.imageBackground)
 		
 		self.imageLogo.image = UIImage(named: "imgPatchrWhite")
 		self.imageLogo.contentMode = UIViewContentMode.scaleAspectFill
-		self.view.addSubview(self.imageLogo)
 		
 		self.appName.text = "Patchr"
 		self.appName.textAlignment = NSTextAlignment.center
+        
+        self.view.addSubview(self.imageBackground)
+        self.view.addSubview(self.imageLogo)
 		self.view.addSubview(self.appName)
 		
 		self.buttonLogin.setTitle("Log in", for: .normal)
@@ -196,6 +196,7 @@ class LobbyViewController: UIViewController {
                                     self.appName.fadeIn(duration: 0.3)
                                     self.buttonGroup.fadeIn(duration: 0.7)
                                     self.buttonOnboard.fadeIn(duration: 0.7)
+                                    then?()
                                 }
                         })
                 })
@@ -211,15 +212,15 @@ class LobbyViewController: UIViewController {
                 "imgGroupChat"]
             
             var titles = [
-                "Create a Group".uppercased(),
-                "Invite Members".uppercased(),
+                "Create a Channel".uppercased(),
+                "Invite".uppercased(),
                 "Carry On!".uppercased()
             ]
             
             var descriptions = [
-                "Share just the right content with just the right people using Patchr channels.",
+                "Share with just the right people using Patchr channels.",
                 "Select people from your contacts and we handle the rest! We will email them an invite, help them install Patchr and gently launch them into your amazing channel.",
-                "Patchr has brilliant messaging features: photo search and editing, emoji reactions, realtime notifications, offline posting plus much more."
+                "Patchr has brilliant message features: photo search and editing, emoji reactions, realtime notifications, offline posting plus much more."
             ]
             
             if appFirstLaunch {

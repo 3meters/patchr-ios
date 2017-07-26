@@ -77,7 +77,7 @@ class MemberSettingsController: UITableViewController {
         self.tableView.backgroundColor = Colors.gray95pcntColor
         self.tableView.sectionFooterHeight = 0
 
-        self.roleEditorCell.textLabel?.text = "Editor"
+        self.roleEditorCell.textLabel?.text = "Contributor"
         self.roleReaderCell.textLabel?.text = "Reader"
         
         self.roleEditorCell.selectionStyle = .none

@@ -16,6 +16,7 @@ class MemberViewController: BaseViewController, UIScrollViewDelegate, UITextFiel
     
     var inputUserId: String!
     
+    var authHandle: AuthStateDidChangeListenerHandle!
     var queryUser: UserQuery!
     var user: FireUser!
 
@@ -173,6 +174,13 @@ class MemberViewController: BaseViewController, UIScrollViewDelegate, UITextFiel
 	
 	override func initialize() {
 		super.initialize()
+        
+        self.authHandle = Auth.auth().addStateDidChangeListener() { [weak self] auth, user in
+            guard let this = self else { return }
+            if user == nil {
+                this.close(animated: true)
+            }
+        }
         
         UIShared.styleChrome(navigationBar: self.navigationController!.navigationBar, translucent: true)
         

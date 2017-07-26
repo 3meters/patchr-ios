@@ -23,7 +23,7 @@ class PasswordViewController: BaseEditViewController {
     var forgotPasswordButton = AirLinkButton()
 
     /*--------------------------------------------------------------------------------------------
-    * Lifecycle
+    * MARK: - Lifecycle
     *--------------------------------------------------------------------------------------------*/
 
     override func loadView() {
@@ -57,7 +57,7 @@ class PasswordViewController: BaseEditViewController {
     }
 
     /*--------------------------------------------------------------------------------------------
-    * Events
+    * MARK: - Events
     *--------------------------------------------------------------------------------------------*/
 
     func doneAction(sender: AnyObject) {
@@ -105,7 +105,7 @@ class PasswordViewController: BaseEditViewController {
     }
     
     /*--------------------------------------------------------------------------------------------
-    * Methods
+    * MARK: - Methods
     *--------------------------------------------------------------------------------------------*/
 
     override func initialize() {

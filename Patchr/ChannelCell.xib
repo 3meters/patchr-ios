@@ -25,14 +25,14 @@
                             <constraint firstAttribute="width" secondItem="F9S-ez-8WB" secondAttribute="height" multiplier="16:9" id="ipn-Lu-lEg"/>
                         </constraints>
                     </view>
-                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Jay's Really Long Birthday Week 2017" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gaB-Un-1Af" userLabel="Title">
-                        <rect key="frame" x="8" y="130" width="208" height="33.5"/>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Jay's Really Long Birthday Week 2017" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gaB-Un-1Af" userLabel="Title">
+                        <rect key="frame" x="8" y="130" width="208" height="34"/>
                         <fontDescription key="fontDescription" name="HelveticaNeue-Light" family="Helvetica Neue" pointSize="14"/>
                         <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                         <nil key="highlightedColor"/>
                     </label>
                     <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="2" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="h5i-BT-PQD" userLabel="Badge">
-                        <rect key="frame" x="8" y="8" width="22" height="22"/>
+                        <rect key="frame" x="194" y="8" width="22" height="22"/>
                         <color key="backgroundColor" red="1" green="0.50196078430000002" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
                             <constraint firstAttribute="height" constant="22" id="2UZ-ZK-HE8"/>
@@ -57,7 +57,7 @@
                 <constraint firstItem="F9S-ez-8WB" firstAttribute="leading" secondItem="LTM-Mi-qV7" secondAttribute="leading" id="1rk-lL-gCu"/>
                 <constraint firstItem="gaB-Un-1Af" firstAttribute="top" secondItem="F9S-ez-8WB" secondAttribute="bottom" constant="4" id="Czt-VW-B72"/>
                 <constraint firstItem="F9S-ez-8WB" firstAttribute="top" secondItem="LTM-Mi-qV7" secondAttribute="top" id="SJV-iK-aL4"/>
-                <constraint firstItem="h5i-BT-PQD" firstAttribute="leading" secondItem="LTM-Mi-qV7" secondAttribute="leading" constant="8" id="YUH-6f-MMg"/>
+                <constraint firstItem="h5i-BT-PQD" firstAttribute="trailing" secondItem="LTM-Mi-qV7" secondAttribute="trailing" constant="-8" id="YUH-6f-MMg"/>
                 <constraint firstItem="gaB-Un-1Af" firstAttribute="leading" secondItem="LTM-Mi-qV7" secondAttribute="leading" constant="8" id="erf-sR-gn6"/>
                 <constraint firstItem="gaB-Un-1Af" firstAttribute="bottom" relation="lessThanOrEqual" secondItem="LTM-Mi-qV7" secondAttribute="bottom" id="gL4-Ip-8nZ"/>
                 <constraint firstItem="gaB-Un-1Af" firstAttribute="trailing" secondItem="LTM-Mi-qV7" secondAttribute="trailing" constant="-8" id="ih5-KA-YMf"/>

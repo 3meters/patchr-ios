@@ -229,7 +229,7 @@ class FireController: NSObject {
             then?(ServiceError(code: 403, message: "Permission denied"), nil)  // permission denied
         }
     }
-    
+ 
     func isConnected(then: @escaping ((Bool?) -> Void)) {
         FireController.db.child(".info/connected").observeSingleEvent(of: .value, with: { snap in
             if let connected = snap.value as? Bool {

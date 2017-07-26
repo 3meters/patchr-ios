@@ -107,7 +107,7 @@ class UserListCell: UITableViewCell {
                 self.roleLabel?.textColor = MaterialColor.deepOrange.base
             }
             else if user.channel.role == "editor" {
-                self.roleLabel?.text = "editor"
+                self.roleLabel?.text = "contributor"
                 self.roleLabel?.textColor = MaterialColor.lightGreen.base
             }
             else if user.channel.role == "reader" {

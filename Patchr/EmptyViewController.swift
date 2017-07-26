@@ -25,18 +25,9 @@ class EmptyViewController: UIViewController {
         initialize()
     }
     
-    override func viewWillLayoutSubviews() {
-        super.viewWillLayoutSubviews()
-        
-        self.imageBackground.fillSuperview()
-        self.appName.anchorInCenter(withWidth: 228, height: 48)
-    }
-    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
         self.view.endEditing(true)
-        self.navigationController?.setNavigationBarHidden(true, animated: animated)
         self.imageLogo.anchorInCenter(withWidth: 72, height: 72)
     }
     
@@ -44,11 +35,13 @@ class EmptyViewController: UIViewController {
         super.viewDidAppear(animated)
     }
     
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        self.navigationController?.setNavigationBarHidden(false, animated: animated)
+    override func viewWillLayoutSubviews() {
+        super.viewWillLayoutSubviews()
+        self.view.fillSuperview()
+        self.imageBackground.fillSuperview()
+        self.appName.anchorInCenter(withWidth: 228, height: 48)
     }
-
+    
     deinit {
         Log.v("\(self.className) released")
     }
@@ -59,6 +52,8 @@ class EmptyViewController: UIViewController {
     
     func initialize() {
         
+        self.automaticallyAdjustsScrollViewInsets = false
+
         self.imageBackground.image = UIImage(named: "imgLobbyBackground")
         self.imageBackground.contentMode = UIViewContentMode.scaleToFill
         

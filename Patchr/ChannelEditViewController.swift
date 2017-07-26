@@ -380,7 +380,7 @@ class ChannelEditViewController: BaseEditViewController {
             channelMap["created_by"] = userId
             channelMap["general"] = false
             channelMap["title"] = channelTitle
-            channelMap["code"] = channelCode
+            channelMap["code"] = channelCode // code is required
             channelMap["owned_by"] = userId
             if photoMap != nil {
                 channelMap["photo"] = photoMap!
@@ -398,9 +398,10 @@ class ChannelEditViewController: BaseEditViewController {
                     return
                 }
                 
-                let controller = ChannelInviteController()
+                let controller = InviteViewController()
                 controller.flow = .internalCreate
                 controller.inputAsOwner = true
+                controller.inputCode = channelCode
                 controller.inputChannelId = channelId
                 controller.inputChannelTitle = channelTitle
                 this.navigationController?.setViewControllers([controller], animated: true)

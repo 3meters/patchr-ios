@@ -19,9 +19,9 @@ class BranchProvider: NSObject {
 		Branch.getInstance().setIdentity(identity)
 	}
     
-    typealias CompletionBlock = (_ response: AnyObject?, _ error: NSError?) -> Void
+    typealias CompletionBlock = (_ response: Any?, _ error: Error?) -> Void
     
-    static func invite(channel: [String: Any], email: String, role: String, message: String?) {
+    static func invite(channel: [String: String], code: String, email: String, role: String, message: String?, then: @escaping CompletionBlock) {
         
         let inviter = UserController.instance.user
         let inviterId = UserController.instance.userId!
@@ -32,7 +32,7 @@ class BranchProvider: NSObject {
         applink.metadata?["channel_id"] = channel["id"]
         applink.metadata?["channel_title"] = channel["title"]
         applink.metadata?["created_at"] = DateUtils.now()
-        applink.metadata?["code"] = channel["code"]
+        applink.metadata?["code"] = code
         applink.metadata?["email"] = email
         applink.metadata?["invited_by"] = inviterId
         applink.metadata?["inviter_name"] = inviterName
@@ -45,10 +45,10 @@ class BranchProvider: NSObject {
         applink.metadata?["role"] = role
         
         /* $og_title */
-        applink.title = "Invite by \(inviterName!) to the \(channel["title"]) channel"
+        applink.title = "Invite by \(inviterName!) to the \(channel["title"]!) channel"
         
         /* $og_description */
-        applink.contentDescription = message ?? "\(inviterName!) has invited you to the \(channel["title"]) channel."
+        applink.contentDescription = message ?? "\(inviterName!) has invited you to the \(channel["title"]!) channel."
         
         let linkProperties = BranchLinkProperties()
         linkProperties.channel = "patchr-ios"
@@ -57,9 +57,12 @@ class BranchProvider: NSObject {
         applink.getShortUrl(with: linkProperties, andCallback: { url, error in
             if error != nil {
                 Log.d("Error creating invite link", breadcrumb: true)
+                then(nil, error)
             }
             else {
-                Log.d("Branch invite link created: \(url)", breadcrumb: true)
+                Log.d("Branch invite link created: \(url!)", breadcrumb: true)
+                let invite = InviteItem(channel: nil, url: url!)
+                then(invite, nil)
             }
         })
     }

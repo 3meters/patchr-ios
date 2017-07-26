@@ -1,8 +1,4 @@
 //
-//  InviteViewController.swift
-//  Patchr
-//
-//  Created by Rob MacEachern on 2015-02-17.
 //  Copyright (c) 2015 3meters. All rights reserved.
 //
 
@@ -13,22 +9,25 @@ import Firebase
 import FirebaseAuth
 import CLTokenInputView
 
+protocol PickerDelegate {
+    func update(channels: [String: Any])
+}
+
 class InviteViewController: BaseEditViewController {
 	
 	var heading = AirLabelTitle()
-	var inviteMembersButton = AirButton()
-    var inviteMembersComment = AirLabelDisplay()
-	var inviteGuestsButton = AirButton()
-    var inviteGuestsComment = AirLabelDisplay()
-    var inviteListButton = AirLinkButton()
-
-    var channelQuery: ChannelQuery!
-    var channels: [String: Any] = [:]
-    var inputGroupId: String?
-    var inputGroupTitle: String?
-    var inputRole: String?
+    var message = AirLabelDisplay()
     
-    var validateFor = "member"
+    var inviteReadersButton = AirButton()
+	var inviteEditorsButton = AirButton()
+    var inviteComment = AirLabelDisplay()
+
+    var inputCode: String!
+    var inputChannelId: String!
+    var inputChannelTitle: String!
+    var inputAsOwner = false
+    
+    var validateFor = "reader"
 	
     /*--------------------------------------------------------------------------------------------
     * Lifecycle
@@ -42,16 +41,18 @@ class InviteViewController: BaseEditViewController {
 	override func viewWillLayoutSubviews() {
 		
         let headingSize = self.heading.sizeThatFits(CGSize(width: Config.contentWidth, height:CGFloat.greatestFiniteMagnitude))
-        let inviteMembersCommentSize = self.inviteMembersComment.sizeThatFits(CGSize(width: Config.contentWidth, height:CGFloat.greatestFiniteMagnitude))
-        let inviteGuestsCommentSize = self.inviteGuestsComment.sizeThatFits(CGSize(width: Config.contentWidth, height:CGFloat.greatestFiniteMagnitude))
+        let messageSize = self.message.sizeThatFits(CGSize(width: Config.contentWidth, height:CGFloat.greatestFiniteMagnitude))
+        
+        self.inviteComment.bounds.size.width = Config.contentWidth
+        self.inviteComment.sizeToFit()
         
 		self.heading.anchorTopCenter(withTopPadding: 0, width: Config.contentWidth, height: headingSize.height)
-		self.inviteMembersButton.alignUnder(self.heading, matchingCenterWithTopPadding: 24, width: Config.contentWidth, height: 48)
-        self.inviteMembersComment.alignUnder(self.inviteMembersButton, matchingCenterWithTopPadding: 12, width: Config.contentWidth, height: inviteMembersCommentSize.height)
-		self.inviteGuestsButton.alignUnder(self.inviteMembersComment, matchingCenterWithTopPadding: 20, width: Config.contentWidth, height: 48)
-        self.inviteGuestsComment.alignUnder(self.inviteGuestsButton, matchingCenterWithTopPadding: 12, width: 280, height: inviteGuestsCommentSize.height)
-        self.inviteListButton.alignUnder(self.inviteGuestsComment, matchingCenterWithTopPadding: 12, width: Config.contentWidth, height: 48)
-		
+        self.message.alignUnder(self.heading, matchingCenterWithTopPadding: 16, width: Config.contentWidth, height: messageSize.height)
+        
+		self.inviteReadersButton.alignUnder(self.message, matchingCenterWithTopPadding: 24, width: Config.contentWidth, height: 48)
+		self.inviteEditorsButton.alignUnder(self.inviteReadersButton, matchingCenterWithTopPadding: 16, width: Config.contentWidth, height: 48)
+        self.inviteComment.alignUnder(self.inviteEditorsButton, matchingCenterWithTopPadding: 16, width: self.inviteComment.width(), height: self.inviteComment.height())
+
         super.viewWillLayoutSubviews()
 	}
 	
@@ -59,36 +60,26 @@ class InviteViewController: BaseEditViewController {
     * Events
     *--------------------------------------------------------------------------------------------*/
     
-	func inviteMembersAction(sender: AnyObject?) {
-        self.validateFor = "members"
-        Reporting.track("invite_group_members")
-		inviteMembers()
+	func inviteReadersAction(sender: AnyObject?) {
+        self.validateFor = "readers"
+        invite(role: "reader")
 	}
 	
-	func inviteGuestsAction(sender: AnyObject?) {
-        self.validateFor = "guests"
-		inviteGuests()
+	func inviteEditorsAction(sender: AnyObject?) {
+        self.validateFor = "editors"
+        invite(role: "editor")
 	}
-    
-    func inviteListAction(sender: AnyObject?) {
-        Reporting.track("view_outstanding_invites")
-        inviteList()
-    }
     
     func closeAction(sender: AnyObject?) {
         close()
     }
     
     func doneAction(sender: AnyObject?) {
-        let groupId = self.inputGroupId!
-        FireController.instance.findGeneralChannel(groupId: groupId) { channelId in
-            if channelId != nil {
-                StateController.instance.setChannelId(channelId: channelId!, groupId: groupId)
-                MainController.instance.showChannel(channelId: channelId!, groupId: groupId)
-                let _ = self.navigationController?.popToRootViewController(animated: false)
-                self.close()
-            }
-        }
+        /* Only called if part of channel create flow */
+        let channelId = self.inputChannelId!
+        StateController.instance.setChannelId(channelId: channelId) // We know it's good
+        MainController.instance.showChannel(channelId: channelId)
+        self.close(animated: true)
     }
 	
     /*--------------------------------------------------------------------------------------------
@@ -97,104 +88,56 @@ class InviteViewController: BaseEditViewController {
 	
 	override func initialize() {
 		super.initialize()
-        
-        let groupTitle = self.inputGroupTitle ?? StateController.instance.group?.title!
-        self.heading.text = "Invite people to \(groupTitle!)."
+		
+        self.heading.text = "Invite people to \(self.inputChannelTitle!)."
 		self.heading.textAlignment = NSTextAlignment.center
 		self.heading.numberOfLines = 0
         
-        if self.flow == .onboardSignup || self.flow == .internalCreate {
-            /*
-             * Invite dialog doesn't show if user is already a member or pending.
-             */
-            self.inviteMembersButton.setTitle("Invite Members".uppercased(), for: .normal)
-            self.inviteMembersButton.imageRight = UIImageView(image: UIImage(named: "imgArrowRightLight"))
-            self.inviteMembersButton.imageRight?.bounds.size = CGSize(width: 10, height: 14)
-
-            self.inviteMembersComment.text = "An email invitation will be sent to your selected contacts. Accepting the invitation will add them as members of your group and help them install Patchr if they don't have it yet."
-            self.inviteMembersComment.textColor = Theme.colorTextSecondary
-            self.inviteMembersComment.textAlignment = .center
-            self.inviteMembersComment.numberOfLines = 0
-            self.inviteMembersButton.addTarget(self, action: #selector(inviteMembersAction(sender:)), for: .touchUpInside)
-            
+        self.message.text = "An email invitation will be sent. Using the invitation will add them to the channel and help them install Patchr if they don't have it yet."
+        self.message.textColor = Theme.colorTextSecondary
+        self.message.textAlignment = .center
+        self.message.numberOfLines = 0
+        
+        self.inviteReadersButton.setTitle("Invite readers".uppercased(), for: .normal)
+        self.inviteReadersButton.imageRight = UIImageView(image: UIImage(named: "imgArrowRightLight"))
+        self.inviteReadersButton.imageRight?.bounds.size = CGSize(width: 10, height: 14)
+        self.inviteReadersButton.rightPadding = 12
+        self.inviteReadersButton.addTarget(self, action: #selector(inviteReadersAction(sender:)), for: .touchUpInside)
+        
+        self.inviteEditorsButton.setTitle("Invite contributors".uppercased(), for: .normal)
+        self.inviteEditorsButton.imageRight = UIImageView(image: UIImage(named: "imgArrowRightLight"))
+        self.inviteEditorsButton.imageRight?.bounds.size = CGSize(width: 10, height: 14)
+        self.inviteEditorsButton.rightPadding = 12
+        self.inviteEditorsButton.addTarget(self, action: #selector(inviteEditorsAction(sender:)), for: .touchUpInside)
+        
+        self.inviteComment.text = "Contributors can post new messages. Both contributors and readers can browse and comment on posted messages."
+        self.inviteComment.textColor = Theme.colorTextSecondary
+        self.inviteComment.textAlignment = .center
+        self.inviteComment.numberOfLines = 0
+        
+        self.contentHolder.addSubview(self.heading)
+        self.contentHolder.addSubview(self.message)
+        self.contentHolder.addSubview(self.inviteReadersButton)
+        self.contentHolder.addSubview(self.inviteEditorsButton)
+        self.contentHolder.addSubview(self.inviteComment)
+        
+        if self.flow == .internalCreate {   // Invite to new channel
             let doneButton = UIBarButtonItem(title: "Done", style: UIBarButtonItemStyle.plain, target: self, action: #selector(doneAction(sender:)))
             self.navigationItem.rightBarButtonItems = [doneButton]
-            
-            self.contentHolder.addSubview(self.heading)
-            self.contentHolder.addSubview(self.inviteMembersButton)
-            self.contentHolder.addSubview(self.inviteMembersComment)
         }
-        else {
-            /*
-             * Invite dialog doesn't show if user is already a member or pending.
-             */
-            self.inviteMembersButton.setTitle("Invite Members".uppercased(), for: .normal)
-            self.inviteMembersButton.imageRight = UIImageView(image: UIImage(named: "imgArrowRightLight"))
-            self.inviteMembersButton.imageRight?.bounds.size = CGSize(width: 10, height: 14)
-            self.inviteMembersComment.text = "Members can partipate in any open channel and access the full group directory."
-            self.inviteMembersComment.textColor = Theme.colorTextSecondary
-            self.inviteMembersComment.textAlignment = .center
-            self.inviteMembersComment.numberOfLines = 0
-            self.inviteMembersButton.addTarget(self, action: #selector(inviteMembersAction(sender:)), for: .touchUpInside)
-            
-            self.inviteGuestsButton.setTitle("Invite Guests".uppercased(), for: .normal)
-            self.inviteGuestsButton.imageRight = UIImageView(image: UIImage(named: "imgArrowRightLight"))
-            self.inviteGuestsButton.imageRight?.bounds.size = CGSize(width: 10, height: 14)
-            
-            self.inviteGuestsComment.text = "Guests can only partipate in selected channels."
-            self.inviteGuestsComment.textColor = Theme.colorTextSecondary
-            self.inviteGuestsComment.textAlignment = .center
-            self.inviteGuestsComment.numberOfLines = 0
-            
-            self.inviteGuestsButton.addTarget(self, action: #selector(inviteGuestsAction(sender:)), for: .touchUpInside)
-            
-            self.inviteListButton.setTitle("Pending and accepted invites".uppercased(), for: .normal)
-            self.inviteListButton.addTarget(self, action: #selector(inviteListAction(sender:)), for: .touchUpInside)
-
-            
-            if let groupId = StateController.instance.groupId,
-                let channelId = StateController.instance.channelId {
-                self.channelQuery = ChannelQuery(groupId: groupId, channelId: channelId, userId: nil)
-                self.channelQuery.once(with: { [weak self] error, channel in
-                    guard let this = self else { return }
-                    if channel != nil {
-                        let channelName = channel!.name!
-                        this.channels[channelId] = channelName
-                    }
-                })
-            }
-            
-            self.contentHolder.addSubview(self.heading)
-            self.contentHolder.addSubview(self.inviteMembersButton)
-            self.contentHolder.addSubview(self.inviteMembersComment)
-            self.contentHolder.addSubview(self.inviteGuestsButton)
-            self.contentHolder.addSubview(self.inviteGuestsComment)
-            self.contentHolder.addSubview(self.inviteListButton)
-            
+        else {  // Invite to existing channel
             let closeButton = UIBarButtonItem(barButtonSystemItem: .stop, target: self, action: #selector(closeAction(sender:)))
             self.navigationItem.leftBarButtonItems = [closeButton]
         }
 	}
-    
-    func inviteList() {
-        let controller = InviteListController()
-        self.navigationController?.pushViewController(controller, animated: true)
-    }
-    
-    func inviteMembers() {
+
+    func invite(role: String) {
         let controller = ContactPickerController()
         controller.flow = self.flow
-        controller.inputRole = self.inputRole
-        controller.inputGroupId = self.inputGroupId
-        controller.inputGroupTitle = self.inputGroupTitle
-        self.navigationController?.pushViewController(controller, animated: true)
-    }
-    
-    func inviteGuests() {
-        let controller = ChannelPickerController()
-        controller.flow = self.flow
-        controller.inputGroupId = self.inputGroupId
-        controller.inputGroupTitle = self.inputGroupTitle
+        controller.inputRole = role
+        controller.inputCode = self.inputCode
+        controller.inputChannelId = self.inputChannelId
+        controller.inputChannelTitle = self.inputChannelTitle
         self.navigationController?.pushViewController(controller, animated: true)
     }
 }

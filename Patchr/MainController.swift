@@ -69,8 +69,6 @@ class MainController: NSObject, iRateDelegate {
         UIBarButtonItem.appearance().setTitleTextAttributes([NSFontAttributeName: Theme.fontBarText], for: UIControlState.normal)
         self.window?.backgroundColor = Theme.colorBackgroundWindow
         self.window?.tintColor = Theme.colorTint
-        UIToolbar.appearance().tintColor = Theme.colorTint
-        UITabBar.appearance().tintColor = Theme.colorTabBarTint
         UISwitch.appearance().onTintColor = Theme.colorTint
         
         UIApplication.shared.statusBarStyle = .lightContent
@@ -191,6 +189,8 @@ class MainController: NSObject, iRateDelegate {
         
         let controller = controller ?? LobbyViewController()
         let wrapper = AirNavigationController(rootViewController: controller)
+        wrapper.tag = "lobby"
+        wrapper.removeStatusBarView()
         
         /* If empty controller is the root then animate scene before the switch */
         if let emptyController = self.containerController.controller as? EmptyViewController {
@@ -209,13 +209,10 @@ class MainController: NSObject, iRateDelegate {
     
     func showChannel(channelId: String, animated: Bool = false, then: (() -> Void)? = nil) {
         showMain {
-            if let tabBarController = self.containerController.controller as? UITabBarController {
-                if let wrapper = tabBarController.viewControllers?[0] as? AirNavigationController {
-                    Reporting.track("view_channel")
-                    let controller = ChannelViewController(channelId: channelId)
-                    controller.inputChannelId = channelId
-                    wrapper.pushViewController(controller, animated: animated)
-                }
+            if let channelsGrid = self.containerController.controller as? AirNavigationController {
+                Reporting.track("view_channel")
+                let controller = ChannelViewController(channelId: channelId)
+                channelsGrid.pushViewController(controller, animated: animated)
             }
             then?()
         }
@@ -233,24 +230,25 @@ class MainController: NSObject, iRateDelegate {
     
     func showMain(then: (() -> Void)? = nil) {
         
-        if self.containerController.controller is UITabBarController {
-            then?()
-            return
+        if let controller = self.containerController.controller as? AirNavigationController {
+            if controller.tag == nil || controller.tag != "lobby" {
+                then?()
+                return
+            }
         }
         
-        let tabBarController = TabBarController()
-        tabBarController.selectedIndex = 0
+        let channelsGrid = AirNavigationController(rootViewController: ChannelGridController(collectionViewLayout: UICollectionViewFlowLayout()))
         
         if let emptyController = self.containerController.controller as? EmptyViewController,
             !emptyController.scenePlayed {
             emptyController.startScene() {
-                self.containerController.changeController(controller: tabBarController)
+                self.containerController.changeController(controller: channelsGrid)
                 then?()
             }
             return
         }
         
-        self.containerController.changeController(controller: tabBarController)
+        self.containerController.changeController(controller: channelsGrid)
         then?()
     }
     
@@ -371,15 +369,14 @@ class MainController: NSObject, iRateDelegate {
         self.showChannel(channelId: channelId) { // User permissions are in place
             Utils.delay(0.5) {
                 if let topController = UIViewController.topMostViewController() {
-                    let message = "You have joined the \(channelTitle) channel. Use the message bar to send your first message."
+                    let message = "You have joined the \(channelTitle) channel. Use the action button to post your first message."
                     let popup = PopupDialog(title: "Welcome!", message: message)
                     popup.buttonAlignment = .horizontal
                     let showButton = DefaultButton(title: "Show Me".uppercased(), height: 48) {
                         Reporting.track("invite_show_me")
-                        if let slideController = self.containerController.controller as? SlideMenuController,
-                            let wrapper = slideController.mainViewController as? AirNavigationController,
+                        if let wrapper = self.containerController.controller as? AirNavigationController,
                             let channelController = wrapper.topViewController as? ChannelViewController {
-                            channelController.textInputbar.textView.becomeFirstResponder()
+                            channelController.actionButtonTapped(gesture: nil)
                         }
                     }
                     let doneButton = DefaultButton(title: "Carry On".uppercased(), height: 48) {

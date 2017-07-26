@@ -8,7 +8,6 @@
 
 import UIKit
 import MBProgressHUD
-import FirebaseRemoteConfig
 import Firebase
 
 class ProfileEditViewController: BaseEditViewController {

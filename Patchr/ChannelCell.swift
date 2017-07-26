@@ -40,12 +40,7 @@ class ChannelCell: UICollectionViewCell {
     func initialize() {
         self.clipsToBounds = true
         self.badge?.backgroundColor = Theme.colorBackgroundBadge
-        
-        self.layer.masksToBounds = false
-        self.layer.shadowColor = Colors.black.cgColor
-        self.layer.shadowOffset = CGSize(width:0, height:1)
-        self.layer.shadowOpacity = 0.4
-        self.layer.shadowRadius = 1
+        self.backgroundColor = Theme.colorBackgroundCell
     }
     
     func reset() {

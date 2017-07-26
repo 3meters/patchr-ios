@@ -63,10 +63,9 @@ class ChannelDetailView: UIView {
         self.photoView.progressView.anchorInCenter(withWidth: 150, height: 20)
         self.titleGroup.anchorBottomLeft(withLeftPadding: 12, bottomPadding: 16, width: viewWidth - 72, height: 72)
 
-        self.titleLabel.bounds.size.width = self.titleGroup.width() - CGFloat(28)
+        self.titleLabel.bounds.size.width = self.titleGroup.width()
         self.titleLabel.sizeToFit()
         self.titleLabel.anchorBottomLeft(withLeftPadding: 0, bottomPadding: 0, width: self.titleLabel.width(), height: self.titleLabel.height())
-        self.starButton.align(toTheRightOf: self.titleLabel, matchingCenterWithLeftPadding: 5, width: !self.starButton.isHidden ? 24 : 0, height: 24, topPadding: -4)
 
         /* Purpose */
         if self.infoGroup.superview != nil {
@@ -110,7 +109,6 @@ class ChannelDetailView: UIView {
         
         if self.titleGroup.superview == nil {
             self.titleGroup.addSubview(self.titleLabel)
-            self.titleGroup.addSubview(self.starButton)
             self.contentGroup.addSubview(self.titleGroup)
         }
         

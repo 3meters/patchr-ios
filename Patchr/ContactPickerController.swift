@@ -16,10 +16,10 @@ import Contacts
  */
 class ContactPickerController: BaseTableController, CLTokenInputViewDelegate {
 
+    var inputCode: String!
     var inputChannelId: String?
     var inputChannelTitle: String?
     var inputRole: String! // reader || editor
-    var inputCode: String!
 
     var tokenView: AirTokenView!
     var doneButton: UIBarButtonItem!
@@ -47,7 +47,7 @@ class ContactPickerController: BaseTableController, CLTokenInputViewDelegate {
         CNContactThumbnailImageDataKey] as [Any]
 
     /*--------------------------------------------------------------------------------------------
-    * Lifecycle
+    * MARK: - Lifecycle
     *--------------------------------------------------------------------------------------------*/
 
     override func viewDidLoad() {
@@ -63,16 +63,9 @@ class ContactPickerController: BaseTableController, CLTokenInputViewDelegate {
         bind()
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        self.navigationController?.setToolbarHidden(false, animated: true)
-    }
-
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
-        
-        let navHeight = self.navigationController?.navigationBar.height() ?? 0
-        let statusHeight = UIApplication.shared.statusBarFrame.size.height
-        self.tokenView.anchorTopCenterFillingWidth(withLeftAndRightPadding: 0, topPadding: (navHeight + statusHeight), height: tokenView.height())
+        self.tokenView.anchorTopCenterFillingWidth(withLeftAndRightPadding: 0, topPadding: 0, height: tokenView.height())
         self.tableView.alignUnder(self.tokenView, matchingLeftAndRightFillingHeightWithTopPadding: 0, bottomPadding: 0)
     }
     
@@ -110,7 +103,7 @@ class ContactPickerController: BaseTableController, CLTokenInputViewDelegate {
     }
     
     /*--------------------------------------------------------------------------------------------
-    * Notifications
+    * MARK: - Notifications
     *--------------------------------------------------------------------------------------------*/
 
     func keyboardWillShow(notification: Notification) {
@@ -133,7 +126,7 @@ class ContactPickerController: BaseTableController, CLTokenInputViewDelegate {
     }
     
     /*--------------------------------------------------------------------------------------------
-    * Methods
+    * MARK: - Methods
     *--------------------------------------------------------------------------------------------*/
     
     override func initialize() {
@@ -146,7 +139,7 @@ class ContactPickerController: BaseTableController, CLTokenInputViewDelegate {
         
         self.automaticallyAdjustsScrollViewInsets = false
         
-        self.navigationItem.title = "Invite Contacts"
+        self.navigationItem.title = (self.inputRole == "reader") ? "Invite Readers" : "Invite Contributors"
 
         self.tokenView = AirTokenView(frame: CGRect(x: 0, y: 0, width: self.view.width(), height: 44))
         self.tokenView.placeholder.text = "Search"
@@ -173,7 +166,6 @@ class ContactPickerController: BaseTableController, CLTokenInputViewDelegate {
         
         self.view.addSubview(self.tokenView)
         self.view.addSubview(self.tableView)
-        self.view.addSubview(self.activity)
         
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(notification:)), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(notification:)), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
@@ -301,14 +293,27 @@ class ContactPickerController: BaseTableController, CLTokenInputViewDelegate {
     
     func invite() {
         
-        Reporting.track("invite_channel_readers")
+        Reporting.track("invite_channel_members")
+        
+        let userTitle = UserController.instance.userTitle!
+        let userEmail = UserController.instance.userEmail!
+        let userId = UserController.instance.userId!
+        let username = UserController.instance.user!.username!
         
         let channel = [
             "id": self.inputChannelId!,
-            "title": self.inputChannelTitle!,
-            "code": self.inputCode]
+            "title": self.inputChannelTitle!]
+        
+        let inviter = [
+            "id": userId,
+            "title": userTitle,
+            "username": username,
+            "email": userEmail]
+        
+        let timestamp = FireController.instance.getServerTimestamp()
         
         for key in self.picks.keys {
+            let inviteId = "in-\(Utils.genRandomId(digits: 9))"
             var email: String!
             if let contact = self.picks[key] as? CNContact {
                 email = contact.emailAddresses.first?.value as? String
@@ -318,9 +323,25 @@ class ContactPickerController: BaseTableController, CLTokenInputViewDelegate {
             }
             
             BranchProvider.invite(channel: channel
+                , code: self.inputCode!
                 , email: email!
-                , role: self.inputRole
-                , message: nil)
+                , role: self.inputRole!
+                , message: nil) { response, error in
+                
+                if error == nil {
+                    let inviteItem = response as! InviteItem
+                    let inviteUrl = inviteItem.url
+                    let invite: [String: Any] = [
+                        "channel": channel,
+                        "created_at": timestamp,
+                        "created_by": userId,
+                        "email": email!,
+                        "inviter": inviter,
+                        "link": inviteUrl,
+                        "role": self.inputRole!]
+                    FireController.db.child("invites/\(inviteId)").setValue(invite)
+                }
+            }
         }
         
         UIShared.toast(message: "Invites sent")

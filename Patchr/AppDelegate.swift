@@ -17,7 +17,6 @@ import Branch
 import Firebase
 import FirebaseInstanceID
 import FirebaseMessaging
-import FirebaseRemoteConfig
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate, MessagingDelegate {

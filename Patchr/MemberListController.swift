@@ -63,10 +63,10 @@ class MemberListController: BaseTableController {
      * Events
      *--------------------------------------------------------------------------------------------*/
     
-    func channelInviteAction(sender: AnyObject?) {
-        
-        let controller = ChannelInviteController()
+    func channelInviteAction(sender: AnyObject?) {        
+        let controller = InviteViewController()
         controller.flow = .none
+        controller.inputCode = self.channel.code!
         controller.inputChannelId = self.channel.id!
         controller.inputChannelTitle = self.channel.title!
         self.navigationController?.pushViewController(controller, animated: true)

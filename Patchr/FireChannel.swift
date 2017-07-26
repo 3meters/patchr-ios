@@ -25,6 +25,7 @@ class FireChannel: NSObject {
     var ownedBy: String?
     var photo: FirePhoto?
     var purpose: String?
+    var code: String?
     
     /* Local */
     var id: String?
@@ -40,6 +41,7 @@ class FireChannel: NSObject {
         self.createdBy = dict["created_by"] as? String
         self.general = dict["general"] as? Bool
         self.id = id
+        self.code = dict["code"] as? String
         self.name = dict["name"] as? String
         self.title = dict["title"] as? String
         self.ownedBy = dict["owned_by"] as? String

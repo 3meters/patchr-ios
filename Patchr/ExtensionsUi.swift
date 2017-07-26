@@ -336,8 +336,7 @@ extension UIViewController {
     }
     
     // Returns the navigation controller if it exists
-    class func getTabBarController() -> UITabBarController? {
-        
+    class func getTabBarController() -> UITabBarController? {        
         if let controller = UIApplication.shared.keyWindow?.rootViewController  {
             return controller as? UITabBarController
         }

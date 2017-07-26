@@ -14,7 +14,7 @@ import pop
 
 class ChannelGridController: UICollectionViewController {
     
-    var handleAuthState: AuthStateDidChangeListenerHandle!
+    var authHandle: AuthStateDidChangeListenerHandle!
     
 	var totalUnreadsQuery: UnreadQuery?
     var searchController = UISearchController(searchResultsController: nil)
@@ -98,7 +98,7 @@ class ChannelGridController: UICollectionViewController {
 
 	func initialize() {
         
-        self.handleAuthState = Auth.auth().addStateDidChangeListener() { [weak self] auth, user in
+        self.authHandle = Auth.auth().addStateDidChangeListener() { [weak self] auth, user in
             guard let this = self else { return }
             if user == nil {
                 this.totalUnreadsQuery?.remove()
@@ -111,6 +111,7 @@ class ChannelGridController: UICollectionViewController {
         self.view.backgroundColor = Theme.colorBackgroundForm
         
         self.automaticallyAdjustsScrollViewInsets = false
+        self.collectionView?.delaysContentTouches = false
         
         self.searchController.dimsBackgroundDuringPresentation = false
         self.definesPresentationContext = true
@@ -165,10 +166,28 @@ class ChannelGridController: UICollectionViewController {
         /* Buttons (*/
 		self.searchButton = UIBarButtonItem(barButtonSystemItem: .search, target: self, action: #selector(searchAction(sender:)))
         self.addButton = UIBarButtonItem(title: "Create", style: .plain, target: self, action: #selector(addAction(sender:)))
+        
+        /* New channel button */
+        var button = UIButton(type: .custom)
+        button.frame = CGRect(x: 0, y: 0, width: 36, height: 36)
+        button.addTarget(self, action: #selector(addAction(sender:)), for: .touchUpInside)
+        button.showsTouchWhenHighlighted = true
+        button.setImage(UIImage(named: "imgAddLight"), for: .normal)
+        button.imageEdgeInsets = UIEdgeInsetsMake(0, 0, 0, 0)
+        self.addButton = UIBarButtonItem(customView: button)
+        
+        /* Menu button */
+        button = UIButton(type: .custom)
+        button.frame = CGRect(x: 0, y: 0, width: 36, height: 36)
+        button.addTarget(self, action: #selector(showActions(sender:)), for: .touchUpInside)
+        button.showsTouchWhenHighlighted = true
+        button.setImage(UIImage(named: "imgOverflowVerticalLight"), for: .normal)
+        button.imageEdgeInsets = UIEdgeInsetsMake(8, 16, 8, 0)
+        let moreButton = UIBarButtonItem(customView: button)
 
         self.navigationItem.title = "Channels"
 		self.navigationItem.leftBarButtonItem = self.searchButton
-        self.navigationItem.rightBarButtonItem = self.addButton
+        self.navigationItem.setRightBarButtonItems([moreButton, UI.spacerFixed, self.addButton], animated: true)
 
 		NotificationCenter.default.addObserver(self, selector: #selector(userDidSwitch(notification:)), name: NSNotification.Name(rawValue: Events.UserDidSwitch), object: nil)
 	}
@@ -198,13 +217,14 @@ class ChannelGridController: UICollectionViewController {
                 guard self != nil else { return cell }
                 
                 if let snap = data as? DataSnapshot {
+                    
                     let channelId = snap.key
+                    
                     cell.channelQuery = ChannelQuery(channelId: channelId, userId: userId)    // Just channel lookup
                     cell.channelQuery!.observe(with: { [weak cell] error, channel in
                         guard let cell = cell else { return }
                         if channel != nil {
                             cell.bind(channel: channel!)
-                            
                             cell.unreadQuery = UnreadQuery(level: .channel, userId: userId, channelId: channelId)
                             cell.unreadQuery!.observe(with: { [weak cell] error, total in
                                 guard let cell = cell else { return }
@@ -247,6 +267,26 @@ class ChannelGridController: UICollectionViewController {
 		}
 	}
     
+    func showActions(sender: AnyObject?) {
+        
+        Reporting.track("view_channel_grid_actions")
+        let sheet = UIAlertController(title: nil, message: nil, preferredStyle: UIAlertControllerStyle.actionSheet)
+        
+        let profileAction = UIAlertAction(title: "Profile and settings", style: .default) { action in
+            let wrapper = AirNavigationController(rootViewController: MemberViewController(userId: UserController.instance.userId!))
+            UIViewController.topMostViewController()?.present(wrapper, animated: true, completion: nil)
+        }
+        
+        let cancel = UIAlertAction(title: "Cancel", style: .cancel) { action in
+            sheet.dismiss(animated: true, completion: nil)
+        }
+        
+        sheet.addAction(profileAction)
+        sheet.addAction(cancel)
+    
+        present(sheet, animated: true, completion: nil)
+    }
+    
     func scrollToFirstRow(animated: Bool = true) {
         let indexPath = IndexPath(row: 0, section: 0)
         self.collectionView?.scrollToItem(at: indexPath, at: .top, animated: true)
@@ -262,14 +302,26 @@ extension ChannelGridController: FUICollectionDelegate {
             let channelId = snap.key
             let path = "channels/\(channelId)"
             FireController.db.child(path).observeSingleEvent(of: .value, with: { snap in
-                let channel = FireChannel(dict: snap.value as! [String: Any], id: snap.key)
-                self.titles[channel.id!] = channel.title!
+                if let dict = snap.value as? [String: Any] {
+                    let channel = FireChannel(dict: dict, id: snap.key)
+                    self.titles[channel.id!] = channel.title!
+                }
             })
         }
     }
 }
 
 extension ChannelGridController {
+    
+    override func collectionView(_ collectionView: UICollectionView, didHighlightItemAt indexPath: IndexPath) {
+        let cell = collectionView.cellForItem(at: indexPath)
+        cell?.backgroundColor = Theme.colorBackgroundSelected
+    }
+    
+    override func collectionView(_ collectionView: UICollectionView, didUnhighlightItemAt indexPath: IndexPath) {
+        let cell = collectionView.cellForItem(at: indexPath)
+        cell?.backgroundColor = Theme.colorBackgroundCell
+    }
     
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) -> Void {
         /*

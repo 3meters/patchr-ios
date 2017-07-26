@@ -91,18 +91,11 @@ class BaseSlackController: SLKTextViewController {
     
     override func didPressLeftButton(_ sender: Any!) {
         
-        if let controller = self as? ChannelViewController {
-            controller.isTyping = true
-        }
-        
         self.dismissKeyboard(true)
         Reporting.track("open_photo_options")
 
         self.photoEditView.photoChooser?.choosePhoto(sender: sender as AnyObject) { [weak self] image, imageResult, asset, cancelled in
             guard let this = self else { return }
-            if let controller = self as? ChannelViewController {
-                controller.isTyping = false
-            }
             if !cancelled {
                 if image != nil || imageResult != nil {
                     DispatchQueue.main.async {
@@ -130,10 +123,6 @@ class BaseSlackController: SLKTextViewController {
         
         if UserDefaults.standard.bool(forKey: PerUserKey(key: Prefs.soundEffects)) {
             AudioController.instance.playSystemSound(soundId: 1004)
-        }
-
-        if let controller = self as? ChannelViewController {
-            controller.isTyping = false
         }
         
         super.didPressRightButton(sender)
