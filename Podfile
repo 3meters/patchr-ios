@@ -22,6 +22,7 @@ def shared_pods
     pod 'AWSS3',                    '2.4.9'
     pod 'BEMCheckBox',              '1.4.0'
     pod 'Branch',                   '0.14.12'     # Url routing and deep linking
+    pod 'ChameleonFramework/Swift', :git => 'https://github.com/ViccAlexander/Chameleon.git'
     pod 'CocoaLumberjack/Swift',    '3.0.0'
     pod 'CLTokenInputView',         '2.3.0'
     pod 'DateTools',                :git => 'https://github.com/MatthewYork/DateTools', :branch => 'swift'

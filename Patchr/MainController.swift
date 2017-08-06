@@ -71,7 +71,7 @@ class MainController: NSObject, iRateDelegate {
         self.window?.tintColor = Theme.colorTint
         UISwitch.appearance().onTintColor = Theme.colorTint
         
-        UIApplication.shared.statusBarStyle = .lightContent
+        UIApplication.shared.statusBarStyle = .default
         if UserDefaults.standard.bool(forKey: Prefs.statusBarHidden) {
             UIApplication.shared.isStatusBarHidden = true
         }
@@ -162,7 +162,7 @@ class MainController: NSObject, iRateDelegate {
             }
         }
         else if channelId == nil {
-            showMain() {
+            showChannelsGrid() {
                 self.bootstrapping = false
                 if let link = MainController.instance.link {
                     Reporting.track("resume_invite")
@@ -208,7 +208,7 @@ class MainController: NSObject, iRateDelegate {
     }
     
     func showChannel(channelId: String, animated: Bool = false, then: (() -> Void)? = nil) {
-        showMain {
+        showChannelsGrid {
             if let channelsGrid = self.containerController.controller as? AirNavigationController {
                 Reporting.track("view_channel")
                 let controller = ChannelViewController(channelId: channelId)
@@ -218,17 +218,7 @@ class MainController: NSObject, iRateDelegate {
         }
     }
 
-    func showEmpty(then: (() -> Void)? = nil) {
-        showMain {
-            if let wrapper = self.containerController.controller as? AirNavigationController {
-                let controller = EmptyViewController()
-                wrapper.setViewControllers([controller], animated: true)
-            }
-            then?()
-        }
-    }
-    
-    func showMain(then: (() -> Void)? = nil) {
+    func showChannelsGrid(then: (() -> Void)? = nil) {
         
         if let controller = self.containerController.controller as? AirNavigationController {
             if controller.tag == nil || controller.tag != "lobby" {
@@ -238,7 +228,8 @@ class MainController: NSObject, iRateDelegate {
         }
         
         let channelsGrid = AirNavigationController(rootViewController: ChannelGridController(collectionViewLayout: UICollectionViewFlowLayout()))
-        
+
+        /* If transitioning from empty */
         if let emptyController = self.containerController.controller as? EmptyViewController,
             !emptyController.scenePlayed {
             emptyController.startScene() {
@@ -247,9 +238,10 @@ class MainController: NSObject, iRateDelegate {
             }
             return
         }
-        
-        self.containerController.changeController(controller: channelsGrid)
-        then?()
+        else {
+            self.containerController.changeController(controller: channelsGrid)
+            then?()
+        }
     }
     
     func routeDeepLink(link: [AnyHashable: Any], flow: Flow = .none, error: Error?) {
@@ -259,13 +251,13 @@ class MainController: NSObject, iRateDelegate {
          */
         if UserController.instance.authenticated {
             
-            guard let groupId = link["group_id"] as? String
+            guard let channelId = link["channel_id"] as? String
                 , let userId = UserController.instance.userId else { return }
             
             /* Must be group member or we get permission denied. Weirdly, we can get callbacks on with and withCancel
                when there is no membership record. So we have to use a flag to prevent double handling. */
             var inviteProcessing = false
-            FireController.db.child("group-members/\(groupId)/\(userId)").observeSingleEvent(of: .value, with: { snap in
+            FireController.db.child("channel-members/\(channelId)/\(userId)").observeSingleEvent(of: .value, with: { snap in
                 guard !inviteProcessing else { return }
                 inviteProcessing = true
                 if let membership = snap.value as? [String: Any] {
@@ -298,68 +290,44 @@ class MainController: NSObject, iRateDelegate {
     
     func processInvite(link: [AnyHashable: Any], member: Bool = false, memberRole: String?, flow: Flow) {
         
-        if let topController = UIViewController.topMostViewController() {
-            
-            let userId = UserController.instance.userId!
-            let inviterName = link["inviter_name"] as! String
-            let channelId = link["channel_id"] as! String
-            let channelTitle = link["channel_title"] as! String
-            let code = link["code"] as! String
-            var role = link["role"] as! String
-            
-            let isChannelMember = (memberRole != nil && memberRole! != "reader")
-            if isChannelMember { // Retain full group member status even if invite role is guest.
-                role = "editor"
-            }
-            
-            /* Check if already a member and not a channel invite */
-            if isChannelMember {
-                if let topController = UIViewController.topMostViewController() {
-                    let popup = PopupDialog(title: "Already a Member", message: "You are currently a member of the \(channelTitle) channel!")
-                    let button = DefaultButton(title: "OK") {
-                        if flow == .onboardInvite {
-                            self.showMain()
-                        }
-                    }
-                    button.buttonHeight = 48
-                    popup.addButton(button)
-                    topController.present(popup, animated: true)
-                }
-                return
-            }
-            
-            let message = "\(inviterName) has invited you to join the \(channelTitle) channel."
-            let popup = PopupDialog(title: "Invitation", message: message)
-            let cancelButton = CancelButton(title: "Cancel".uppercased(), height: 48) {
-                // If we don't have a currrent group|channel then we are in the lobby
-                Reporting.track("cancel_invite")
-                if StateController.instance.channelId == nil {
-                    self.route()
-                }
-            }
-            
-            let joinButton = DefaultButton(title: "Join".uppercased(), height: 48) {
-                Reporting.track("accept_invite")
-                self.progress = AirProgress.showAdded(to: MainController.instance.window!, animated: true)
-                self.progress!.mode = MBProgressHUDMode.indeterminate
-                self.progress!.styleAs(progressStyle: .activityWithText)
-                self.progress!.minShowTime = 0.5
-                self.progress!.labelText = "Joining..."
-                self.progress!.removeFromSuperViewOnHide = true
-                self.progress!.show(true)
-
-                FireController.instance.addUserToChannel(userId: userId, channelId: channelId, code: code, role: role) { [weak self] error, result in
-                    guard let this = self else { return }
-                    this.progress?.hide(true)
-                    if error == nil {
-                        this.afterChannelInvite(channelId: channelId, channelTitle: channelTitle)
+        let userId = UserController.instance.userId!
+        let channelId = link["channel_id"] as! String
+        let channelTitle = link["channel_title"] as! String
+        let code = link["code"] as! String
+        let role = link["role"] as! String
+        
+        let isChannelMember = (memberRole != nil)
+        
+        /* Check if already a member and not a channel invite */
+        if isChannelMember {
+            if let topController = UIViewController.topMostViewController() {
+                let popup = PopupDialog(title: "Already a Member", message: "You are currently a member of the \(channelTitle) channel!")
+                let button = DefaultButton(title: "OK") {
+                    if flow == .onboardInvite {
+                        StateController.instance.setChannelId(channelId: channelId)
+                        self.showChannel(channelId: channelId)
                     }
                 }
+                button.buttonHeight = 48
+                popup.addButton(button)
+                topController.present(popup, animated: true)
             }
-            
-            popup.buttonAlignment = .horizontal
-            popup.addButtons([cancelButton, joinButton])
-            topController.present(popup, animated: true, completion: nil)
+            return
+        }
+        else {
+            FireController.instance.addUserToChannel(userId: userId, channelId: channelId, code: code, role: role) { [weak self] error, result in
+                guard let this = self else { return }
+                this.progress?.hide(true)
+                if error == nil {
+                    this.afterChannelInvite(channelId: channelId, channelTitle: channelTitle)
+                }
+                else {
+                    if flow == .onboardInvite {
+                        this.showChannelsGrid()
+                    }
+                    /* Otherwise leave the user at their current location */
+                }
+            }
         }
     }
     
@@ -369,20 +337,12 @@ class MainController: NSObject, iRateDelegate {
         self.showChannel(channelId: channelId) { // User permissions are in place
             Utils.delay(0.5) {
                 if let topController = UIViewController.topMostViewController() {
-                    let message = "You have joined the \(channelTitle) channel. Use the action button to post your first message."
-                    let popup = PopupDialog(title: "Welcome!", message: message)
-                    popup.buttonAlignment = .horizontal
-                    let showButton = DefaultButton(title: "Show Me".uppercased(), height: 48) {
-                        Reporting.track("invite_show_me")
-                        if let wrapper = self.containerController.controller as? AirNavigationController,
-                            let channelController = wrapper.topViewController as? ChannelViewController {
-                            channelController.actionButtonTapped(gesture: nil)
-                        }
-                    }
-                    let doneButton = DefaultButton(title: "Carry On".uppercased(), height: 48) {
+                    let popup = PopupDialog(title: "Welcome!", message: "You have joined the \(channelTitle) channel!")
+                    let button = DefaultButton(title: "OK".uppercased(), height: 48) {
                         Reporting.track("invite_carry_on")
                     }
-                    popup.addButtons([showButton, doneButton])
+                    button.buttonHeight = 48
+                    popup.addButton(button)
                     topController.present(popup, animated: true)
                 }
             }

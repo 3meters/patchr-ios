@@ -186,7 +186,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, MessagingDelegate {
         Messaging.messaging().setAPNSToken(deviceToken, type: Config.isDebug ? .sandbox : .prod)
         if let token = InstanceID.instanceID().token(),
             let userId = UserController.instance.userId {
-            Log.i("AppDelegate: setting firebase messaging token: \(userId)")
+            Log.i("AppDelegate: Setting firebase messaging token")
             FireController.db.child("installs/\(userId)/\(token)").setValue(true)
         }
     }

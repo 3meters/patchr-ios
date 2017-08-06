@@ -521,7 +521,7 @@ class MessageViewController: BaseSlackController {
 			guard channel != nil else {
 				if error != nil {
 					// We don't have a current group
-					MainController.instance.showMain()
+					MainController.instance.showChannelsGrid()
 				}
 				return
 			}

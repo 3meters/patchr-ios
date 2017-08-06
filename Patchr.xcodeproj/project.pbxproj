@@ -508,7 +508,6 @@
 		E2499E531F26BF66002C0F16 /* MessageViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageViewController.swift; sourceTree = "<group>"; };
 		E24A87251B2DC0AB00E6F96B /* ThumbnailCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ThumbnailCollectionViewCell.swift; sourceTree = "<group>"; };
 		E24D74531BBAED5F0061F339 /* TaskQueue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TaskQueue.swift; sourceTree = "<group>"; };
-		E24D84D01E89E16300BFE408 /* UserLobbyController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserLobbyController.swift; sourceTree = "<group>"; };
 		E24D84D21E8AF1D300BFE408 /* AirNavigationBar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirNavigationBar.swift; sourceTree = "<group>"; };
 		E25173C31E0982450030259A /* DrawerHeaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = DrawerHeaderView.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		E25173C51E09CB9D0030259A /* UIBarButtonItem+Badge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIBarButtonItem+Badge.h"; sourceTree = "<group>"; };
@@ -1189,7 +1188,6 @@
 				E259082D1DC69BBE00CB6C3F /* MemberViewController.swift */,
 				E2499E531F26BF66002C0F16 /* MessageViewController.swift */,
 				E2EEE90F1E9C7F720085565E /* ReactionPickerController.swift */,
-				E24D84D01E89E16300BFE408 /* UserLobbyController.swift */,
 				E2F618DE1B02667A0055D09C /* Edit */,
 				E200E62C1DDD261B00E3457F /* Photos */,
 				9FDCC1ACB8C2807530D788EA /* Settings */,

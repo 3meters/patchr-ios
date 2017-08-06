@@ -12,7 +12,7 @@ import Firebase
 import Photos
 import FirebaseStorage
 
-class BaseEditViewController: BaseViewController, UITextFieldDelegate, UITextViewDelegate {
+class BaseEditViewController: BaseViewController, UITextFieldDelegate, UITextViewDelegate, PhotoEditDelegate {
 	
 	var activeTextField: UIView?
     
@@ -55,12 +55,16 @@ class BaseEditViewController: BaseViewController, UITextFieldDelegate, UITextVie
 	func photoViewHasFocus(sender: NSNotification) {
 		self.view.endEditing(true)
 	}
-	
-	func photoDidChange(sender: NSNotification) {
-		viewWillLayoutSubviews()
-	}
     
-    func photoRemoved(sender: NSNotification) {
+    func willSetPhoto() {
+        viewWillLayoutSubviews()
+    }
+    
+    func didSetPhoto() {
+        viewWillLayoutSubviews()
+    }
+    
+    func didClearPhoto() {
         viewWillLayoutSubviews()
     }
 

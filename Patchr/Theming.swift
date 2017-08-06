@@ -70,7 +70,7 @@ class Snow {
     let colorTint                   = Colors.brandColorTextLight
     let colorTabBarTint             = Colors.brandColor
     let colorTabBarBackground       = Colors.accentColor
-    let colorNavBarTint             = Colors.white
+    let colorNavBarTint             = Colors.black
     let colorNavBarBackground       = Colors.accentColor
 
 	let colorButtonRadioTitle				= Colors.black

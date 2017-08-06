@@ -12,9 +12,14 @@ import Photos
 
 enum PhotoMode: Int {
 	case none
-	case empty
 	case placeholder
 	case photo
+}
+
+@objc protocol PhotoEditDelegate: class {
+    @objc optional func didClearPhoto()
+    @objc optional func didSetPhoto()
+    @objc optional func willSetPhoto()
 }
 
 class PhotoEditView: UIView {
@@ -28,6 +33,8 @@ class PhotoEditView: UIView {
 		set(newVal) {
 		}
 	}
+    
+    var photoDelegate: PhotoEditDelegate?
 
 	var usingPhotoDefault: Bool = true
 	var photoDirty: Bool = false
@@ -35,14 +42,13 @@ class PhotoEditView: UIView {
 	var photoChosen: Bool = false
 	var photoSchema: String?
 	var photoChooser: PhotoChooserUI?
-	var photoMode: PhotoMode = .empty
+	var photoMode: PhotoMode = .placeholder
 
-	var photoGroup = UIView()
-	var scrimGroup = UIView()
-	var imageView = AirImageView(frame: CGRect.zero)
-	var setPhotoButton = UIButton()
-	var editPhotoButton = UIButton()
-	var clearPhotoButton = UIButton()
+    var photoGroup: UIView!
+    var imageView: AirImageView!
+    var setPhotoButton: UIButton!
+    var editPhotoButton: UIButton!
+    var clearPhotoButton: UIButton!
 	var progressBlock: AWSS3TransferUtilityProgressBlock?
 
 	var clearButtonAlignment: NSTextAlignment = .left
@@ -50,7 +56,7 @@ class PhotoEditView: UIView {
 	var setButtonAlignment: NSTextAlignment = .center
 
 	/*--------------------------------------------------------------------------------------------
-	* Lifecycle
+	* MARK: - Lifecycle
 	*--------------------------------------------------------------------------------------------*/
 
 	required init(coder aDecoder: NSCoder) {
@@ -66,7 +72,7 @@ class PhotoEditView: UIView {
 	}
 
 	/*--------------------------------------------------------------------------------------------
-	* Events
+	* MARK: - Events
 	*--------------------------------------------------------------------------------------------*/
 
 	override func layoutSubviews() {
@@ -75,41 +81,21 @@ class PhotoEditView: UIView {
 		self.photoGroup.fillSuperview()
 		self.imageView.fillSuperview()
         self.imageView.progressView.anchorInCenter(withWidth: 150, height: 20)
-		self.scrimGroup.anchorBottomCenterFillingWidth(withLeftAndRightPadding: 0, bottomPadding: 0, height: 48)
 
-		if self.editButtonAlignment == .right {
-			self.editPhotoButton.anchorCenterRight(withRightPadding: 6, width: 36, height: 36)
-		}
-		else if self.editButtonAlignment == .left {
-			self.editPhotoButton.anchorCenterLeft(withLeftPadding: 6, width: 36, height: 36)
-		}
-
-		if self.clearButtonAlignment == .right {
-			self.clearPhotoButton.anchorCenterRight(withRightPadding: 6, width: 36, height: 36)
-		}
-		else if self.clearButtonAlignment == .left {
-			self.clearPhotoButton.anchorCenterLeft(withLeftPadding: 6, width: 36, height: 36)
-		}
+        self.editPhotoButton.anchorBottomRight(withRightPadding: 6, bottomPadding: 6, width: 36, height: 36)
+        self.clearPhotoButton.anchorBottomLeft(withLeftPadding: 6, bottomPadding: 6, width: 36, height: 36)
 
 		if self.photoMode == .placeholder {
 			self.setPhotoButton.anchorInCenter(withWidth: 48, height: 48)
-		}
-		else {
+		} else {
 			self.setPhotoButton.anchorTopCenterFillingWidth(withLeftAndRightPadding: 0, topPadding: 0, height: 48)
 		}
 	}
 
 	func imageNotFoundAction(sender: AnyObject) {
-		if self.photoSchema == Schema.entityMessage {
-			self.imageView.image = nil
-			configureTo(photoMode: .empty)
-		}
-		else {
-			self.imageView.image = nil
-			self.usingPhotoDefault = true
-			configureTo(photoMode: .placeholder)
-		}
-
+        self.imageView.image = nil
+        self.usingPhotoDefault = true
+        configureTo(photoMode: .placeholder)
 		self.photoActive = false
 	}
 
@@ -124,20 +110,12 @@ class PhotoEditView: UIView {
 
 	func clearPhotoAction(sender: AnyObject) {
         Reporting.track("clear_photo")
-		if self.photoSchema == Schema.entityMessage {
-			self.imageView.image = nil
-			configureTo(photoMode: .empty)
-		}
-		else {
-			self.imageView.image = nil
-			self.usingPhotoDefault = true
-			configureTo(photoMode: .placeholder)
-		}
-
+        self.imageView.image = nil
+        self.usingPhotoDefault = true
+        configureTo(photoMode: .placeholder)
 		self.photoActive = false
 		self.photoDirty = true
-
-		NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.PhotoRemoved), object: self)
+        self.photoDelegate?.didClearPhoto?()
 	}
 
 	func setPhotoAction(sender: AnyObject) {
@@ -164,7 +142,7 @@ class PhotoEditView: UIView {
 		if image != nil {
 			self.imageView.image = image
 			self.imageView.asset = asset
-			NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.PhotoDidChange), object: self)
+            self.photoDelegate?.didSetPhoto?()
 		}
 		else if imageResult != nil {
 			/*
@@ -178,7 +156,7 @@ class PhotoEditView: UIView {
                         UIShared.toast(message: "Unable to download image")
                         return
                     }
-                    NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.PhotoDidChange), object: this)
+                    this.photoDelegate?.didSetPhoto?()
                 }
             }
             else {
@@ -187,7 +165,7 @@ class PhotoEditView: UIView {
                 self.imageView.setImageWithUrl(url: url) { [weak self] success in
                     guard let this = self else { return }
                     if success {
-                        NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.PhotoDidChange), object: this)
+                        this.photoDelegate?.didSetPhoto?()
                     }
                     else {
                         UIShared.toast(message: "Unable to download image")
@@ -198,7 +176,7 @@ class PhotoEditView: UIView {
 	}
 
 	/*--------------------------------------------------------------------------------------------
-	* Methods
+	* MARK: - Methods
 	*--------------------------------------------------------------------------------------------*/
 
 	func initialize() {
@@ -219,64 +197,51 @@ class PhotoEditView: UIView {
                 }
 			}
 		}
-
-		self.photoGroup.alpha = 0
+        
+        self.photoGroup = UIView()
 		self.photoGroup.backgroundColor = Theme.colorBackgroundImage
 		self.photoGroup.cornerRadius = 4
-		self.photoGroup.clipsToBounds = true
-
+        self.photoGroup.clipsToBounds = true
+        
+        self.imageView = AirImageView(frame: CGRect.zero)
 		self.imageView.contentMode = .scaleAspectFill
 
+        self.editPhotoButton = UIButton(type: .custom)
 		self.editPhotoButton.setImage(UIImage(named: "imgEdit2Light"), for: .normal)
 		self.editPhotoButton.backgroundColor = Theme.colorScrimLighten
 		self.editPhotoButton.cornerRadius = 18
 		self.editPhotoButton.alpha = 0
 
+        self.clearPhotoButton = UIButton(type: .custom)
 		self.clearPhotoButton.setImage(UIImage(named: "imgCancelDark"), for: .normal)
 		self.clearPhotoButton.backgroundColor = Theme.colorScrimLighten
 		self.clearPhotoButton.cornerRadius = 18
 		self.clearPhotoButton.alpha = 0
 
+        self.setPhotoButton = UIButton(type: .custom)
 		self.setPhotoButton.setImage(UIImage(named: "UIButtonCamera"), for: .normal)
-		self.setPhotoButton.borderWidth = Theme.dimenButtonBorderWidth
-
-		if photoMode == .placeholder {
-			self.setPhotoButton.backgroundColor = Theme.colorScrimLighten
-			self.setPhotoButton.borderColor = Colors.clear
-			self.setPhotoButton.cornerRadius = 24
-		}
-		else {
-			self.setPhotoButton.backgroundColor = Theme.colorButtonFill
-			self.setPhotoButton.borderColor = Theme.colorButtonBorder
-			self.setPhotoButton.cornerRadius = Theme.dimenButtonCornerRadius
-		}
-
+        self.setPhotoButton.backgroundColor = (photoMode == .placeholder) ? Theme.colorScrimLighten : Theme.colorButtonFill
+        self.setPhotoButton.cornerRadius = (photoMode == .placeholder) ? 24 : Theme.dimenButtonCornerRadius
+        self.setPhotoButton.borderWidth = Theme.dimenButtonBorderWidth
+        self.setPhotoButton.borderColor = (photoMode == .placeholder) ? Colors.clear : Theme.colorButtonBorder
 		self.setPhotoButton.alpha = 0
 
-		self.addSubview(self.photoGroup)
 		self.photoGroup.addSubview(self.imageView)
-		self.photoGroup.addSubview(self.scrimGroup)
-		self.scrimGroup.addSubview(self.editPhotoButton)
-		self.scrimGroup.addSubview(self.clearPhotoButton)
-		self.addSubview(self.setPhotoButton)
-
+        self.addSubview(self.photoGroup)
+        self.addSubview(self.setPhotoButton)
+        self.addSubview(self.editPhotoButton)
+        self.addSubview(self.clearPhotoButton)
+        
 		self.editPhotoButton.addTarget(self, action: #selector(editPhotoAction(sender:)), for: .touchUpInside)
 		self.clearPhotoButton.addTarget(self, action: #selector(clearPhotoAction(sender:)), for: .touchUpInside)
 		self.setPhotoButton.addTarget(self, action: #selector(setPhotoAction(sender:)), for: .touchUpInside)
 	}
 
 	func bind(url: URL, uploading: Bool? = false) {
+        self.photoDelegate?.willSetPhoto?()
 		self.imageView.setImageWithUrl(url: url, animate: true)
 		self.usingPhotoDefault = false
 		self.photoActive = true
-	}
-
-	func reset() {
-		self.imageView.image = nil
-		configureTo(photoMode: .empty)
-		self.photoDirty = false
-		self.photoActive = false
-		self.photoChosen = false
 	}
 
 	func setHost(controller: UIViewController?, view: UIView?) {
@@ -290,33 +255,11 @@ class PhotoEditView: UIView {
 			self.editPhotoButton.fadeIn()
 			self.clearPhotoButton.fadeIn()
 			self.setPhotoButton.fadeOut()
-
-			if self.photoMode == .empty {
-				self.photoGroup.fadeIn()
-			}
 		}
 		else if photoMode == .placeholder {
-			self.setPhotoButton.borderColor = Colors.clear
-			self.setPhotoButton.backgroundColor = Theme.colorScrimLighten
-			self.setPhotoButton.cornerRadius = 24
-
-			if self.photoMode == .photo {
-				self.editPhotoButton.fadeOut()
-				self.clearPhotoButton.fadeOut()
-				self.setPhotoButton.fadeIn()
-			}
-			else if self.photoMode == .empty {
-				self.photoGroup.fadeIn()
-				self.setPhotoButton.fadeIn()
-			}
-		}
-		else if photoMode == .empty {
-			self.setPhotoButton.backgroundColor = Theme.colorButtonFill
-			self.setPhotoButton.borderColor = Theme.colorButtonBorder
-			self.setPhotoButton.cornerRadius = Theme.dimenButtonCornerRadius
-
-			self.setPhotoButton.fadeIn()
-			self.photoGroup.fadeOut()
+            self.editPhotoButton.fadeOut()
+            self.clearPhotoButton.fadeOut()
+            self.setPhotoButton.fadeIn()
 		}
 		self.photoMode = photoMode
 		self.setNeedsLayout()    // Needed because dimensions can change

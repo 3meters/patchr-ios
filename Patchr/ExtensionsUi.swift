@@ -82,11 +82,11 @@ extension UIAlertController {
 
 public extension UIView {
 	
-    func fadeIn(duration: TimeInterval = 0.3, delay: TimeInterval = 0.0, alpha: CGFloat = 1.0, completion: @escaping ((Bool) -> Void) = {(finished: Bool) -> Void in}) {
+    func fadeIn(duration: TimeInterval = 0.3, delay: TimeInterval = 0.0, alpha: CGFloat = 1.0, completion: ((Bool) -> Void)? = nil) {
         if self.alpha != alpha {
             UIView.animate(withDuration: duration
 				, delay: delay
-				, options: [.curveEaseIn]
+				, options: [.curveEaseIn, .allowUserInteraction]
 				, animations: {
 					self.alpha = alpha
                 }
@@ -94,11 +94,11 @@ public extension UIView {
         }
     }
     
-    func fadeOut(duration: TimeInterval = 0.3, delay: TimeInterval = 0.0, alpha: CGFloat = 0.0, completion: @escaping (Bool) -> Void = {(finished: Bool) -> Void in}) {
+    func fadeOut(duration: TimeInterval = 0.3, delay: TimeInterval = 0.0, alpha: CGFloat = 0.0, completion: ((Bool) -> Void)? = nil) {
         if self.alpha != alpha {
             UIView.animate(withDuration: duration
 				, delay: delay
-				, options: [.curveEaseIn]
+				, options: [.curveEaseIn, .allowUserInteraction]
 				, animations: {
 					self.alpha = alpha
                 }

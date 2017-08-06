@@ -68,8 +68,14 @@ class MemberViewController: BaseViewController, UIScrollViewDelegate, UITextFiel
         })
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        UIApplication.shared.statusBarStyle = .lightContent
+    }
+    
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
+        UIApplication.shared.statusBarStyle = .default
         if self.isMovingFromParentViewController {
             UIShared.styleChrome(navigationBar: self.navigationController!.navigationBar, translucent: false)
         }
@@ -130,24 +136,6 @@ class MemberViewController: BaseViewController, UIScrollViewDelegate, UITextFiel
         UIViewController.topMostViewController()?.present(wrapper, animated: true, completion: nil)
     }
     
-    func emailAction(sender: AnyObject?) {
-        Reporting.track("view_email_compose")
-        if let email = self.user!.group.email {
-            if MFMailComposeViewController.canSendMail() {
-                UI.mailComposer!.mailComposeDelegate = self
-                UI.mailComposer!.setToRecipients([email])
-                self.present(UI.mailComposer!, animated: true, completion: nil)
-            }
-            else {
-                var emailURL = "mailto:\(email)"
-                emailURL = emailURL.addingPercentEncoding(withAllowedCharacters: NSMutableCharacterSet.urlQueryAllowed) ?? emailURL
-                if let url = URL(string: emailURL) {
-                    UIApplication.shared.openURL(url as URL)
-                }
-            }            
-        }
-    }
-
     func phoneAction(sender: AnyObject?) {
         do {
             Reporting.track("call_member")
@@ -199,7 +187,6 @@ class MemberViewController: BaseViewController, UIScrollViewDelegate, UITextFiel
 
         self.email.caption.text = "Email"
         self.email.label.textColor = Colors.brandColorTextLight
-        self.email.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(emailAction(sender:))))
         self.email.isHidden = true
         
         self.editButton.setTitle("Edit profile".uppercased(), for: .normal)
@@ -226,7 +213,7 @@ class MemberViewController: BaseViewController, UIScrollViewDelegate, UITextFiel
         
         if self.presented {
             let closeButton = UIBarButtonItem(barButtonSystemItem: .stop, target: self, action: #selector(self.closeAction(sender:)))
-            closeButton.tintColor = Theme.colorNavBarTint
+            closeButton.tintColor = Colors.white
             self.navigationItem.leftBarButtonItems = [closeButton]
         }
 	}
@@ -273,45 +260,5 @@ extension MemberViewController {
      */
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         updateHeaderView()
-    }
-}
-
-extension MemberViewController: MFMailComposeViewControllerDelegate {
-    
-    func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Error?) {
-		switch result {
-			case MFMailComposeResult.cancelled:	// 0
-                Reporting.track("email_cancelled")
-				UIShared.toast(message: "Email cancelled", controller: self, addToWindow: false)
-			case MFMailComposeResult.saved:		// 1
-                Reporting.track("email_saved")
-				UIShared.toast(message: "Email saved", controller: self, addToWindow: false)
-			case MFMailComposeResult.sent:		// 2
-                Reporting.track("email_sent")
-				UIShared.toast(message: "Email sent", controller: self, addToWindow: false)
-			case MFMailComposeResult.failed:	// 3
-				UIShared.toast(message: "Email send failure: \(error!.localizedDescription)", controller: self, addToWindow: false)
-				break
-		}
-		
-		self.dismiss(animated: true) {
-			UI.mailComposer = nil
-			UI.mailComposer = MFMailComposeViewController()
-		}
-	}
-}
-
-class MemberItem: NSObject, UIActivityItemSource {
-    
-    func activityViewControllerPlaceholderItem(_ activityViewController: UIActivityViewController) -> Any {
-        return ""
-    }
-    
-    func activityViewController(_ activityViewController: UIActivityViewController, itemForActivityType activityType: UIActivityType) -> Any? {
-        return ""
-    }
-    
-    func activityViewController(_ activityViewController: UIActivityViewController, subjectForActivityType activityType: UIActivityType?) -> String {
-        return ""
     }
 }

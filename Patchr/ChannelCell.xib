@@ -65,6 +65,17 @@
                 <constraint firstItem="h5i-BT-PQD" firstAttribute="top" secondItem="LTM-Mi-qV7" secondAttribute="top" constant="8" id="zRj-f1-ZTd"/>
             </constraints>
             <size key="customSize" width="201" height="259"/>
+            <userDefinedRuntimeAttributes>
+                <userDefinedRuntimeAttribute type="number" keyPath="borderWidth">
+                    <real key="value" value="0.5"/>
+                </userDefinedRuntimeAttribute>
+                <userDefinedRuntimeAttribute type="color" keyPath="borderColor">
+                    <color key="value" red="0.80000001190000003" green="0.80000001190000003" blue="0.80000001190000003" alpha="1" colorSpace="calibratedRGB"/>
+                </userDefinedRuntimeAttribute>
+                <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
+                    <real key="value" value="4"/>
+                </userDefinedRuntimeAttribute>
+            </userDefinedRuntimeAttributes>
             <connections>
                 <outlet property="badge" destination="h5i-BT-PQD" id="8G7-1q-Elb"/>
                 <outlet property="photoView" destination="F9S-ez-8WB" id="xiI-Dk-K02"/>

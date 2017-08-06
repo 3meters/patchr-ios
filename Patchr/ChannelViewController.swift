@@ -29,7 +29,6 @@ class ChannelViewController: BaseTableController {
 	var displayPhotosSorted: [Any]!
     var lastContentOffset = CGFloat(0)
     var isChromeTranslucent = false
-    var statusBarStyle: UIStatusBarStyle = .lightContent
     var postingEnabled = false
 
     var selectedRow: Int?
@@ -38,9 +37,10 @@ class ChannelViewController: BaseTableController {
 
 	weak var sheetController: STPopupController!
 
-	var titleView: ChannelTitleView!
-	var navButton: UIBarButtonItem!
-	var titleButton: UIBarButtonItem!
+	var backButton: UIBarButtonItem!
+    var galleryButton: UIBarButtonItem!
+    var editButton: UIBarButtonItem!
+    var menuButton: UIBarButtonItem!
 
 	/* Only used for row sizing */
 	var rowHeights: NSMutableDictionary = [:]
@@ -69,11 +69,16 @@ class ChannelViewController: BaseTableController {
         }
 		bind(channelId: self.inputChannelId!)
 	}
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        UIApplication.shared.statusBarStyle = .lightContent
+    }
 
 	override func viewDidAppear(_ animated: Bool) {
 		super.viewDidAppear(animated)
-        
-        if self.actionButton != nil && self.postingEnabled {
+    
+        if self.channel != nil && self.postingEnabled && !(self.container?.actionButtonVisible)! {
             self.container?.setActionButton(button: self.actionButton)
             self.container?.showActionButton()
         }
@@ -94,26 +99,22 @@ class ChannelViewController: BaseTableController {
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
+        UIApplication.shared.statusBarStyle = .default
+
+        if self.postingEnabled {
+            self.container?.setActionButton(button: nil)
+            self.container?.hideActionButton()
+        }
         if self.isMovingFromParentViewController {
             UIShared.styleChrome(navigationBar: self.navigationController!.navigationBar, translucent: false)
-            self.container?.hideActionButton()
             StateController.instance.clearChannel() // Only clears last channel default
         }
     }
 
-	override func viewDidDisappear(_ animated: Bool) {
-		super.viewDidDisappear(animated)
-        self.container?.setActionButton(button: nil)
-	}
-
 	override func viewWillLayoutSubviews() {
         self.view.fillSuperview()
-
 		super.viewWillLayoutSubviews()
-
 		self.tableView.fillSuperview()
-		self.titleView?.bounds.size.width = self.view.width() - 160
-		self.navigationController?.navigationBar.setNeedsLayout()
 	}
 
 	deinit {
@@ -142,11 +143,10 @@ class ChannelViewController: BaseTableController {
 
     func actionButtonTapped(gesture: UIGestureRecognizer?) {
         let controller = MessageEditViewController()
-        let wrapper = AirNavigationController()
+        let wrapper = AirNavigationController(rootViewController: controller)
         controller.inputChannelId = StateController.instance.channelId!
         controller.mode = .insert
-        wrapper.viewControllers = [controller]
-        UIViewController.topMostViewController()?.present(wrapper, animated: true, completion: nil)
+        self.present(wrapper, animated: true, completion: nil)
     }
 
 	func browseMemberAction(sender: AnyObject?) {
@@ -155,7 +155,7 @@ class ChannelViewController: BaseTableController {
                 let controller = MemberViewController(userId: user.id)
                 let wrapper = AirNavigationController(rootViewController: controller)
 				Reporting.track("view_group_member")
-                UIViewController.topMostViewController()?.present(wrapper, animated: true, completion: nil)
+                self.present(wrapper, animated: true, completion: nil)
 			}
 		}
 	}
@@ -189,12 +189,11 @@ class ChannelViewController: BaseTableController {
 		}
 	}
 
-	func editChannelAction() {
+    func editChannelAction(sender: AnyObject?) {
 		let controller = ChannelEditViewController()
-		let wrapper = AirNavigationController()
+		let wrapper = AirNavigationController(rootViewController: controller)
 		controller.mode = .update
 		controller.inputChannelId = self.channel.id
-		wrapper.viewControllers = [controller]
 		Reporting.track("view_channel_edit")
 		self.present(wrapper, animated: true, completion: nil)
 	}
@@ -213,6 +212,7 @@ class ChannelViewController: BaseTableController {
                         if error == nil {
                             UIShared.toast(message: "You have left this channel.")
                             StateController.instance.clearChannel() // Only clears last channel default
+                            self?.close()
                             if UserDefaults.standard.bool(forKey: PerUserKey(key: Prefs.soundEffects)) {
                                 AudioController.instance.play(sound: Sound.pop.rawValue)
                             }
@@ -303,8 +303,17 @@ class ChannelViewController: BaseTableController {
         button.titleEdgeInsets = UIEdgeInsetsMake(0, -36, 0, 0)
         button.frame = CGRect(x: 0, y: 0, width: 120, height: 36)
         button.addTarget(self, action: #selector(backAction(sender:)), for: .touchUpInside)
-        let backButton = UIBarButtonItem(customView: button)
+        self.backButton = UIBarButtonItem(customView: button)
 
+        /* Edit button */
+        button = UIButton(type: .custom)
+        button.frame = CGRect(x: 0, y: 0, width: 36, height: 36)
+        button.addTarget(self, action: #selector(editChannelAction(sender:)), for: .touchUpInside)
+        button.showsTouchWhenHighlighted = true
+        button.setImage(#imageLiteral(resourceName: "imgEdit2Light"), for: .normal)
+        button.imageEdgeInsets = UIEdgeInsetsMake(8, 0, 8, 16)
+        self.editButton = UIBarButtonItem(customView: button)
+        
 		/* Gallery button */
 		button = UIButton(type: .custom)
 		button.frame = CGRect(x: 0, y: 0, width: 36, height: 36)
@@ -312,7 +321,7 @@ class ChannelViewController: BaseTableController {
 		button.showsTouchWhenHighlighted = true
 		button.setImage(#imageLiteral(resourceName: "imgGallery2Light"), for: .normal)
 		button.imageEdgeInsets = UIEdgeInsetsMake(6, 6, 6, 6)
-		let photosButton = UIBarButtonItem(customView: button)
+		self.galleryButton = UIBarButtonItem(customView: button)
 
 		/* Menu button */
 		button = UIButton(type: .custom)
@@ -321,11 +330,11 @@ class ChannelViewController: BaseTableController {
 		button.showsTouchWhenHighlighted = true
 		button.setImage(UIImage(named: "imgOverflowVerticalLight"), for: .normal)
 		button.imageEdgeInsets = UIEdgeInsetsMake(8, 16, 8, 0)
-		let moreButton = UIBarButtonItem(customView: button)
+		self.menuButton = UIBarButtonItem(customView: button)
         
         self.navigationItem.hidesBackButton = true
         self.navigationItem.setLeftBarButton(backButton, animated: true)
-		self.navigationItem.setRightBarButtonItems([moreButton, UI.spacerFixed, UI.spacerFixed, photosButton], animated: true)
+		self.navigationItem.setRightBarButtonItems([self.menuButton, UI.spacerFixed, self.galleryButton], animated: true)
 
 		NotificationCenter.default.addObserver(self, selector: #selector(messageDidChange(notification:)), name: NSNotification.Name(rawValue: Events.MessageDidUpdate), object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(userDidUpdate(notification:)), name: NSNotification.Name(rawValue: Events.UserDidUpdate), object: nil)
@@ -416,19 +425,25 @@ class ChannelViewController: BaseTableController {
 
 			guard let this = self else { return }
 			guard channel != nil else {
-				if error != nil {
-					// We don't have a current group
-					MainController.instance.showMain()
-				}
+                this.backAction(sender: nil)
 				return
 			}
 
 			this.channel = channel
 			this.navigationController?.navigationBar.setNeedsLayout()
-            let isReader = (channel!.role == "reader")
-            if !isReader && !this.postingEnabled {
+            
+            if this.channel.role == "reader" {
+                this.postingEnabled = false
+            }
+            else {
+                this.postingEnabled = true
                 this.container?.setActionButton(button: this.actionButton)
                 this.container?.showActionButton()
+            }
+            
+            /* Add edit button */
+            if this.isOwner() {
+                this.navigationItem.setRightBarButtonItems([this.menuButton, UI.spacerFixed, this.galleryButton, UI.spacerFixed, this.editButton], animated: true)
             }
             
 			/* We do this here so we have tableView sizing */
@@ -437,32 +452,23 @@ class ChannelViewController: BaseTableController {
 			this.headerView.bind(channel: this.channel)
 
 			if this.channel.purpose != nil {
+				let viewWidth = min(Config.contentWidthMax, this.view.width())
+				this.headerView.purposeLabel.bounds.size.width = viewWidth - 32
+				this.headerView.purposeLabel.sizeToFit()
+				this.headerView.purposeLabel.anchorTopLeft(withLeftPadding: 12
+						, topPadding: 12
+						, width: this.headerView.purposeLabel.width()
+						, height: this.headerView.purposeLabel.height())
 
-//				let viewWidth = min(Config.contentWidthMax, this.view.width())
-//				this.headerView.purposeLabel.bounds.size.width = viewWidth - 32
-//				this.headerView.purposeLabel.sizeToFit()
-//				this.headerView.purposeLabel.anchorTopLeft(withLeftPadding: 12
-//						, topPadding: 12
-//						, width: this.headerView.purposeLabel.width()
-//						, height: this.headerView.purposeLabel.height())
-//
-//				let infoHeight = this.headerView.purposeLabel.height() + 24
-//				this.headerHeight = (viewWidth * 0.625) + infoHeight
-//
-//				this.tableView.contentInset = UIEdgeInsets(top: this.headerHeight + 74, left: 0, bottom: 0, right: 0)
-//				this.tableView.contentOffset = CGPoint(x: 0, y: -(this.headerHeight + 74))
-//				this.updateHeaderView()
+				let infoHeight = this.headerView.purposeLabel.height() + 24
+				this.headerHeight = (viewWidth * 0.625) + infoHeight
+                this.tableView.contentInset = UIEdgeInsets(top: this.headerHeight, left: 0, bottom: 0, right: 0)
+                this.tableView.contentOffset = CGPoint(x: 0, y: -(this.headerHeight))
+				this.updateHeaderView()
 			}
 		})
 
 		Log.v("Observe query triggered for channel messages")
-
-		if !MainController.instance.introPlayed {
-			if UserDefaults.standard.bool(forKey: PerUserKey(key: Prefs.soundEffects)) {
-				AudioController.instance.play(sound: Sound.greeting.rawValue)
-			}
-			MainController.instance.introPlayed = true
-		}
 	}
 
 	func unbind() {
@@ -471,6 +477,10 @@ class ChannelViewController: BaseTableController {
 		}
 		self.channelQuery?.remove()
 	}
+    
+    func isOwner() -> Bool {
+        return (self.channel.role == "owner" || self.channel.ownedBy == UserController.instance.userId)
+    }
     
 	func updateHeaderView() {
 		var headerRect = CGRect(x: 0, y: -self.headerHeight, width: self.view.width(), height: self.headerHeight)
@@ -486,9 +496,10 @@ class ChannelViewController: BaseTableController {
 		let userId = UserController.instance.userId!
 		let sheet = UIAlertController(title: nil, message: nil, preferredStyle: UIAlertControllerStyle.actionSheet)
 
-		let like = UIAlertAction(title: "Add reaction", style: .default) { action in
+		let like = UIAlertAction(title: "Add reaction", style: .default) { [weak self] action in
 
-			if self.channel?.joinedAt == nil {
+            guard let this = self else { return }
+			if this.channel?.joinedAt == nil {
 				UIShared.toast(message: "Join this channel to add reactions.")
 				return
 			}
@@ -498,34 +509,33 @@ class ChannelViewController: BaseTableController {
 			controller.inputMessage = message
 			controller.contentSizeInPopup = CGSize(width: Config.screenWidth, height: 192)
 
-			if let topController = UIViewController.topMostViewController() {
-				let popController = STPopupController(rootViewController: controller)
-				let backgroundView = UIView()
-				backgroundView.backgroundColor = Colors.opacity25pcntBlack
-				popController.style = .bottomSheet
-				popController.backgroundView = backgroundView
-				popController.hidesCloseButton = true
-				self.sheetController = popController
-				let tap = UITapGestureRecognizer(target: self, action: #selector(self.backgroundTapped(sender:)))
-				self.sheetController.backgroundView?.addGestureRecognizer(tap)
-				self.sheetController.present(in: topController)
-			}
+            let popController = STPopupController(rootViewController: controller)
+            let backgroundView = UIView()
+            backgroundView.backgroundColor = Colors.opacity25pcntBlack
+            popController.style = .bottomSheet
+            popController.backgroundView = backgroundView
+            popController.hidesCloseButton = true
+            this.sheetController = popController
+            let tap = UITapGestureRecognizer(target: this, action: #selector(this.backgroundTapped(sender:)))
+            this.sheetController.backgroundView?.addGestureRecognizer(tap)
+            this.sheetController.present(in: this)
 		}
 
-		let edit = UIAlertAction(title: "Edit message", style: .default) { action in
+		let edit = UIAlertAction(title: "Edit message", style: .default) { [weak self] action in
             
+            guard let this = self else { return }
             Reporting.track("view_message_edit")
             let controller = MessageEditViewController()
-            let wrapper = AirNavigationController()
             controller.inputMessageId = message.id!
             controller.inputChannelId = message.channelId!
             controller.mode = .update
-            wrapper.viewControllers = [controller]
-            UIViewController.topMostViewController()?.present(wrapper, animated: true, completion: nil)
+            let wrapper = AirNavigationController(rootViewController: controller)
+            this.present(wrapper, animated: true, completion: nil)
 		}
         
-		let delete = UIAlertAction(title: "Delete message", style: .destructive) { action in
-			self.deleteMessageAction(message: message)
+		let delete = UIAlertAction(title: "Delete message", style: .destructive) { [weak self] action in
+            guard let this = self else { return }
+			this.deleteMessageAction(message: message)
 		}
         
 		let cancel = UIAlertAction(title: "Cancel", style: .cancel) { action in
@@ -538,7 +548,7 @@ class ChannelViewController: BaseTableController {
 			sheet.addAction(delete)
 			sheet.addAction(cancel)
 		}
-		else if self.channel.role == "owner" {
+		else if isOwner() {
 			sheet.addAction(like)
 			sheet.addAction(delete)
 			sheet.addAction(cancel)
@@ -563,9 +573,9 @@ class ChannelViewController: BaseTableController {
 		if self.channel != nil {
             
 			let sheet = UIAlertController(title: nil, message: nil, preferredStyle: UIAlertControllerStyle.actionSheet)
-			let isOwner = (self.channel.role == "owner")
+			let isOwner = self.isOwner()
 
-			let statusAction = UIAlertAction(title: "Leave channel", style: .default) { [weak self] action in
+			let statusAction = UIAlertAction(title: "Leave", style: .default) { [weak self] action in
 				guard let this = self else { return }
                 this.leaveChannelAction(sender: nil)
 			}
@@ -574,7 +584,7 @@ class ChannelViewController: BaseTableController {
             
             if let notifications = self.channel.notifications {
                 let muted = (notifications == "none")
-                let mutedTitle = muted ? "Unmute channel" : "Mute channel"
+                let mutedTitle = muted ? "Unmute" : "Mute"
                 muteAction = UIAlertAction(title: mutedTitle, style: .default) { [weak self] action in
                     guard let this = self else { return }
                     Reporting.track(muted ? "unmute_channel" : "mute_channel")
@@ -582,20 +592,16 @@ class ChannelViewController: BaseTableController {
                 }
             }
 
-			let editAction = UIAlertAction(title: "Manage channel", style: .default) { [weak self] action in
-				guard let this = self else { return }
-				this.editChannelAction()
-			}
-
-			let browseMembersAction = UIAlertAction(title: "Channel members", style: .default) { action in
+			let browseMembersAction = UIAlertAction(title: "Members", style: .default) { [weak self] action in
+                guard let this = self else { return }
 				let controller = MemberListController()
+                controller.scope = .channel
+                controller.manage = isOwner
 				let wrapper = AirNavigationController(rootViewController: controller)
-				controller.scope = .channel
-				controller.target = .channel
-				UIViewController.topMostViewController()?.present(wrapper, animated: true, completion: nil)
+                this.present(wrapper, animated: true, completion: nil)
 			}
 
-			let inviteAction = UIAlertAction(title: "Invite to channel", style: .default) { [weak self] action in
+			let inviteAction = UIAlertAction(title: "Invite", style: .default) { [weak self] action in
 				guard let this = self else { return }
 				Reporting.track("view_channel_invite")
 				let controller = InviteViewController()
@@ -604,12 +610,13 @@ class ChannelViewController: BaseTableController {
 				controller.inputChannelId = this.channel.id!
 				controller.inputChannelTitle = this.channel.title!
 				let wrapper = AirNavigationController(rootViewController: controller)
-				UIViewController.topMostViewController()?.present(wrapper, animated: true, completion: nil)
+				this.present(wrapper, animated: true, completion: nil)
 			}
             
-            let profileAction = UIAlertAction(title: "Profile and settings", style: .default) { action in
+            let profileAction = UIAlertAction(title: "Profile and settings", style: .default) { [weak self] action in
+                guard let this = self else { return }
                 let wrapper = AirNavigationController(rootViewController: MemberViewController(userId: UserController.instance.userId!))
-                UIViewController.topMostViewController()?.present(wrapper, animated: true, completion: nil)
+                this.present(wrapper, animated: true, completion: nil)
             }
 
 			let cancel = UIAlertAction(title: "Cancel", style: .cancel) { action in
@@ -620,7 +627,6 @@ class ChannelViewController: BaseTableController {
 				sheet.addAction(muteAction!)
 				sheet.addAction(browseMembersAction)
                 sheet.addAction(inviteAction) // Onwers only
-				sheet.addAction(editAction) // Owners only
                 sheet.addAction(profileAction)
 				sheet.addAction(cancel)
 			}
@@ -633,8 +639,8 @@ class ChannelViewController: BaseTableController {
 			}
 
 			if let presenter = sheet.popoverPresentationController {
-				presenter.sourceView = self.titleView
-				presenter.sourceRect = self.titleView.bounds
+				presenter.sourceView = self.menuButton.customView
+				presenter.sourceRect = (self.menuButton.customView?.bounds)!
 			}
 
 			present(sheet, animated: true, completion: nil)
@@ -719,8 +725,9 @@ class ChannelViewController: BaseTableController {
         self.actionButton.bounds.size = CGSize(width: 56, height: 56)
         self.actionButton.autoresizingMask = [.flexibleRightMargin, .flexibleLeftMargin, .flexibleBottomMargin, .flexibleTopMargin]
         self.actionButton.centerView.gestureRecognizers?.forEach(self.actionButton.centerView.removeGestureRecognizer) /* Remove default tap regcognizer */
-        self.actionButton.imageInsets = UIEdgeInsetsMake(14, 14, 14, 14)
-        self.actionButton.imageView.image = UIImage(named: "imgAddLight")	// Default
+        self.actionButton.imageInsets = UIEdgeInsetsMake(18, 20, 18, 16)
+        self.actionButton.imageView.image = #imageLiteral(resourceName: "imgAddMessageLight")	// Default
+        self.actionButton.imageView.tintColor = Colors.black
         self.actionButton.showBackground = false
         
         self.actionButton.centerView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(actionButtonTapped(gesture:))))
@@ -767,6 +774,11 @@ extension ChannelViewController {
                     , delay: 0
                     , options: [.curveEaseInOut, .transitionCrossDissolve]
                     , animations: {
+                        UIApplication.shared.statusBarStyle = .default
+                        if let backButton = self.backButton?.customView as? UIButton {
+                            backButton.tintColor = Colors.black
+                            backButton.setTitleColor(Colors.black, for: .normal)
+                        }
                         UIShared.styleChrome(navigationBar: self.navigationController!.navigationBar, translucent: false)
                         self.isChromeTranslucent = false
                 }, completion: nil)
@@ -778,6 +790,11 @@ extension ChannelViewController {
                     , delay: 0
                     , options: [.curveEaseInOut, .transitionCrossDissolve]
                     , animations: {
+                        UIApplication.shared.statusBarStyle = .lightContent
+                        if let backButton = self.backButton?.customView as? UIButton {
+                            backButton.tintColor = Colors.white
+                            backButton.setTitleColor(Colors.white, for: .normal)
+                        }
                         UIShared.styleChrome(navigationBar: self.navigationController!.navigationBar, translucent: true)
                         self.isChromeTranslucent = true
                 }, completion: nil)

@@ -21,7 +21,6 @@ class FireUser: NSObject {
     var createdAt: Int64!
     var createdBy: String!
     var developer: Bool?
-    var group: GroupMembership!
     var id: String!
     var modifiedAt: Int64!
     var presence: Any?
@@ -69,29 +68,5 @@ class ChannelMembership: NSObject {
         self.joinedAt = nil
         self.starred = nil
         self.muted = nil
-    }
-}
-
-class GroupMembership: NSObject {
-    var disabled: Bool!
-    var email: String?
-    var joinedAt: Int?
-    var notifications: String!
-    var role: String!
-    
-    init(dict: [String: Any]) {
-        self.disabled = dict["disabled"] as? Bool
-        self.role = dict["role"] as? String
-        self.notifications = dict["notifications"] as? String
-        self.email = dict["email"] as? String
-        self.joinedAt = dict["joined_at"] as? Int
-    }
-    
-    func clear() {
-        self.disabled = nil
-        self.role = nil
-        self.notifications = nil
-        self.email = nil
-        self.joinedAt = nil
     }
 }

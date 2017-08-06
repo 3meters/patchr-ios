@@ -24,6 +24,7 @@ class MessageEditViewController: BaseEditViewController {
 	var userName = AirLabelDisplay()
 	var messageField = AirTextView()
 	var photoEditView = PhotoEditView()
+    var photoButton = UIButton()
 
     var doneButton: UIBarButtonItem!
 
@@ -59,11 +60,6 @@ class MessageEditViewController: BaseEditViewController {
 		}
 	}
 
-	override func viewWillDisappear(_ animated: Bool) {
-		super.viewWillDisappear(animated)
-		self.firstAppearance = false
-	}
-
 	override func viewWillLayoutSubviews() {
 		super.viewWillLayoutSubviews()
         
@@ -77,7 +73,8 @@ class MessageEditViewController: BaseEditViewController {
         self.userName.align(toTheRightOf: self.userPhotoControl, matchingCenterWithLeftPadding: 8, width: self.userName.width(), height: self.userName.height())
         
         self.messageField.alignUnder(self.userGroup, matchingCenterWithTopPadding: 0, width: viewWidth - 32, height: max(messageSize.height, 96))
-		self.photoEditView.alignUnder(self.messageField, matchingLeftAndRightWithTopPadding: 8, height: self.photoEditView.photoMode == .empty ? 48 : viewWidth * 0.75)
+		self.photoEditView.alignUnder(self.messageField, matchingLeftAndRightWithTopPadding: 8, height: viewWidth * 0.75)
+        self.photoButton.alignUnder(self.messageField, matchingLeftAndRightWithTopPadding: 8, height: 48)
 	}
 
 	/*--------------------------------------------------------------------------------------------
@@ -148,21 +145,36 @@ class MessageEditViewController: BaseEditViewController {
         super.textViewDidEndEditing(textView)
         self.doneButton.isEnabled = isDirty()
     }
+    
+    func setPhotoAction(sender: AnyObject) {
+        self.view.endEditing(true)
+        self.photoEditView.setPhotoAction(sender: sender)
+    }
+    
+    override func willSetPhoto() {
+        super.willSetPhoto()
+        self.photoButton.fadeOut()
+        self.photoEditView.fadeIn()
+    }
+    
+    override func didSetPhoto() {
+        super.didSetPhoto()
+        self.photoButton.fadeOut()
+        self.photoEditView.fadeIn()
+        self.doneButton.isEnabled = isDirty()
+    }
+    
+    override func didClearPhoto() {
+        super.didClearPhoto()
+        self.photoButton.fadeIn()
+        self.photoEditView.fadeOut()
+        self.doneButton.isEnabled = isDirty()
+    }
 
     /*--------------------------------------------------------------------------------------------
      * MARK: - Notifications
      *--------------------------------------------------------------------------------------------*/
     
-    override func photoDidChange(sender: NSNotification) {
-        super.photoDidChange(sender: sender)
-        self.doneButton.isEnabled = isDirty()
-    }
-    
-    override func photoRemoved(sender: NSNotification) {
-        super.photoRemoved(sender: sender)
-        self.doneButton.isEnabled = isDirty()
-    }
-
 	/*--------------------------------------------------------------------------------------------
 	 * MARK: - Methods
 	 *--------------------------------------------------------------------------------------------*/
@@ -185,11 +197,23 @@ class MessageEditViewController: BaseEditViewController {
 		self.photoEditView.photoSchema = Schema.entityMessage
 		self.photoEditView.setHost(controller: self, view: self.photoEditView)
 		self.photoEditView.configureTo(photoMode: .placeholder)
+        self.photoEditView.photoDelegate = self
+        self.photoEditView.alpha = 0
+        
+        self.photoButton.setImage(#imageLiteral(resourceName: "UIButtonCamera"), for: .normal)
+        self.photoButton.backgroundColor = Theme.colorButtonFill
+        self.photoButton.cornerRadius = Theme.dimenButtonCornerRadius
+        self.photoButton.borderWidth = Theme.dimenButtonBorderWidth
+        self.photoButton.borderColor = Theme.colorButtonBorder
+        self.photoButton.alpha = 1
+        
+        self.photoButton.addTarget(self, action: #selector(setPhotoAction(sender:)), for: .touchUpInside)
 
 		self.userGroup.addSubview(self.userPhotoControl)
 		self.userGroup.addSubview(self.userName)
 		self.contentHolder.addSubview(self.messageField)
 		self.contentHolder.addSubview(self.photoEditView)
+        self.contentHolder.addSubview(self.photoButton)
 		self.contentHolder.addSubview(self.userGroup)
 
 		if self.mode == .insert {
@@ -210,9 +234,6 @@ class MessageEditViewController: BaseEditViewController {
 			self.navigationItem.leftBarButtonItems = [closeButton]
 			self.navigationItem.rightBarButtonItems = [doneButton, UI.spacerFixed, deleteButton]
 		}
-
-		NotificationCenter.default.addObserver(self, selector: #selector(photoDidChange(sender:)), name: NSNotification.Name(rawValue: Events.PhotoDidChange), object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(photoRemoved(sender:)), name: NSNotification.Name(rawValue: Events.PhotoRemoved), object: nil)
 	}
 
 	func bind() {
@@ -252,11 +273,11 @@ class MessageEditViewController: BaseEditViewController {
                 self.photoEditView.bind(url: url)
             }
             else {
-                self.photoEditView.configureTo(photoMode: .empty)
+                self.photoEditView.configureTo(photoMode: .placeholder)
             }
         }
         else {
-            self.photoEditView.configureTo(photoMode: .empty)
+            self.photoEditView.configureTo(photoMode: .placeholder)
         }
 	}
 
@@ -348,7 +369,7 @@ class MessageEditViewController: BaseEditViewController {
             self.close(animated: true)
         }
 	}
-
+    
 	func isDirty() -> Bool {
 
 		if self.mode == .insert {

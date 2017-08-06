@@ -126,8 +126,6 @@ public struct Events {
     static let RightDidClose = "RightDidClose"
     static let RightWillOpen = "RightWillOpen"
     static let MessageDidUpdate = "MessageDidUpdate"
-    static let PhotoDidChange = "PhotoDidChange"
-    static let PhotoRemoved = "PhotoRemoved"
     static let StateInitialized = "StateInitialized"
     static let UnreadChange = "UnreadChange"
     static let UserDidSwitch = "UserDidSwitch"

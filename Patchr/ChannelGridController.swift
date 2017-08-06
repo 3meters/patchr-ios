@@ -28,6 +28,7 @@ class ChannelGridController: UICollectionViewController {
 	var searchBarButton: UIBarButtonItem!
 	var searchButton: UIBarButtonItem!
     var addButton: UIBarButtonItem!
+    var menuButton: UIBarButtonItem!
 	var titleButton: UIBarButtonItem!
     
     fileprivate var sectionInsets: UIEdgeInsets?
@@ -172,8 +173,8 @@ class ChannelGridController: UICollectionViewController {
         button.frame = CGRect(x: 0, y: 0, width: 36, height: 36)
         button.addTarget(self, action: #selector(addAction(sender:)), for: .touchUpInside)
         button.showsTouchWhenHighlighted = true
-        button.setImage(UIImage(named: "imgAddLight"), for: .normal)
-        button.imageEdgeInsets = UIEdgeInsetsMake(0, 0, 0, 0)
+        button.setImage(#imageLiteral(resourceName: "imgChannelAdd"), for: .normal)
+        button.imageEdgeInsets = UIEdgeInsetsMake(6, 6, 6, 6)
         self.addButton = UIBarButtonItem(customView: button)
         
         /* Menu button */
@@ -183,11 +184,11 @@ class ChannelGridController: UICollectionViewController {
         button.showsTouchWhenHighlighted = true
         button.setImage(UIImage(named: "imgOverflowVerticalLight"), for: .normal)
         button.imageEdgeInsets = UIEdgeInsetsMake(8, 16, 8, 0)
-        let moreButton = UIBarButtonItem(customView: button)
+        self.menuButton = UIBarButtonItem(customView: button)
 
         self.navigationItem.title = "Channels"
 		self.navigationItem.leftBarButtonItem = self.searchButton
-        self.navigationItem.setRightBarButtonItems([moreButton, UI.spacerFixed, self.addButton], animated: true)
+        self.navigationItem.setRightBarButtonItems([self.menuButton, UI.spacerFixed, self.addButton], animated: true)
 
 		NotificationCenter.default.addObserver(self, selector: #selector(userDidSwitch(notification:)), name: NSNotification.Name(rawValue: Events.UserDidSwitch), object: nil)
 	}
@@ -213,6 +214,14 @@ class ChannelGridController: UICollectionViewController {
                 let collectionView = scrollView as! UICollectionView
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as! ChannelCell
                 cell.reset()    // Releases previous data observers
+                
+                
+                if !MainController.instance.introPlayed {
+                    if UserDefaults.standard.bool(forKey: PerUserKey(key: Prefs.soundEffects)) {
+                        AudioController.instance.play(sound: Sound.greeting.rawValue)
+                    }
+                    MainController.instance.introPlayed = true
+                }
                 
                 guard self != nil else { return cell }
                 

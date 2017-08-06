@@ -44,9 +44,6 @@ class UserController: NSObject {
     
     var userEmail: String? {
         var userEmail: String?
-        if let email = UserController.instance.user?.group?.email {
-            userEmail = email
-        }
         if userEmail == nil, let authEmail = Auth.auth().currentUser?.email {
             userEmail = authEmail
         }
@@ -111,7 +108,7 @@ class UserController: NSObject {
             Log.i("User logged in: \(userId)")
             
             if let token = InstanceID.instanceID().token() {
-                Log.i("UserController: setting firebase messaging token: \(token)")
+                Log.i("UserController: Setting firebase messaging token")
                 FireController.db.child("installs/\(userId)/\(token)").setValue(true)
             }
             else {

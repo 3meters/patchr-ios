@@ -126,20 +126,20 @@ class ProfileEditViewController: BaseEditViewController {
         return true
     }
     
+    override func didSetPhoto() {
+        super.didSetPhoto()
+        self.doneButton.isEnabled = isDirty()
+    }
+    
+    override func didClearPhoto() {
+        super.didClearPhoto()
+        self.doneButton.isEnabled = isDirty()
+    }
+    
     /*--------------------------------------------------------------------------------------------
      * MARK: - Notifications
      *--------------------------------------------------------------------------------------------*/
     
-    override func photoDidChange(sender: NSNotification) {
-        super.photoDidChange(sender: sender)
-        self.doneButton.isEnabled = isDirty()
-    }
-    
-    override func photoRemoved(sender: NSNotification) {
-        super.photoRemoved(sender: sender)
-        self.doneButton.isEnabled = isDirty()
-    }
-
     /*--------------------------------------------------------------------------------------------
      * MARK: - Methods
      *--------------------------------------------------------------------------------------------*/
@@ -205,9 +205,6 @@ class ProfileEditViewController: BaseEditViewController {
         self.firstNameField.addTarget(self, action: #selector(textFieldDidChange(_:)), for: .editingChanged)
         self.lastNameField.addTarget(self, action: #selector(textFieldDidChange(_:)), for: .editingChanged)
         self.phoneField.addTarget(self, action: #selector(textFieldDidChange(_:)), for: .editingChanged)
-        
-        NotificationCenter.default.addObserver(self, selector: #selector(photoDidChange(sender:)), name: NSNotification.Name(rawValue: Events.PhotoDidChange), object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(photoRemoved(sender:)), name: NSNotification.Name(rawValue: Events.PhotoRemoved), object: nil)
     }
 
     func bind() {

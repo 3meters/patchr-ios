@@ -84,7 +84,7 @@ class AirTextView: UITextView {
 		
 	override func layoutSubviews() {
 		super.layoutSubviews()
-        self.placeholderLabel?.anchorBottomCenterFillingWidth(withLeftAndRightPadding: 0, bottomPadding: 12, height: 24)
+        self.placeholderLabel?.anchorTopCenterFillingWidth(withLeftAndRightPadding: 0, topPadding: 12, height: 24)
 		self.rule.anchorBottomCenterFillingWidth(withLeftAndRightPadding: 0, bottomPadding: 0, height: Theme.dimenRuleThickness)
 	}
     

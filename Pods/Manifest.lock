@@ -33,6 +33,9 @@ PODS:
     - Branch/without-IDFA (= 0.14.12)
   - Branch/Core (0.14.12)
   - Branch/without-IDFA (0.14.12)
+  - ChameleonFramework/Default (2.1.0)
+  - ChameleonFramework/Swift (2.1.0):
+    - ChameleonFramework/Default
   - CLTokenInputView (2.3.0)
   - CocoaLumberjack/Core (3.0.0)
   - CocoaLumberjack/Default (3.0.0):
@@ -157,6 +160,7 @@ DEPENDENCIES:
   - AWSS3 (= 2.4.9)
   - BEMCheckBox (= 1.4.0)
   - Branch (= 0.14.12)
+  - ChameleonFramework/Swift (from `https://github.com/ViccAlexander/Chameleon.git`)
   - CLTokenInputView (= 2.3.0)
   - CocoaLumberjack/Swift (= 3.0.0)
   - DateTools (from `https://github.com/MatthewYork/DateTools`, branch `swift`)
@@ -191,6 +195,8 @@ DEPENDENCIES:
   - VTAcknowledgementsViewController (= 1.2.1)
 
 EXTERNAL SOURCES:
+  ChameleonFramework:
+    :git: https://github.com/ViccAlexander/Chameleon.git
   DateTools:
     :branch: swift
     :git: https://github.com/MatthewYork/DateTools
@@ -204,6 +210,9 @@ EXTERNAL SOURCES:
     :path: ~/code/SlideMenuControllerSwift
 
 CHECKOUT OPTIONS:
+  ChameleonFramework:
+    :commit: 6dd284bde21ea2e7f9fd89bc36f40df16e16369d
+    :git: https://github.com/ViccAlexander/Chameleon.git
   DateTools:
     :commit: c36311e6c0b28103f32311b54f1d27a334785bcc
     :git: https://github.com/MatthewYork/DateTools
@@ -216,6 +225,7 @@ SPEC CHECKSUMS:
   AWSS3: e4959b48db48d5f3dcd5cdf9e24a07f60a313611
   BEMCheckBox: e18e4a148905b290bd03d98b767651c104f4eda3
   Branch: f63d9cf82ac09747349a73184a0b739d28781c4d
+  ChameleonFramework: d21a3cc247abfe5e37609a283a8238b03575cf64
   CLTokenInputView: 9dc1ffb7c9d2d81787e69a63c75bd97b0b2d1e76
   CocoaLumberjack: c823149bccc5519a9447aeb433be7b1212a7d6a5
   DACircularProgress: 4dd437c0fc3da5161cb289e07ac449493d41db71
@@ -258,6 +268,6 @@ SPEC CHECKSUMS:
   UIDevice-Hardware: ecb52d9a7b223b31f81982358e2b0769ac1a7918
   VTAcknowledgementsViewController: e1de80f2c0ce31cc7e1c6f1c8aaeec2770371f09
 
-PODFILE CHECKSUM: 9ebb9b898dfc7b7eb37712392abfd4a552decde1
+PODFILE CHECKSUM: 5c804f19d334c5ee469cbc03683947a1dee9497d
 
 COCOAPODS: 1.2.1

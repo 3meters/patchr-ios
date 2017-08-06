@@ -18,6 +18,7 @@ class ContainerController: UIViewController {
     var actionButton: AirRadialMenu?
     var actionButtonCenter: CGPoint!
     var actionButtonAnimating = false
+    var actionButtonVisible = false
     
     func setViewController(_ controller: UIViewController) {
         self.controller = controller
@@ -131,8 +132,9 @@ class ContainerController: UIViewController {
     func setActionButton(button: AirRadialMenu?, startHidden: Bool = true) {
         
         self.actionButton?.removeFromSuperview()
-        
         self.actionButton = button
+        self.actionButtonAnimating = false
+        self.actionButtonVisible = false
         
         if self.actionButton != nil {
             self.view.insertSubview(self.actionButton!, at: self.view.subviews.count)
@@ -143,26 +145,32 @@ class ContainerController: UIViewController {
             if startHidden {
                 self.actionButton!.transform = CGAffineTransform(scaleX: CGFloat(0.0001), y: CGFloat(0.0001)) // Hide by scaling
                 self.actionButtonAnimating = false
+                self.actionButtonVisible = false
+            }
+            else {
+                self.actionButtonVisible = true
             }
         }
     }
     
     func hideActionButton() {
-        if !self.actionButtonAnimating && self.actionButton != nil {
+        if self.actionButtonVisible && !self.actionButtonAnimating && self.actionButton != nil {
             self.actionButtonAnimating = true
             self.actionButton!.scaleOut() {
                 finished in
                 self.actionButtonAnimating = false
+                self.actionButtonVisible = false
             }
         }
     }
     
     func showActionButton() {
-        if !self.actionButtonAnimating && self.actionButton != nil {
+        if !self.actionButtonVisible && !self.actionButtonAnimating && self.actionButton != nil {
             self.actionButtonAnimating = true
             self.actionButton!.scaleIn() {
                 finished in
                 self.actionButtonAnimating = false
+                self.actionButtonVisible = true
             }
         }
     }

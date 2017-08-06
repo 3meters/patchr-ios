@@ -18,8 +18,7 @@ class MemberListController: BaseTableController {
     
     var channel: FireChannel!
     var channelQuery: ChannelQuery!
-    var scope: ListScope = .group
-    var target: MemberTarget = .group
+    var scope: ListScope = .channel
     var manage = false
     
     /*--------------------------------------------------------------------------------------------
@@ -81,9 +80,7 @@ class MemberListController: BaseTableController {
             let controller = MemberSettingsController()
             let wrapper = AirNavigationController(rootViewController: controller)
             controller.inputUser = user
-            if self.target == .channel {
-                controller.inputChannel = self.channel
-            }
+            controller.inputChannel = self.channel
             self.present(wrapper, animated: true)
         }
     }
@@ -115,7 +112,7 @@ class MemberListController: BaseTableController {
 
     func bind() {
         
-        if (self.scope == .channel && self.channel.role == "owner") {
+        if (self.scope == .channel && isOwner()) {
             if self.scope != .reaction {
                 let addButton = UIBarButtonItem(title: "Invite", style: .plain, target: self, action: #selector(channelInviteAction(sender:)))
                 self.navigationItem.rightBarButtonItems = [addButton]
@@ -163,14 +160,14 @@ class MemberListController: BaseTableController {
                     return
                 }
                 if user != nil {
-                    var target = (this.target == .group) ? "group" : "channel"
+                    var target = "channel"
                     if this.scope == .reaction {
                         target = "reaction"
                     }
                     cell.bind(user: user!, target: target)
                     if this.manage {
                         if this.scope == .channel {
-                            if let role = this.channel.role, role == "owner", userId != UserController.instance.userId {
+                            if this.isOwner() {
                                 cell.actionButton?.isHidden = false
                                 cell.actionButton?.setTitle("Manage", for: .normal)
                                 cell.actionButton?.data = user
@@ -186,15 +183,13 @@ class MemberListController: BaseTableController {
         }
     }
     
-    enum ListScope: Int {
-        case group
-        case channel
-        case reaction
+    func isOwner() -> Bool {
+        return (self.channel.role == "owner" || self.channel.ownedBy == UserController.instance.userId)
     }
     
-    enum MemberTarget: Int {
-        case group
+    enum ListScope: Int {
         case channel
+        case reaction
     }
 }
 

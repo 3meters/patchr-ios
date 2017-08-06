@@ -216,12 +216,10 @@ class PasswordViewController: BaseEditViewController {
                 guard let this = self else { return }
                 if this.flow == .onboardLogin || this.flow == .onboardSignup {
                     Reporting.track("view_channels")
-                    MainController.instance.showMain()
+                    MainController.instance.showChannelsGrid()
                 }
                 else if this.flow == .onboardInvite {
                     Reporting.track("resume_invite")
-                    let controller = EmptyViewController()
-                    this.navigationController?.setViewControllers([controller], animated: true)
                     MainController.instance.routeDeepLink(link: this.inputInviteLink, flow: this.flow, error: nil)
                 }
             }

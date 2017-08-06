@@ -21,7 +21,6 @@ class ChannelEditViewController: BaseEditViewController {
     var photoEditView = PhotoEditView()
     var titleField = FloatTextField(frame: CGRect.zero)
     var purposeField = AirTextView()
-    var usersButton = AirButton()
 
     var doneButton: UIBarButtonItem!
 
@@ -64,15 +63,7 @@ class ChannelEditViewController: BaseEditViewController {
         let purposeSize = self.purposeField.sizeThatFits(CGSize(width: Config.contentWidth, height:CGFloat.greatestFiniteMagnitude))
 
         self.banner.anchorTopCenter(withTopPadding: 0, width: Config.contentWidth, height: bannerSize.height)
-        
-        if self.usersButton.isHidden {
-            self.usersButton.alignUnder(self.banner, matchingCenterWithTopPadding: 0, width: Config.contentWidth, height: 0)
-        }
-        else {
-            self.usersButton.alignUnder(self.banner, matchingCenterWithTopPadding: 24, width: Config.contentWidth, height: 48)
-        }
-        
-        self.titleField.alignUnder(self.usersButton, matchingCenterWithTopPadding: 8, width: Config.contentWidth, height: 48)
+        self.titleField.alignUnder(self.banner, matchingCenterWithTopPadding: 24, width: Config.contentWidth, height: 48)
         self.photoEditView.alignUnder(self.titleField, matchingCenterWithTopPadding: 16, width: Config.contentWidth, height: Config.contentWidth * 0.56)
         self.purposeField.alignUnder(self.photoEditView, matchingCenterWithTopPadding: 16, width: Config.contentWidth, height: max(48, purposeSize.height))
         
@@ -165,15 +156,6 @@ class ChannelEditViewController: BaseEditViewController {
         }
     }
     
-    func manageUsersAction(sender: AnyObject?) {
-        Reporting.track("view_channel_members_management")
-        let controller = MemberListController()
-        controller.scope = .channel
-        controller.target = .channel
-        controller.manage = true
-        self.navigationController?.pushViewController(controller, animated: true)
-    }
-    
     func textFieldDidChange(_ textField: UITextField) {
         self.doneButton.isEnabled = isDirty()
     }
@@ -191,20 +173,20 @@ class ChannelEditViewController: BaseEditViewController {
         self.doneButton.isEnabled = isDirty()
     }
     
+    override func didSetPhoto() {
+        super.didSetPhoto()
+        self.doneButton.isEnabled = isDirty()
+    }
+    
+    override func didClearPhoto() {
+        super.didClearPhoto()
+        self.doneButton.isEnabled = isDirty()
+    }
+    
     /*--------------------------------------------------------------------------------------------
      * MARK: - Notifications
      *--------------------------------------------------------------------------------------------*/
     
-    override func photoDidChange(sender: NSNotification) {
-        super.photoDidChange(sender: sender)
-        self.doneButton.isEnabled = isDirty()
-    }
-    
-    override func photoRemoved(sender: NSNotification) {
-        super.photoRemoved(sender: sender)
-        self.doneButton.isEnabled = isDirty()
-    }
-
     /*--------------------------------------------------------------------------------------------
      * MARK: - Methods
      *--------------------------------------------------------------------------------------------*/
@@ -234,22 +216,14 @@ class ChannelEditViewController: BaseEditViewController {
         self.purposeField.initialize()
         self.purposeField.delegate = self
 
-        self.usersButton.setTitle("Manage Members".uppercased(), for: .normal)
-        self.usersButton.imageRight = UIImageView(image: UIImage(named: "imgArrowRightLight"))
-        self.usersButton.imageRight?.bounds.size = CGSize(width: 10, height: 14)
-        self.usersButton.titleEdgeInsets = UIEdgeInsets(top: 0, left: 12, bottom: 0, right: 36)
-        self.usersButton.addTarget(self, action: #selector(manageUsersAction(sender:)), for: .touchUpInside)
-
         self.contentHolder.addSubview(self.banner)
         self.contentHolder.addSubview(self.titleField)
         self.contentHolder.addSubview(self.purposeField)
         self.contentHolder.addSubview(self.photoEditView)
-        self.contentHolder.addSubview(self.usersButton)
 
         if self.mode == .insert {
 
             self.banner.text = "New Channel"
-            self.usersButton.isHidden = true
 
             /* Navigation bar buttons */
             let closeButton = UIBarButtonItem(barButtonSystemItem: .stop, target: self, action: #selector(closeAction(sender:)))
@@ -261,19 +235,17 @@ class ChannelEditViewController: BaseEditViewController {
         else if self.mode == .update  {
 
             self.banner.text = "Edit Channel"
-
+            
             /* Navigation bar buttons */
             let closeButton = UIBarButtonItem(barButtonSystemItem: .stop, target: self, action: #selector(closeAction(sender:)))
+            let deleteButton = UIBarButtonItem(barButtonSystemItem: .trash, target: self, action: #selector(deleteAction(sender:)))
             self.doneButton = UIBarButtonItem(title: "Save", style: .plain, target: self, action: #selector(doneAction(sender:)))
             self.doneButton.isEnabled = false
             self.navigationItem.leftBarButtonItems = [closeButton]
-            self.navigationItem.rightBarButtonItems = [doneButton]
+            self.navigationItem.rightBarButtonItems = [doneButton, UI.spacerFixed, deleteButton]
         }
         
-        self.titleField.addTarget(self, action: #selector(textFieldDidChange(_:)), for: .editingChanged)
-        
-        NotificationCenter.default.addObserver(self, selector: #selector(photoDidChange(sender:)), name: NSNotification.Name(rawValue: Events.PhotoDidChange), object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(photoRemoved(sender:)), name: NSNotification.Name(rawValue: Events.PhotoRemoved), object: nil)
+        self.titleField.addTarget(self, action: #selector(textFieldDidChange(_:)), for: .editingChanged)        
     }
 
     func bind() {
@@ -287,16 +259,6 @@ class ChannelEditViewController: BaseEditViewController {
             self.photoEditView.bind(url: photoUrl)
         }
         
-        /* Delete */
-        if !self.channel.general! && self.mode == .update {
-            self.navigationController?.setToolbarHidden(false, animated: true)
-            let deleteIconButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.trash, target: self, action: #selector(deleteAction(sender:)))
-            let deleteTitleButton = UIBarButtonItem(title: "Delete", style: .plain, target: self, action: #selector(deleteAction(sender:)))
-            deleteIconButton.tintColor = Colors.brandColor
-            deleteTitleButton.tintColor = Colors.brandColor
-            self.toolbarItems = [UI.spacerFlex, deleteIconButton, deleteTitleButton, UI.spacerFlex]
-        }
-
         /* Visibility */
         self.view.setNeedsLayout()
     }

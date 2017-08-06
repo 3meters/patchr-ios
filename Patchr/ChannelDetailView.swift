@@ -4,6 +4,7 @@
 //
 
 import UIKit
+import ChameleonFramework
 
 class ChannelDetailView: UIView {
     
@@ -150,7 +151,7 @@ class ChannelDetailView: UIView {
                 self.photoView.backgroundColor = Colors.accentColorFill
             }
             else {
-                let seed = Utils.numberFromName(fullname: channel.name!)
+                let seed = Utils.numberFromName(fullname: channel.title!.lowercased())
                 self.photoView.backgroundColor = ColorArray.randomColor(seed: seed)
             }
         }
@@ -177,6 +178,14 @@ class ChannelDetailView: UIView {
                 if success {
                     self.photoView.gradientLayer.isHidden = false
                     self.needsPhoto = false
+                    if self.infoGroup.superview != nil {
+                        if let image = self.photoView.image {
+                            let colorImageAverage = AverageColorFromImage(image)
+                            let colorText = ContrastColorOf(colorImageAverage, returnFlat: false)
+                            self.infoGroup.backgroundColor = colorImageAverage
+                            self.purposeLabel.textColor = colorText
+                        }
+                    }
                 }
             }
         }

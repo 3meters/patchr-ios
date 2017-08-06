@@ -89,7 +89,7 @@ class InviteViewController: BaseEditViewController {
 	override func initialize() {
 		super.initialize()
 		
-        self.heading.text = "Invite people to \(self.inputChannelTitle!)."
+        self.heading.text = "Invite people to \"\(self.inputChannelTitle!)\"."
 		self.heading.textAlignment = NSTextAlignment.center
 		self.heading.numberOfLines = 0
         

@@ -13,7 +13,7 @@ class AirImageView: FLAnimatedImageView {
 
     var progressView: DALabeledCircularProgressView!
     
-    var gradientColorTop = UIColor(red: CGFloat(0), green: CGFloat(0), blue: CGFloat(0), alpha: CGFloat(0.33))
+    var gradientColorTop = UIColor(red: CGFloat(0), green: CGFloat(0), blue: CGFloat(0), alpha: CGFloat(0.66))
     var gradientColorMiddle1 = UIColor(red: CGFloat(0), green: CGFloat(0), blue: CGFloat(0), alpha: CGFloat(0.0))
     var gradientColorMiddle2 = UIColor(red: CGFloat(0), green: CGFloat(0), blue: CGFloat(0), alpha: CGFloat(0.0))
     var gradientColorBottom = UIColor(red: CGFloat(0), green: CGFloat(0), blue: CGFloat(0), alpha: CGFloat(0.66))
@@ -45,7 +45,7 @@ class AirImageView: FLAnimatedImageView {
                         , self.gradientColorMiddle1.cgColor
                         , self.gradientColorMiddle2.cgColor
                         , self.gradientColorBottom.cgColor]
-                    self.gradientLayer.locations = [0.0, 0.33, 0.66, 1.0]
+                    self.gradientLayer.locations = [0.0, 0.45, 0.66, 1.0]
                     
                     /* Travels from top to bottom */
                     self.gradientLayer.startPoint = CGPoint(x: 0.5, y: 0.0)    // (0,0) upper left corner, (1,1) lower right corner

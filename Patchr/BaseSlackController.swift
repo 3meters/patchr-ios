@@ -14,7 +14,7 @@ import Firebase
 import FirebaseDatabaseUI
 import FirebaseStorage
 
-class BaseSlackController: SLKTextViewController {
+class BaseSlackController: SLKTextViewController, PhotoEditDelegate {
 	
     var controllerIsActive = false
     var authHandle: AuthStateDidChangeListenerHandle!
@@ -119,7 +119,6 @@ class BaseSlackController: SLKTextViewController {
         sendMessage()
         
         hidePhotoEdit()
-        self.photoEditView.reset()
         
         if UserDefaults.standard.bool(forKey: PerUserKey(key: Prefs.soundEffects)) {
             AudioController.instance.playSystemSound(soundId: 1004)
@@ -133,7 +132,6 @@ class BaseSlackController: SLKTextViewController {
         dismissKeyboard(true)
         updateMessage()
         hidePhotoEdit()
-        self.photoEditView.reset()
         super.didCommitTextEditing(sender)
     }
     
@@ -143,24 +141,23 @@ class BaseSlackController: SLKTextViewController {
         self.textInputbar.endTextEdition()
         dismissKeyboard(true)
         hidePhotoEdit()
-        self.photoEditView.reset()
     }
 
-    /*--------------------------------------------------------------------------------------------
-     * MARK: - Notifications
-     *--------------------------------------------------------------------------------------------*/
-
-    func photoDidChange(sender: NSNotification) {
+    func didSetPhoto() {
         textDidUpdate(true)
         Reporting.track("change_photo")
         showPhotoEdit()
     }
     
-    func photoRemoved(sender: NSNotification) {
+    func didClearPhoto() {
         textDidUpdate(true)
         Reporting.track("remove_photo")
         hidePhotoEdit()
     }
+
+    /*--------------------------------------------------------------------------------------------
+     * MARK: - Notifications
+     *--------------------------------------------------------------------------------------------*/
 
     func textInputbarDidMove(_ note: Notification) {
         
@@ -198,6 +195,7 @@ class BaseSlackController: SLKTextViewController {
         self.photoEditView = PhotoEditView()
         self.photoEditView.setHost(controller: self, view: self.leftButton)
         self.photoEditView.configureTo(photoMode: .photo)
+        self.photoEditView.photoDelegate = self
         
         self.rule.backgroundColor = Theme.colorRule
         
@@ -226,8 +224,6 @@ class BaseSlackController: SLKTextViewController {
 
         self.photoEditView.editPhotoButton.addTarget(self, action: #selector(editPhotoAction(sender:)), for: .touchUpInside)
         
-        NotificationCenter.default.addObserver(self, selector: #selector(photoDidChange(sender:)), name: NSNotification.Name(rawValue: Events.PhotoDidChange), object: self.photoEditView)
-        NotificationCenter.default.addObserver(self, selector: #selector(photoRemoved(sender:)), name: NSNotification.Name(rawValue: Events.PhotoRemoved), object: self.photoEditView)
         NotificationCenter.default.addObserver(self, selector: #selector(viewWillResignActive(sender:)), name: NSNotification.Name.UIApplicationWillResignActive, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(viewDidBecomeActive(sender:)), name: NSNotification.Name.UIApplicationDidBecomeActive, object: nil)
 	}

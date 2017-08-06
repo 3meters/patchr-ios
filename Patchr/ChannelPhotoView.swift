@@ -88,7 +88,7 @@ class ChannelPhotoView: UIView {
                 self.photoView.backgroundColor = Colors.accentColorFill
             }
             else {
-                let seed = Utils.numberFromName(fullname: channel.name!)
+                let seed = Utils.numberFromName(fullname: channel.title!.lowercased())
                 self.photoView.backgroundColor = ColorArray.randomColor(seed: seed)
             }
         }

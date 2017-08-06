@@ -16,6 +16,7 @@ class MemberSettingsController: UITableViewController {
     
     var progress: AirProgress?
 
+    var roleOwnerCell = AirTableViewCell()
     var roleEditorCell = AirTableViewCell()
     var roleReaderCell = AirTableViewCell()
     var removeCell = AirTableViewCell()
@@ -77,6 +78,7 @@ class MemberSettingsController: UITableViewController {
         self.tableView.backgroundColor = Colors.gray95pcntColor
         self.tableView.sectionFooterHeight = 0
 
+        self.roleOwnerCell.textLabel?.text = "Owner"
         self.roleEditorCell.textLabel?.text = "Contributor"
         self.roleReaderCell.textLabel?.text = "Reader"
         
@@ -104,6 +106,7 @@ class MemberSettingsController: UITableViewController {
             if let memberRole = snap.value as? String {
                 self.role = memberRole
                 self.roleNext = memberRole
+                self.roleOwnerCell.accessoryType = self.role == "owner" ? .checkmark : .none
                 self.roleEditorCell.accessoryType = self.role == "editor" ? .checkmark : .none
                 self.roleReaderCell.accessoryType = self.role == "reader" ? .checkmark : .none
             }
@@ -114,18 +117,14 @@ class MemberSettingsController: UITableViewController {
     
     func update() {
         
+        var updates = [String: Any]()
         let userId = self.inputUser.id!
+        let channelId = self.inputChannel.id!
 
         if self.roleNext != self.role {
-            
-            let channelId = self.inputChannel.id!
-            let memberChannelsPath = "member-channels/\(userId)/\(channelId)/role"
-
-            let updates: [String: Any] = [
-                memberChannelsPath: self.roleNext!,
-            ]
+            updates["role"] = self.roleNext!
             Reporting.track("update_channel_member_role")
-            FireController.db.updateChildValues(updates)
+            FireController.db.child("channel-members/\(channelId)/\(userId)").updateChildValues(updates)
             closeAction(sender: nil)
         }
     }
@@ -170,8 +169,9 @@ extension MemberSettingsController {
         if indexPath.section == 0 {
             let selectedCell = tableView.cellForRow(at: indexPath)
             self.roleNext = selectedCell?.textLabel!.text!.lowercased()
-            self.roleEditorCell.accessoryType = .none
             self.roleReaderCell.accessoryType = .none
+            self.roleEditorCell.accessoryType = .none
+            self.roleOwnerCell.accessoryType = .none
             selectedCell!.accessoryType = .checkmark
             self.tableView.reloadData()
         }
@@ -183,15 +183,16 @@ extension MemberSettingsController {
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if section == 0 {
-            return 2
+            return 3
         }
         return 1
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if indexPath.section == 0 {
-            if indexPath.row == 0 { return self.roleEditorCell }
-            if indexPath.row == 1 { return self.roleReaderCell }
+            if indexPath.row == 0 { return self.roleOwnerCell }
+            if indexPath.row == 1 { return self.roleEditorCell }
+            if indexPath.row == 2 { return self.roleReaderCell }
         }
         return self.removeCell
     }
@@ -203,7 +204,18 @@ extension MemberSettingsController {
         return nil
     }
     
+    override func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
+        if section == 0 {
+            return "Contributors can post new messages. Both contributors and readers can browse and comment on posted messages. Only owners can invite users and edit the channel."
+        }
+        return nil
+    }
+    
     override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         return 48
+    }
+    
+    override func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+        return 72
     }
 }

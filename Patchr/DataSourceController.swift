@@ -156,11 +156,12 @@ class DataSourceController: NSObject, FUICollectionDelegate {
     func array(_ array: FUICollection, didAdd object: Any, at index: UInt) {
         if self.mapperActive || self.startEmpty { return }
         self.delegate?.array?(array, didAdd: object, at: index)
+        let indexPath = IndexPath(row: Int(index), section: 0)
         if let tableView = self.scrollView as? UITableView {
-            tableView.insertRows(at: [IndexPath(row: Int(index), section: 0)], with: .none)
+            tableView.insertRows(at: [indexPath], with: .none)
         }
         else if let collectionView = self.scrollView as? UICollectionView {
-            collectionView.insertItems(at: [IndexPath(row: Int(index), section: 0)])
+            collectionView.insertItems(at: [indexPath])
         }
     }
     
