@@ -268,10 +268,12 @@ class ChannelGridController: UICollectionViewController {
 		else {
             self.searchBar?.setShowsCancelButton(false, animated: true)
             self.searchBar?.endEditing(true)
+            if !(self.searchBar.text?.isEmpty)! {
+                self.queryController.filter(searchText: nil)
+            }
             self.queryController.filterActive = false
-            self.queryController.filter(searchText: nil)
 			self.navigationItem.setLeftBarButton(self.searchButton, animated: true)
-			self.navigationItem.setRightBarButton(self.addButton, animated: true)
+            self.navigationItem.setRightBarButtonItems([self.menuButton, UI.spacerFixed, self.addButton], animated: true)
 			self.searchBar.resignFirstResponder()
 		}
 	}

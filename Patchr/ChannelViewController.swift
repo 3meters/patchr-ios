@@ -627,6 +627,9 @@ class ChannelViewController: BaseTableController {
 				sheet.addAction(muteAction!)
 				sheet.addAction(browseMembersAction)
                 sheet.addAction(inviteAction) // Onwers only
+                if self.channel.ownedBy != UserController.instance.userId {
+                    sheet.addAction(statusAction)
+                }
                 sheet.addAction(profileAction)
 				sheet.addAction(cancel)
 			}

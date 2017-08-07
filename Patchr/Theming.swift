@@ -52,7 +52,7 @@ class Snow {
     let colorBackgroundBadge            = UIColor.red
 	let colorBackgroundHighlighted      = Colors.gray90pcntColor
     let colorBackgroundSelected         = Colors.accentColorLighter
-    let colorBackgroundCell             = Colors.gray95pcntColor
+    let colorBackgroundCell             = Colors.gray90pcntColor
     
 	let colorRule                   = Colors.gray85pcntColor
 	let colorRuleActive             = Colors.accentColorRule

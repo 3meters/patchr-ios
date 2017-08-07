@@ -154,6 +154,7 @@ class ProfileEditViewController: BaseEditViewController {
 
         self.photoEditView.photoSchema = Schema.entityUser
         self.photoEditView.setHost(controller: self, view: self.photoEditView)
+        self.photoEditView.photoDelegate = self
 
         self.firstNameField.placeholder = "First name"
         self.firstNameField.font = Theme.fontTextDisplay

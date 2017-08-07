@@ -201,6 +201,7 @@ class ChannelEditViewController: BaseEditViewController {
         self.photoEditView.photoSchema = Schema.entityPatch
         self.photoEditView.setHost(controller: self, view: self.photoEditView)
         self.photoEditView.configureTo(photoMode: .placeholder)
+        self.photoEditView.photoDelegate = self
 
         self.titleField.placeholder = "Channel title"
         self.titleField.title = "Title"

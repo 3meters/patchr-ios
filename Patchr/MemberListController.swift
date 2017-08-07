@@ -168,10 +168,12 @@ class MemberListController: BaseTableController {
                     if this.manage {
                         if this.scope == .channel {
                             if this.isOwner() {
-                                cell.actionButton?.isHidden = false
-                                cell.actionButton?.setTitle("Manage", for: .normal)
-                                cell.actionButton?.data = user
-                                cell.actionButton?.addTarget(this, action: #selector(this.manageUserAction(sender:)), for: .touchUpInside)
+                                if this.channel.ownedBy! != user!.id {
+                                    cell.actionButton?.isHidden = false
+                                    cell.actionButton?.setTitle("Manage", for: .normal)
+                                    cell.actionButton?.data = user
+                                    cell.actionButton?.addTarget(this, action: #selector(this.manageUserAction(sender:)), for: .touchUpInside)
+                                }
                             }
                         }
                     }
