@@ -239,11 +239,10 @@ class ChannelEditViewController: BaseEditViewController {
             
             /* Navigation bar buttons */
             let closeButton = UIBarButtonItem(barButtonSystemItem: .stop, target: self, action: #selector(closeAction(sender:)))
-            let deleteButton = UIBarButtonItem(barButtonSystemItem: .trash, target: self, action: #selector(deleteAction(sender:)))
             self.doneButton = UIBarButtonItem(title: "Save", style: .plain, target: self, action: #selector(doneAction(sender:)))
             self.doneButton.isEnabled = false
             self.navigationItem.leftBarButtonItems = [closeButton]
-            self.navigationItem.rightBarButtonItems = [doneButton, UI.spacerFixed, deleteButton]
+            self.navigationItem.rightBarButtonItems = [doneButton]
         }
         
         self.titleField.addTarget(self, action: #selector(textFieldDidChange(_:)), for: .editingChanged)        
@@ -258,6 +257,11 @@ class ChannelEditViewController: BaseEditViewController {
             self.photoEditView.configureTo(photoMode: .photo)
             let photoUrl = ImageProxy.url(photo: photo, category: SizeCategory.standard)
             self.photoEditView.bind(url: photoUrl)
+        }
+        
+        if !self.channel.general! {
+            let deleteButton = UIBarButtonItem(barButtonSystemItem: .trash, target: self, action: #selector(deleteAction(sender:)))
+            self.navigationItem.setRightBarButtonItems([self.doneButton, UI.spacerFixed, deleteButton], animated: true)
         }
         
         /* Visibility */

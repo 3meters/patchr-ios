@@ -146,7 +146,6 @@ PODS:
     - SDWebImage/Core
   - SkyFloatingLabelTextField (2.0.0)
   - SlackTextViewController (1.9.5)
-  - SlideMenuControllerSwift (3.0.1)
   - STPopup (1.8.2)
   - TTTAttributedLabel (2.0.0)
   - TwicketSegmentedControl (0.1.1)
@@ -187,7 +186,6 @@ DEPENDENCIES:
   - SDWebImage/GIF (= 4.0.0)
   - SkyFloatingLabelTextField (= 2.0.0)
   - SlackTextViewController (from `~/code/SlackTextViewController`)
-  - SlideMenuControllerSwift (from `~/code/SlideMenuControllerSwift`)
   - STPopup (= 1.8.2)
   - TTTAttributedLabel (= 2.0.0)
   - TwicketSegmentedControl (= 0.1.1)
@@ -206,8 +204,6 @@ EXTERNAL SOURCES:
     :path: Pods/CocoaPodsKeys
   SlackTextViewController:
     :path: ~/code/SlackTextViewController
-  SlideMenuControllerSwift:
-    :path: ~/code/SlideMenuControllerSwift
 
 CHECKOUT OPTIONS:
   ChameleonFramework:
@@ -261,13 +257,12 @@ SPEC CHECKSUMS:
   SDWebImage: 76a6348bdc74eb5a55dd08a091ef298e56b55e41
   SkyFloatingLabelTextField: a81a0eaed2785d1599f11484c6ebc1c4eb5d1228
   SlackTextViewController: fbcdadbb8090673f604484ff5b6eb8d77baed42a
-  SlideMenuControllerSwift: 08e93da4735d78038057ec636028d35ba24f0983
   STPopup: b69b3e7484ef7d2baec5f9ab2939f8a7bcdfe218
   TTTAttributedLabel: 8cffe8e127e4e82ff3af1e5386d4cd0ad000b656
   TwicketSegmentedControl: bbb2d155792dbfcee7fea995a614d0c0a3de4a16
   UIDevice-Hardware: ecb52d9a7b223b31f81982358e2b0769ac1a7918
   VTAcknowledgementsViewController: e1de80f2c0ce31cc7e1c6f1c8aaeec2770371f09
 
-PODFILE CHECKSUM: 5c804f19d334c5ee469cbc03683947a1dee9497d
+PODFILE CHECKSUM: 1e79a3d5ae11435aaeaa66262a5442361ffe58ba
 
 COCOAPODS: 1.2.1

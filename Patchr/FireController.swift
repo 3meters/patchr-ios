@@ -137,11 +137,44 @@ class FireController: NSObject {
         }
     }
     
-    func deleteMessage(messageId: String, channelId: String) {
+    func deleteMessage(messageId: String, channelId: String, then: ((Error?) -> Void)? = nil) {
         let path = "channel-messages/\(channelId)/\(messageId)"
         FireController.db.child(path).setValue(NSNull()) { error, ref in
             if error == nil {
                 Log.d("Message deleted: \(messageId)")
+            }
+            then?(error)
+        }
+    }
+    /*--------------------------------------------------------------------------------------------
+     * MARK: - Move
+     *--------------------------------------------------------------------------------------------*/
+    
+    func moveMessage(message: FireMessage, fromChannelId: String, toChannelId: String, then: ((Error?) -> Void)? = nil) {
+        /* activity date is set to created date which doesn't change for the move. That
+           means that activity date could be way in the past. Members of the 'to' channel 
+           get the standard notification. */
+        let messageId = message.id!
+        var updates = [String: Any]()
+        var messageDict = message.dict!
+        updates["moving"] = true
+        FireController.db.child("channel-messages/\(fromChannelId)/\(messageId)").updateChildValues(updates) { error, ref in
+            if error != nil {
+                then?(error)
+                return
+            }
+            
+            let ref = FireController.db.child("channel-messages/\(toChannelId)").childByAutoId()
+            messageDict["channel_id"] = toChannelId
+            messageDict["moving"] = true
+            ref.setValue(messageDict) { error, ref in
+                if error != nil {
+                    then?(error)
+                    return
+                }
+                self.deleteMessage(messageId: message.id!, channelId: fromChannelId) { error in
+                    then?(error)
+                }
             }
         }
     }

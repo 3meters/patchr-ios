@@ -7,7 +7,6 @@
 //
 import MBProgressHUD
 import Photos
-import SlideMenuControllerSwift
 
 extension UITextField {
     var isEmpty: Bool {

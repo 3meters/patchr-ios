@@ -48,7 +48,6 @@ def shared_pods
     pod 'SDWebImage/GIF',           '4.0.0'
     pod 'SkyFloatingLabelTextField','2.0.0'
     pod 'SlackTextViewController',  :path => '~/code/SlackTextViewController'
-    pod 'SlideMenuControllerSwift', :path => '~/code/SlideMenuControllerSwift'
     pod 'STPopup',                  '1.8.2'
     pod 'TTTAttributedLabel',       '2.0.0'
     pod 'TwicketSegmentedControl',  '0.1.1'

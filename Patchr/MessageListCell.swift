@@ -22,7 +22,6 @@ class MessageListCell: UITableViewCell {
     var createdDate = AirLabelDisplay()
     var edited = AirLabelDisplay()
     var unread = AirLabelDisplay()
-    var actionsButton: AirButtonBase!
     var hitInsets: UIEdgeInsets = UIEdgeInsets.zero
 
     var reactionToolbar: AirReactionToolbar!
@@ -76,7 +75,6 @@ class MessageListCell: UITableViewCell {
         self.userName.align(toTheRightOf: self.userPhotoControl, matchingTopWithLeftPadding: 8, width: self.userName.width(), height: 22)
         self.createdDate.align(toTheRightOf: self.userName, matchingBottomWithLeftPadding: 8, width: self.createdDate.width(), height: self.createdDate.height())
         self.unread.align(toTheRightOf: self.createdDate, matchingBottomWithLeftPadding: 8, width: self.unread.width(), height: self.unread.height())
-        self.actionsButton.anchorTopRight(withRightPadding: 0, topPadding: 0, width: 20, height: 20)
 
         /* Body */
 
@@ -99,8 +97,9 @@ class MessageListCell: UITableViewCell {
             self.photoView?.alignUnder(self.userName, matchingLeftAndFillingWidthWithRightPadding: 0, topPadding: 10, height: photoHeight)
             self.photoView.progressView.anchorInCenter(withWidth: 150, height: 20)
         }
-
-        self.edited.alignUnder(bottomView!, matchingLeftWithTopPadding: 2, width: self.edited.width(), height: self.edited.isHidden ? 0 : self.edited.height())
+        
+        let isEdited = (self.message.createdAt != self.message.modifiedAt)
+        self.edited.alignUnder(bottomView!, matchingLeftWithTopPadding: isEdited ? 2 : 0, width: self.edited.width(), height: isEdited ? self.edited.height() : 0)
 
         /* Footer */
 
@@ -167,7 +166,6 @@ class MessageListCell: UITableViewCell {
         self.edited.numberOfLines = 1
         self.edited.textColor = Colors.gray66pcntColor
         self.edited.textAlignment = .left
-        self.edited.isHidden = true
 
         self.unread.text = "new"
         self.unread.font = Theme.fontText
@@ -175,11 +173,6 @@ class MessageListCell: UITableViewCell {
         self.unread.textColor = Theme.colorBackgroundBadge
         self.unread.textAlignment = .left
         self.unread.isHidden = true
-        
-        self.actionsButton = AirLinkButton(frame: .zero, hitInsets: UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0))
-        self.actionsButton.setImage(UIImage(named: "imgOverflowVerticalLight"), for: .normal)
-        self.actionsButton.showsTouchWhenHighlighted = true
-        self.actionsButton.isHidden = true
         
         self.selectionStyle = .none
         
@@ -193,7 +186,6 @@ class MessageListCell: UITableViewCell {
         self.contentView.addSubview(self.createdDate)
         self.contentView.addSubview(self.edited)
         self.contentView.addSubview(self.unread)
-        self.contentView.addSubview(self.actionsButton)
     }
 
     func bind(message: FireMessage) {
@@ -252,15 +244,10 @@ class MessageListCell: UITableViewCell {
             self.photoView?.image = nil
         }
         
-        /* Actions button */
-        self.actionsButton.data = message
-        self.actionsButton.isHidden = true
-        
         /* Created date and edited flag */
 
-        let createdAt = DateUtils.from(timestamp: message.createdAt!)
-        self.createdDate.text = DateUtils.timeAgoShort(date: createdAt)
-        self.edited.isHidden = (message.createdAt == message.modifiedAt)
+        let createdAtDate = DateUtils.from(timestamp: message.createdAt!)
+        self.createdDate.text = DateUtils.timeAgoShort(date: createdAtDate)
         
         /* Reaction toolbar */
         
@@ -277,8 +264,6 @@ class MessageListCell: UITableViewCell {
         self.description_?.textColor = Colors.black
         self.description_!.font = Theme.fontTextList
         self.unread.isHidden = true
-        self.edited.isHidden = true
-        self.actionsButton.isHidden = true
         self.userQuery?.remove()
         self.userQuery = nil
         self.unreadQuery?.remove()

@@ -9,7 +9,6 @@ import AVFoundation
 import Firebase
 import FirebaseDatabaseUI
 import FirebaseAuth
-import SlideMenuControllerSwift
 import pop
 
 class ChannelGridController: UICollectionViewController {
@@ -23,7 +22,6 @@ class ChannelGridController: UICollectionViewController {
 
 	var searchBar: UISearchBar!
 	var searchBarHolder = UIView()
-	var searchOn = false
     
 	var searchBarButton: UIBarButtonItem!
 	var searchButton: UIBarButtonItem!
@@ -256,7 +254,6 @@ class ChannelGridController: UICollectionViewController {
 	}
 
 	func search(on: Bool) {
-		self.searchOn = on
 		if on {
             self.queryController.filterActive = true
 			self.navigationItem.setLeftBarButton(self.searchBarButton, animated: true)

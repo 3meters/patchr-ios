@@ -30,8 +30,10 @@ class FireMessage: NSObject {
     // Local
     var creator: FireUser?
     var id: String?
+    var dict: [String: Any]!
     
     init(dict: [String: Any], id: String?) {
+        self.dict = dict
         if let attachments = dict["attachments"] as? [String: Any], attachments.keys.count > 0 {
             self.attachments = [:]
             for attachmentKey in attachments.keys {

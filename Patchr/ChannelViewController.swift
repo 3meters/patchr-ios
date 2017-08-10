@@ -13,6 +13,7 @@ import FirebaseDatabaseUI
 import TTTAttributedLabel
 import STPopup
 import BEMCheckBox
+import PopupDialog
 
 class ChannelViewController: BaseTableController {
 
@@ -220,18 +221,8 @@ class ChannelViewController: BaseTableController {
                     })
                 }
         }
-        
 	}
     
-    func showActions(sender: AnyObject?) {
-        if let button = sender as? AirButtonBase {
-            if let message = button.data as? FireMessage {
-                Reporting.track("view_message_actions")
-                showMessageActions(message: message, sourceView: button)
-            }
-        }
-    }
-
 	func longPressAction(sender: UILongPressGestureRecognizer) {
 		if sender.state == UIGestureRecognizerState.began {
 			let point = sender.location(in: self.tableView)
@@ -355,6 +346,7 @@ class ChannelViewController: BaseTableController {
 			let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! MessageListCell
 			guard let this = self else { return cell }
 
+            cell.reset()    // Releases previous data observers
 			let snap = data as! DataSnapshot
 			let userId = UserController.instance.userId!
 			let message = FireMessage(dict: snap.value as! [String: Any], id: snap.key)
@@ -383,7 +375,6 @@ class ChannelViewController: BaseTableController {
                     
 					cell.photoView?.isUserInteractionEnabled = true
 					cell.photoView?.addGestureRecognizer(UITapGestureRecognizer(target: this, action: #selector(this.browsePhotoAction(sender:))))
-                    cell.actionsButton.addTarget(this, action: #selector(this.showActions(sender:)), for: .touchUpInside)
 					cell.decorated = true
 				}
 
@@ -495,7 +486,7 @@ class ChannelViewController: BaseTableController {
 
 		let userId = UserController.instance.userId!
 		let sheet = UIAlertController(title: nil, message: nil, preferredStyle: UIAlertControllerStyle.actionSheet)
-
+        
 		let like = UIAlertAction(title: "Add reaction", style: .default) { [weak self] action in
 
             guard let this = self else { return }
@@ -533,6 +524,31 @@ class ChannelViewController: BaseTableController {
             this.present(wrapper, animated: true, completion: nil)
 		}
         
+        let move = UIAlertAction(title: "Move to", style: .default) { [weak self] action in
+            guard let this = self else { return }
+            let controller = ChannelPickerController()
+            let popup = PopupDialog(viewController: controller, gestureDismissal: false) {
+                guard let channel = controller.selectedChannel else { return }
+                let fromChannelId = message.channelId!
+                let toChannelId = channel.id!
+                FireController.instance.moveMessage(message: message, fromChannelId: fromChannelId, toChannelId: toChannelId)
+//                { error in
+//                    if error == nil {
+                        UIShared.toast(message: "Message moved to: \(channel.title!)", duration: 2.0, controller: self, addToWindow: false)
+                        Log.v("Copy message to channel: \(channel.id!)")
+                        Reporting.track("move_message")
+//                    }
+//                }
+            }
+            let cancel = DefaultButton(title: "Cancel".uppercased(), height: 48) {
+                Log.v("Cancel copy")
+            }
+            cancel.buttonHeight = 48
+            popup.addButton(cancel)
+            controller.popup = popup
+            this.present(popup, animated: true)
+        }
+        
 		let delete = UIAlertAction(title: "Delete message", style: .destructive) { [weak self] action in
             guard let this = self else { return }
 			this.deleteMessageAction(message: message)
@@ -545,6 +561,7 @@ class ChannelViewController: BaseTableController {
 		if message.createdBy == userId {
 			sheet.addAction(like)
 			sheet.addAction(edit)
+            sheet.addAction(move)
 			sheet.addAction(delete)
 			sheet.addAction(cancel)
 		}
@@ -574,7 +591,7 @@ class ChannelViewController: BaseTableController {
             
 			let sheet = UIAlertController(title: nil, message: nil, preferredStyle: UIAlertControllerStyle.actionSheet)
 			let isOwner = self.isOwner()
-
+            
 			let statusAction = UIAlertAction(title: "Leave", style: .default) { [weak self] action in
 				guard let this = self else { return }
                 this.leaveChannelAction(sender: nil)

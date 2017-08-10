@@ -8,7 +8,6 @@ import UIKit
 import Keys
 import AFNetworking
 import iRate
-import SlideMenuControllerSwift
 import Firebase
 import FirebaseDatabase
 import Branch
