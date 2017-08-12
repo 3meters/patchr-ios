@@ -33,22 +33,25 @@ class BranchProvider: NSObject {
         applink.metadata?["channel_title"] = channel["title"]
         applink.metadata?["created_at"] = DateUtils.now()
         applink.metadata?["code"] = code
+        applink.metadata?["role"] = role
         applink.metadata?["email"] = email
         applink.metadata?["invited_by"] = inviterId
         applink.metadata?["inviter_name"] = inviterName
+        
+        if message != nil {
+            applink.metadata?["message"] = message!
+        }
         
         if let photo = inviter!.profile?.photo {
             let photoUrl = ImageProxy.url(photo: photo, category: SizeCategory.profile)
             applink.metadata?["inviter_photo_url"] = photoUrl
         }
         
-        applink.metadata?["role"] = role
-        
         /* $og_title */
-        applink.title = "Invite by \(inviterName!) to the \(channel["title"]!) channel"
+        applink.title = "Invite by \(inviterName!) to the '\(channel["title"]!)' channel"
         
         /* $og_description */
-        applink.contentDescription = message ?? "\(inviterName!) has invited you to the \(channel["title"]!) channel."
+        applink.contentDescription = message ?? "\(inviterName!) has invited you to the '\(channel["title"]!)' channel."
         
         let linkProperties = BranchLinkProperties()
         linkProperties.channel = "patchr-ios"

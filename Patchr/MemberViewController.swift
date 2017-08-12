@@ -170,7 +170,9 @@ class MemberViewController: BaseViewController, UIScrollViewDelegate, UITextFiel
             }
         }
         
-        UIShared.styleChrome(navigationBar: self.navigationController!.navigationBar, translucent: true)
+        if let navigationBar = self.navigationController?.navigationBar {
+            UIShared.styleChrome(navigationBar: navigationBar, translucent: true)
+        }
         
         self.automaticallyAdjustsScrollViewInsets = false
         let viewWidth = min(Config.contentWidthMax, self.view.bounds.size.width)

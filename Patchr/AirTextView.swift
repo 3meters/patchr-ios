@@ -12,6 +12,7 @@ class AirTextView: UITextView {
 	
 	var rule = UIView()
     var placeholderLabel: UILabel?
+    var ruleEnabled = true
     override var text: String? {
         didSet{
             self.placeholderLabel!.isHidden = (self.text != nil && self.text!.utf16.count > 0)
@@ -84,21 +85,23 @@ class AirTextView: UITextView {
 		
 	override func layoutSubviews() {
 		super.layoutSubviews()
-        self.placeholderLabel?.anchorTopCenterFillingWidth(withLeftAndRightPadding: 0, topPadding: 12, height: 24)
+        self.placeholderLabel?.anchorTopCenterFillingWidth(withLeftAndRightPadding: self.textContainerInset.left, topPadding: self.textContainerInset.top, height: 24)
 		self.rule.anchorBottomCenterFillingWidth(withLeftAndRightPadding: 0, bottomPadding: 0, height: Theme.dimenRuleThickness)
 	}
     
 	func editingBegin(notification: NSNotification) {
-		if let textView = notification.object as? UITextView {
-			if textView == self {
-				self.rule.backgroundColor = Theme.colorRuleActive
-			}
-            else {
+        if self.ruleEnabled {
+            if let textView = notification.object as? UITextView {
+                if textView == self {
+                    self.rule.backgroundColor = Theme.colorRuleActive
+                }
+                else {
+                    self.rule.backgroundColor = Theme.colorRule
+                }
+            }
+            else if let _ = notification.object as? UITextField {
                 self.rule.backgroundColor = Theme.colorRule
             }
-		}
-        else if let _ = notification.object as? UITextField {
-            self.rule.backgroundColor = Theme.colorRule
         }
 	}
 }

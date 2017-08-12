@@ -90,8 +90,7 @@ class ChannelViewController: BaseTableController {
 			MainController.instance.routeDeepLink(link: link, error: nil)
 		}
         
-        if self.unreads.count > 0 {
-            let channelId = StateController.instance.channelId!
+        if self.unreads.count > 0, let channelId = StateController.instance.channelId {
             for messageId in self.unreads.keys {
                 FireController.instance.clearMessageUnread(messageId: messageId, channelId: channelId)
             }
@@ -532,13 +531,13 @@ class ChannelViewController: BaseTableController {
                 let fromChannelId = message.channelId!
                 let toChannelId = channel.id!
                 FireController.instance.moveMessage(message: message, fromChannelId: fromChannelId, toChannelId: toChannelId)
-//                { error in
-//                    if error == nil {
+                { error in
+                    if error == nil {
                         UIShared.toast(message: "Message moved to: \(channel.title!)", duration: 2.0, controller: self, addToWindow: false)
                         Log.v("Copy message to channel: \(channel.id!)")
                         Reporting.track("move_message")
-//                    }
-//                }
+                    }
+                }
             }
             let cancel = DefaultButton(title: "Cancel".uppercased(), height: 48) {
                 Log.v("Cancel copy")

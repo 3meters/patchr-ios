@@ -155,50 +155,82 @@ class DataSourceController: NSObject, FUICollectionDelegate {
     
     func array(_ array: FUICollection, didAdd object: Any, at index: UInt) {
         if self.mapperActive || self.startEmpty { return }
-        self.delegate?.array?(array, didAdd: object, at: index)
-        let indexPath = IndexPath(row: Int(index), section: 0)
-        if let tableView = self.scrollView as? UITableView {
-            tableView.insertRows(at: [indexPath], with: .none)
+        do {
+            self.delegate?.array?(array, didAdd: object, at: index)
+            let indexPath = IndexPath(row: Int(index), section: 0)
+            try ObjC.catchException {
+                if let tableView = self.scrollView as? UITableView {
+                    tableView.insertRows(at: [indexPath], with: .none)
+                }
+                else if let collectionView = self.scrollView as? UICollectionView {
+                    collectionView.insertItems(at: [indexPath])
+                }
+            }
         }
-        else if let collectionView = self.scrollView as? UICollectionView {
-            collectionView.insertItems(at: [indexPath])
+        catch {
+            Log.w("Caught exception: arrayDidAdd: \(error.localizedDescription)")
+            return
         }
     }
     
     func array(_ array: FUICollection, didMove object: Any, from fromIndex: UInt, to toIndex: UInt) {
         if self.mapperActive || self.startEmpty { return }
-        self.delegate?.array?(array, didMove: object, from: fromIndex, to: toIndex)
-        if let tableView = self.scrollView as? UITableView {
-            tableView.moveRow(at: IndexPath(row: Int(fromIndex), section: 0), to: IndexPath(row: Int(toIndex), section: 0))
+        do {
+            self.delegate?.array?(array, didMove: object, from: fromIndex, to: toIndex)
+            try ObjC.catchException {
+                if let tableView = self.scrollView as? UITableView {
+                    tableView.moveRow(at: IndexPath(row: Int(fromIndex), section: 0), to: IndexPath(row: Int(toIndex), section: 0))
+                }
+                else if let collectionView = self.scrollView as? UICollectionView {
+                    collectionView.moveItem(at: IndexPath(row: Int(fromIndex), section: 0), to: IndexPath(row: Int(toIndex), section: 0))
+                }
+            }
         }
-        else if let collectionView = self.scrollView as? UICollectionView {
-            collectionView.moveItem(at: IndexPath(row: Int(fromIndex), section: 0), to: IndexPath(row: Int(toIndex), section: 0))
+        catch {
+            Log.w("Caught exception: arrayDidMove: \(error.localizedDescription)")
+            return
         }
     }
     
     func array(_ array: FUICollection, didRemove object: Any, at index: UInt) {
         if self.mapperActive || self.startEmpty { return }
-        self.delegate?.array?(array, didRemove: object, at: index)
-        if let tableView = self.scrollView as? UITableView {
-            tableView.deleteRows(at: [IndexPath(row: Int(index), section: 0)], with: .none)
+        do {
+            self.delegate?.array?(array, didRemove: object, at: index)
+            try ObjC.catchException {
+                if let tableView = self.scrollView as? UITableView {
+                    tableView.deleteRows(at: [IndexPath(row: Int(index), section: 0)], with: .none)
+                }
+                else if let collectionView = self.scrollView as? UICollectionView {
+                    collectionView.deleteItems(at: [IndexPath(row: Int(index), section: 0)])
+                }
+            }
         }
-        else if let collectionView = self.scrollView as? UICollectionView {
-            collectionView.deleteItems(at: [IndexPath(row: Int(index), section: 0)])
+        catch {
+            Log.w("Caught exception: arrayDidRemove: \(error.localizedDescription)")
+            return
         }
     }
     
     func array(_ array: FUICollection, didChange object: Any, at index: UInt) {
         if self.mapperActive || self.startEmpty { return }
-        if self.delegate != nil && self.delegate!.responds(to: #selector(array(_:didChange:at:))) {
-            self.delegate?.array?(array, didChange: object, at: index)
+        do {
+            try ObjC.catchException {
+                if self.delegate != nil && self.delegate!.responds(to: #selector(self.array(_:didChange:at:))) {
+                    self.delegate?.array?(array, didChange: object, at: index)
+                }
+                else {
+                    if let tableView = self.scrollView as? UITableView {
+                        tableView.reloadRows(at: [IndexPath(row: Int(index), section: 0)], with: .none)
+                    }
+                    else if let collectionView = self.scrollView as? UICollectionView {
+                        collectionView.reloadItems(at: [IndexPath(row: Int(index), section: 0)])
+                    }
+                }
+            }
         }
-        else {
-            if let tableView = self.scrollView as? UITableView {
-                tableView.reloadRows(at: [IndexPath(row: Int(index), section: 0)], with: .none)
-            }
-            else if let collectionView = self.scrollView as? UICollectionView {
-                collectionView.reloadItems(at: [IndexPath(row: Int(index), section: 0)])
-            }
+        catch {
+            Log.w("Caught exception: arrayDidChange: \(error.localizedDescription)")
+            return
         }
     }
     

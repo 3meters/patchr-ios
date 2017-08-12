@@ -155,6 +155,12 @@
 		E2A28E6F1B4A602200B3A2FE /* AirToggleButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2A28E6E1B4A602200B3A2FE /* AirToggleButton.swift */; };
 		E2A5A8851B703B9B006D6E81 /* PhotoEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2A5A8841B703B9B006D6E81 /* PhotoEditView.swift */; };
 		E2A603241CD97B7A00FBD55B /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = E2A603221CD97B7A00FBD55B /* InfoPlist.strings */; };
+		E2AA50BE1F3E6FEC007A9D6E /* PopupInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2AA50BD1F3E6FEC007A9D6E /* PopupInputView.swift */; };
+		E2AA50BF1F3E6FEC007A9D6E /* PopupInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2AA50BD1F3E6FEC007A9D6E /* PopupInputView.swift */; };
+		E2AA50C11F3E7152007A9D6E /* InviteMessageController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2AA50C01F3E7152007A9D6E /* InviteMessageController.swift */; };
+		E2AA50C21F3E7152007A9D6E /* InviteMessageController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2AA50C01F3E7152007A9D6E /* InviteMessageController.swift */; };
+		E2AA50C51F3F8640007A9D6E /* ObjC.m in Sources */ = {isa = PBXBuildFile; fileRef = E2AA50C41F3F8640007A9D6E /* ObjC.m */; };
+		E2AA50C61F3F8640007A9D6E /* ObjC.m in Sources */ = {isa = PBXBuildFile; fileRef = E2AA50C41F3F8640007A9D6E /* ObjC.m */; };
 		E2AC5FAC1E37DC6400C95A60 /* DropdownTransitionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2AC5FAB1E37DC6400C95A60 /* DropdownTransitionManager.swift */; };
 		E2B2CAB21C553A8900CAE183 /* BaseEditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2B2CAB11C553A8900CAE183 /* BaseEditViewController.swift */; };
 		E2B4590E1BC1E76C00155659 /* SwiftyJSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D01FA3A1A705D8700DD6DFA /* SwiftyJSON.swift */; };
@@ -579,6 +585,10 @@
 		E2A28E6E1B4A602200B3A2FE /* AirToggleButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirToggleButton.swift; sourceTree = "<group>"; };
 		E2A5A8841B703B9B006D6E81 /* PhotoEditView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = PhotoEditView.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		E2A603231CD97B7A00FBD55B /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		E2AA50BD1F3E6FEC007A9D6E /* PopupInputView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PopupInputView.swift; sourceTree = "<group>"; };
+		E2AA50C01F3E7152007A9D6E /* InviteMessageController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InviteMessageController.swift; sourceTree = "<group>"; };
+		E2AA50C31F3F8626007A9D6E /* ObjC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObjC.h; sourceTree = "<group>"; };
+		E2AA50C41F3F8640007A9D6E /* ObjC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ObjC.m; sourceTree = "<group>"; };
 		E2AC5FAB1E37DC6400C95A60 /* DropdownTransitionManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DropdownTransitionManager.swift; sourceTree = "<group>"; };
 		E2B2CAB11C553A8900CAE183 /* BaseEditViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = BaseEditViewController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		E2B756A81D84600E00C102EC /* ChannelsHeaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = ChannelsHeaderView.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
@@ -1007,6 +1017,7 @@
 				E259082F1DC69C3F00CB6C3F /* MemberDetailView.swift */,
 				E2FA133D1D8220DD0057F287 /* MenuItemView.swift */,
 				E2A5A8841B703B9B006D6E81 /* PhotoEditView.swift */,
+				E2AA50BD1F3E6FEC007A9D6E /* PopupInputView.swift */,
 				E258DF9B1F3B6D26004687CC /* PopupTableView.swift */,
 				E2810BA51DC8E6930013AEA0 /* PresenceView.swift */,
 				E2D654FC1E13365400714BA9 /* UnreadBackView.swift */,
@@ -1069,6 +1080,8 @@
 			children = (
 				E2919DB61EDC82750044F412 /* JSONResponseSerializerWithData.h */,
 				E2919DB71EDC82750044F412 /* JSONResponseSerializerWithData.m */,
+				E2AA50C31F3F8626007A9D6E /* ObjC.h */,
+				E2AA50C41F3F8640007A9D6E /* ObjC.m */,
 				E2FFD38A1DF32D3200FD75C7 /* Debouncer.swift */,
 				7D01FA3A1A705D8700DD6DFA /* SwiftyJSON.swift */,
 				E24D74531BBAED5F0061F339 /* TaskQueue.swift */,
@@ -1170,6 +1183,7 @@
 				E26A02FC1DF5BE0D00EE32D3 /* ContactPickerController.swift */,
 				E2274B001E8D53FB005F4CF7 /* ContainerController.swift */,
 				E2999EE21DC25AAE005C69D8 /* EmptyViewController.swift */,
+				E2AA50C01F3E7152007A9D6E /* InviteMessageController.swift */,
 				E203BBCA1E69CDDA00589071 /* InviteViewController.swift */,
 				E2D12A801C0A52D700DE507E /* LobbyViewController.swift */,
 				E25B0F451DCE778B00021D5B /* MemberListController.swift */,
@@ -1597,6 +1611,7 @@
 				E2999EE31DC25AAE005C69D8 /* EmptyViewController.swift in Sources */,
 				E23C010F1CE4D73B009C56B2 /* DisplayPhoto.swift in Sources */,
 				E2BC53331DE5D54600C97A2C /* BingController.swift in Sources */,
+				E2AA50C51F3F8640007A9D6E /* ObjC.m in Sources */,
 				E20555061DBC178F003C8398 /* ColorArray.swift in Sources */,
 				E2FFD38F1DF4817700FD75C7 /* AirCheckBox.swift in Sources */,
 				E25327D21B13DEF800990A81 /* AudioController.swift in Sources */,
@@ -1612,6 +1627,7 @@
 				E229CD121C1337A700F5BDAC /* AirLabelBase.swift in Sources */,
 				E20C3A811BDC1D57008CCED1 /* BaseDetailView.swift in Sources */,
 				E25173C71E09CB9D0030259A /* UIBarButtonItem+Badge.m in Sources */,
+				E2AA50BE1F3E6FEC007A9D6E /* PopupInputView.swift in Sources */,
 				E2D10E5C1C87AA760099EA6E /* AirHideShowButton.swift in Sources */,
 				E29730601C14A7BC00B9433B /* AirSearchField.swift in Sources */,
 				E29A921E1DB19A2600B27093 /* FireProfile.swift in Sources */,
@@ -1653,6 +1669,7 @@
 				E2D12A7B1C091C4D00DE507E /* BaseViewController.swift in Sources */,
 				E22489721E5C92B900A96F27 /* Date.swift in Sources */,
 				E2EEE9101E9C7F730085565E /* ReactionPickerController.swift in Sources */,
+				E2AA50C11F3E7152007A9D6E /* InviteMessageController.swift in Sources */,
 				E25327B21B0FCE9C00990A81 /* Constants.swift in Sources */,
 				E25908301DC69C3F00CB6C3F /* MemberDetailView.swift in Sources */,
 				E2DA16DD1DD11B7A0096D86F /* AirToggleImage.swift in Sources */,
@@ -1750,6 +1767,7 @@
 				E2DB42AB1EB4F2C400B1F78B /* EmptyViewController.swift in Sources */,
 				E2DB42AC1EB4F2C400B1F78B /* DisplayPhoto.swift in Sources */,
 				E2DB42AE1EB4F2C400B1F78B /* BingController.swift in Sources */,
+				E2AA50C61F3F8640007A9D6E /* ObjC.m in Sources */,
 				E2DB42B01EB4F2C400B1F78B /* ColorArray.swift in Sources */,
 				E2DB42B11EB4F2C400B1F78B /* AirCheckBox.swift in Sources */,
 				E2DB42B21EB4F2C400B1F78B /* AudioController.swift in Sources */,
@@ -1765,6 +1783,7 @@
 				E2DB42BC1EB4F2C400B1F78B /* AirTableView.swift in Sources */,
 				E2DB42BD1EB4F2C400B1F78B /* AirLabelBase.swift in Sources */,
 				E2DB42BE1EB4F2C400B1F78B /* BaseDetailView.swift in Sources */,
+				E2AA50BF1F3E6FEC007A9D6E /* PopupInputView.swift in Sources */,
 				E2DB42BF1EB4F2C400B1F78B /* UIBarButtonItem+Badge.m in Sources */,
 				E2DB42C01EB4F2C400B1F78B /* AirHideShowButton.swift in Sources */,
 				E2DB42C11EB4F2C400B1F78B /* AirSearchField.swift in Sources */,
@@ -1806,6 +1825,7 @@
 				E2DB42EA1EB4F2C400B1F78B /* BaseViewController.swift in Sources */,
 				E2DB42EB1EB4F2C400B1F78B /* Date.swift in Sources */,
 				E2DB42EC1EB4F2C400B1F78B /* ReactionPickerController.swift in Sources */,
+				E2AA50C21F3E7152007A9D6E /* InviteMessageController.swift in Sources */,
 				E2DB42ED1EB4F2C400B1F78B /* Constants.swift in Sources */,
 				E2DB42EE1EB4F2C400B1F78B /* MemberDetailView.swift in Sources */,
 				E2DB42EF1EB4F2C400B1F78B /* AirToggleImage.swift in Sources */,

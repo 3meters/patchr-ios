@@ -102,6 +102,7 @@ class MainController: NSObject, iRateDelegate {
         buttonAppearance.titleFont = Theme.fontButtonTitle
         buttonAppearance.titleColor = Theme.colorButtonTitle
         buttonAppearance.buttonColor = Colors.clear
+        buttonAppearance.buttonHeight = 48
         buttonAppearance.separatorColor = Theme.colorRule
         CancelButton.appearance().titleFont = Theme.fontButtonTitle
         

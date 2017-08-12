@@ -9,6 +9,7 @@ import FirebaseDatabaseUI
 import pop
 import CLTokenInputView
 import Contacts
+import PopupDialog
 
 /* Routes
  * - Channel create flow: channelswitcher->channeledit->channelinvite->contactpicker (.internalCreate)
@@ -74,7 +75,7 @@ class ContactPickerController: BaseTableController, CLTokenInputViewDelegate {
     }
 
     /*--------------------------------------------------------------------------------------------
-    * Events
+    * MARK: - Events
     *--------------------------------------------------------------------------------------------*/
     
     func doneAction(sender: AnyObject?) {
@@ -85,7 +86,16 @@ class ContactPickerController: BaseTableController, CLTokenInputViewDelegate {
             }
         }
         if self.picks.count > 0 {
-            invite()
+            let controller = InviteMessageController()
+            let popup = PopupDialog(viewController: controller, gestureDismissal: false)
+            let cancelButton = DefaultButton(title: "Back".uppercased(), height: 48, action: nil)
+            let inviteButton = DefaultButton(title: "Invite".uppercased(), height: 48) {
+                let message = controller.textView.text
+                self.invite(message: message)
+            }
+            popup.buttonAlignment = .horizontal
+            popup.addButtons([cancelButton, inviteButton])
+            present(popup, animated: true)
         }
         else if self.flow == .internalCreate {
             self.navigateToChannel()
@@ -291,7 +301,7 @@ class ContactPickerController: BaseTableController, CLTokenInputViewDelegate {
         }
     }
     
-    func invite() {
+    func invite(message: String? = nil) {
         
         Reporting.track("invite_channel_members")
         
@@ -326,12 +336,12 @@ class ContactPickerController: BaseTableController, CLTokenInputViewDelegate {
                 , code: self.inputCode!
                 , email: email!
                 , role: self.inputRole!
-                , message: nil) { response, error in
+                , message: message) { response, error in
                 
                 if error == nil {
                     let inviteItem = response as! InviteItem
                     let inviteUrl = inviteItem.url
-                    let invite: [String: Any] = [
+                    var invite: [String: Any] = [
                         "channel": channel,
                         "created_at": timestamp,
                         "created_by": userId,
@@ -339,6 +349,9 @@ class ContactPickerController: BaseTableController, CLTokenInputViewDelegate {
                         "inviter": inviter,
                         "link": inviteUrl,
                         "role": self.inputRole!]
+                    if message != nil {
+                        invite["message"] = message!
+                    }
                     FireController.db.child("invites/\(inviteId)").setValue(invite)
                 }
             }
