@@ -25,6 +25,7 @@ class FireMessage: NSObject {
     var modifiedAt: Int64?
     var modifiedBy: String?
     var reactions: [String: [String: Bool]]?
+    var commentCount: Int?
     var text: String?
     
     // Local
@@ -43,6 +44,7 @@ class FireMessage: NSObject {
         }
         self.channelId = dict["channel_id"] as? String
         self.messageId = dict["message_id"] as? String
+        self.commentCount = dict["comment_count"] as? Int
         self.createdAt = dict["created_at"] as? Int64
         self.createdBy = dict["created_by"] as? String
         self.id = id

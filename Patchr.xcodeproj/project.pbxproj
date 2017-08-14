@@ -70,6 +70,10 @@
 		E241D15A1B1B3FCE00702E01 /* UIView+BorderLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = E241D1591B1B3FCE00702E01 /* UIView+BorderLayer.m */; };
 		E24493C91F2396A100C705FD /* DataSourceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E24493C81F2396A000C705FD /* DataSourceController.swift */; };
 		E24493CA1F2396A100C705FD /* DataSourceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E24493C81F2396A000C705FD /* DataSourceController.swift */; };
+		E2473E8A1F40A00700F5C19E /* MessageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2499E531F26BF66002C0F16 /* MessageViewController.swift */; };
+		E2473E8B1F40A00800F5C19E /* MessageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2499E531F26BF66002C0F16 /* MessageViewController.swift */; };
+		E2473E8D1F42281B00F5C19E /* CommentsButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2473E8C1F42281B00F5C19E /* CommentsButton.swift */; };
+		E2473E8E1F42281B00F5C19E /* CommentsButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2473E8C1F42281B00F5C19E /* CommentsButton.swift */; };
 		E24773451DCA254F00EFB46F /* FloatPhoneField.swift in Sources */ = {isa = PBXBuildFile; fileRef = E24773441DCA254F00EFB46F /* FloatPhoneField.swift */; };
 		E2499E4E1F23F432002C0F16 /* ChannelPhotoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2499E4D1F23F432002C0F16 /* ChannelPhotoView.swift */; };
 		E2499E4F1F23F7FC002C0F16 /* ChannelPhotoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2499E4D1F23F432002C0F16 /* ChannelPhotoView.swift */; };
@@ -503,6 +507,7 @@
 		E241D1581B1B3FCE00702E01 /* UIView+BorderLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+BorderLayer.h"; sourceTree = "<group>"; };
 		E241D1591B1B3FCE00702E01 /* UIView+BorderLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+BorderLayer.m"; sourceTree = "<group>"; };
 		E24493C81F2396A000C705FD /* DataSourceController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DataSourceController.swift; path = Patchr/DataSourceController.swift; sourceTree = "<group>"; };
+		E2473E8C1F42281B00F5C19E /* CommentsButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommentsButton.swift; sourceTree = "<group>"; };
 		E24773441DCA254F00EFB46F /* FloatPhoneField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FloatPhoneField.swift; sourceTree = "<group>"; };
 		E2499E4D1F23F432002C0F16 /* ChannelPhotoView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChannelPhotoView.swift; sourceTree = "<group>"; };
 		E2499E501F265136002C0F16 /* MessageEditViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageEditViewController.swift; sourceTree = "<group>"; };
@@ -1158,6 +1163,7 @@
 				E26A02FE1DF5DC5800EE32D3 /* AirTokenView.swift */,
 				E2DA16D81DD0F7280096D86F /* AirUIView.swift */,
 				E2D10E5B1C87AA760099EA6E /* AirHideShowButton.swift */,
+				E2473E8C1F42281B00F5C19E /* CommentsButton.swift */,
 				E27CE27F1E632E4800149305 /* DropdownButton.swift */,
 				E24773441DCA254F00EFB46F /* FloatPhoneField.swift */,
 				E27F8A7D1DFB3A180020E852 /* FloatTextField.swift */,
@@ -1610,6 +1616,7 @@
 				E25327B61B1000C000990A81 /* AirImageView.swift in Sources */,
 				E2999EE31DC25AAE005C69D8 /* EmptyViewController.swift in Sources */,
 				E23C010F1CE4D73B009C56B2 /* DisplayPhoto.swift in Sources */,
+				E2473E8B1F40A00800F5C19E /* MessageViewController.swift in Sources */,
 				E2BC53331DE5D54600C97A2C /* BingController.swift in Sources */,
 				E2AA50C51F3F8640007A9D6E /* ObjC.m in Sources */,
 				E20555061DBC178F003C8398 /* ColorArray.swift in Sources */,
@@ -1706,6 +1713,7 @@
 				9FDCC30FF30E86567AA6374F /* ChannelViewController.swift in Sources */,
 				9FDCCD2CE4DF052BF67BB9AF /* MaterialColor.swift in Sources */,
 				9FDCC36F029C0222AB24D09F /* FireController.swift in Sources */,
+				E2473E8D1F42281B00F5C19E /* CommentsButton.swift in Sources */,
 				9FDCC6C37ECC4CE0D7B2070E /* MainController.swift in Sources */,
 				9FDCCE62CE764FDC39D41C5F /* ProfileEditViewController.swift in Sources */,
 				9FDCCFD4969C57E5231CF509 /* AccountEditViewController.swift in Sources */,
@@ -1766,6 +1774,7 @@
 				E2DB42AA1EB4F2C400B1F78B /* AirImageView.swift in Sources */,
 				E2DB42AB1EB4F2C400B1F78B /* EmptyViewController.swift in Sources */,
 				E2DB42AC1EB4F2C400B1F78B /* DisplayPhoto.swift in Sources */,
+				E2473E8A1F40A00700F5C19E /* MessageViewController.swift in Sources */,
 				E2DB42AE1EB4F2C400B1F78B /* BingController.swift in Sources */,
 				E2AA50C61F3F8640007A9D6E /* ObjC.m in Sources */,
 				E2DB42B01EB4F2C400B1F78B /* ColorArray.swift in Sources */,
@@ -1862,6 +1871,7 @@
 				E2DB43101EB4F2C400B1F78B /* ChannelViewController.swift in Sources */,
 				E2DB43111EB4F2C400B1F78B /* MaterialColor.swift in Sources */,
 				E2DB43121EB4F2C400B1F78B /* FireController.swift in Sources */,
+				E2473E8E1F42281B00F5C19E /* CommentsButton.swift in Sources */,
 				E2DB43131EB4F2C400B1F78B /* MainController.swift in Sources */,
 				E2DB43141EB4F2C400B1F78B /* ProfileEditViewController.swift in Sources */,
 				E2DB43151EB4F2C400B1F78B /* AccountEditViewController.swift in Sources */,

@@ -146,6 +146,17 @@ class FireController: NSObject {
             then?(error)
         }
     }
+    
+    func deleteComment(commentId: String, messageId: String, channelId: String, then: ((Error?) -> Void)? = nil) {
+        let path = "message-comments/\(channelId)/\(messageId)/\(commentId)"
+        FireController.db.child(path).setValue(NSNull()) { error, ref in
+            if error == nil {
+                Log.d("Comment deleted: \(commentId)")
+            }
+            then?(error)
+        }
+    }
+    
     /*--------------------------------------------------------------------------------------------
      * MARK: - Move
      *--------------------------------------------------------------------------------------------*/

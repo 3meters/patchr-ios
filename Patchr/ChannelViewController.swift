@@ -126,6 +126,14 @@ class ChannelViewController: BaseTableController {
 	 * MARK: - Events
 	 *--------------------------------------------------------------------------------------------*/
 
+    func actionButtonTapped(gesture: UIGestureRecognizer?) {
+        let controller = MessageEditViewController()
+        let wrapper = AirNavigationController(rootViewController: controller)
+        controller.inputChannelId = StateController.instance.channelId!
+        controller.mode = .insert
+        self.present(wrapper, animated: true, completion: nil)
+    }
+    
 	func backgroundTapped(sender: AnyObject?) {
 		if let controller = self.sheetController {
 			controller.dismiss()
@@ -136,17 +144,10 @@ class ChannelViewController: BaseTableController {
         let _ = self.navigationController?.popViewController(animated: true)
     }
     
-	func openGalleryAction(sender: AnyObject?) {
-		Reporting.track("view_photo_gallery")
-		showPhotos(mode: .gallery)
-	}
-
-    func actionButtonTapped(gesture: UIGestureRecognizer?) {
-        let controller = MessageEditViewController()
-        let wrapper = AirNavigationController(rootViewController: controller)
-        controller.inputChannelId = StateController.instance.channelId!
-        controller.mode = .insert
-        self.present(wrapper, animated: true, completion: nil)
+    func browseCommentsAction(sender: AnyObject?) {
+        if let control = sender as? CommentsButton {
+            showComments(message: control.message)
+        }
     }
 
 	func browseMemberAction(sender: AnyObject?) {
@@ -171,21 +172,6 @@ class ChannelViewController: BaseTableController {
                 self.tableView(self.tableView, didSelectRowAt: indexPath)
             }
 			showPhotos(mode: .browse, fromView: control, initialUrl: url)
-		}
-	}
-
-	func deleteMessageAction(message: FireMessage) {
-		DeleteConfirmationAlert(
-				title: "Confirm Delete",
-				message: "Are you sure you want to delete this?",
-				actionTitle: "Delete", cancelTitle: "Cancel", delegate: self) {
-			doIt in
-			if doIt {
-				let channelId = message.channelId!
-				let messageId = message.id!
-				Reporting.track("delete_message")
-				FireController.instance.deleteMessage(messageId: messageId, channelId: channelId)
-			}
 		}
 	}
 
@@ -235,6 +221,11 @@ class ChannelViewController: BaseTableController {
 			}
 		}
 	}
+
+    func openGalleryAction(sender: AnyObject?) {
+        Reporting.track("view_photo_gallery")
+        showPhotos(mode: .gallery)
+    }
 
 	/*--------------------------------------------------------------------------------------------
 	* MARK: - Notifications
@@ -402,6 +393,10 @@ class ChannelViewController: BaseTableController {
 						}
 					})
 				}
+                
+                /* Comments */
+                cell.commentsButton.addTarget(this, action: #selector(this.browseCommentsAction(sender:)), for: .touchUpInside)
+                
 			})
 			return cell
 		}
@@ -483,34 +478,10 @@ class ChannelViewController: BaseTableController {
 
 	func showMessageActions(message: FireMessage, sourceView: UIView?) {
 
-		let userId = UserController.instance.userId!
+        let userId = UserController.instance.userId!
+        if message.createdBy != userId && !isOwner() { return }
 		let sheet = UIAlertController(title: nil, message: nil, preferredStyle: UIAlertControllerStyle.actionSheet)
         
-		let like = UIAlertAction(title: "Add reaction", style: .default) { [weak self] action in
-
-            guard let this = self else { return }
-			if this.channel?.joinedAt == nil {
-				UIShared.toast(message: "Join this channel to add reactions.")
-				return
-			}
-			Reporting.track("view_reaction_picker")
-			let layout = UICollectionViewFlowLayout()
-			let controller = ReactionPickerController(collectionViewLayout: layout)
-			controller.inputMessage = message
-			controller.contentSizeInPopup = CGSize(width: Config.screenWidth, height: 192)
-
-            let popController = STPopupController(rootViewController: controller)
-            let backgroundView = UIView()
-            backgroundView.backgroundColor = Colors.opacity25pcntBlack
-            popController.style = .bottomSheet
-            popController.backgroundView = backgroundView
-            popController.hidesCloseButton = true
-            this.sheetController = popController
-            let tap = UITapGestureRecognizer(target: this, action: #selector(this.backgroundTapped(sender:)))
-            this.sheetController.backgroundView?.addGestureRecognizer(tap)
-            this.sheetController.present(in: this)
-		}
-
 		let edit = UIAlertAction(title: "Edit message", style: .default) { [weak self] action in
             
             guard let this = self else { return }
@@ -550,7 +521,7 @@ class ChannelViewController: BaseTableController {
         
 		let delete = UIAlertAction(title: "Delete message", style: .destructive) { [weak self] action in
             guard let this = self else { return }
-			this.deleteMessageAction(message: message)
+			this.deleteMessage(message: message)
 		}
         
 		let cancel = UIAlertAction(title: "Cancel", style: .cancel) { action in
@@ -558,19 +529,13 @@ class ChannelViewController: BaseTableController {
 		}
 
 		if message.createdBy == userId {
-			sheet.addAction(like)
 			sheet.addAction(edit)
             sheet.addAction(move)
 			sheet.addAction(delete)
 			sheet.addAction(cancel)
 		}
 		else if isOwner() {
-			sheet.addAction(like)
 			sheet.addAction(delete)
-			sheet.addAction(cancel)
-		}
-		else {
-			sheet.addAction(like)
 			sheet.addAction(cancel)
 		}
 
@@ -665,6 +630,28 @@ class ChannelViewController: BaseTableController {
 			present(sheet, animated: true, completion: nil)
 		}
 	}
+    
+    func showComments(message: FireMessage) {
+        Reporting.track("view_comment_list")
+        let controller = MessageViewController()
+        controller.inputMessageId = message.id!
+        controller.inputChannelId = message.channelId!
+        controller.contentSizeInPopup = CGSize(width: Config.screenWidth, height: Config.screenHeight * 0.40 )
+        
+        let backgroundView = UIView()
+        backgroundView.backgroundColor = Colors.opacity25pcntBlack
+        
+        let popController = STPopupController(rootViewController: controller)
+        popController.style = .bottomSheet
+        popController.backgroundView = backgroundView
+        popController.hidesCloseButton = true
+        
+        self.sheetController = popController
+        
+        let tap = UITapGestureRecognizer(target: self, action: #selector(self.backgroundTapped(sender:)))
+        self.sheetController.backgroundView?.addGestureRecognizer(tap)
+        self.sheetController.present(in: self)
+    }
 
 	func showPhotos(mode: PhotoBrowserMode, fromView: UIView? = nil, initialUrl: URL? = nil) {
 
@@ -736,7 +723,22 @@ class ChannelViewController: BaseTableController {
 			})
 		}
 	}
-    
+
+    func deleteMessage(message: FireMessage) {
+        DeleteConfirmationAlert(
+            title: "Confirm Delete",
+            message: "Are you sure you want to delete this?",
+            actionTitle: "Delete", cancelTitle: "Cancel", delegate: self) {
+                doIt in
+                if doIt {
+                    let channelId = message.channelId!
+                    let messageId = message.id!
+                    Reporting.track("delete_message")
+                    FireController.instance.deleteMessage(messageId: messageId, channelId: channelId)
+                }
+        }
+    }
+
     func configureActionButton() {
         
         /* Action button */

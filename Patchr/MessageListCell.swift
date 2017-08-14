@@ -25,6 +25,7 @@ class MessageListCell: UITableViewCell {
     var hitInsets: UIEdgeInsets = UIEdgeInsets.zero
 
     var reactionToolbar: AirReactionToolbar!
+    var commentsButton = CommentsButton()
 
     var template = false
     var decorated = false
@@ -103,12 +104,24 @@ class MessageListCell: UITableViewCell {
 
         /* Footer */
 
-        if !self.reactionToolbar.isHidden {
+        if self.reactionToolbar.superview != nil {
             let toolbarSize = self.reactionToolbar.intrinsicContentSize
+            var toolbarWidth = columnWidth
+            if self.commentsButton.superview != nil {
+                self.commentsButton.sizeToFit()
+                toolbarWidth = min(toolbarSize.width, columnWidth - (16 + self.commentsButton.width() + 8))
+            }
             self.reactionToolbar.alignUnder(self.edited
                 , matchingLeftWithTopPadding: 8
-                , width: columnWidth
+                , width: toolbarWidth
                 , height: toolbarSize.height)
+        }
+        
+        if self.commentsButton.superview != nil {
+            self.commentsButton.align(toTheRightOf: self.reactionToolbar
+                , matchingCenterWithLeftPadding: 8
+                , width: self.commentsButton.width() + 16
+                , height: self.reactionToolbar.height())
         }
         
         self.contentView.resizeToFitSubviews()
@@ -177,8 +190,10 @@ class MessageListCell: UITableViewCell {
         self.selectionStyle = .none
         
         self.reactionToolbar = AirReactionToolbar()
+        self.reactionToolbar.alwaysShowAddButton = true
         
         self.contentView.addSubview(self.reactionToolbar)
+        self.contentView.addSubview(self.commentsButton)
         self.contentView.addSubview(self.description_!)
         self.contentView.addSubview(self.photoView!)
         self.contentView.addSubview(self.userPhotoControl)
@@ -251,10 +266,18 @@ class MessageListCell: UITableViewCell {
         
         /* Reaction toolbar */
         
-        self.reactionToolbar.isHidden = true
-        self.reactionToolbar.bind(message: message)
-        self.reactionToolbar.isHidden = (self.reactionToolbar.reactionButtons.count == 0)
-
+        if self.reactionToolbar.superview != nil {
+            self.reactionToolbar.isHidden = true
+            self.reactionToolbar.bind(message: message)
+            self.reactionToolbar.isHidden = (self.reactionToolbar.reactionButtons.count == 0)
+        }
+        
+        /* Comments button */
+        
+        if self.commentsButton.superview != nil {
+            self.commentsButton.bind(message: message)
+        }
+        
         self.setNeedsLayout()
     }
     

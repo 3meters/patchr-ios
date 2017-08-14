@@ -14,24 +14,16 @@ import Firebase
 import FirebaseDatabaseUI
 import FirebaseStorage
 
-class BaseSlackController: SLKTextViewController, PhotoEditDelegate {
+class BaseSlackController: SLKTextViewController {
 	
     var controllerIsActive = false
     var authHandle: AuthStateDidChangeListenerHandle!
     
     var queryController: DataSourceController!
-    var channel: FireChannel!
-    var searchResult: [String]?
-    var editingMessage: FireMessage!
-    var messageId: String!
+    var editingComment: FireMessage!
+    var inputChannelId: String!
+    var inputMessageId: String!
     
-    var photoEditView: PhotoEditView!
-    var photoDirty: Bool = false
-    var photoActive: Bool = false
-    var photoChosen: Bool = false
-    var photoHolder	: UIVisualEffectView!
-    var rule = UIView()
-	
     var array: FUIArray!
 
     override var tableView: UITableView {
@@ -53,123 +45,47 @@ class BaseSlackController: SLKTextViewController, PhotoEditDelegate {
         self.controllerIsActive = (UIApplication.shared.applicationState == .active)
     }
     
-    override func viewWillLayoutSubviews() {
-        let holderWidth = self.view.width()
-        let holderHeight = CGFloat((Config.contentWidth * 0.56) + 32)
-        self.photoHolder?.frame.size = CGSize(width: holderWidth, height: holderHeight)
-        self.photoHolder?.frame.origin.x = 0
-        self.photoEditView?.anchorInCenter(withWidth: Config.contentWidth, height: CGFloat(Config.contentWidth * 0.56))
-        self.rule.anchorTopCenterFillingWidth(withLeftAndRightPadding: 0, topPadding: 0, height: 0.5)
-        super.viewWillLayoutSubviews()
-    }
-    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         NotificationCenter.default.addObserver(self.tableView, selector: #selector(UITableView.reloadData), name: NSNotification.Name.UIContentSizeCategoryDidChange, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(textInputbarDidMove(_:)), name: NSNotification.Name.SLKTextInputbarDidMove, object: nil)
-    }
-    
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
     }
     
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         NotificationCenter.default.removeObserver(self, name: NSNotification.Name.UIContentSizeCategoryDidChange, object: nil)
-        NotificationCenter.default.removeObserver(self, name: NSNotification.Name.SLKTextInputbarDidMove, object: nil)
     }
 
 	/*--------------------------------------------------------------------------------------------
 	* MARK: - Events
 	*--------------------------------------------------------------------------------------------*/
-
-    func editPhotoAction(sender: AnyObject) {
-        Reporting.track("edit_photo")
-        //hidePhotoEdit()
-        self.photoEditView.editPhotoAction(sender: sender)
-    }
-    
-    override func didPressLeftButton(_ sender: Any!) {
-        
-        self.dismissKeyboard(true)
-        Reporting.track("open_photo_options")
-
-        self.photoEditView.photoChooser?.choosePhoto(sender: sender as AnyObject) { [weak self] image, imageResult, asset, cancelled in
-            guard let this = self else { return }
-            if !cancelled {
-                if image != nil || imageResult != nil {
-                    DispatchQueue.main.async {
-                        Reporting.track("chose_photo")
-                        this.photoEditView.photoChosen(image: image, imageResult: imageResult, asset: asset)
-                        this.showPhotoEdit()
-                        this.presentKeyboard(true)
-                    }
-                }
-            }
-            else {
-                Reporting.track("cancel_photo_selection")
-                this.presentKeyboard(true)
-            }
-        }
-    }
     
     override func didPressRightButton(_ sender: Any!) {
         self.textView.refreshFirstResponder()
-        
-        sendMessage()
-        
-        hidePhotoEdit()
-        
+        sendComment()
         if UserDefaults.standard.bool(forKey: PerUserKey(key: Prefs.soundEffects)) {
             AudioController.instance.playSystemSound(soundId: 1004)
         }
-        
         super.didPressRightButton(sender)
     }
     
     override func didCommitTextEditing(_ sender: Any) {
         self.textView.refreshFirstResponder()
         dismissKeyboard(true)
-        updateMessage()
-        hidePhotoEdit()
+        updateComment()
         super.didCommitTextEditing(sender)
     }
     
     override func didCancelTextEditing(_ sender: Any) {
         super.didCancelTextEditing(sender)
-        self.editingMessage = nil
+        self.editingComment = nil
         self.textInputbar.endTextEdition()
         dismissKeyboard(true)
-        hidePhotoEdit()
-    }
-
-    func didSetPhoto() {
-        textDidUpdate(true)
-        Reporting.track("change_photo")
-        showPhotoEdit()
-    }
-    
-    func didClearPhoto() {
-        textDidUpdate(true)
-        Reporting.track("remove_photo")
-        hidePhotoEdit()
     }
 
     /*--------------------------------------------------------------------------------------------
      * MARK: - Notifications
      *--------------------------------------------------------------------------------------------*/
 
-    func textInputbarDidMove(_ note: Notification) {
-        
-        guard let userInfo = (note as NSNotification).userInfo
-            , let value = userInfo["origin"] as? NSValue else { return }
-        
-        /* Keep photo edit view positioned above the input bar.*/
-        var frame = self.photoHolder.frame
-        frame.origin.y = value.cgPointValue.y - (self.photoHolder.height() - 1)
-        self.photoHolder.frame = frame
-    }
-    
     func viewDidBecomeActive(sender: NSNotification) {
         /* User either switched to app, launched app, or turned their screen back on with app in foreground. */
         self.controllerIsActive = true
@@ -188,224 +104,81 @@ class BaseSlackController: SLKTextViewController, PhotoEditDelegate {
         
 		self.view.backgroundColor = Theme.colorBackgroundForm
         
-        self.photoHolder = UIVisualEffectView(effect: UIBlurEffect(style: .light))
-        self.photoHolder.isHidden = true
-        self.photoHolder.alpha = 0.0
-        
-        self.photoEditView = PhotoEditView()
-        self.photoEditView.setHost(controller: self, view: self.leftButton)
-        self.photoEditView.configureTo(photoMode: .photo)
-        self.photoEditView.photoDelegate = self
-        
-        self.rule.backgroundColor = Theme.colorRule
-        
-        self.photoHolder.contentView.addSubview(self.rule)
-        self.photoHolder.contentView.addSubview(self.photoEditView)
-        self.view.addSubview(self.photoHolder)
-        
         self.bounces = true
         self.isKeyboardPanningEnabled = true
         self.shouldScrollToBottomAfterKeyboardShows = false
         self.isInverted = false
         
-        self.leftButton.setImage(#imageLiteral(resourceName: "imgCameraPadded"), for: UIControlState())
-        self.leftButton.imageEdgeInsets = UIEdgeInsetsMake(0, 0, 0, 0)
-        self.leftButton.showsTouchWhenHighlighted = true
-        
         self.rightButton.setTitle(NSLocalizedString("Send", comment: ""), for: UIControlState())
         
         self.textInputbar.autoHideRightButton = false
-        self.textInputbar.showLeftButtonWhenEditing = true
         self.textInputbar.editorTitle.textColor = UIColor.darkGray
         
         self.typingIndicatorView!.canResignByTouch = true
         
         self.registerPrefixes(forAutoCompletion: ["@",  "#", ":", "+:", "/"])
 
-        self.photoEditView.editPhotoButton.addTarget(self, action: #selector(editPhotoAction(sender:)), for: .touchUpInside)
-        
         NotificationCenter.default.addObserver(self, selector: #selector(viewWillResignActive(sender:)), name: NSNotification.Name.UIApplicationWillResignActive, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(viewDidBecomeActive(sender:)), name: NSNotification.Name.UIApplicationDidBecomeActive, object: nil)
 	}
     
-    func editMessage(message: FireMessage) {
-        self.editingMessage = message
+    func editComment(comment: FireMessage) {
+        self.editingComment = comment
         self.presentKeyboard(true)
         self.textInputbar.beginTextEditing()
-        
-        if message.text != nil {
-            self.editText(message.text!)
-        }
-        
-        if let photo = message.attachments?.values.first?.photo {
-            let photoUrl = ImageProxy.url(photo: photo, category: SizeCategory.standard)
-            self.photoEditView.configureTo(photoMode: .photo)
-            self.photoEditView.bind(url: photoUrl, uploading: photo.uploading)
-            showPhotoEdit()
+        if comment.text != nil {
+            self.editText(comment.text!)
         }
     }
     
-    func sendMessage() {
+    func sendComment() {
         
         guard let userId = UserController.instance.userId
-            , let channelId = StateController.instance.channelId else {
-                fatalError("Tried to send a message without complete state available")
+            , let channelId = self.inputChannelId
+                , let messageId = self.inputMessageId else {
+                fatalError("Tried to send a comment without complete state available")
         }
         
-        var message: [String: Any] = [:]
-        let ref = FireController.db.child("channel-messages/\(channelId)").childByAutoId()
-        
-        if self.photoEditView.photoActive {
-            let attachmentId = "at-\(Utils.genRandomId(digits: 9))"
-            let image = self.photoEditView.imageView.image
-            let asset = self.photoEditView.imageView.asset
-            var photoMap: [String: Any]?
-            photoMap = postPhoto(image: image!, asset: asset, progress: self.photoEditView.progressBlock) { error in
-                if error == nil {
-                    photoMap!["uploading"] = NSNull()
-                    ref.child("attachments/\(attachmentId)").setValue(["photo": photoMap!])
-                    Log.d("*** Cleared uploading: \(photoMap!["filename"]!)")
-                }
-            }
-            message["attachments"] = [attachmentId: ["photo": photoMap!]]
-        }
+        var comment: [String: Any] = [:]
+        let ref = FireController.db.child("message-comments/\(channelId)/\(messageId)").childByAutoId()
         
         let timestamp = FireController.instance.getServerTimestamp()
         let timestampReversed = -1 * timestamp
         
-        message["channel_id"] = channelId
-        message["created_at"] = timestamp
-        message["created_at_desc"] = timestampReversed
-        message["created_by"] = userId
-        message["modified_at"] = timestamp
-        message["modified_by"] = userId
+        comment["channel_id"] = channelId
+        comment["message_id"] = messageId
+        comment["created_at"] = timestamp
+        comment["created_at_desc"] = timestampReversed
+        comment["created_by"] = userId
+        comment["modified_at"] = timestamp
+        comment["modified_by"] = userId
         
         if let text = self.textInputbar.textView.text, !text.isEmpty {
-            message["text"] = text
+            comment["text"] = text
         }
         
-        ref.setValue(message)
-        Reporting.track("send_message")
+        ref.setValue(comment)
+        Reporting.track("send_comment")
     }
     
-    func updateMessage() {
+    func updateComment() {
         
         let timestamp = FireController.instance.getServerTimestamp()
         var updateMap: [String: Any] = ["modified_at": timestamp]
-        let path = self.editingMessage.path
-        
-        if self.photoEditView.photoDirty {
-            if self.photoEditView.photoActive {
-                let attachmentId = "at-\(Utils.genRandomId(digits: 9))"
-                let image = self.photoEditView.imageView.image
-                let asset = self.photoEditView.imageView.asset
-                var photoMap: [String: Any]?
-                photoMap = postPhoto(image: image!, asset: asset, progress: self.photoEditView.progressBlock) { error in
-                    if error == nil {
-                        photoMap!["uploading"] = NSNull()
-                        FireController.db.child(path).child("attachments/\(attachmentId)").setValue(["photo": photoMap!])
-                    }
-                }
-                updateMap["attachments"] = [attachmentId: ["photo": photoMap!]]
-            }
-            else {
-                updateMap["attachments"] = NSNull()
-            }
-        }
-        
+        let channelId = self.editingComment.channelId!
+        let messageId = self.editingComment.messageId!
+        let commentId = self.editingComment.id!
+        let path = "message-comments/\(channelId)/\(messageId)/\(commentId)"
         let text = self.textInputbar.textView.text
         updateMap["text"] = (text == nil || text!.isEmpty) ? NSNull() : text
-        Reporting.track("send_edited_message")
+        Reporting.track("send_edited_comment")
         FireController.db.child(path).updateChildValues(updateMap)
-        NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.MessageDidUpdate), object: self, userInfo: ["message_id":self.editingMessage.id!])
-    }
-    
-    func postPhoto(image: UIImage
-        , asset: Any?
-        , progress: AWSS3TransferUtilityProgressBlock? = nil
-        , then: ((Any?) -> Void)? = nil) -> [String: Any] {
-        
-        /* Ensure image is resized/rotated before upload */
-        let preparedImage = ImageUtils.prepareImage(image: image)
-        
-        /* Generate image key */
-        let imageKey = "\(Utils.genImageKey()).jpg"
-        
-        var photoMap = [
-            "filename": imageKey,
-            "height": Int(preparedImage.size.height),
-            "source": GoogleStorage.imageSource,
-            "width": Int(preparedImage.size.width), // width/height are in points...should be pixels?
-            "uploading": true] as [String: Any]
-        
-        if let asset = asset as? PHAsset {
-            if let takenDate = asset.creationDate {
-                photoMap["taken_at"] = takenDate.milliseconds
-                Log.d("Photo taken: \(takenDate)")
-            }
-            if let coordinate = asset.location?.coordinate {
-                photoMap["location"] = ["lat": coordinate.latitude, "lng": coordinate.longitude]
-                Log.d("Photo lat/lng: \(coordinate)")
-            }
-        }
-        else if let asset = asset as? [String: Any] {
-            if let takenDate = asset["taken_at"] as? Int {
-                photoMap["taken_at"] = takenDate
-                Log.d("Photo taken: \(takenDate)")
-            }
-        }
-        
-        let imageData = UIImageJPEGRepresentation(preparedImage, /*compressionQuality*/ 0.70)!
-        
-        /* Prime the cache so offline has something to work with */
-        let photo = FirePhoto(dict: photoMap)
-        let photoUrlStandard = ImageProxy.url(photo: photo, category: SizeCategory.standard)
-        let photoUrlProfile = ImageProxy.url(photo: photo, category: SizeCategory.profile)
-        ImageUtils.storeImageDataToCacheSync(imageData: imageData, key: photoUrlProfile.absoluteString)
-        ImageUtils.storeImageDataToCacheSync(imageData: imageData, key: photoUrlStandard.absoluteString)
-        
-        /* Upload */
-        DispatchQueue.global(qos: .userInitiated).async {
-            GoogleStorage.instance.upload(imageData: imageData, imageKey: imageKey) { snapshot in
-                if snapshot.status == .failure {
-                    then?(snapshot.error)
-                }
-                else if snapshot.status == .success {
-                    Log.d("*** Google storage image upload complete: \(imageKey)")
-                    then?(nil)
-                }
-            }
-        }
-        
-        return photoMap
-    }
-
-    func showPhotoEdit() {
-        
-        if self.photoHolder.isHidden {
-            self.photoHolder.frame.origin.y = (self.textInputbar.frame.minY - (self.photoHolder.height() - 1))
-            self.photoHolder.isHidden = false
-            self.photoHolder.alpha = 0.0
-            
-            UIView.animate(withDuration: 0.25, animations: { [unowned self] () -> Void in
-                self.photoHolder.alpha = 1.0
-            })
-        }
-    }
-    
-    func hidePhotoEdit() {
-        if !self.photoHolder.isHidden {
-            UIView.animate(withDuration: 0.3, animations: { [unowned self] () -> Void in
-                self.photoHolder.alpha = 0.0
-                }, completion: { [unowned self] (finished) -> Void in
-                    self.photoHolder.isHidden = true
-            })
-        }
+        NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.MessageDidUpdate), object: self, userInfo: ["message_id":self.editingComment.id!])
     }
     
     override func canPressRightButton() -> Bool {
         super.canPressRightButton()
-        if self.editingMessage != nil {
+        if self.editingComment != nil {
             return (isValid() && isDirty())
         }
         else {
@@ -415,10 +188,7 @@ class BaseSlackController: SLKTextViewController, PhotoEditDelegate {
     
     func isDirty() -> Bool {
         
-        if !stringsAreEqual(string1: self.textView.text, string2: self.editingMessage.text) {
-            return true
-        }
-        if self.photoEditView.photoDirty {
+        if !stringsAreEqual(string1: self.textView.text, string2: self.editingComment.text) {
             return true
         }
         return false
@@ -426,8 +196,7 @@ class BaseSlackController: SLKTextViewController, PhotoEditDelegate {
 
     func isValid() -> Bool {
         
-        if ((self.textView.text == nil || self.textView.text!.isEmpty)
-            && self.photoEditView?.imageView.image == nil) {
+        if (self.textView.text == nil || self.textView.text!.isEmpty) {
             return false
         }
         return true
@@ -479,66 +248,5 @@ extension BaseSlackController {
         let data = userInfo[SLKTextViewPastedItemData]
         
         print("didPasteMediaContent : \(contentType) (type = \(mediaType) | data : \(data))")
-    }
-    
-    override func didChangeAutoCompletionPrefix(_ prefix: String, andWord word: String) {
-        
-        let array:Array<String> = []
-        //let wordPredicate = NSPredicate(format: "self BEGINSWITH[c] %@", word);
-        
-        self.searchResult = nil
-        
-        if prefix == "@" {
-            if word.characters.count > 0 {
-                //array = self.users.filter { wordPredicate.evaluate(with: $0) };
-            }
-            else {
-                //array = self.users
-            }
-        }
-        else if prefix == "#" {
-            
-            if word.characters.count > 0 {
-                //array = self.channels.filter { wordPredicate.evaluate(with: $0) };
-            }
-            else {
-                //array = self.channels
-            }
-        }
-        else if (prefix == ":" || prefix == "+:") && word.characters.count > 0 {
-            //array = self.emojis.filter { wordPredicate.evaluate(with: $0) };
-        }
-        else if prefix == "/" && self.foundPrefixRange.location == 0 {
-            if word.characters.count > 0 {
-                //array = self.commands.filter { wordPredicate.evaluate(with: $0) };
-            }
-            else {
-                //array = self.commands
-            }
-        }
-        
-        var show = false
-        
-        if array.count > 0 {
-            let sortedArray = array.sorted { $0.localizedCaseInsensitiveCompare($1) == ComparisonResult.orderedAscending }
-            self.searchResult = sortedArray
-            show = sortedArray.count > 0
-        }
-        
-        self.showAutoCompletionView(show)
-    }
-    
-    override func heightForAutoCompletionView() -> CGFloat {
-        
-        guard let searchResult = self.searchResult else {
-            return 0
-        }
-        
-        let cellHeight = self.autoCompletionView.delegate?.tableView!(self.autoCompletionView, heightForRowAt: IndexPath(row: 0, section: 0))
-        guard let height = cellHeight else {
-            return 0
-        }
-        
-        return height * CGFloat(searchResult.count)
     }
 }

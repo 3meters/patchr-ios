@@ -95,6 +95,9 @@ class AirReactionToolbar: AirScrollView {
                     width += self.buttonSpacing
                 }
             }
+            if self.reactionButtons.count > 1 { // Remove trailing spacing
+                width -= self.buttonSpacing
+            }
             width += paddingRight
             let desiredSize = CGSize(width: width, height: self.reactionButtons.count > 0 ? self.buttonHeight : 0)
             return desiredSize
