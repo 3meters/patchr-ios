@@ -19,7 +19,8 @@ class MemberViewController: BaseViewController, UIScrollViewDelegate, UITextFiel
     var authHandle: AuthStateDidChangeListenerHandle!
     var queryUser: UserQuery!
     var user: FireUser!
-
+    
+    var chromeBackground = UIView(frame: .zero)
     var headerView = MemberDetailView()
     var email = AirLabelStack()
     var phone = AirLabelStack()
@@ -86,7 +87,9 @@ class MemberViewController: BaseViewController, UIScrollViewDelegate, UITextFiel
         let viewWidth = min(Config.contentWidthMax, self.view.bounds.size.width)
         let buttonWidth = (viewWidth - 48) / 2
         
-        self.view.bounds.size.width = viewWidth
+        self.chromeBackground.anchorTopCenterFillingWidth(withLeftAndRightPadding: 0, topPadding: 0, height: 64)
+        
+        //self.view.bounds.size.width = viewWidth
         self.contentHolder.bounds.size.width = viewWidth
         
         self.scrollView.anchorTopCenter(withTopPadding: 0, width: viewWidth, height: self.view.bounds.height)
@@ -174,6 +177,7 @@ class MemberViewController: BaseViewController, UIScrollViewDelegate, UITextFiel
             UIShared.styleChrome(navigationBar: navigationBar, translucent: true)
         }
         
+        self.view.backgroundColor = Theme.colorBackgroundWindow
         self.automaticallyAdjustsScrollViewInsets = false
         let viewWidth = min(Config.contentWidthMax, self.view.bounds.size.width)
         
@@ -200,6 +204,8 @@ class MemberViewController: BaseViewController, UIScrollViewDelegate, UITextFiel
         self.callButton.setTitle("Call".uppercased(), for: .normal)
         self.callButton.addTarget(self, action: #selector(phoneAction(sender:)), for: .touchUpInside)
         
+        self.chromeBackground.backgroundColor = Colors.accentColor
+        
         self.buttonGroup.addSubview(self.editButton)
         self.buttonGroup.addSubview(self.callButton)
         self.buttonGroup.addSubview(self.settingsButton)
@@ -209,6 +215,8 @@ class MemberViewController: BaseViewController, UIScrollViewDelegate, UITextFiel
         self.scrollView.addSubview(self.headerView)
         self.contentHolder.addSubview(self.buttonGroup)
         self.contentHolder.addSubview(self.profileGroup)
+        self.view.addSubview(self.chromeBackground)
+        self.view.sendSubview(toBack: self.chromeBackground)
         
         self.scrollView.delegate = self
         self.authenticatedUser = (self.inputUserId == UserController.instance.userId)
@@ -247,7 +255,7 @@ class MemberViewController: BaseViewController, UIScrollViewDelegate, UITextFiel
     }
     
     func updateHeaderView() {
-        var headerRect = CGRect(x: 0, y: -self.headerHeight, width: self.view.width(), height: self.headerHeight)
+        var headerRect = CGRect(x: 0, y: -self.headerHeight, width: self.contentHolder.width(), height: self.headerHeight)
         if self.scrollView.contentOffset.y < -(self.headerHeight) {
             headerRect.origin.y = (self.scrollView.contentOffset.y)
             headerRect.size.height = -(self.scrollView.contentOffset.y)

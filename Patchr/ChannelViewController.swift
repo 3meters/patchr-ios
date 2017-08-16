@@ -23,6 +23,8 @@ class ChannelViewController: BaseTableController {
     var channel: FireChannel!
 
     var container: ContainerController?
+    var contentView = UIView(frame: .zero)
+    var chromeBackground = UIView(frame: .zero)
 	var headerView = ChannelDetailView()
     var actionButton: AirRadialMenu!
 	var unreads = [String: Bool]()
@@ -113,7 +115,9 @@ class ChannelViewController: BaseTableController {
 
 	override func viewWillLayoutSubviews() {
         self.view.fillSuperview()
-		super.viewWillLayoutSubviews()
+        self.chromeBackground.anchorTopCenterFillingWidth(withLeftAndRightPadding: 0, topPadding: 0, height: 64)
+        let viewWidth = min(Config.contentWidthMax, self.view.width())
+        self.contentView.anchorTopCenter(withTopPadding: 0, width: viewWidth, height: self.view.height())
 		self.tableView.fillSuperview()
 	}
 
@@ -248,9 +252,10 @@ class ChannelViewController: BaseTableController {
 	override func initialize() {
 		super.initialize()
 
+        let viewWidth = min(Config.contentWidthMax, self.view.width())
+        
 		self.automaticallyAdjustsScrollViewInsets = false
-		let viewWidth = min(Config.contentWidthMax, self.view.width())
-
+        self.view.backgroundColor = Theme.colorBackgroundWindow
 		self.headerHeight = viewWidth * 0.625
 
 		updateHeaderView()
@@ -259,6 +264,8 @@ class ChannelViewController: BaseTableController {
         if self.container != nil {
             configureActionButton()
         }
+        
+        self.chromeBackground.backgroundColor = Colors.accentColor
 
 		self.tableView.addSubview(self.headerView)
 
@@ -272,7 +279,9 @@ class ChannelViewController: BaseTableController {
 		self.tableView.contentOffset = CGPoint(x: 0, y: -(self.headerHeight))
 		self.tableView.register(MessageListCell.self, forCellReuseIdentifier: "cell")
         
-        self.view.addSubview(self.tableView)
+        self.contentView.addSubview(self.tableView)
+        self.view.addSubview(self.chromeBackground)
+        self.view.addSubview(self.contentView)
 
 		self.itemTemplate.template = true
         
@@ -417,6 +426,13 @@ class ChannelViewController: BaseTableController {
 			this.channel = channel
 			this.navigationController?.navigationBar.setNeedsLayout()
             
+            if !MainController.instance.introPlayed {
+                if UserDefaults.standard.bool(forKey: PerUserKey(key: Prefs.soundEffects)) {
+                    AudioController.instance.play(sound: Sound.greeting.rawValue)
+                }
+                MainController.instance.introPlayed = true
+            }
+            
             if this.channel.role == "reader" {
                 this.postingEnabled = false
             }
@@ -468,7 +484,7 @@ class ChannelViewController: BaseTableController {
     }
     
 	func updateHeaderView() {
-		var headerRect = CGRect(x: 0, y: -self.headerHeight, width: self.view.width(), height: self.headerHeight)
+		var headerRect = CGRect(x: 0, y: -self.headerHeight, width: self.contentView.width(), height: self.headerHeight)
 		if self.tableView.contentOffset.y < -(self.headerHeight) {
 			headerRect.origin.y = (self.tableView.contentOffset.y)
 			headerRect.size.height = -(self.tableView.contentOffset.y)

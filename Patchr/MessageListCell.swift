@@ -204,6 +204,8 @@ class MessageListCell: UITableViewCell {
     }
 
     func bind(message: FireMessage) {
+        
+        guard message.createdAt != nil else { return }
 
         self.message = message
         

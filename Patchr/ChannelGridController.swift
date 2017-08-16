@@ -213,7 +213,6 @@ class ChannelGridController: UICollectionViewController {
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as! ChannelCell
                 cell.reset()    // Releases previous data observers
                 
-                
                 if !MainController.instance.introPlayed {
                     if UserDefaults.standard.bool(forKey: PerUserKey(key: Prefs.soundEffects)) {
                         AudioController.instance.play(sound: Sound.greeting.rawValue)
@@ -291,6 +290,11 @@ class ChannelGridController: UICollectionViewController {
         
         sheet.addAction(profileAction)
         sheet.addAction(cancel)
+        
+        if let presenter = sheet.popoverPresentationController {
+            presenter.sourceView = self.menuButton.customView
+            presenter.sourceRect = (self.menuButton.customView?.bounds)!
+        }
     
         present(sheet, animated: true, completion: nil)
     }

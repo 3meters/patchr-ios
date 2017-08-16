@@ -67,8 +67,8 @@ class MessageEditViewController: BaseEditViewController {
 
 		let messageSize = self.messageField.sizeThatFits(CGSize(width: viewWidth, height: CGFloat.greatestFiniteMagnitude))
         self.userName.sizeToFit()
-
-		self.userGroup.anchorTopCenterFillingWidth(withLeftAndRightPadding: -16, topPadding: -16, height: 64)
+        
+        self.userGroup.anchorTopCenter(withTopPadding: -16, width: viewWidth, height: 64)
 		self.userPhotoControl.anchorCenterLeft(withLeftPadding: 16, width: 48, height: 48)
         self.userName.align(toTheRightOf: self.userPhotoControl, matchingCenterWithLeftPadding: 8, width: self.userName.width(), height: self.userName.height())
         
@@ -363,7 +363,7 @@ class MessageEditViewController: BaseEditViewController {
             Reporting.track("send_message")
             
             if UserDefaults.standard.bool(forKey: PerUserKey(key: Prefs.soundEffects)) {
-                AudioController.instance.playSystemSound(soundId: 1004)
+                AudioController.instance.playSystemSound(soundId: 1004) // Whoosh
             }
             
             self.close(animated: true)

@@ -30,11 +30,6 @@ class InviteMessageController: BaseViewController, UITextViewDelegate {
      * Lifecycle
      *--------------------------------------------------------------------------------------------*/
     
-    /* Replace the original controller view with our dedicated view */
-    override func loadView() {
-        self.view = PopupInputView(frame: .zero)
-    }
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         initialize()

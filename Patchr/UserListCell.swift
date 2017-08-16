@@ -111,7 +111,8 @@ class UserListCell: UITableViewCell {
                 self.roleLabel?.textColor = MaterialColor.lightGreen.base
             }
             else if user.channel.role == "reader" {
-                self.roleLabel?.isHidden = true
+                self.roleLabel?.text = "reader"
+                self.roleLabel?.textColor = MaterialColor.lightBlue.base
             }
         }
         else if target == "reaction" {

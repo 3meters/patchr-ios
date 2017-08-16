@@ -46,11 +46,6 @@ class MessageViewController: BaseSlackController {
 		bind()
 	}
     
-//    override func viewWillAppear(_ animated: Bool) {
-//        super.viewWillAppear(animated)
-//        textInputbar.textView.becomeFirstResponder()
-//    }
-
 	override func viewWillLayoutSubviews() {
 		let viewWidth = min(Config.contentWidthMax, self.view.width())
 		self.view.anchorTopCenter(withTopPadding: 0, width: viewWidth, height: self.view.height())
@@ -88,59 +83,13 @@ class MessageViewController: BaseSlackController {
         self.close(animated: true)
     }
     
-	func deleteCommentAction(message: FireMessage) {
-		DeleteConfirmationAlert(
-				title: "Confirm Delete",
-				message: "Are you sure you want to delete this?",
-				actionTitle: "Delete", cancelTitle: "Cancel", delegate: self) {
-			doIt in
-			if doIt {
-				let channelId = message.channelId!
-				let messageId = message.messageId!
-                let commentId = message.id!
-				Reporting.track("delete_comment")
-                FireController.instance.deleteComment(commentId: commentId, messageId: messageId, channelId: channelId)
-			}
-		}
-	}
-    
     override func didPressRightButton(_ sender: Any!) {
         super.didPressRightButton(sender)
     }
     
-    func longPressAction(sender: UILongPressGestureRecognizer) {
-        if sender.state == UIGestureRecognizerState.began {
-            let point = sender.location(in: self.tableView)
-            if let indexPath = self.tableView.indexPathForRow(at: point) {
-                self.view.endEditing(true)
-                dismissKeyboard(true)
-                let cell = self.tableView.cellForRow(at: indexPath) as! MessageListCell
-                let snap = self.queryController.snapshot(at: indexPath.row)
-                let message = FireMessage(dict: snap.value as! [String: Any], id: snap.key)
-                Reporting.track("view_message_actions")
-                showCommentActions(message: message, sourceView: cell.contentView)
-            }
-        }
-    }
-    
-    func showCommentActions(sender: AnyObject?) {
-        if let button = sender as? AirButtonBase {
-            if let message = button.data as? FireMessage {
-                Reporting.track("view_message_actions")
-                showCommentActions(message: message, sourceView: button)
-            }
-        }
-    }
-
 	/*--------------------------------------------------------------------------------------------
 	* MARK: - Notifications
 	*--------------------------------------------------------------------------------------------*/
-
-	func messageDidChange(notification: NSNotification) {
-		if let userInfo = notification.userInfo, let messageId = userInfo["message_id"] as? String {
-			self.rowHeights.removeObject(forKey: messageId)
-		}
-	}
 
 	func userDidUpdate(notification: NSNotification) {
 		self.tableView.reloadData()
@@ -174,7 +123,7 @@ class MessageViewController: BaseSlackController {
         self.itemTemplate.commentsButton.removeFromSuperview()
         self.itemTemplate.reactionToolbar.removeFromSuperview()
         
-        self.textView.placeholder = "Add comment"
+        self.textView.placeholder = "Write a comment..."
         
 		/* Navigation bar */
         let closeButton = UIBarButtonItem(barButtonSystemItem: .stop, target: self, action: #selector(closeAction(sender:)))
@@ -184,7 +133,6 @@ class MessageViewController: BaseSlackController {
         /* Trigger layout pass */
 		self.textInputbar.contentInset = UIEdgeInsetsMake(5, 8, 5, 8)
 
-		NotificationCenter.default.addObserver(self, selector: #selector(messageDidChange(notification:)), name: NSNotification.Name(rawValue: Events.MessageDidUpdate), object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(userDidUpdate(notification:)), name: NSNotification.Name(rawValue: Events.UserDidUpdate), object: nil)
 	}
 
@@ -226,11 +174,6 @@ class MessageViewController: BaseSlackController {
 				message.creator = user
 
 				if !cell.decorated {
-
-					let recognizer = UILongPressGestureRecognizer(target: this, action: #selector(this.longPressAction(sender:)))
-					recognizer.minimumPressDuration = TimeInterval(0.2)
-					cell.addGestureRecognizer(recognizer)
-
 					if let label = cell.description_ as? TTTAttributedLabel {
 						label.delegate = this
 					}
@@ -256,37 +199,6 @@ class MessageViewController: BaseSlackController {
 		if self.queryController != nil {
 			self.queryController.unbind()
 		}
-	}
-    
-	func showCommentActions(message: FireMessage, sourceView: UIView?) {
-
-		let userId = UserController.instance.userId!
-        if message.createdBy != userId { return }
-		let sheet = UIAlertController(title: nil, message: nil, preferredStyle: UIAlertControllerStyle.actionSheet)
-
-		let edit = UIAlertAction(title: "Edit comment", style: .default) { action in
-            Reporting.track("view_comment_edit")
-            self.editComment(comment: message)
-		}
-        
-		let delete = UIAlertAction(title: "Delete comment", style: .destructive) { action in
-			self.deleteCommentAction(message: message)
-		}
-        
-		let cancel = UIAlertAction(title: "Cancel", style: .cancel) { action in
-			sheet.dismiss(animated: true, completion: nil)
-		}
-
-        sheet.addAction(edit)
-        sheet.addAction(delete)
-        sheet.addAction(cancel)
-
-		if let presenter = sheet.popoverPresentationController, let sourceView = sourceView {
-			presenter.sourceView = sourceView
-			presenter.sourceRect = sourceView.bounds
-		}
-
-		present(sheet, animated: true, completion: nil)
 	}
     
 	func scrollToFirstRow(animated: Bool = true) {

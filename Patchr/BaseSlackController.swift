@@ -63,25 +63,11 @@ class BaseSlackController: SLKTextViewController {
         self.textView.refreshFirstResponder()
         sendComment()
         if UserDefaults.standard.bool(forKey: PerUserKey(key: Prefs.soundEffects)) {
-            AudioController.instance.playSystemSound(soundId: 1004)
+            AudioController.instance.playSystemSound(soundId: 1004) // Whoosh
         }
         super.didPressRightButton(sender)
     }
     
-    override func didCommitTextEditing(_ sender: Any) {
-        self.textView.refreshFirstResponder()
-        dismissKeyboard(true)
-        updateComment()
-        super.didCommitTextEditing(sender)
-    }
-    
-    override func didCancelTextEditing(_ sender: Any) {
-        super.didCancelTextEditing(sender)
-        self.editingComment = nil
-        self.textInputbar.endTextEdition()
-        dismissKeyboard(true)
-    }
-
     /*--------------------------------------------------------------------------------------------
      * MARK: - Notifications
      *--------------------------------------------------------------------------------------------*/
@@ -122,15 +108,6 @@ class BaseSlackController: SLKTextViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(viewDidBecomeActive(sender:)), name: NSNotification.Name.UIApplicationDidBecomeActive, object: nil)
 	}
     
-    func editComment(comment: FireMessage) {
-        self.editingComment = comment
-        self.presentKeyboard(true)
-        self.textInputbar.beginTextEditing()
-        if comment.text != nil {
-            self.editText(comment.text!)
-        }
-    }
-    
     func sendComment() {
         
         guard let userId = UserController.instance.userId
@@ -159,21 +136,6 @@ class BaseSlackController: SLKTextViewController {
         
         ref.setValue(comment)
         Reporting.track("send_comment")
-    }
-    
-    func updateComment() {
-        
-        let timestamp = FireController.instance.getServerTimestamp()
-        var updateMap: [String: Any] = ["modified_at": timestamp]
-        let channelId = self.editingComment.channelId!
-        let messageId = self.editingComment.messageId!
-        let commentId = self.editingComment.id!
-        let path = "message-comments/\(channelId)/\(messageId)/\(commentId)"
-        let text = self.textInputbar.textView.text
-        updateMap["text"] = (text == nil || text!.isEmpty) ? NSNull() : text
-        Reporting.track("send_edited_comment")
-        FireController.db.child(path).updateChildValues(updateMap)
-        NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.MessageDidUpdate), object: self, userInfo: ["message_id":self.editingComment.id!])
     }
     
     override func canPressRightButton() -> Bool {

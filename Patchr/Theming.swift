@@ -42,7 +42,7 @@ class Snow {
 
 	let colorBackgroundForm             = Colors.white
 	let colorBackgroundTable            = Colors.gray97pcntColor
-	let colorBackgroundWindow           = Colors.gray90pcntColor
+    let colorBackgroundWindow           = Colors.gray90pcntColor
 	let colorBackgroundImage            = Colors.gray90pcntColor
 	let colorBackgroundTile             = Colors.white
 	let colorBackgroundTileList         = Colors.gray95pcntColor
