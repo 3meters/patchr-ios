@@ -392,11 +392,16 @@ class ChannelViewController: BaseTableController {
 				}
 				else {
 					cell.unreadQuery = UnreadQuery(level: .message, userId: userId, channelId: channelId, messageId: messageId)
-					cell.unreadQuery!.observe(with: { [weak this, weak cell] error, total in
+					cell.unreadQuery!.observe(with: { [weak this, weak cell] error, total, isComment in
 						guard let this = this else { return }
 						guard let cell = cell else { return }
 						if total != nil && total! > 0 {
-							cell.unread.isHidden = false
+                            if isComment != nil && isComment! {
+                                cell.commentsButton.setTitleColor(Theme.colorBackgroundBadge, for: .normal)
+                            }
+                            else {
+                                cell.unread.isHidden = false
+                            }
 							this.unreads[messageId] = true // Cache it
                             FireController.instance.clearMessageUnread(messageId: messageId, channelId: channelId)
 						}

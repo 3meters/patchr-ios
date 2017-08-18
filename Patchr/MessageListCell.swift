@@ -286,6 +286,7 @@ class MessageListCell: UITableViewCell {
     func reset() {
         self.photoView.reset()
         self.userPhotoControl.reset()
+        self.commentsButton.reset()
         self.description_?.textColor = Colors.black
         self.description_!.font = Theme.fontTextList
         self.unread.isHidden = true

@@ -10,7 +10,7 @@ class UnreadQuery: NSObject {
     
     var authHandle: AuthStateDidChangeListenerHandle!
     
-    var block: ((Error?, Int?) -> Swift.Void)!
+    var block: ((Error?, Int?, Bool?) -> Swift.Void)!
 
     var path: String!
     var handle: UInt!
@@ -29,7 +29,7 @@ class UnreadQuery: NSObject {
         }
     }
     
-    func observe(with block: @escaping (Error?, Int?) -> Void) {
+    func observe(with block: @escaping (Error?, Int?, Bool?) -> Void) {
         
         self.block = block
         
@@ -43,9 +43,13 @@ class UnreadQuery: NSObject {
         self.handle = FireController.db.child(self.path).observe(.value, with: { [weak self] snap in
             guard let this = self else { return }
             var total = 0
+            var comment = false
             if !(snap.value is NSNull) {
                 if this.level == .message  {
                     total = 1
+                    if (snap.value as? String) != nil {
+                        comment = true
+                    }
                 }
                 else if this.level == .channel  {
                     if let messages = snap.value as? [String: Any] {
@@ -62,12 +66,12 @@ class UnreadQuery: NSObject {
                 }
                 this.total = total
             }
-            this.block(nil, total)
+            this.block(nil, total, comment)
             
         }, withCancel: { [weak self] error in
             guard let this = self else { return }
             Log.v("Permission denied trying to read unreads: \(this.path!)")
-            this.block(error, nil)
+            this.block(error, nil, nil)
         })
     }
     

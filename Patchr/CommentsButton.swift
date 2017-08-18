@@ -52,4 +52,9 @@ class CommentsButton: AirButton {
             self.setTitle("1 Comment", for: .normal)
         }
     }
+    
+    func reset() {
+        self.setTitleColor(Theme.colorButtonBorder, for: .normal)
+        self.setTitleColor(Theme.colorButtonTitleHighlighted, for: .highlighted)
+    }
 }

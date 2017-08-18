@@ -80,7 +80,12 @@ class ChannelGridController: UICollectionViewController {
 	}
 
 	func searchAction(sender: AnyObject?) {
-		search(on: true)
+        self.navigationItem.setLeftBarButton(self.searchBarButton, animated: true)
+        self.navigationItem.setRightBarButtonItems(nil, animated: true)
+        self.searchBarHolder.frame = CGRect(x: 0, y: 0, width: (self.navigationController?.navigationBar.width())! - 24, height: 44)
+        self.searchBar.fillSuperview()
+        self.searchBar.becomeFirstResponder()
+        self.searchBar?.setShowsCancelButton(true, animated: true)
 	}
 
 	/*--------------------------------------------------------------------------------------------
@@ -225,7 +230,7 @@ class ChannelGridController: UICollectionViewController {
                         if channel != nil {
                             cell.bind(channel: channel!)
                             cell.unreadQuery = UnreadQuery(level: .channel, userId: userId, channelId: channelId)
-                            cell.unreadQuery!.observe(with: { [weak cell] error, total in
+                            cell.unreadQuery!.observe(with: { [weak cell] error, total, isComment in
                                 guard let cell = cell else { return }
                                 if total != nil && total! > 0 {
                                     cell.badge?.text = "\(total!)"
@@ -245,27 +250,27 @@ class ChannelGridController: UICollectionViewController {
 		}
 	}
 
-	func search(on: Bool) {
-		if on {
-            self.queryController.filterActive = true
-			self.navigationItem.setLeftBarButton(self.searchBarButton, animated: true)
-			self.navigationItem.setRightBarButtonItems(nil, animated: true)
-			self.searchBarHolder.frame = CGRect(x: 0, y: 0, width: (self.navigationController?.navigationBar.width())! - 24, height: 44)
-			self.searchBar.fillSuperview()
-			self.searchBar.becomeFirstResponder()
-		}
-		else {
-            self.searchBar?.setShowsCancelButton(false, animated: true)
-            self.searchBar?.endEditing(true)
-            if !(self.searchBar.text?.isEmpty)! {
-                self.queryController.filter(searchText: nil)
-            }
-            self.queryController.filterActive = false
-			self.navigationItem.setLeftBarButton(self.searchButton, animated: true)
-            self.navigationItem.setRightBarButtonItems([self.menuButton, UI.spacerFixed, self.addButton], animated: true)
-			self.searchBar.resignFirstResponder()
-		}
-	}
+//	func search(on: Bool) {
+//		if on {
+//            self.queryController.filterActive = true
+//			self.navigationItem.setLeftBarButton(self.searchBarButton, animated: true)
+//			self.navigationItem.setRightBarButtonItems(nil, animated: true)
+//			self.searchBarHolder.frame = CGRect(x: 0, y: 0, width: (self.navigationController?.navigationBar.width())! - 24, height: 44)
+//			self.searchBar.fillSuperview()
+//			self.searchBar.becomeFirstResponder()
+//		}
+//		else {
+//            self.searchBar?.setShowsCancelButton(false, animated: true)
+//            self.searchBar?.endEditing(true)
+//            if !(self.searchBar.text?.isEmpty)! {
+//                self.queryController.filter(searchText: nil)
+//            }
+//            self.queryController.filterActive = false
+//			self.navigationItem.setLeftBarButton(self.searchButton, animated: true)
+//            self.navigationItem.setRightBarButtonItems([self.menuButton, UI.spacerFixed, self.addButton], animated: true)
+//			self.searchBar.resignFirstResponder()
+//		}
+//	}
     
     func showActions(sender: AnyObject?) {
         
@@ -363,7 +368,8 @@ extension ChannelGridController {
 extension ChannelGridController: UISearchBarDelegate {
 
 	func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
-		self.searchBar?.setShowsCancelButton(true, animated: true)
+        self.queryController.filterActive = true
+        searchBar.becomeFirstResponder()
 	}
 
 	func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
@@ -371,10 +377,19 @@ extension ChannelGridController: UISearchBarDelegate {
 	}
 
 	func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
-		self.searchBar?.text = nil
+		searchBar.text = nil
+        searchBar.resignFirstResponder()
 	}
 
 	func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
-		search(on: false)
+        if !(searchBar.text?.isEmpty)! {
+            self.queryController.filter(searchText: nil)
+        }
+        searchBar.endEditing(true)
+        self.searchBar.resignFirstResponder()
+        self.queryController.filterActive = false
+        searchBar.setShowsCancelButton(false, animated: true)
+        self.navigationItem.setLeftBarButton(self.searchButton, animated: true)
+        self.navigationItem.setRightBarButtonItems([self.menuButton, UI.spacerFixed, self.addButton], animated: true)
 	}
 }
