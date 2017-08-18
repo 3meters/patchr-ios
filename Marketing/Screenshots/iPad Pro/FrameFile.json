@@ -15,9 +15,9 @@
     {
       "filter": "channel",
       "font_scale_factor": 0.05,
-      "padding": "5%",
+      "padding": 100,
       "title": {
-        "text": "Group messaging\nfor control freaks."
+        "text": "Group messaging\nwith awesome sharing controls."
       }
     }
   ]

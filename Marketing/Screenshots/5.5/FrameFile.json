@@ -21,7 +21,7 @@
       "filter": "reaction",
       "background": "./background.png",
       "title": {
-        "text": "Emoji reactions\nlet you respond quickly with style."
+        "text": "Reactions and comments\nlet you respond quickly with style."
       }
     },
     {
@@ -39,10 +39,10 @@
       }
     },
     {
-      "filter": "notifications",
+      "filter": "grid",
       "background": "./background.png",
       "title": {
-        "text": "Stay current\nwith real-time notifications."
+        "text": "Channel manager\nwith real-time notifications."
       }
     },
     {
