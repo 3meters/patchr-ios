@@ -363,7 +363,7 @@ class MessageEditViewController: BaseEditViewController {
             Reporting.track("send_message")
             
             if UserDefaults.standard.bool(forKey: PerUserKey(key: Prefs.soundEffects)) {
-                AudioController.instance.playSystemSound(soundId: 1004) // Whoosh
+                AudioController.instance.playSystemSound(soundId: 1004) // sms bloop
             }
             
             self.close(animated: true)

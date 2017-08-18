@@ -426,13 +426,6 @@ class ChannelViewController: BaseTableController {
 			this.channel = channel
 			this.navigationController?.navigationBar.setNeedsLayout()
             
-            if !MainController.instance.introPlayed {
-                if UserDefaults.standard.bool(forKey: PerUserKey(key: Prefs.soundEffects)) {
-                    AudioController.instance.play(sound: Sound.greeting.rawValue)
-                }
-                MainController.instance.introPlayed = true
-            }
-            
             if this.channel.role == "reader" {
                 this.postingEnabled = false
             }

@@ -213,13 +213,6 @@ class ChannelGridController: UICollectionViewController {
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as! ChannelCell
                 cell.reset()    // Releases previous data observers
                 
-                if !MainController.instance.introPlayed {
-                    if UserDefaults.standard.bool(forKey: PerUserKey(key: Prefs.soundEffects)) {
-                        AudioController.instance.play(sound: Sound.greeting.rawValue)
-                    }
-                    MainController.instance.introPlayed = true
-                }
-                
                 guard self != nil else { return cell }
                 
                 if let snap = data as? DataSnapshot {

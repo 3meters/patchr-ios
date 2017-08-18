@@ -63,7 +63,7 @@ class BaseSlackController: SLKTextViewController {
         self.textView.refreshFirstResponder()
         sendComment()
         if UserDefaults.standard.bool(forKey: PerUserKey(key: Prefs.soundEffects)) {
-            AudioController.instance.playSystemSound(soundId: 1004) // Whoosh
+            AudioController.instance.playSystemSound(soundId: 1004) // sms bloop
         }
         super.didPressRightButton(sender)
     }

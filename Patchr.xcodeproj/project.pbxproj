@@ -80,7 +80,6 @@
 		E2499E5A1F3A1913002C0F16 /* ChannelPickerCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2499E591F3A1913002C0F16 /* ChannelPickerCell.swift */; };
 		E2499E5B1F3A1913002C0F16 /* ChannelPickerCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2499E591F3A1913002C0F16 /* ChannelPickerCell.swift */; };
 		E24A87261B2DC0AB00E6F96B /* ThumbnailCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E24A87251B2DC0AB00E6F96B /* ThumbnailCollectionViewCell.swift */; };
-		E24D74521BB865F50061F339 /* S3Storage.swift in Sources */ = {isa = PBXBuildFile; fileRef = E28177751B5C39E200D65AC1 /* S3Storage.swift */; };
 		E24D74541BBAED5F0061F339 /* TaskQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = E24D74531BBAED5F0061F339 /* TaskQueue.swift */; };
 		E24D84D31E8AF1D300BFE408 /* AirNavigationBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = E24D84D21E8AF1D300BFE408 /* AirNavigationBar.swift */; };
 		E25173C71E09CB9D0030259A /* UIBarButtonItem+Badge.m in Sources */ = {isa = PBXBuildFile; fileRef = E25173C61E09CB9D0030259A /* UIBarButtonItem+Badge.m */; };
@@ -293,7 +292,6 @@
 		E2DB43011EB4F2C400B1F78B /* Reporting.swift in Sources */ = {isa = PBXBuildFile; fileRef = E281776D1B5B0EE200D65AC1 /* Reporting.swift */; };
 		E2DB43021EB4F2C400B1F78B /* BaseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20C3A7A1BD6A717008CCED1 /* BaseView.swift */; };
 		E2DB43031EB4F2C400B1F78B /* AirStarButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2DA16DA1DD114230096D86F /* AirStarButton.swift */; };
-		E2DB43051EB4F2C400B1F78B /* S3Storage.swift in Sources */ = {isa = PBXBuildFile; fileRef = E28177751B5C39E200D65AC1 /* S3Storage.swift */; };
 		E2DB43061EB4F2C400B1F78B /* ReachabilityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E28D565E1BB1849F00BFD433 /* ReachabilityManager.swift */; };
 		E2DB43071EB4F2C400B1F78B /* CKRadialMenu.m in Sources */ = {isa = PBXBuildFile; fileRef = E2B8A4B21CE7818B00A28D3A /* CKRadialMenu.m */; };
 		E2DB43081EB4F2C400B1F78B /* PhotoSearchController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FDCC06A84126B197626CEB2 /* PhotoSearchController.swift */; };
@@ -545,7 +543,6 @@
 		E2816B391F003D700049E84B /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "Prod/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		E2816C1D1F0468740049E84B /* GoogleStorage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = GoogleStorage.swift; path = Patchr/GoogleStorage.swift; sourceTree = "<group>"; };
 		E281776D1B5B0EE200D65AC1 /* Reporting.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Reporting.swift; sourceTree = "<group>"; };
-		E28177751B5C39E200D65AC1 /* S3Storage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = S3Storage.swift; path = Patchr/S3Storage.swift; sourceTree = "<group>"; };
 		E28915901C5A85CF005D7AA0 /* .xctool-args */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ".xctool-args"; sourceTree = "<group>"; };
 		E28915921C5AD528005D7AA0 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		E28A481E1DE72E0400A01B46 /* BaseTableController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseTableController.swift; sourceTree = "<group>"; };
@@ -674,7 +671,6 @@
 				E2816C1D1F0468740049E84B /* GoogleStorage.swift */,
 				9FDCCADB4957C2E128DDE9FF /* MainController.swift */,
 				E28D565E1BB1849F00BFD433 /* ReachabilityManager.swift */,
-				E28177751B5C39E200D65AC1 /* S3Storage.swift */,
 				E2BC53361DE5DE4500C97A2C /* StateController.swift */,
 				E2BC53381DE5DE5600C97A2C /* UserController.swift */,
 				7D3D39CA1A6F086F00A44CB2 /* Products */,
@@ -1657,7 +1653,6 @@
 				E281776E1B5B0EE200D65AC1 /* Reporting.swift in Sources */,
 				E20C3A7B1BD6A717008CCED1 /* BaseView.swift in Sources */,
 				E2DA16DB1DD114230096D86F /* AirStarButton.swift in Sources */,
-				E24D74521BB865F50061F339 /* S3Storage.swift in Sources */,
 				E28D565F1BB1849F00BFD433 /* ReachabilityManager.swift in Sources */,
 				E2B8A4B41CE7818B00A28D3A /* CKRadialMenu.m in Sources */,
 				9FDCC8F9EEEF77DEBE173AFA /* PhotoSearchController.swift in Sources */,
@@ -1807,7 +1802,6 @@
 				E2DB43011EB4F2C400B1F78B /* Reporting.swift in Sources */,
 				E2DB43021EB4F2C400B1F78B /* BaseView.swift in Sources */,
 				E2DB43031EB4F2C400B1F78B /* AirStarButton.swift in Sources */,
-				E2DB43051EB4F2C400B1F78B /* S3Storage.swift in Sources */,
 				E2DB43061EB4F2C400B1F78B /* ReachabilityManager.swift in Sources */,
 				E2DB43071EB4F2C400B1F78B /* CKRadialMenu.m in Sources */,
 				E2DB43081EB4F2C400B1F78B /* PhotoSearchController.swift in Sources */,
