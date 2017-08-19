@@ -23,7 +23,7 @@
 	<key>STORAGE_BUCKET</key>
 	<string>patchr-ios-dev.appspot.com</string>
 	<key>STORAGE_BUCKET_IMAGES</key>
-	<string>patchr-images-dev</string>
+	<string>patchr-images</string>
 	<key>IS_ADS_ENABLED</key>
 	<true/>
 	<key>IS_ANALYTICS_ENABLED</key>
