@@ -39,6 +39,9 @@
       }
     },
     {
+      "filter": "grid_2"
+    },
+    {
       "filter": "grid",
       "background": "./background.png",
       "title": {
