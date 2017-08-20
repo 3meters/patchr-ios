@@ -62,12 +62,13 @@ class LobbyViewController: UIViewController {
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
         
+        self.appName.sizeToFit()
         self.imageBackground.fillSuperview()
         self.buttonGroup.anchorInCenter(withWidth: 240, height: 96)
         self.buttonSignup.anchorTopCenterFillingWidth(withLeftAndRightPadding: 0, topPadding: 0, height: 44)
         self.buttonLogin.anchorBottomCenterFillingWidth(withLeftAndRightPadding: 0, bottomPadding: 0, height: 44)
         self.buttonOnboard.alignUnder(self.buttonGroup, matchingCenterWithTopPadding: 36, width: 240, height: 44)
-        self.appName.align(above: self.buttonGroup, matchingCenterWithBottomPadding: 20, width: 228, height: 48)
+        self.appName.align(above: self.buttonGroup, matchingCenterWithBottomPadding: 20, width: self.appName.width(), height: 48)
     }
     
     /*--------------------------------------------------------------------------------------------
@@ -220,7 +221,7 @@ class LobbyViewController: UIViewController {
             var descriptions = [
                 "Share with just the right people using Teeny channels.",
                 "Select people from your contacts and we handle the rest! We will email them an invite, help them install Teeny Social and gently launch them into your amazing channel.",
-                "Teeny Social has brilliant message features: photo search and editing, emoji reactions, realtime notifications, offline posting plus much more."
+                "Teeny Social has brilliant sharing features: photo search and editing, reactions, comments, realtime notifications, offline posting plus much more."
             ]
             
             if appFirstLaunch {

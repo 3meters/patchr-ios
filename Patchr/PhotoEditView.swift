@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import AWSS3
 import Photos
 
 enum PhotoMode: Int {
@@ -49,7 +48,6 @@ class PhotoEditView: UIView {
     var setPhotoButton: UIButton!
     var editPhotoButton: UIButton!
     var clearPhotoButton: UIButton!
-	var progressBlock: AWSS3TransferUtilityProgressBlock?
 
 	var clearButtonAlignment: NSTextAlignment = .left
 	var editButtonAlignment: NSTextAlignment = .right
@@ -188,16 +186,6 @@ class PhotoEditView: UIView {
 
 		self.backgroundColor = Colors.clear
 
-		self.progressBlock = { [weak self] task, progress in
-            guard let this = self else { return }
-			DispatchQueue.main.async {
-				this.imageView.progressView.progress = CGFloat(progress.fractionCompleted)
-                if progress.fractionCompleted == 1.0 {
-                    this.imageView.hideProgress()
-                }
-			}
-		}
-        
         self.photoGroup = UIView()
 		self.photoGroup.backgroundColor = Theme.colorBackgroundImage
 		self.photoGroup.cornerRadius = 4

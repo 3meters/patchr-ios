@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import AWSS3
 import Firebase
 import Photos
 import FirebaseStorage
@@ -78,7 +77,6 @@ class BaseEditViewController: BaseViewController, UITextFieldDelegate, UITextVie
     
     func postPhoto(image: UIImage
         , asset: Any?
-        , progress: AWSS3TransferUtilityProgressBlock? = nil
         , next: ((Any?) -> Void)? = nil) -> [String: Any] {
         
         /* Ensure image is resized/rotated before upload */

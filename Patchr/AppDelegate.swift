@@ -11,8 +11,6 @@ import UserNotifications
 import Keys
 import AFNetworking
 import AFNetworkActivityLogger
-import AWSCore
-import AWSS3
 import Branch
 import Firebase
 import FirebaseInstanceID
@@ -249,7 +247,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, MessagingDelegate {
          * callbacks. If such a session has already been created (if the app is being resumed, for instance), then the delegate will start receiving
          * callbacks without any action by the application. You should call the completionHandler as soon as you're finished handling the callbacks.
          */
-        AWSS3TransferUtility.interceptApplication(application, handleEventsForBackgroundURLSession: identifier, completionHandler: completionHandler)
         Log.d("handleEventsForBackgroundURLSession called")
     }
 }

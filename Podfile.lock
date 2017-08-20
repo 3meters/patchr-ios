@@ -24,9 +24,6 @@ PODS:
     - AFNetworking/NSURLConnection
     - AFNetworking/NSURLSession
   - AlertOnboarding (1.9)
-  - AWSCore (2.4.9)
-  - AWSS3 (2.4.9):
-    - AWSCore (= 2.4.9)
   - BEMCheckBox (1.4.0)
   - Branch (0.14.12):
     - Branch/Core (= 0.14.12)
@@ -148,7 +145,6 @@ PODS:
   - SlackTextViewController (1.9.5)
   - STPopup (1.8.2)
   - TTTAttributedLabel (2.0.0)
-  - TwicketSegmentedControl (0.1.1)
   - UIDevice-Hardware (0.1.8)
   - VTAcknowledgementsViewController (1.2.1)
 
@@ -156,7 +152,6 @@ DEPENDENCIES:
   - AFNetworkActivityLogger (= 2.0.4)
   - AFNetworking (= 2.6.3)
   - AlertOnboarding (= 1.9)
-  - AWSS3 (= 2.4.9)
   - BEMCheckBox (= 1.4.0)
   - Branch (= 0.14.12)
   - ChameleonFramework/Swift (from `https://github.com/ViccAlexander/Chameleon.git`)
@@ -188,7 +183,6 @@ DEPENDENCIES:
   - SlackTextViewController (from `~/code/SlackTextViewController`)
   - STPopup (= 1.8.2)
   - TTTAttributedLabel (= 2.0.0)
-  - TwicketSegmentedControl (= 0.1.1)
   - UIDevice-Hardware (= 0.1.8)
   - VTAcknowledgementsViewController (= 1.2.1)
 
@@ -217,8 +211,6 @@ SPEC CHECKSUMS:
   AFNetworkActivityLogger: 121486778117d53b3ab1c61d264b88081d0c3eee
   AFNetworking: cb8d14a848e831097108418f5d49217339d4eb60
   AlertOnboarding: 0c97f5c4feac0a4e914bae5d530f66b4dbc6b771
-  AWSCore: 175208358b95492e0ebe0337df2ab415300bddac
-  AWSS3: e4959b48db48d5f3dcd5cdf9e24a07f60a313611
   BEMCheckBox: e18e4a148905b290bd03d98b767651c104f4eda3
   Branch: f63d9cf82ac09747349a73184a0b739d28781c4d
   ChameleonFramework: d21a3cc247abfe5e37609a283a8238b03575cf64
@@ -259,10 +251,9 @@ SPEC CHECKSUMS:
   SlackTextViewController: fbcdadbb8090673f604484ff5b6eb8d77baed42a
   STPopup: b69b3e7484ef7d2baec5f9ab2939f8a7bcdfe218
   TTTAttributedLabel: 8cffe8e127e4e82ff3af1e5386d4cd0ad000b656
-  TwicketSegmentedControl: bbb2d155792dbfcee7fea995a614d0c0a3de4a16
   UIDevice-Hardware: ecb52d9a7b223b31f81982358e2b0769ac1a7918
   VTAcknowledgementsViewController: e1de80f2c0ce31cc7e1c6f1c8aaeec2770371f09
 
-PODFILE CHECKSUM: 1e79a3d5ae11435aaeaa66262a5442361ffe58ba
+PODFILE CHECKSUM: 22fb7617e53d96fd9ebf46e924da29dbbf613451
 
 COCOAPODS: 1.2.1

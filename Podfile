@@ -19,7 +19,6 @@ def shared_pods
     pod 'AFNetworkActivityLogger',  '2.0.4'
     pod 'AFNetworking',             '2.6.3'
     pod 'AlertOnboarding',          '1.9'
-    pod 'AWSS3',                    '2.4.9'
     pod 'BEMCheckBox',              '1.4.0'
     pod 'Branch',                   '0.14.12'     # Url routing and deep linking
     pod 'ChameleonFramework/Swift', :git => 'https://github.com/ViccAlexander/Chameleon.git'
@@ -50,7 +49,6 @@ def shared_pods
     pod 'SlackTextViewController',  :path => '~/code/SlackTextViewController'
     pod 'STPopup',                  '1.8.2'
     pod 'TTTAttributedLabel',       '2.0.0'
-    pod 'TwicketSegmentedControl',  '0.1.1'
     pod 'UIDevice-Hardware',        '0.1.8'		# Convenience for determining system version and model identifier
     pod 'VTAcknowledgementsViewController','1.2.1'
 end

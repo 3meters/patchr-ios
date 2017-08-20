@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import AWSS3
 import SlackTextViewController
 import Photos
 import Firebase

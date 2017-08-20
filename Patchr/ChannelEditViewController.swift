@@ -290,7 +290,7 @@ class ChannelEditViewController: BaseEditViewController {
                     let asset = self.photoEditView.imageView.asset
                     let path = self.channel.path
                     var photoMap: [String: Any]?
-                    photoMap = postPhoto(image: image!, asset: asset, progress: self.photoEditView.progressBlock, next: { error in
+                    photoMap = postPhoto(image: image!, asset: asset, next: { error in
                         if error == nil {
                             photoMap!["uploading"] = NSNull()
                             FireController.db.child(path).updateChildValues(["photo": photoMap!])
