@@ -54,7 +54,7 @@ class BranchProvider: NSObject {
         applink.contentDescription = message ?? "\(inviterName!) has invited you to the '\(channel["title"]!)' channel."
         
         let linkProperties = BranchLinkProperties()
-        linkProperties.channel = "patchr-ios"
+        linkProperties.channel = "teeny-ios"
         linkProperties.feature = BRANCH_FEATURE_TAG_INVITE
         
         applink.getShortUrl(with: linkProperties, andCallback: { url, error in

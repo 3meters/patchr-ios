@@ -119,7 +119,7 @@ class LobbyViewController: UIViewController {
 		self.imageLogo.image = UIImage(named: "imgPatchrWhite")
 		self.imageLogo.contentMode = UIViewContentMode.scaleAspectFill
 		
-		self.appName.text = "Patchr"
+		self.appName.text = "Teeny Social"
 		self.appName.textAlignment = NSTextAlignment.center
         
         self.view.addSubview(self.imageBackground)
@@ -218,15 +218,15 @@ class LobbyViewController: UIViewController {
             ]
             
             var descriptions = [
-                "Share with just the right people using Patchr channels.",
-                "Select people from your contacts and we handle the rest! We will email them an invite, help them install Patchr and gently launch them into your amazing channel.",
-                "Patchr has brilliant message features: photo search and editing, emoji reactions, realtime notifications, offline posting plus much more."
+                "Share with just the right people using Teeny channels.",
+                "Select people from your contacts and we handle the rest! We will email them an invite, help them install Teeny Social and gently launch them into your amazing channel.",
+                "Teeny Social has brilliant message features: photo search and editing, emoji reactions, realtime notifications, offline posting plus much more."
             ]
             
             if appFirstLaunch {
                 images.insert("imgGroupChat", at: 0)
                 titles.insert("Welcome!".uppercased(), at: 0)
-                descriptions.insert("Patchr channels are a modern and simple way to share with just the right people!", at: 0)
+                descriptions.insert("Teeny Social is a modern and simple way to share with just the right people!", at: 0)
             }
             
             self.alertView = AlertOnboarding(arrayOfImage: images, arrayOfTitle: titles, arrayOfDescription: descriptions)

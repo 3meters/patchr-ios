@@ -75,7 +75,7 @@ class PhotoBrowser: IDMPhotoBrowser {
         }
         else {
             if self.message?.createdBy != nil {
-                super.shareMessage = "Photo by \(self.message?.createdBy) on Patchr"
+                super.shareMessage = "Photo by \(self.message?.createdBy) on Teeny Social"
             }
             
             /* Configure bottom toolbar */

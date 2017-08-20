@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
-	<string>Patchr</string>
+	<string>Teeny</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -27,7 +27,7 @@
 			<string>Editor</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>patchr</string>
+				<string>teeny</string>
 			</array>
 		</dict>
 	</array>
@@ -114,7 +114,7 @@
 				<key>NSThirdPartyExceptionRequiresForwardSecrecy</key>
 				<false/>
 			</dict>
-			<key>patchr.com</key>
+			<key>teenysocial.com</key>
 			<dict>
 				<key>NSIncludesSubdomains</key>
 				<true/>
@@ -130,7 +130,7 @@
 	<key>NSCameraUsageDescription</key>
 	<string>Take a photo to include with your message.</string>
 	<key>NSContactsUsageDescription</key>
-	<string>Invite people to your Patchr group using your contacts.</string>
+	<string>Invite people to your Teeny channel using your contacts.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Select a library photo to include with your message.</string>
 	<key>UIBackgroundModes</key>
@@ -160,8 +160,6 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
-	<key>branch_app_domain</key>
-	<string>patchr.app.link</string>
 	<key>branch_key</key>
 	<dict>
 		<key>live</key>

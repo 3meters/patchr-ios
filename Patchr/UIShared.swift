@@ -19,7 +19,7 @@ struct UIShared {
 			if let controller = UIViewController.topMostViewController() {
 				controller.UpdateConfirmationAlert(
 					title: "Update required",
-					message: "Your version of Patchr is not compatible with the Patchr service. Please update to a newer version.",
+					message: "Your version of Teeny Social is not compatible with the Teeny Social service. Please update to a newer version.",
 					actionTitle: "Update",
 					cancelTitle: "Later") {
 						doIt in
@@ -75,7 +75,7 @@ struct UIShared {
 			if let controller = UIViewController.topMostViewController() {
 				controller.LocationSettingsAlert(
 					title: "Location Services is disabled",
-					message: "Patchr uses your location to discover nearby patches. Please turn on Location Services in your device settings.",
+					message: "Teeny Social uses your location to discover nearby messages. Please turn on Location Services in your device settings.",
 					actionTitle: "Settings",
 					cancelTitle: "No Thanks") {
 						doIt in

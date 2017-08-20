@@ -39,7 +39,8 @@ class EmptyViewController: UIViewController {
         super.viewWillLayoutSubviews()
         self.view.fillSuperview()
         self.imageBackground.fillSuperview()
-        self.appName.anchorInCenter(withWidth: 228, height: 48)
+        self.appName.sizeToFit()
+        self.appName.anchorInCenter(withWidth: self.appName.width(), height: 48)
     }
     
     deinit {
@@ -60,7 +61,7 @@ class EmptyViewController: UIViewController {
         self.imageLogo.image = UIImage(named: "imgPatchrWhite")
         self.imageLogo.contentMode = UIViewContentMode.scaleAspectFill
         
-        self.appName.text = "Patchr"
+        self.appName.text = "Teeny Social"
         self.appName.textAlignment = NSTextAlignment.center
         
         self.view.addSubview(self.imageBackground)

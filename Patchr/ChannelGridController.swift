@@ -189,7 +189,7 @@ class ChannelGridController: UICollectionViewController {
         button.imageEdgeInsets = UIEdgeInsetsMake(8, 16, 8, 0)
         self.menuButton = UIBarButtonItem(customView: button)
 
-        self.navigationItem.title = "Channels"
+        self.navigationItem.title = "Teeny Channels"
 		self.navigationItem.leftBarButtonItem = self.searchButton
         self.navigationItem.setRightBarButtonItems([self.menuButton, UI.spacerFixed, self.addButton], animated: true)
 

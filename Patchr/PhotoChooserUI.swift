@@ -188,12 +188,12 @@ extension PhotoChooserUI: UIImagePickerControllerDelegate {
                 asset = ["taken_at": DateUtils.now()] 
             }
             
-			/* If the user took a photo then add it to the patchr photo album */
+			/* If the user took a photo then add it to the Teeny Social photo album */
             if self.chosenPhotoFunction == .TakePhoto {
                 hostViewController?.dismiss(animated: true, completion: nil)
                 if PHPhotoLibrary.authorizationStatus() == .authorized {
-                    self.addPhotoToAlbum(image: image, toAlbum: "Patchr") { success in
-                        print("Image added to Patchr album: \(success)");
+                    self.addPhotoToAlbum(image: image, toAlbum: "Teeny") { success in
+                        print("Image added to Teeny album: \(success)");
                         self.completion!(image, nil, asset, false)
                     }
                 }

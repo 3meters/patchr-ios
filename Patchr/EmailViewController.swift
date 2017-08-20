@@ -78,7 +78,7 @@ class EmailViewController: BaseEditViewController {
             self.message.text = "Welcome."
         }
         else if self.flow == .onboardSignup {
-            self.message.text = "Patchr channels are perfect for control freaks."
+            self.message.text = "Teeny channels are perfect for just enough sharing."
         }
 
         self.message.textColor = Theme.colorTextTitle

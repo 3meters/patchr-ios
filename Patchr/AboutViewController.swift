@@ -108,20 +108,20 @@ extension AboutViewController {
         
         if selectedCell == self.termsOfServiceCell {
             Reporting.track("view_terms_of_service")
-            let termsURLString = "http://patchr.com/terms"
+            let termsURLString = "http://teenysocial.com/terms"
             self.pushWebViewController(url: NSURL(string: termsURLString) as URL?)
         }
             
         if selectedCell == self.privacyPolicyCell {
             Reporting.track("view_privacy_policy")
-            let privacyPolicyURLString = "http://patchr.com/privacy"
+            let privacyPolicyURLString = "http://teenysocial.com/privacy"
             self.pushWebViewController(url: NSURL(string: privacyPolicyURLString) as URL?)
         }
             
         if selectedCell == self.softwareLicensesCell {
             Reporting.track("view_software_licenses")
             let controller = VTAcknowledgementsViewController.acknowledgementsViewController()
-            controller?.headerText = "The following third party software may be contained in portions of the Patchr mobile application. We offer our sincere thanks to the open source community for all of their contributions. Carry on!"
+            controller?.headerText = "The following third party software may be contained in portions of the Teeny Social mobile application. We offer our sincere thanks to the open source community for all of their contributions. Carry on!"
             self.navigationController?.pushViewController(controller!, animated: true)
         }
     }

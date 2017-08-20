@@ -206,7 +206,7 @@ class ChannelEditViewController: BaseEditViewController {
         self.titleField.placeholder = "Channel title"
         self.titleField.title = "Title"
         self.titleField.setDelegate(delegate: self)
-        self.titleField.autocapitalizationType = .none
+        self.titleField.autocapitalizationType = .words
         self.titleField.autocorrectionType = .no
         self.titleField.keyboardType = .default
         self.titleField.returnKeyType = .next
@@ -224,7 +224,7 @@ class ChannelEditViewController: BaseEditViewController {
 
         if self.mode == .insert {
 
-            self.banner.text = "New Channel"
+            self.banner.text = "New Teeny Channel"
 
             /* Navigation bar buttons */
             let closeButton = UIBarButtonItem(barButtonSystemItem: .stop, target: self, action: #selector(closeAction(sender:)))
@@ -235,7 +235,7 @@ class ChannelEditViewController: BaseEditViewController {
         }
         else if self.mode == .update  {
 
-            self.banner.text = "Edit Channel"
+            self.banner.text = "Edit Teeny Channel"
             
             /* Navigation bar buttons */
             let closeButton = UIBarButtonItem(barButtonSystemItem: .stop, target: self, action: #selector(closeAction(sender:)))

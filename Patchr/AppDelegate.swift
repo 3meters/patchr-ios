@@ -33,7 +33,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, MessagingDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey : Any]? = nil) -> Bool {
         
         Log.prepare()
-        Log.i("Patchr launching...")
+        Log.i("Teeny launching...")
         
         FirebaseApp.configure()
         Database.database().isPersistenceEnabled = true
