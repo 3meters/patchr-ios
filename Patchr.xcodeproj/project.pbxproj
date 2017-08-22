@@ -40,7 +40,6 @@
 		E200E62F1DDD2A3E00E3457F /* EmailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E200E62E1DDD2A3E00E3457F /* EmailViewController.swift */; };
 		E203BBCB1E69CDDA00589071 /* InviteViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E203BBCA1E69CDDA00589071 /* InviteViewController.swift */; };
 		E20555061DBC178F003C8398 /* ColorArray.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20555051DBC178F003C8398 /* ColorArray.swift */; };
-		E2064BF11BBF3C26009C7B6A /* AirMuteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2064BF01BBF3C26009C7B6A /* AirMuteView.swift */; };
 		E2064BF31BC0212B009C7B6A /* silence.caf in Resources */ = {isa = PBXBuildFile; fileRef = E2064BF21BC0212B009C7B6A /* silence.caf */; };
 		E2064BF51BC18A66009C7B6A /* AirProgress.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2064BF41BC18A66009C7B6A /* AirProgress.swift */; };
 		E207B5021E2978140019C2A1 /* ChannelCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E207B5011E2978140019C2A1 /* ChannelCell.xib */; };
@@ -187,7 +186,6 @@
 		E2D12A851C0A592D00DE507E /* AirLabelBanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2D12A841C0A592D00DE507E /* AirLabelBanner.swift */; };
 		E2D654FB1E0C9EBB00714BA9 /* UnreadQuery.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2D654FA1E0C9EBB00714BA9 /* UnreadQuery.swift */; };
 		E2DA16D91DD0F7280096D86F /* AirUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2DA16D81DD0F7280096D86F /* AirUIView.swift */; };
-		E2DA16DB1DD114230096D86F /* AirStarButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2DA16DA1DD114230096D86F /* AirStarButton.swift */; };
 		E2DA16DD1DD11B7A0096D86F /* AirToggleImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2DA16DC1DD11B7A0096D86F /* AirToggleImage.swift */; };
 		E2DB42891EB4F2C400B1F78B /* UserListCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E25B0F471DCE7D7400021D5B /* UserListCell.swift */; };
 		E2DB428A1EB4F2C400B1F78B /* AirRuleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29730631C15090300B9433B /* AirRuleView.swift */; };
@@ -253,7 +251,6 @@
 		E2DB42D41EB4F2C400B1F78B /* Animation.swift in Sources */ = {isa = PBXBuildFile; fileRef = E26C80911C3AE246001514B3 /* Animation.swift */; };
 		E2DB42D51EB4F2C400B1F78B /* PasswordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D021ABD1A9409450047DAAE /* PasswordViewController.swift */; };
 		E2DB42D61EB4F2C400B1F78B /* FloatTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = E27F8A7D1DFB3A180020E852 /* FloatTextField.swift */; };
-		E2DB42D71EB4F2C400B1F78B /* AirMuteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2064BF01BBF3C26009C7B6A /* AirMuteView.swift */; };
 		E2DB42D81EB4F2C400B1F78B /* Http.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2BC533D1DE5E7EC00C97A2C /* Http.swift */; };
 		E2DB42D91EB4F2C400B1F78B /* AirScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2D12A701C0778C100DE507E /* AirScrollView.swift */; };
 		E2DB42DA1EB4F2C400B1F78B /* AirAddReactionButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29074A11E9D3554001E0609 /* AirAddReactionButton.swift */; };
@@ -291,7 +288,6 @@
 		E2DB43001EB4F2C400B1F78B /* ImageUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = E238BB051B571AFF0094AF41 /* ImageUtils.swift */; };
 		E2DB43011EB4F2C400B1F78B /* Reporting.swift in Sources */ = {isa = PBXBuildFile; fileRef = E281776D1B5B0EE200D65AC1 /* Reporting.swift */; };
 		E2DB43021EB4F2C400B1F78B /* BaseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20C3A7A1BD6A717008CCED1 /* BaseView.swift */; };
-		E2DB43031EB4F2C400B1F78B /* AirStarButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2DA16DA1DD114230096D86F /* AirStarButton.swift */; };
 		E2DB43061EB4F2C400B1F78B /* ReachabilityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E28D565E1BB1849F00BFD433 /* ReachabilityManager.swift */; };
 		E2DB43071EB4F2C400B1F78B /* CKRadialMenu.m in Sources */ = {isa = PBXBuildFile; fileRef = E2B8A4B21CE7818B00A28D3A /* CKRadialMenu.m */; };
 		E2DB43081EB4F2C400B1F78B /* PhotoSearchController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FDCC06A84126B197626CEB2 /* PhotoSearchController.swift */; };
@@ -454,7 +450,6 @@
 		E200E62E1DDD2A3E00E3457F /* EmailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = EmailViewController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		E203BBCA1E69CDDA00589071 /* InviteViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = InviteViewController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		E20555051DBC178F003C8398 /* ColorArray.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ColorArray.swift; sourceTree = "<group>"; };
-		E2064BF01BBF3C26009C7B6A /* AirMuteView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = AirMuteView.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		E2064BF21BC0212B009C7B6A /* silence.caf */ = {isa = PBXFileReference; lastKnownFileType = file; path = silence.caf; sourceTree = "<group>"; };
 		E2064BF41BC18A66009C7B6A /* AirProgress.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirProgress.swift; sourceTree = "<group>"; };
 		E207B5011E2978140019C2A1 /* ChannelCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ChannelCell.xib; sourceTree = "<group>"; };
@@ -600,7 +595,6 @@
 		E2D12A841C0A592D00DE507E /* AirLabelBanner.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirLabelBanner.swift; sourceTree = "<group>"; };
 		E2D654FA1E0C9EBB00714BA9 /* UnreadQuery.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UnreadQuery.swift; sourceTree = "<group>"; };
 		E2DA16D81DD0F7280096D86F /* AirUIView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirUIView.swift; sourceTree = "<group>"; };
-		E2DA16DA1DD114230096D86F /* AirStarButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirStarButton.swift; sourceTree = "<group>"; };
 		E2DA16DC1DD11B7A0096D86F /* AirToggleImage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirToggleImage.swift; sourceTree = "<group>"; };
 		E2DB43591EB4F2C400B1F78B /* Patchr-Dev.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Patchr-Dev.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E2E271281C5D1ED600E36804 /* BranchProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = BranchProvider.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
@@ -1102,7 +1096,6 @@
 				E2D12A7C1C0A03F100DE507E /* AirLabelDisplay.swift */,
 				E25908311DC7B3AA00CB6C3F /* AirLabelStack.swift */,
 				E2D12A781C08FA0E00DE507E /* AirLinkButton.swift */,
-				E2064BF01BBF3C26009C7B6A /* AirMuteView.swift */,
 				E24D84D21E8AF1D300BFE408 /* AirNavigationBar.swift */,
 				E2064BF41BC18A66009C7B6A /* AirProgress.swift */,
 				E2B8A4B51CE7875400A28D3A /* AirRadialMenu.swift */,
@@ -1111,7 +1104,6 @@
 				9FDCC3EBF074337408E968D0 /* AirReactionToolbar.swift */,
 				E29730631C15090300B9433B /* AirRuleView.swift */,
 				E25617F31E02F8D000E31240 /* AirScrimButton.swift */,
-				E2DA16DA1DD114230096D86F /* AirStarButton.swift */,
 				E2D12A701C0778C100DE507E /* AirScrollView.swift */,
 				E297305F1C14A7BC00B9433B /* AirSearchField.swift */,
 				E20C3A7C1BD70DD2008CCED1 /* AirTableView.swift */,
@@ -1609,7 +1601,6 @@
 				E26C80921C3AE246001514B3 /* Animation.swift in Sources */,
 				7D021ABE1A9409450047DAAE /* PasswordViewController.swift in Sources */,
 				E27F8A7E1DFB3A180020E852 /* FloatTextField.swift in Sources */,
-				E2064BF11BBF3C26009C7B6A /* AirMuteView.swift in Sources */,
 				E2BC533E1DE5E7EC00C97A2C /* Http.swift in Sources */,
 				E258DF9C1F3B6D26004687CC /* PopupTableView.swift in Sources */,
 				E2D12A711C0778C100DE507E /* AirScrollView.swift in Sources */,
@@ -1652,7 +1643,6 @@
 				E238BB061B571AFF0094AF41 /* ImageUtils.swift in Sources */,
 				E281776E1B5B0EE200D65AC1 /* Reporting.swift in Sources */,
 				E20C3A7B1BD6A717008CCED1 /* BaseView.swift in Sources */,
-				E2DA16DB1DD114230096D86F /* AirStarButton.swift in Sources */,
 				E28D565F1BB1849F00BFD433 /* ReachabilityManager.swift in Sources */,
 				E2B8A4B41CE7818B00A28D3A /* CKRadialMenu.m in Sources */,
 				9FDCC8F9EEEF77DEBE173AFA /* PhotoSearchController.swift in Sources */,
@@ -1759,7 +1749,6 @@
 				E2DB42D41EB4F2C400B1F78B /* Animation.swift in Sources */,
 				E2DB42D51EB4F2C400B1F78B /* PasswordViewController.swift in Sources */,
 				E2DB42D61EB4F2C400B1F78B /* FloatTextField.swift in Sources */,
-				E2DB42D71EB4F2C400B1F78B /* AirMuteView.swift in Sources */,
 				E258DF9D1F3B6D26004687CC /* PopupTableView.swift in Sources */,
 				E2DB42D81EB4F2C400B1F78B /* Http.swift in Sources */,
 				E2DB42D91EB4F2C400B1F78B /* AirScrollView.swift in Sources */,
@@ -1801,7 +1790,6 @@
 				E2DB43001EB4F2C400B1F78B /* ImageUtils.swift in Sources */,
 				E2DB43011EB4F2C400B1F78B /* Reporting.swift in Sources */,
 				E2DB43021EB4F2C400B1F78B /* BaseView.swift in Sources */,
-				E2DB43031EB4F2C400B1F78B /* AirStarButton.swift in Sources */,
 				E2DB43061EB4F2C400B1F78B /* ReachabilityManager.swift in Sources */,
 				E2DB43071EB4F2C400B1F78B /* CKRadialMenu.m in Sources */,
 				E2DB43081EB4F2C400B1F78B /* PhotoSearchController.swift in Sources */,

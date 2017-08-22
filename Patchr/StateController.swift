@@ -57,12 +57,11 @@ class StateController: NSObject {
                 return
             }
             
-            if let lastChannelId = UserDefaults.standard.string(forKey: PerUserKey(key: Prefs.lastChannelId)),
-                let userId = UserController.instance.userId {
-                channelQuery = ChannelQuery(channelId: lastChannelId, userId: userId)
+            if let lastChannelId = UserDefaults.standard.string(forKey: PerUserKey(key: Prefs.lastChannelId)) {
+                channelQuery = ChannelQuery(channelId: lastChannelId)
                 channelQuery.once(with: { [weak this] error, channel in
                     guard let this = this else { return }
-                    if channel == nil {
+                    if error != nil || channel == nil { // Channel was deleted or user was kicked since we last used it
                         this.clearChannel()
                         next(nil)
                     }
@@ -101,7 +100,7 @@ class StateController: NSObject {
             return
         }
         
-        Log.d("Current channel: \(channelId!)")
+        Log.d("Set current channel: \(channelId!)")
         
         FireController.db.child("channel-members/\(channelId!)").keepSynced(true)
         self.channelId = channelId!
@@ -111,8 +110,10 @@ class StateController: NSObject {
     }
     
     func clearChannel() {
-        Log.d("Current channel: nothing")
-        self.channelId = nil
-        UserDefaults.standard.set(nil, forKey: PerUserKey(key: Prefs.lastChannelId))
+        if self.channelId != nil {
+            Log.d("Set current channel: nothing")
+            self.channelId = nil
+            UserDefaults.standard.set(nil, forKey: PerUserKey(key: Prefs.lastChannelId))
+        }
     }
 }

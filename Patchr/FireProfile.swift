@@ -1,6 +1,6 @@
 //
 //  FireProfile.swift
-//  Patchr
+//  Teeny
 //
 //  Created by Jay Massena on 10/14/16.
 //  Copyright © 2016 3meters. All rights reserved.

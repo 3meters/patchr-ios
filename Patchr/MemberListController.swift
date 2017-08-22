@@ -139,19 +139,12 @@ class MemberListController: BaseTableController {
             let tableView = scrollView as! UITableView
             let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! UserListCell
             cell.reset()
-            guard let this = self else { return cell }
+            guard self != nil else { return cell }
             
             let snap = data as! DataSnapshot
             let userId = snap.key
-            let channelId = StateController.instance.channelId!
             
-            if this.scope == .reaction {
-                cell.userQuery = UserQuery(userId: userId)
-            }
-            else {
-                cell.userQuery = UserQuery(userId: userId, channelId: channelId)
-            }
-            
+            cell.userQuery = UserQuery(userId: userId)
             cell.userQuery.once(with: { [weak self, weak cell] error, user in
                 guard let this = self else { return }
                 guard let cell = cell else { return }
@@ -160,6 +153,7 @@ class MemberListController: BaseTableController {
                     return
                 }
                 if user != nil {
+                    user!.membershipFrom(dict: snap.value as! [String : Any])
                     var target = "channel"
                     if this.scope == .reaction {
                         target = "reaction"
@@ -186,7 +180,7 @@ class MemberListController: BaseTableController {
     }
     
     func isOwner() -> Bool {
-        return (self.channel.role == "owner" || self.channel.ownedBy == UserController.instance.userId)
+        return (self.channel.membership!.role == "owner" || self.channel.ownedBy == UserController.instance.userId)
     }
     
     enum ListScope: Int {

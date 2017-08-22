@@ -197,7 +197,8 @@ class ChannelViewController: BaseTableController {
                 if doIt {
                     let userId = UserController.instance.userId!
                     Reporting.track("leave_channel")
-                    FireController.instance.removeUserFromChannel(userId: userId, channelId: self.channel.id!, then: { [weak self] error, result in
+                    self.unbind()
+                    FireController.instance.deleteMembership(userId: userId, channelId: self.channel.id!, then: { [weak self] error, result in
                         guard self != nil else { return }
                         if error == nil {
                             UIShared.toast(message: "You have left this channel.")
@@ -354,7 +355,7 @@ class ChannelViewController: BaseTableController {
 				return cell
 			}
             
-			cell.userQuery = UserQuery(userId: message.createdBy!, channelId: channelId)
+			cell.userQuery = UserQuery(userId: message.createdBy!)
 			cell.userQuery.once(with: { [weak this, weak cell] error, user in
 
 				guard let this = this else { return }
@@ -431,7 +432,7 @@ class ChannelViewController: BaseTableController {
 			this.channel = channel
 			this.navigationController?.navigationBar.setNeedsLayout()
             
-            if this.channel.role == "reader" {
+            if this.channel.membership?.role == "reader" {
                 this.postingEnabled = false
             }
             else {
@@ -478,7 +479,7 @@ class ChannelViewController: BaseTableController {
 	}
     
     func isOwner() -> Bool {
-        return (self.channel.role == "owner" || self.channel.ownedBy == UserController.instance.userId)
+        return (self.channel.membership!.role == "owner" || self.channel.ownedBy == UserController.instance.userId)
     }
     
 	func updateHeaderView() {
@@ -577,7 +578,7 @@ class ChannelViewController: BaseTableController {
 
 			var muteAction: UIAlertAction? = nil
             
-            if let notifications = self.channel.notifications {
+            if let notifications = self.channel.membership?.notifications {
                 let muted = (notifications == "none")
                 let mutedTitle = muted ? "Unmute" : "Mute"
                 muteAction = UIAlertAction(title: mutedTitle, style: .default) { [weak self] action in

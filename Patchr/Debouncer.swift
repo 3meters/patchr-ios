@@ -1,6 +1,6 @@
 //
 //  Debouncer.swift
-//  Patchr
+//  Teeny
 //
 //  Created by Jay Massena on 12/3/16.
 //  Copyright © 2016 3meters. All rights reserved.

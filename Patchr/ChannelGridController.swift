@@ -227,6 +227,11 @@ class ChannelGridController: UICollectionViewController {
                     cell.channelQuery = ChannelQuery(channelId: channelId, userId: userId)    // Just channel lookup
                     cell.channelQuery!.observe(with: { [weak cell] error, channel in
                         guard let cell = cell else { return }
+                        if error != nil {
+                            cell.channelQuery?.remove()
+                            Log.v("Removing channel from grid: \(channelId)")
+                            return
+                        }
                         if channel != nil {
                             cell.bind(channel: channel!)
                             cell.unreadQuery = UnreadQuery(level: .channel, userId: userId, channelId: channelId)
@@ -249,28 +254,6 @@ class ChannelGridController: UICollectionViewController {
 			self.view.setNeedsLayout()
 		}
 	}
-
-//	func search(on: Bool) {
-//		if on {
-//            self.queryController.filterActive = true
-//			self.navigationItem.setLeftBarButton(self.searchBarButton, animated: true)
-//			self.navigationItem.setRightBarButtonItems(nil, animated: true)
-//			self.searchBarHolder.frame = CGRect(x: 0, y: 0, width: (self.navigationController?.navigationBar.width())! - 24, height: 44)
-//			self.searchBar.fillSuperview()
-//			self.searchBar.becomeFirstResponder()
-//		}
-//		else {
-//            self.searchBar?.setShowsCancelButton(false, animated: true)
-//            self.searchBar?.endEditing(true)
-//            if !(self.searchBar.text?.isEmpty)! {
-//                self.queryController.filter(searchText: nil)
-//            }
-//            self.queryController.filterActive = false
-//			self.navigationItem.setLeftBarButton(self.searchButton, animated: true)
-//            self.navigationItem.setRightBarButtonItems([self.menuButton, UI.spacerFixed, self.addButton], animated: true)
-//			self.searchBar.resignFirstResponder()
-//		}
-//	}
     
     func showActions(sender: AnyObject?) {
         

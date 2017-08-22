@@ -1,6 +1,6 @@
 //
 //  CaptionView.swift
-//  Patchr
+//  Teeny
 //
 //  Created by Jay Massena on 5/12/16.
 //  Copyright © 2016 3meters. All rights reserved.

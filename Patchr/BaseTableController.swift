@@ -1,6 +1,6 @@
 //
 //  BaseViewController.swift
-//  Patchr
+//  Teeny
 //
 //  Created by Jay Massena on 11/27/15.
 //  Copyright © 2015 3meters. All rights reserved.
@@ -25,10 +25,6 @@ class BaseTableController: UIViewController {
     override func viewWillLayoutSubviews() {
         let viewWidth = min(Config.contentWidthMax, self.view.width())
         self.view.anchorTopCenter(withTopPadding: 0, width: viewWidth, height: self.view.height())
-    }
-    
-    deinit {
-        Log.v("\(self.className) released")
     }
 	
 	/*--------------------------------------------------------------------------------------------

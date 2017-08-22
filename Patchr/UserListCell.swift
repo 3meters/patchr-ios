@@ -101,16 +101,16 @@ class UserListCell: UITableViewCell {
             self.subtitle?.text = "@\(user.username!)"
         }
         
-        if target == "channel" {
-            if user.channel.role == "owner" {
+        if target == "channel", let membership = user.membership {
+            if membership.role == "owner" {
                 self.roleLabel?.text = "owner"
                 self.roleLabel?.textColor = MaterialColor.deepOrange.base
             }
-            else if user.channel.role == "editor" {
+            else if membership.role == "editor" {
                 self.roleLabel?.text = "contributor"
                 self.roleLabel?.textColor = MaterialColor.lightGreen.base
             }
-            else if user.channel.role == "reader" {
+            else if membership.role == "reader" {
                 self.roleLabel?.text = "reader"
                 self.roleLabel?.textColor = MaterialColor.lightBlue.base
             }

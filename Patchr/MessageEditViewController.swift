@@ -1,6 +1,6 @@
 //
 //  MessageEditViewController.swift
-//  Patchr
+//  Teeny
 //
 //  Created by Jay Massena on 7/24/17.
 //  Copyright © 2017 3meters. All rights reserved.

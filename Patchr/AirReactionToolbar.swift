@@ -18,12 +18,6 @@ class AirReactionToolbar: AirScrollView {
     var paddingLeft = CGFloat(0)
     var paddingRight = CGFloat(0)
     
-    var messageQuery: MessageQuery!
-    
-    deinit {
-        self.messageQuery?.remove()
-    }
-    
     override func initialize() {
         self.showsHorizontalScrollIndicator = false
         self.showsVerticalScrollIndicator = false
@@ -31,17 +25,7 @@ class AirReactionToolbar: AirScrollView {
     }
 
 	func bind(message: FireMessage) {
-        
         self.layout(message: message, animate: false)
-        
-        let channelId = message.channelId!
-        let messageId = message.id!
-        self.messageQuery = MessageQuery(channelId: channelId, messageId: messageId)
-        self.messageQuery.observe { [weak self] error, message in
-            guard let this = self else { return }
-            guard let message = message else { return }
-            this.layout(message: message)
-        }
 	}
     
     func layout(message: FireMessage, animate: Bool = true) {

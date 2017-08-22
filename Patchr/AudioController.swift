@@ -1,6 +1,6 @@
 //
 //  AudioController.swift
-//  Patchr
+//  Teeny
 //
 //  Created by Jay Massena on 5/25/15.
 //  Copyright (c) 2015 3meters. All rights reserved.

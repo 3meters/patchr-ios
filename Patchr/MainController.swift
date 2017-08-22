@@ -25,6 +25,7 @@ class MainController: NSObject, iRateDelegate {
     var introPlayed = false
     var bootstrapping = true
     var containerController: ContainerController!
+    var channelQuery: ChannelQuery?
 
     private override init() { }
 
@@ -257,27 +258,56 @@ class MainController: NSObject, iRateDelegate {
             /* Must be group member or we get permission denied. Weirdly, we can get callbacks on with and withCancel
                when there is no membership record. So we have to use a flag to prevent double handling. */
             var inviteProcessing = false
-            FireController.db.child("channel-members/\(channelId)/\(userId)").observeSingleEvent(of: .value, with: { snap in
+            self.channelQuery = ChannelQuery(channelId: channelId, userId: userId)
+            self.channelQuery!.once(with: { [weak self] error, channel in
+                guard let this = self else { return }
                 guard !inviteProcessing else { return }
                 inviteProcessing = true
-                if let membership = snap.value as? [String: Any] {
-                    /* Already a member */
-                    let role = membership["role"] as? String
-                    Reporting.track("process_invite")
-                    self.processInvite(link: link, member: true, memberRole: role, flow: flow)
-                }
-                else {
+                if error != nil {
                     /* Not a group member yet */
                     Reporting.track("process_invite")
-                    self.processInvite(link: link, member: false, memberRole: nil, flow: flow)
+                    this.processInvite(link: link, member: false, memberRole: nil, flow: flow)  // permission denied means not group member
+                    return
                 }
-            }, withCancel: { error in
-                /* Not a member yet */
-                guard !inviteProcessing else { return }
-                inviteProcessing = true
+                if channel == nil {
+                    /* Channel is gone */
+                    if let topController = UIViewController.topMostViewController() {
+                        let popup = PopupDialog(title: "Channel Missing", message: "Your invitation is to a channel that has been deleted.")
+                        let button = DefaultButton(title: "OK") {
+                            Reporting.track("invite_channel_missing")
+                        }
+                        button.buttonHeight = 48
+                        popup.addButton(button)
+                        topController.present(popup, animated: true)
+                    }
+                    return
+                }
                 Reporting.track("process_invite")
-                self.processInvite(link: link, member: false, memberRole: nil, flow: flow)  // permission denied means not group member
+                this.processInvite(link: link, member: false, memberRole: nil, flow: flow)
             })
+            
+            
+//            FireController.db.child("channel-members/\(channelId)/\(userId)").observeSingleEvent(of: .value, with: { snap in
+//                guard !inviteProcessing else { return }
+//                inviteProcessing = true
+//                if let membership = snap.value as? [String: Any] {
+//                    /* Already a member */
+//                    let role = membership["role"] as? String
+//                    Reporting.track("process_invite")
+//                    self.processInvite(link: link, member: true, memberRole: role, flow: flow)
+//                }
+//                else {
+//                    /* Not a group member yet */
+//                    Reporting.track("process_invite")
+//                    self.processInvite(link: link, member: false, memberRole: nil, flow: flow)
+//                }
+//            }, withCancel: { error in
+//                /* Not a member yet */
+//                guard !inviteProcessing else { return }
+//                inviteProcessing = true
+//                Reporting.track("process_invite")
+//                self.processInvite(link: link, member: false, memberRole: nil, flow: flow)  // permission denied means not group member
+//            })
         }
         else {
             Reporting.track("pause_invite_for_login")

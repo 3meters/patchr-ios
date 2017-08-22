@@ -1,6 +1,6 @@
 //
 //  JSONResponseSerializerWithData.h
-//  Patchr
+//  Teeny
 //
 //  Courtesy of http://blog.gregfiumara.com/archives/239
 //

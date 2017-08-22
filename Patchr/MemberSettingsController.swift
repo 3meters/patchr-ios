@@ -1,6 +1,6 @@
 //
 //  NotificationSettingsViewController.swift
-//  Patchr
+//  Teeny
 //
 //  Created by Rob MacEachern on 2015-03-09.
 //  Copyright (c) 2015 3meters. All rights reserved.
@@ -151,7 +151,7 @@ class MemberSettingsController: UITableViewController {
                 
                 let userId = self.inputUser.id!
                 let channelId = self.inputChannel.id!
-                FireController.instance.removeUserFromChannel(userId: userId, channelId: channelId) { [weak self] error, result in
+                FireController.instance.deleteMembership(userId: userId, channelId: channelId) { [weak self] error, result in
                     guard let this = self else { return }
                     this.progress?.hide(true)
                     if error == nil {

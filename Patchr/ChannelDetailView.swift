@@ -14,7 +14,6 @@ class ChannelDetailView: UIView {
     
     var photoView = AirImageView(frame: CGRect.zero)
     var titleLabel = AirLabelDisplay()
-    var starButton = AirStarButton(frame: CGRect.zero)
     var purposeLabel = AirLabelDisplay(frame: CGRect.zero)
     
     var photo: FirePhoto!
@@ -136,14 +135,12 @@ class ChannelDetailView: UIView {
         if let photo = channel.photo {
             self.photo = photo
             self.needsPhoto = true
-            self.starButton.tintColor = Colors.white
             self.photoView.backgroundColor = Theme.colorBackgroundImage
             displayPhoto()
         }
         else {
             self.photoView.image = nil
             self.photoView.gradientLayer.isHidden = true
-            self.starButton.tintColor = Colors.white
             if channel.name == "general" || channel.general! {
                 self.photoView.backgroundColor = Colors.brandColorLight
             }
@@ -155,9 +152,6 @@ class ChannelDetailView: UIView {
                 self.photoView.backgroundColor = ColorArray.randomColor(seed: seed)
             }
         }
-
-        self.starButton.isHidden = (channel.joinedAt == nil)
-        self.starButton.bind(channel: channel)
 
         self.setNeedsLayout()    // Needed because binding can change element layout
         self.layoutIfNeeded()

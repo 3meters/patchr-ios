@@ -1,6 +1,6 @@
 //
 //  UI.swift
-//  Patchr
+//  Teeny
 //
 //  Created by Jay Massena on 5/9/15.
 //  Copyright (c) 2015 3meters. All rights reserved.

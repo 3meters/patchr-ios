@@ -22,7 +22,7 @@ class ChannelQuery: NSObject {
 	var linkMap: [String: Any]!
 	var linkMapMiss = false
 
-	init(channelId: String, userId: String?) {
+	init(channelId: String, userId: String? = nil) {
 		super.init()
 		self.channelPath = "channels/\(channelId)"
 		if userId != nil {
@@ -55,7 +55,7 @@ class ChannelQuery: NSObject {
 			}
 		}, withCancel: { [weak self] error in
 			guard let this = self else { return }
-			Log.v("Permission denied trying to read channel: \(this.channelPath!)")
+            //Log.v("Permission denied trying to observe channel: \(this.channelPath!)")
 			this.block(error, nil)
 		})
 
@@ -78,7 +78,7 @@ class ChannelQuery: NSObject {
 				}
 			}, withCancel: { [weak self] error in
 				guard let this = self else { return }
-				Log.v("Permission denied trying to read channel membership: \(this.linkPath!)")
+                //Log.v("Permission denied trying to observe membership: \(this.linkPath!)")
 				this.block(error, nil)
 			})
 		}
@@ -110,7 +110,7 @@ class ChannelQuery: NSObject {
 			}
 		}, withCancel: { [weak self] error in
 			guard let this = self else { return }
-			Log.v("Permission denied trying to read channel: \(this.channelPath!)")
+			Log.v("Permission denied trying to read channel once: \(this.channelPath!)")
 			this.block(error, nil)
 		})
 
@@ -137,7 +137,7 @@ class ChannelQuery: NSObject {
 				}
 			}, withCancel: { [weak self] error in
 				guard let this = self else { return }
-				Log.v("Permission denied trying to read channel membership: \(this.linkPath!)")
+				Log.v("Permission denied trying to read membership once: \(this.linkPath!)")
 				this.block(error, nil)
 			})
 		}

@@ -1,6 +1,6 @@
 //
 //  AirTableViewCell.swift
-//  Patchr
+//  Teeny
 //
 //  Created by Jay Massena on 10/18/15.
 //  Copyright © 2015 3meters. All rights reserved.

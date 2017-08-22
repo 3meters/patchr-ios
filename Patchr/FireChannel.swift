@@ -1,6 +1,6 @@
 //
 //  Location.swift
-//  Patchr
+//  Teeny
 //
 //  Created by Jay Massena on 11/11/15.
 //  Copyright © 2015 3meters. All rights reserved.
@@ -17,25 +17,18 @@ class FireChannel: NSObject {
         return "channels/\(self.id!)"
     }
     
+    var code: String?
     var createdAt: Int64?
     var createdBy: String?
     var general: Bool?
+    var id: String?
+    var membership: Membership?
     var name: String?
-    var title: String?
     var ownedBy: String?
     var photo: FirePhoto?
     var purpose: String?
-    var code: String?
+    var title: String?
     
-    /* Local */
-    var id: String?
-    
-    /* Channel link properties for the current user */
-    var starred: Bool?
-    var notifications: String?
-    var role: String?
-    var joinedAt: Int?
-
     init(dict: [String: Any], id: String?) {
         self.createdAt = dict["created_at"] as? Int64
         self.createdBy = dict["created_by"] as? String
@@ -52,17 +45,13 @@ class FireChannel: NSObject {
     }
     
     func membershipClear() {
-        self.starred = nil
-        self.notifications = nil
-        self.role = nil
-        self.joinedAt = nil
+        self.membership?.clear()
+        self.membership = nil
     }
 
     func membershipFrom(dict: [String: Any]) {
-        self.starred = dict["starred"] as? Bool
-        self.notifications = dict["notifications"] as? String
-        self.role = dict["role"] as? String
-        self.joinedAt = dict["created_at"] as? Int
+        let membership = Membership(dict: dict)
+        self.membership = membership
     }
     
     func star(on: Bool) {

@@ -70,7 +70,7 @@ class UnreadQuery: NSObject {
             
         }, withCancel: { [weak self] error in
             guard let this = self else { return }
-            Log.v("Permission denied trying to read unreads: \(this.path!)")
+            Log.v("Permission denied trying to observe unreads: \(this.path!)")
             this.block(error, nil, nil)
         })
     }

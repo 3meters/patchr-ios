@@ -1,6 +1,6 @@
 //
 //  PhotoChooserUI.swift
-//  Patchr
+//  Teeny
 //
 //  Created by Brent on 2015-03-03.
 //  Copyright (c) 2015 3meters. All rights reserved.
@@ -188,7 +188,7 @@ extension PhotoChooserUI: UIImagePickerControllerDelegate {
                 asset = ["taken_at": DateUtils.now()] 
             }
             
-			/* If the user took a photo then add it to the Teeny Social photo album */
+			/* If the user took a photo then add it to the Teeny photo album */
             if self.chosenPhotoFunction == .TakePhoto {
                 hostViewController?.dismiss(animated: true, completion: nil)
                 if PHPhotoLibrary.authorizationStatus() == .authorized {

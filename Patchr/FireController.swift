@@ -93,20 +93,6 @@ class FireController: NSObject {
         }
     }
     
-    func removeUserFromChannel(userId: String, channelId: String, then: ((ServiceError?, Any?) -> Void)? = nil) {
-        
-        var updates: [String: Any] = [:]
-        updates["channel-members/\(channelId)/\(userId)"] = NSNull() // delete requires creator or channel owner
-        FireController.db.updateChildValues(updates) { error, ref in
-            if error != nil {
-                Log.w("Permission denied removing channel member")
-                then?(ServiceError(code: 403, message: "Permission denied"), nil)  // permission denied
-                return
-            }
-            then?(nil, nil)
-        }
-    }
-    
     func channelMemberMap(userId: String, timestamp: Int64, code: String, role: String) -> [String: Any] {
         
         let link: [String: Any] = [
@@ -130,7 +116,7 @@ class FireController: NSObject {
 
     func deleteChannel(channelId: String) {
         let path = "channels/\(channelId)"
-        FireController.db.child(path).setValue(NSNull()) { error, ref in
+        FireController.db.child(path).removeValue() { error, ref in
             if error == nil {
                 Log.d("Channel deleted: \(channelId)")
             }
@@ -139,7 +125,7 @@ class FireController: NSObject {
     
     func deleteMessage(messageId: String, channelId: String, then: ((Error?) -> Void)? = nil) {
         let path = "channel-messages/\(channelId)/\(messageId)"
-        FireController.db.child(path).setValue(NSNull()) { error, ref in
+        FireController.db.child(path).removeValue() { error, ref in
             if error == nil {
                 Log.d("Message deleted: \(messageId)")
             }
@@ -149,11 +135,25 @@ class FireController: NSObject {
     
     func deleteComment(commentId: String, messageId: String, channelId: String, then: ((Error?) -> Void)? = nil) {
         let path = "message-comments/\(channelId)/\(messageId)/\(commentId)"
-        FireController.db.child(path).setValue(NSNull()) { error, ref in
+        FireController.db.child(path).removeValue() { error, ref in
             if error == nil {
                 Log.d("Comment deleted: \(commentId)")
             }
             then?(error)
+        }
+    }
+    
+    func deleteMembership(userId: String, channelId: String, then: ((ServiceError?, Any?) -> Void)? = nil) {
+        let path = "channel-members/\(channelId)/\(userId)"
+        FireController.db.child(path).removeValue() { error, ref in
+            if error == nil {
+                Log.d("Membership deleted: \(channelId)")
+                then?(nil, nil)
+                return
+            }
+            Log.w("Permission denied removing channel member")
+            then?(ServiceError(code: 403, message: "Permission denied"), nil)  // permission denied
+            return
         }
     }
     

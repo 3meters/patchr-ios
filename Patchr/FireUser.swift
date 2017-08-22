@@ -1,6 +1,6 @@
 //
 //  Location.swift
-//  Patchr
+//  Teeny
 //
 //  Created by Jay Massena on 11/11/15.
 //  Copyright © 2015 3meters. All rights reserved.
@@ -17,11 +17,11 @@ class FireUser: NSObject {
         return "users/\(self.id)"
     }
 
-    var channel: ChannelMembership!
     var createdAt: Int64!
     var createdBy: String!
     var developer: Bool?
     var id: String!
+    var membership: Membership?
     var modifiedAt: Int64!
     var presence: Any?
     var profile: FireProfile?
@@ -48,25 +48,32 @@ class FireUser: NSObject {
             self.profile = FireProfile(dict: dict["profile"] as! [String : Any])
         }
     }
+    
+    func membershipClear() {
+        self.membership?.clear()
+        self.membership = nil
+    }
+
+    func membershipFrom(dict: [String: Any]) {
+        let membership = Membership(dict: dict)
+        self.membership = membership
+    }
 }
 
-class ChannelMembership: NSObject {
-    var joinedAt: Int?
-    var muted: Bool!
+class Membership: NSObject {
+    var notifications: String?
     var role: String!
     var starred: Bool!
     
     init(dict: [String: Any]) {
+        self.notifications = dict["notifications"] as? String
         self.role = dict["role"] as! String
-        self.joinedAt = dict["joined_at"] as? Int
         self.starred = dict["starred"] as? Bool
-        self.muted = dict["muted"] as? Bool
     }
     
     func clear() {
+        self.notifications = nil
         self.role = nil
-        self.joinedAt = nil
         self.starred = nil
-        self.muted = nil
     }
 }

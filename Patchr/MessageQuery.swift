@@ -9,10 +9,7 @@ import FirebaseAuth
 class MessageQuery: NSObject {
 
     var authHandle: AuthStateDidChangeListenerHandle!
-
     var block: ((Error?, FireMessage?) -> Swift.Void)!
-    var fired = false
-
     var messagePath: String!
     var messageHandle: UInt!
     var message: FireMessage!
@@ -32,6 +29,7 @@ class MessageQuery: NSObject {
                 this.remove()
             }
         }
+        
         self.messageHandle = FireController.db.child(self.messagePath).observe(.value, with: { [weak self] snap in
             guard let this = self else { return }
             if let value = snap.value as? [String: Any] {
@@ -40,7 +38,7 @@ class MessageQuery: NSObject {
             }
         }, withCancel: { [weak self] error in
             guard let this = self else { return }
-            Log.v("Permission denied trying to read message: \(this.messagePath!)")
+            Log.v("Permission denied trying to observe message: \(this.messagePath!)")
             this.block(error, nil)
         })
     }
@@ -57,7 +55,7 @@ class MessageQuery: NSObject {
             }
         }, withCancel: { [weak self] error in
             guard let this = self else { return }
-            Log.v("Permission denied trying to read message: \(this.messagePath!)")
+            Log.v("Permission denied trying to read message once: \(this.messagePath!)")
             this.block(error, nil)
         })
     }

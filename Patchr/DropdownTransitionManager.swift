@@ -1,6 +1,6 @@
 //
 //  DropdownTransitionManager.swift
-//  Patchr
+//  Teeny
 //
 //  Created by Jay Massena on 1/24/17.
 //  Copyright © 2017 3meters. All rights reserved.

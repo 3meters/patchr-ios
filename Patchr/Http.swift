@@ -1,6 +1,6 @@
 //
 //  Http.swift
-//  Patchr
+//  Teeny
 //
 //  Created by Jay Massena on 11/23/16.
 //  Copyright © 2016 3meters. All rights reserved.

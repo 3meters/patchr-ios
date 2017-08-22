@@ -1,6 +1,6 @@
 //
 //  UI.swift
-//  Patchr
+//  Teeny
 //
 //  Created by Jay Massena on 5/9/15.
 //  Copyright (c) 2015 3meters. All rights reserved.
@@ -19,7 +19,7 @@ struct UIShared {
 			if let controller = UIViewController.topMostViewController() {
 				controller.UpdateConfirmationAlert(
 					title: "Update required",
-					message: "Your version of Teeny Social is not compatible with the Teeny Social service. Please update to a newer version.",
+					message: "Your version of Teeny is not compatible with the Teeny service. Please update to a newer version.",
 					actionTitle: "Update",
 					cancelTitle: "Later") {
 						doIt in

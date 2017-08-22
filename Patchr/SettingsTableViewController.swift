@@ -1,6 +1,6 @@
 //
 //  SettingsTableViewController.swift
-//  Patchr
+//  Teeny
 //
 //  Created by Rob MacEachern on 2015-03-09.
 //  Copyright (c) 2015 3meters. All rights reserved.
@@ -112,7 +112,7 @@ class SettingsTableViewController: UITableViewController {
         self.soundEffectsCell.textLabel!.text = "Play sound effects"
 
         self.sendFeedbackCell.textLabel!.text = "Send feedback"
-        self.rateCell.textLabel!.text = "Rate Teeny Social"
+        self.rateCell.textLabel!.text = "Rate Teeny"
         self.aboutCell.textLabel!.text = "About"
         self.developmentCell.textLabel!.text = "Developer"
 
@@ -165,7 +165,7 @@ extension SettingsTableViewController {
         if selectedCell == self.sendFeedbackCell {
             Reporting.track("view_feedback_compose")
             let email = "feedback@teenysocial.com"
-            let subject = "Feedback for Teeny Social iOS"
+            let subject = "Feedback for Teeny iOS"
             if MFMailComposeViewController.canSendMail() {
                 UI.mailComposer!.mailComposeDelegate = self
                 UI.mailComposer!.setToRecipients([email])
