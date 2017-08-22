@@ -144,8 +144,10 @@ class FireController: NSObject {
     }
     
     func deleteMembership(userId: String, channelId: String, then: ((ServiceError?, Any?) -> Void)? = nil) {
-        let path = "channel-members/\(channelId)/\(userId)"
-        FireController.db.child(path).removeValue() { error, ref in
+        var updates = [String: Any]()
+        updates["channel-members/\(channelId)/\(userId)"] = NSNull()
+        updates["member-channels/\(userId)/\(channelId)"] = NSNull()
+        FireController.db.updateChildValues(updates) { error, ref in
             if error == nil {
                 Log.d("Membership deleted: \(channelId)")
                 then?(nil, nil)

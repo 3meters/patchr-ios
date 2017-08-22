@@ -479,7 +479,10 @@ class ChannelViewController: BaseTableController {
 	}
     
     func isOwner() -> Bool {
-        return (self.channel.membership!.role == "owner" || self.channel.ownedBy == UserController.instance.userId)
+        if let membership = self.channel.membership {
+            return (membership.role == "owner" || self.channel.ownedBy == UserController.instance.userId)
+        }
+        return false
     }
     
 	func updateHeaderView() {
