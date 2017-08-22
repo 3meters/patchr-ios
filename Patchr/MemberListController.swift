@@ -145,9 +145,8 @@ class MemberListController: BaseTableController {
             let userId = snap.key
             
             cell.userQuery = UserQuery(userId: userId)
-            cell.userQuery.once(with: { [weak self, weak cell] error, user in
-                guard let this = self else { return }
-                guard let cell = cell else { return }
+            cell.userQuery.once(with: { [weak self, weak cell, weak snap] error, user in
+                guard let this = self, let cell = cell, let snap = snap else { return }
                 if error != nil {
                     Log.w("Permission denied")
                     return
@@ -180,7 +179,10 @@ class MemberListController: BaseTableController {
     }
     
     func isOwner() -> Bool {
-        return (self.channel.membership!.role == "owner" || self.channel.ownedBy == UserController.instance.userId)
+        if let membership = self.channel.membership {
+            return (membership.role == "owner" || self.channel.ownedBy == UserController.instance.userId)
+        }
+        return false
     }
     
     enum ListScope: Int {
