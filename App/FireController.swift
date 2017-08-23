@@ -116,8 +116,13 @@ class FireController: NSObject {
      *--------------------------------------------------------------------------------------------*/
 
     func deleteChannel(channelId: String) {
-        let path = "channels/\(channelId)"
-        FireController.db.child(path).removeValue() { error, ref in
+        var updates = [String: Any]()
+        let userId = UserController.instance.userId!
+        /* We clear locally for snappier ui */
+        updates["channel-members/\(channelId)/\(userId)"] = NSNull()
+        updates["member-channels/\(userId)/\(channelId)"] = NSNull()
+        updates["channels/\(channelId)"] = NSNull()
+        FireController.db.updateChildValues(updates) { error, ref in
             if error == nil {
                 Log.d("Channel deleted: \(channelId)")
             }

@@ -66,9 +66,8 @@ class StateController: NSObject {
                         next(nil)
                     }
                     else {
-                        this.setChannelId(channelId: lastChannelId) { error in
-                            next(nil)
-                        }
+                        this.setChannelId(channelId: lastChannelId)
+                        next(nil)
                     }
                 })
             }
@@ -88,7 +87,7 @@ class StateController: NSObject {
         queue.run()
     }
     
-    func setChannelId(channelId: String?, bundle: [String: Any]? = nil, next: ((Error?) -> Void)? = nil) {
+    func setChannelId(channelId: String?) {
         
         guard UserController.instance.userId != nil else {
             assertionFailure("userId and channelId must be set")
@@ -96,7 +95,6 @@ class StateController: NSObject {
         }
         
         guard channelId != self.channelId else {
-            next?(nil)
             return
         }
         
@@ -105,8 +103,6 @@ class StateController: NSObject {
         FireController.db.child("channel-members/\(channelId!)").keepSynced(true)
         self.channelId = channelId!
         UserDefaults.standard.set(channelId, forKey: PerUserKey(key: Prefs.lastChannelId))
-        
-        next?(nil)
     }
     
     func clearChannel() {
