@@ -367,7 +367,7 @@
 		7D39D3C41ABA21B200275759 /* CALayer+XibConfiguration.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "CALayer+XibConfiguration.m"; sourceTree = "<group>"; };
 		7D3D39C91A6F086F00A44CB2 /* Teeny.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Teeny.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7D3D39CD1A6F086F00A44CB2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		7D3D39CE1A6F086F00A44CB2 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; lineEnding = 0; name = AppDelegate.swift; path = Patchr/AppDelegate.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
+		7D3D39CE1A6F086F00A44CB2 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; lineEnding = 0; name = AppDelegate.swift; path = App/AppDelegate.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		7D3D39D51A6F086F00A44CB2 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		7D3D39EE1A6F09CC00A44CB2 /* BridgingHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BridgingHeader.h; sourceTree = "<group>"; };
 		844D6E361AA6550400EE71ED /* PhotoChooserUI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = PhotoChooserUI.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
@@ -394,7 +394,7 @@
 		9FDCC5452372EFCC98BA01BF /* UserQuery.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserQuery.swift; sourceTree = "<group>"; };
 		9FDCC5CDEEB4DD9DDA31F876 /* single-nexus-5.psd */ = {isa = PBXFileReference; lastKnownFileType = file.psd; path = "single-nexus-5.psd"; sourceTree = "<group>"; };
 		9FDCC5E84AD8B2BDA2A67F77 /* channel_framed.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = channel_framed.png; sourceTree = "<group>"; };
-		9FDCC68ACDC02C764EE70B02 /* FireController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FireController.swift; path = Patchr/FireController.swift; sourceTree = "<group>"; };
+		9FDCC68ACDC02C764EE70B02 /* FireController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FireController.swift; path = App/FireController.swift; sourceTree = "<group>"; };
 		9FDCC6D9E7C9AADE45675174 /* MemberSettingsController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MemberSettingsController.swift; sourceTree = "<group>"; };
 		9FDCC7279D63732F217E85F0 /* cover-image.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "cover-image.jpg"; sourceTree = "<group>"; };
 		9FDCC73F84557793D2F1F813 /* patchr_banner.psd */ = {isa = PBXFileReference; lastKnownFileType = file.psd; path = patchr_banner.psd; sourceTree = "<group>"; };
@@ -417,7 +417,7 @@
 		9FDCC9FB41B6849BBBB72F96 /* nexus-5-mockup.psd */ = {isa = PBXFileReference; lastKnownFileType = file.psd; path = "nexus-5-mockup.psd"; sourceTree = "<group>"; };
 		9FDCCA7AB0285558DFFDF2C1 /* SettingsTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsTableViewController.swift; sourceTree = "<group>"; };
 		9FDCCAC04E140F7D6BDCEF10 /* Roboto-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file.ttf; path = "Roboto-Regular.ttf"; sourceTree = "<group>"; };
-		9FDCCADB4957C2E128DDE9FF /* MainController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MainController.swift; path = Patchr/MainController.swift; sourceTree = "<group>"; };
+		9FDCCADB4957C2E128DDE9FF /* MainController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MainController.swift; path = App/MainController.swift; sourceTree = "<group>"; };
 		9FDCCB4B50E35F9A34C652AA /* channel.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = channel.png; sourceTree = "<group>"; };
 		9FDCCBBC7BF1C0419007B9F9 /* AccountEditViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = AccountEditViewController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		9FDCCC15CA72BB57D88D11CC /* patchr-promo-graphic.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "patchr-promo-graphic.jpg"; sourceTree = "<group>"; };
@@ -469,7 +469,7 @@
 		E238BACF1B5088A40094AF41 /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
 		E238BAD51B50907F0094AF41 /* Accounts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accounts.framework; path = System/Library/Frameworks/Accounts.framework; sourceTree = SDKROOT; };
 		E238BAD71B5090870094AF41 /* Social.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Social.framework; path = System/Library/Frameworks/Social.framework; sourceTree = SDKROOT; };
-		E238BAEE1B5405380094AF41 /* Teeny.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.entitlements; name = Teeny.entitlements; path = Patchr/Teeny.entitlements; sourceTree = SOURCE_ROOT; };
+		E238BAEE1B5405380094AF41 /* Teeny.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.entitlements; name = Teeny.entitlements; path = App/Teeny.entitlements; sourceTree = SOURCE_ROOT; };
 		E238BB051B571AFF0094AF41 /* ImageUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageUtils.swift; sourceTree = "<group>"; };
 		E23C010C1CE243F2009C56B2 /* Keys.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = Keys.md; sourceTree = "<group>"; };
 		E23C010E1CE4D73B009C56B2 /* DisplayPhoto.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = DisplayPhoto.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
@@ -477,7 +477,7 @@
 		E23EC4CD1DBD44DB00EBCD42 /* ChannelCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChannelCell.swift; sourceTree = "<group>"; };
 		E241D1581B1B3FCE00702E01 /* UIView+BorderLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+BorderLayer.h"; sourceTree = "<group>"; };
 		E241D1591B1B3FCE00702E01 /* UIView+BorderLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+BorderLayer.m"; sourceTree = "<group>"; };
-		E24493C81F2396A000C705FD /* DataSourceController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DataSourceController.swift; path = Patchr/DataSourceController.swift; sourceTree = "<group>"; };
+		E24493C81F2396A000C705FD /* DataSourceController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DataSourceController.swift; path = App/DataSourceController.swift; sourceTree = "<group>"; };
 		E2473E8C1F42281B00F5C19E /* CommentsButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommentsButton.swift; sourceTree = "<group>"; };
 		E24773441DCA254F00EFB46F /* FloatPhoneField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FloatPhoneField.swift; sourceTree = "<group>"; };
 		E2499E501F265136002C0F16 /* MessageEditViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageEditViewController.swift; sourceTree = "<group>"; };
@@ -495,7 +495,7 @@
 		E25327C71B13D34100990A81 /* notification_candi_discovered_soft.aac */ = {isa = PBXFileReference; lastKnownFileType = file; path = notification_candi_discovered_soft.aac; sourceTree = "<group>"; };
 		E25327C81B13D34200990A81 /* notification_carme.aac */ = {isa = PBXFileReference; lastKnownFileType = file; path = notification_carme.aac; sourceTree = "<group>"; };
 		E25327C91B13D34200990A81 /* notification_pop.aac */ = {isa = PBXFileReference; lastKnownFileType = file; path = notification_pop.aac; sourceTree = "<group>"; };
-		E25327D11B13DEF800990A81 /* AudioController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AudioController.swift; path = Patchr/AudioController.swift; sourceTree = "<group>"; };
+		E25327D11B13DEF800990A81 /* AudioController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AudioController.swift; path = App/AudioController.swift; sourceTree = "<group>"; };
 		E25617F31E02F8D000E31240 /* AirScrimButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirScrimButton.swift; sourceTree = "<group>"; };
 		E256B4271BD3DDC900EBF894 /* AirTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirTableViewCell.swift; sourceTree = "<group>"; };
 		E258DF981F3A1CA1004687CC /* ChannelPickerCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ChannelPickerCell.xib; sourceTree = "<group>"; };
@@ -532,12 +532,12 @@
 		E2816B321F003A650049E84B /* ServiceAccountProd.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = ServiceAccountProd.json; sourceTree = "<group>"; };
 		E2816B361F003D580049E84B /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "Dev/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		E2816B391F003D700049E84B /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "Prod/GoogleService-Info.plist"; sourceTree = "<group>"; };
-		E2816C1D1F0468740049E84B /* GoogleStorage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = GoogleStorage.swift; path = Patchr/GoogleStorage.swift; sourceTree = "<group>"; };
+		E2816C1D1F0468740049E84B /* GoogleStorage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = GoogleStorage.swift; path = App/GoogleStorage.swift; sourceTree = "<group>"; };
 		E281776D1B5B0EE200D65AC1 /* Reporting.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Reporting.swift; sourceTree = "<group>"; };
 		E28915901C5A85CF005D7AA0 /* .xctool-args */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ".xctool-args"; sourceTree = "<group>"; };
 		E28915921C5AD528005D7AA0 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		E28A481E1DE72E0400A01B46 /* BaseTableController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseTableController.swift; sourceTree = "<group>"; };
-		E28D565E1BB1849F00BFD433 /* ReachabilityManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ReachabilityManager.swift; path = Patchr/ReachabilityManager.swift; sourceTree = "<group>"; };
+		E28D565E1BB1849F00BFD433 /* ReachabilityManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ReachabilityManager.swift; path = App/ReachabilityManager.swift; sourceTree = "<group>"; };
 		E290749F1E9D2278001E0609 /* EmojiCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = EmojiCell.xib; sourceTree = "<group>"; };
 		E29074A11E9D3554001E0609 /* AirAddReactionButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirAddReactionButton.swift; sourceTree = "<group>"; };
 		E29074A31E9D5897001E0609 /* ReactionCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ReactionCell.xib; sourceTree = "<group>"; };
@@ -564,9 +564,9 @@
 		E2B8A4B31CE7818B00A28D3A /* CKRadialMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CKRadialMenu.h; sourceTree = "<group>"; };
 		E2B8A4B51CE7875400A28D3A /* AirRadialMenu.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = AirRadialMenu.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		E2BC532A1DE20E6F00C97A2C /* AirTextFieldCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirTextFieldCell.swift; sourceTree = "<group>"; };
-		E2BC53321DE5D54600C97A2C /* BingController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = BingController.swift; path = Patchr/BingController.swift; sourceTree = "<group>"; };
-		E2BC53361DE5DE4500C97A2C /* StateController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = StateController.swift; path = Patchr/StateController.swift; sourceTree = "<group>"; };
-		E2BC53381DE5DE5600C97A2C /* UserController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = UserController.swift; path = Patchr/UserController.swift; sourceTree = "<group>"; };
+		E2BC53321DE5D54600C97A2C /* BingController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = BingController.swift; path = App/BingController.swift; sourceTree = "<group>"; };
+		E2BC53361DE5DE4500C97A2C /* StateController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = StateController.swift; path = App/StateController.swift; sourceTree = "<group>"; };
+		E2BC53381DE5DE5600C97A2C /* UserController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = UserController.swift; path = App/UserController.swift; sourceTree = "<group>"; };
 		E2BC533A1DE5E53600C97A2C /* NGAParallaxMotion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NGAParallaxMotion.h; sourceTree = "<group>"; };
 		E2BC533B1DE5E53600C97A2C /* NGAParallaxMotion.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NGAParallaxMotion.m; sourceTree = "<group>"; };
 		E2BC533D1DE5E7EC00C97A2C /* Http.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Http.swift; sourceTree = "<group>"; };
@@ -650,7 +650,7 @@
 		7D3D39C01A6F086F00A44CB2 = {
 			isa = PBXGroup;
 			children = (
-				7D3D39CB1A6F086F00A44CB2 /* Patchr */,
+				7D3D39CB1A6F086F00A44CB2 /* App */,
 				7D3D39CE1A6F086F00A44CB2 /* AppDelegate.swift */,
 				E25327D11B13DEF800990A81 /* AudioController.swift */,
 				E2BC53321DE5D54600C97A2C /* BingController.swift */,
@@ -677,7 +677,7 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		7D3D39CB1A6F086F00A44CB2 /* Patchr */ = {
+		7D3D39CB1A6F086F00A44CB2 /* App */ = {
 			isa = PBXGroup;
 			children = (
 				E20C74321DD8C15800D90A4D /* Animation */,
@@ -697,7 +697,7 @@
 				E246E3111B740154007327F5 /* Views */,
 				E2CE389F1AEFBF7600710227 /* Widgets */,
 			);
-			path = Patchr;
+			path = App;
 			sourceTree = "<group>";
 		};
 		7DA730701A71ACA5008C25FA /* Model */ = {
@@ -1487,7 +1487,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "GOOGLE_APP_ID=1:148529190495:ios:2e74793bf3076ad4\n\"${PODS_ROOT}\"/FirebaseCrash/upload-sym \"${SRCROOT}/Patchr/ServiceAccountProd.json\"";
+			shellScript = "GOOGLE_APP_ID=1:148529190495:ios:2e74793bf3076ad4\n\"${PODS_ROOT}\"/FirebaseCrash/upload-sym \"${SRCROOT}/App/ServiceAccountProd.json\"";
 		};
 		E2DB43511EB4F2C400B1F78B /* Warn about TODO: and FIXME: */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -1515,7 +1515,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "GOOGLE_APP_ID=1:919324191724:ios:2e74793bf3076ad4\n\"${PODS_ROOT}\"/FirebaseCrash/upload-sym \"${SRCROOT}/Patchr/ServiceAccountDev.json\"";
+			shellScript = "GOOGLE_APP_ID=1:919324191724:ios:2e74793bf3076ad4\n\"${PODS_ROOT}\"/FirebaseCrash/upload-sym \"${SRCROOT}/App/ServiceAccountDev.json\"";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -1933,7 +1933,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon3;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_MODULE_DEBUGGING = YES;
-				CODE_SIGN_ENTITLEMENTS = Patchr/Teeny.entitlements;
+				CODE_SIGN_ENTITLEMENTS = App/Teeny.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
@@ -1945,7 +1945,7 @@
 				);
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
-				INFOPLIST_FILE = Patchr/Info.plist;
+				INFOPLIST_FILE = App/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
@@ -1988,7 +1988,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.3meters.patchr.ios;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_OBJC_BRIDGING_HEADER = Patchr/BridgingHeader.h;
+				SWIFT_OBJC_BRIDGING_HEADER = App/BridgingHeader.h;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALID_ARCHS = "arm64 armv7 armv7s i386 x86_64";
 			};
@@ -2002,7 +2002,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon3;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_MODULE_DEBUGGING = NO;
-				CODE_SIGN_ENTITLEMENTS = Patchr/Teeny.entitlements;
+				CODE_SIGN_ENTITLEMENTS = App/Teeny.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				ENABLE_BITCODE = NO;
@@ -2012,7 +2012,7 @@
 					"$(PROJECT_DIR)/Frameworks",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
-				INFOPLIST_FILE = Patchr/Info.plist;
+				INFOPLIST_FILE = App/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
@@ -2054,7 +2054,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.3meters.patchr.ios;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_OBJC_BRIDGING_HEADER = Patchr/BridgingHeader.h;
+				SWIFT_OBJC_BRIDGING_HEADER = App/BridgingHeader.h;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALID_ARCHS = "arm64 armv7 armv7s i386 x86_64";
 			};
@@ -2110,7 +2110,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon3;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_MODULE_DEBUGGING = NO;
-				CODE_SIGN_ENTITLEMENTS = Patchr/Teeny.entitlements;
+				CODE_SIGN_ENTITLEMENTS = App/Teeny.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				ENABLE_BITCODE = NO;
@@ -2120,7 +2120,7 @@
 					"$(PROJECT_DIR)/Frameworks",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
-				INFOPLIST_FILE = Patchr/Info.plist;
+				INFOPLIST_FILE = App/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
@@ -2161,7 +2161,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.3meters.patchr.ios;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_OBJC_BRIDGING_HEADER = Patchr/BridgingHeader.h;
+				SWIFT_OBJC_BRIDGING_HEADER = App/BridgingHeader.h;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALID_ARCHS = "arm64 armv7 armv7s i386 x86_64";
 			};
@@ -2175,7 +2175,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon3;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_MODULE_DEBUGGING = YES;
-				CODE_SIGN_ENTITLEMENTS = Patchr/Teeny.entitlements;
+				CODE_SIGN_ENTITLEMENTS = App/Teeny.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
@@ -2188,7 +2188,7 @@
 				);
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
-				INFOPLIST_FILE = Patchr/Info.plist;
+				INFOPLIST_FILE = App/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
@@ -2231,7 +2231,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.3meters.patchr.ios;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_OBJC_BRIDGING_HEADER = Patchr/BridgingHeader.h;
+				SWIFT_OBJC_BRIDGING_HEADER = App/BridgingHeader.h;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALID_ARCHS = "arm64 armv7 armv7s i386 x86_64";
 			};
@@ -2245,7 +2245,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon3;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_MODULE_DEBUGGING = NO;
-				CODE_SIGN_ENTITLEMENTS = Patchr/Teeny.entitlements;
+				CODE_SIGN_ENTITLEMENTS = App/Teeny.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				DEVELOPMENT_TEAM = 7542324V6B;
@@ -2256,7 +2256,7 @@
 					"$(PROJECT_DIR)/Frameworks",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
-				INFOPLIST_FILE = Patchr/Info.plist;
+				INFOPLIST_FILE = App/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
@@ -2298,7 +2298,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.3meters.patchr.ios;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_OBJC_BRIDGING_HEADER = Patchr/BridgingHeader.h;
+				SWIFT_OBJC_BRIDGING_HEADER = App/BridgingHeader.h;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALID_ARCHS = "arm64 armv7 armv7s i386 x86_64";
 			};
@@ -2312,7 +2312,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon3;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_MODULE_DEBUGGING = NO;
-				CODE_SIGN_ENTITLEMENTS = Patchr/Teeny.entitlements;
+				CODE_SIGN_ENTITLEMENTS = App/Teeny.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				DEVELOPMENT_TEAM = 7542324V6B;
@@ -2323,7 +2323,7 @@
 					"$(PROJECT_DIR)/Frameworks",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
-				INFOPLIST_FILE = Patchr/Info.plist;
+				INFOPLIST_FILE = App/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
@@ -2364,7 +2364,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.3meters.patchr.ios;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_OBJC_BRIDGING_HEADER = Patchr/BridgingHeader.h;
+				SWIFT_OBJC_BRIDGING_HEADER = App/BridgingHeader.h;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALID_ARCHS = "arm64 armv7 armv7s i386 x86_64";
 			};
