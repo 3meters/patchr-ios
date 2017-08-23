@@ -36,7 +36,7 @@ class FireUser: NSObject {
         }
     }
     
-    init(dict: [String: Any], id: String?) {
+    init(dict: [String: Any], membership: [String: Any]? = nil, id: String?) {
         self.id = id
         self.createdAt = dict["created_at"] as? Int64
         self.createdBy = dict["created_by"] as? String
@@ -46,6 +46,9 @@ class FireUser: NSObject {
         self.developer = dict["developer"] as? Bool
         if (dict["profile"] as? [String : Any]) != nil {
             self.profile = FireProfile(dict: dict["profile"] as! [String : Any])
+        }
+        if membership != nil {
+            self.membership = Membership(dict: membership!)
         }
     }
     

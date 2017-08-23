@@ -12,13 +12,15 @@ class UserQuery: NSObject {
 	var authHandle: AuthStateDidChangeListenerHandle!
 	var onlineHandle: UInt!
 	var block: ((Error?, FireUser?) -> Swift.Void)!
+    var membership: [String: Any]?
 	var userPath: String!
 	var userHandle: UInt!
 	var user: FireUser!
 
-	init(userId: String, trackPresence: Bool = false) {
+    init(userId: String, membership: [String: Any]? = nil, trackPresence: Bool = false) {
 		super.init()
 		self.userPath = "users/\(userId)"
+        self.membership = membership
 		if trackPresence {
 			self.onlineHandle = FireController.db.child(".info/connected").observe(.value, with: { [weak self] snap in
 				guard let this = self else { return }
@@ -45,7 +47,7 @@ class UserQuery: NSObject {
 		self.userHandle = FireController.db.child(self.userPath).observe(.value, with: { [weak self] snap in
 			guard let this = self else { return }
 			if let value = snap.value as? [String: Any] {
-				this.user = FireUser(dict: value, id: snap.key)
+                this.user = FireUser(dict: value, membership: this.membership, id: snap.key)
                 this.block(nil, this.user)
 			}
 		}, withCancel: { [weak self] error in
@@ -62,7 +64,7 @@ class UserQuery: NSObject {
 		FireController.db.child(self.userPath).observeSingleEvent(of: .value, with: { [weak self] snap in
 			guard let this = self else { return }
             if let value = snap.value as? [String: Any] {
-                this.user = FireUser(dict: value, id: snap.key)
+                this.user = FireUser(dict: value, membership: this.membership, id: snap.key)
                 this.block(nil, this.user)
             }
 		}, withCancel: { [weak self] error in

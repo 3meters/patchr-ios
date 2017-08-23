@@ -11,6 +11,6 @@
 #endif
 
 
-FOUNDATION_EXPORT double Pods_Patchr_DevVersionNumber;
-FOUNDATION_EXPORT const unsigned char Pods_Patchr_DevVersionString[];
+FOUNDATION_EXPORT double Pods_TeenyVersionNumber;
+FOUNDATION_EXPORT const unsigned char Pods_TeenyVersionString[];
 

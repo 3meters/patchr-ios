@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		0B8D01CCCD1727D573CCC8DA /* Pods_Patchr_Dev.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D1F81171C9B92B5EBA6D333 /* Pods_Patchr_Dev.framework */; };
 		7D021ABE1A9409450047DAAE /* PasswordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D021ABD1A9409450047DAAE /* PasswordViewController.swift */; };
 		7D39D3C51ABA21B200275759 /* CALayer+XibConfiguration.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D39D3C41ABA21B200275759 /* CALayer+XibConfiguration.m */; };
 		7D3D39CF1A6F086F00A44CB2 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D3D39CE1A6F086F00A44CB2 /* AppDelegate.swift */; };
@@ -15,6 +14,7 @@
 		844D6E371AA6550400EE71ED /* PhotoChooserUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 844D6E361AA6550400EE71ED /* PhotoChooserUI.swift */; };
 		8468F81F1A9D09D1007D6EE6 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 8468F8211A9D09D1007D6EE6 /* Localizable.strings */; };
 		84EF12AC1AA904700043EBBA /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84EF12AB1AA904700043EBBA /* Utils.swift */; };
+		88D955416591098ED48252F1 /* Pods_Teeny.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF867EF4443716D8478B68A4 /* Pods_Teeny.framework */; };
 		9FDCC02817FBC4B31C6CB796 /* AirReactionToolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FDCC3EBF074337408E968D0 /* AirReactionToolbar.swift */; };
 		9FDCC0B1FBF9425A99BD2185 /* FireChannel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FDCCDE61C162E20DE3909AC /* FireChannel.swift */; };
 		9FDCC14A3F9BFB4B39C54AA2 /* ChannelQuery.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FDCCE483C7DF6C69EC46E17 /* ChannelQuery.swift */; };
@@ -35,7 +35,7 @@
 		9FDCCE62CE764FDC39D41C5F /* ProfileEditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FDCCE5E0AA449B739AD0137 /* ProfileEditViewController.swift */; };
 		9FDCCEE8BA867A541B95EB3A /* SettingsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FDCCA7AB0285558DFFDF2C1 /* SettingsTableViewController.swift */; };
 		9FDCCFD4969C57E5231CF509 /* AccountEditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FDCCBBC7BF1C0419007B9F9 /* AccountEditViewController.swift */; };
-		BF98B6F9D3FF1C2F37B5F0C9 /* Pods_Patchr.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CAF3CBC8351F3118FD6F9491 /* Pods_Patchr.framework */; };
+		B54501825B36289EE7AA7376 /* Pods_Teeny_Dev.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9699FFD4921DCD4EA0F0D802 /* Pods_Teeny_Dev.framework */; };
 		E20004DF1B094ACA00425694 /* PasswordEditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20004DE1B094ACA00425694 /* PasswordEditViewController.swift */; };
 		E200E62F1DDD2A3E00E3457F /* EmailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E200E62E1DDD2A3E00E3457F /* EmailViewController.swift */; };
 		E203BBCB1E69CDDA00589071 /* InviteViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E203BBCA1E69CDDA00589071 /* InviteViewController.swift */; };
@@ -155,7 +155,6 @@
 		E2AA50C21F3E7152007A9D6E /* InviteMessageController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2AA50C01F3E7152007A9D6E /* InviteMessageController.swift */; };
 		E2AA50C51F3F8640007A9D6E /* ObjC.m in Sources */ = {isa = PBXBuildFile; fileRef = E2AA50C41F3F8640007A9D6E /* ObjC.m */; };
 		E2AA50C61F3F8640007A9D6E /* ObjC.m in Sources */ = {isa = PBXBuildFile; fileRef = E2AA50C41F3F8640007A9D6E /* ObjC.m */; };
-		E2AC5FAC1E37DC6400C95A60 /* DropdownTransitionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2AC5FAB1E37DC6400C95A60 /* DropdownTransitionManager.swift */; };
 		E2B2CAB21C553A8900CAE183 /* BaseEditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2B2CAB11C553A8900CAE183 /* BaseEditViewController.swift */; };
 		E2B4590E1BC1E76C00155659 /* SwiftyJSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D01FA3A1A705D8700DD6DFA /* SwiftyJSON.swift */; };
 		E2B8A4B41CE7818B00A28D3A /* CKRadialMenu.m in Sources */ = {isa = PBXBuildFile; fileRef = E2B8A4B21CE7818B00A28D3A /* CKRadialMenu.m */; };
@@ -274,7 +273,6 @@
 		E2DB42F11EB4F2C400B1F78B /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84EF12AB1AA904700043EBBA /* Utils.swift */; };
 		E2DB42F21EB4F2C400B1F78B /* FireAttachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2CA16FE1DB95DDB00F99E1D /* FireAttachment.swift */; };
 		E2DB42F31EB4F2C400B1F78B /* CaptionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E23C01101CE4F771009C56B2 /* CaptionView.swift */; };
-		E2DB42F41EB4F2C400B1F78B /* DropdownTransitionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2AC5FAB1E37DC6400C95A60 /* DropdownTransitionManager.swift */; };
 		E2DB42F51EB4F2C400B1F78B /* DropdownButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E27CE27F1E632E4800149305 /* DropdownButton.swift */; };
 		E2DB42F61EB4F2C400B1F78B /* AirTokenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E26A02FE1DF5DC5800EE32D3 /* AirTokenView.swift */; };
 		E2DB42F71EB4F2C400B1F78B /* PHPhotoLibrary+PhotoAsset.swift in Sources */ = {isa = PBXBuildFile; fileRef = E26BBF971DB5734F00038754 /* PHPhotoLibrary+PhotoAsset.swift */; };
@@ -360,17 +358,14 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		1ABF81DC9DEDDD69FBC066D6 /* Pods-Patchr Dev.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Patchr Dev.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Patchr Dev/Pods-Patchr Dev.debug.xcconfig"; sourceTree = "<group>"; };
-		34324E6AEB307329B941DA59 /* Pods-Patchr-Dev.adhoc.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Patchr-Dev.adhoc.xcconfig"; path = "Pods/Target Support Files/Pods-Patchr-Dev/Pods-Patchr-Dev.adhoc.xcconfig"; sourceTree = "<group>"; };
-		421F7AD838B3B4E49DF13B29 /* Pods-Patchr.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Patchr.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Patchr/Pods-Patchr.debug.xcconfig"; sourceTree = "<group>"; };
-		4D1F81171C9B92B5EBA6D333 /* Pods_Patchr_Dev.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Patchr_Dev.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		4F4317476EBE67AF9D4058C9 /* Pods-Patchr.adhoc.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Patchr.adhoc.xcconfig"; path = "Pods/Target Support Files/Pods-Patchr/Pods-Patchr.adhoc.xcconfig"; sourceTree = "<group>"; };
-		533DCBF83C432DADDB421074 /* Pods-Patchr Dev.adhoc.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Patchr Dev.adhoc.xcconfig"; path = "Pods/Target Support Files/Pods-Patchr Dev/Pods-Patchr Dev.adhoc.xcconfig"; sourceTree = "<group>"; };
+		2BA1012D1A691BE325EC056D /* Pods-Teeny-Dev.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Teeny-Dev.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Teeny-Dev/Pods-Teeny-Dev.debug.xcconfig"; sourceTree = "<group>"; };
+		5366E22FCA4E7CE62DD3E826 /* Pods-Teeny-Dev.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Teeny-Dev.release.xcconfig"; path = "Pods/Target Support Files/Pods-Teeny-Dev/Pods-Teeny-Dev.release.xcconfig"; sourceTree = "<group>"; };
+		6A7663A8C402DE197D930CE6 /* Pods-Teeny.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Teeny.release.xcconfig"; path = "Pods/Target Support Files/Pods-Teeny/Pods-Teeny.release.xcconfig"; sourceTree = "<group>"; };
 		7D01FA3A1A705D8700DD6DFA /* SwiftyJSON.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwiftyJSON.swift; sourceTree = "<group>"; };
 		7D021ABD1A9409450047DAAE /* PasswordViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = PasswordViewController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		7D39D3C31ABA21B200275759 /* CALayer+XibConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "CALayer+XibConfiguration.h"; sourceTree = "<group>"; };
 		7D39D3C41ABA21B200275759 /* CALayer+XibConfiguration.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "CALayer+XibConfiguration.m"; sourceTree = "<group>"; };
-		7D3D39C91A6F086F00A44CB2 /* Patchr.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Patchr.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		7D3D39C91A6F086F00A44CB2 /* Teeny.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Teeny.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7D3D39CD1A6F086F00A44CB2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		7D3D39CE1A6F086F00A44CB2 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; lineEnding = 0; name = AppDelegate.swift; path = Patchr/AppDelegate.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		7D3D39D51A6F086F00A44CB2 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
@@ -378,7 +373,7 @@
 		844D6E361AA6550400EE71ED /* PhotoChooserUI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = PhotoChooserUI.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		8468F8201A9D09D1007D6EE6 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		84EF12AB1AA904700043EBBA /* Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
-		94070891C85E295AE0F1A020 /* Pods-Patchr Dev.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Patchr Dev.release.xcconfig"; path = "Pods/Target Support Files/Pods-Patchr Dev/Pods-Patchr Dev.release.xcconfig"; sourceTree = "<group>"; };
+		9699FFD4921DCD4EA0F0D802 /* Pods_Teeny_Dev.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Teeny_Dev.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		9FDCC049778239D3F3D452DB /* nexus-7-aircandi.psd */ = {isa = PBXFileReference; lastKnownFileType = file.psd; path = "nexus-7-aircandi.psd"; sourceTree = "<group>"; };
 		9FDCC06A84126B197626CEB2 /* PhotoSearchController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = PhotoSearchController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		9FDCC1090EAA7D7799F16058 /* PhotoControl.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotoControl.swift; sourceTree = "<group>"; };
@@ -443,9 +438,10 @@
 		9FDCCF1B16FEE7BE42F9A731 /* channel_framed.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = channel_framed.png; sourceTree = "<group>"; };
 		9FDCCF46E5C9BD1E20E59536 /* photo_edit_framed.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = photo_edit_framed.png; sourceTree = "<group>"; };
 		9FDCCFBA14298172864A2DAB /* Free iPhone Mockup Generator & App Demo Videos by Placeit.webloc */ = {isa = PBXFileReference; lastKnownFileType = file.webloc; path = "Free iPhone Mockup Generator & App Demo Videos by Placeit.webloc"; sourceTree = "<group>"; };
-		B6B2F7BDE6B4FBC649A2E3AA /* Pods-Patchr.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Patchr.release.xcconfig"; path = "Pods/Target Support Files/Pods-Patchr/Pods-Patchr.release.xcconfig"; sourceTree = "<group>"; };
-		C6DFD98B47B1A1657ECD09B3 /* Pods-Patchr-Dev.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Patchr-Dev.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Patchr-Dev/Pods-Patchr-Dev.debug.xcconfig"; sourceTree = "<group>"; };
-		CAF3CBC8351F3118FD6F9491 /* Pods_Patchr.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Patchr.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B9AE7D6D6BF8933855ECA54F /* Pods-Teeny.adhoc.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Teeny.adhoc.xcconfig"; path = "Pods/Target Support Files/Pods-Teeny/Pods-Teeny.adhoc.xcconfig"; sourceTree = "<group>"; };
+		C86F973614EE206EF42E568D /* Pods-Teeny.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Teeny.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Teeny/Pods-Teeny.debug.xcconfig"; sourceTree = "<group>"; };
+		CEEE33809BD3DB5068E015C6 /* Pods-Teeny-Dev.adhoc.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Teeny-Dev.adhoc.xcconfig"; path = "Pods/Target Support Files/Pods-Teeny-Dev/Pods-Teeny-Dev.adhoc.xcconfig"; sourceTree = "<group>"; };
+		CF867EF4443716D8478B68A4 /* Pods_Teeny.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Teeny.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E20004DE1B094ACA00425694 /* PasswordEditViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = PasswordEditViewController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		E200E62E1DDD2A3E00E3457F /* EmailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = EmailViewController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		E203BBCA1E69CDDA00589071 /* InviteViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = InviteViewController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
@@ -473,7 +469,7 @@
 		E238BACF1B5088A40094AF41 /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
 		E238BAD51B50907F0094AF41 /* Accounts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accounts.framework; path = System/Library/Frameworks/Accounts.framework; sourceTree = SDKROOT; };
 		E238BAD71B5090870094AF41 /* Social.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Social.framework; path = System/Library/Frameworks/Social.framework; sourceTree = SDKROOT; };
-		E238BAEE1B5405380094AF41 /* Patchr.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = Patchr.entitlements; path = Patchr/Patchr.entitlements; sourceTree = SOURCE_ROOT; };
+		E238BAEE1B5405380094AF41 /* Teeny.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.entitlements; name = Teeny.entitlements; path = Patchr/Teeny.entitlements; sourceTree = SOURCE_ROOT; };
 		E238BB051B571AFF0094AF41 /* ImageUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageUtils.swift; sourceTree = "<group>"; };
 		E23C010C1CE243F2009C56B2 /* Keys.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = Keys.md; sourceTree = "<group>"; };
 		E23C010E1CE4D73B009C56B2 /* DisplayPhoto.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = DisplayPhoto.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
@@ -563,7 +559,6 @@
 		E2AA50C01F3E7152007A9D6E /* InviteMessageController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InviteMessageController.swift; sourceTree = "<group>"; };
 		E2AA50C31F3F8626007A9D6E /* ObjC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObjC.h; sourceTree = "<group>"; };
 		E2AA50C41F3F8640007A9D6E /* ObjC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ObjC.m; sourceTree = "<group>"; };
-		E2AC5FAB1E37DC6400C95A60 /* DropdownTransitionManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DropdownTransitionManager.swift; sourceTree = "<group>"; };
 		E2B2CAB11C553A8900CAE183 /* BaseEditViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = BaseEditViewController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		E2B8A4B21CE7818B00A28D3A /* CKRadialMenu.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = CKRadialMenu.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		E2B8A4B31CE7818B00A28D3A /* CKRadialMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CKRadialMenu.h; sourceTree = "<group>"; };
@@ -596,7 +591,7 @@
 		E2D654FA1E0C9EBB00714BA9 /* UnreadQuery.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UnreadQuery.swift; sourceTree = "<group>"; };
 		E2DA16D81DD0F7280096D86F /* AirUIView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirUIView.swift; sourceTree = "<group>"; };
 		E2DA16DC1DD11B7A0096D86F /* AirToggleImage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirToggleImage.swift; sourceTree = "<group>"; };
-		E2DB43591EB4F2C400B1F78B /* Patchr-Dev.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Patchr-Dev.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		E2DB43591EB4F2C400B1F78B /* Teeny-Dev.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Teeny-Dev.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E2E271281C5D1ED600E36804 /* BranchProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = BranchProvider.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		E2E9AAA61CEF86470057698F /* AirNavigationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirNavigationController.swift; sourceTree = "<group>"; };
 		E2EEE90D1E99470D0085565E /* AirReactionButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirReactionButton.swift; sourceTree = "<group>"; };
@@ -612,7 +607,6 @@
 		E2FFD38A1DF32D3200FD75C7 /* Debouncer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Debouncer.swift; sourceTree = "<group>"; };
 		E2FFD38C1DF3441C00FD75C7 /* Firebase.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = Firebase.md; sourceTree = "<group>"; };
 		E2FFD38E1DF4817700FD75C7 /* AirCheckBox.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirCheckBox.swift; sourceTree = "<group>"; };
-		F3792D5363FE5E34D96DD7FA /* Pods-Patchr-Dev.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Patchr-Dev.release.xcconfig"; path = "Pods/Target Support Files/Pods-Patchr-Dev/Pods-Patchr-Dev.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -629,7 +623,7 @@
 				E238BAD01B5088A40094AF41 /* MobileCoreServices.framework in Frameworks */,
 				E238BAD81B5090870094AF41 /* Social.framework in Frameworks */,
 				E238BACC1B50888C0094AF41 /* SystemConfiguration.framework in Frameworks */,
-				BF98B6F9D3FF1C2F37B5F0C9 /* Pods_Patchr.framework in Frameworks */,
+				88D955416591098ED48252F1 /* Pods_Teeny.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -646,7 +640,7 @@
 				E2DB432D1EB4F2C400B1F78B /* MobileCoreServices.framework in Frameworks */,
 				E2DB432E1EB4F2C400B1F78B /* Social.framework in Frameworks */,
 				E2DB432F1EB4F2C400B1F78B /* SystemConfiguration.framework in Frameworks */,
-				0B8D01CCCD1727D573CCC8DA /* Pods_Patchr_Dev.framework in Frameworks */,
+				B54501825B36289EE7AA7376 /* Pods_Teeny_Dev.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -677,8 +671,8 @@
 		7D3D39CA1A6F086F00A44CB2 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				7D3D39C91A6F086F00A44CB2 /* Patchr.app */,
-				E2DB43591EB4F2C400B1F78B /* Patchr-Dev.app */,
+				7D3D39C91A6F086F00A44CB2 /* Teeny.app */,
+				E2DB43591EB4F2C400B1F78B /* Teeny-Dev.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -895,8 +889,8 @@
 				E238BACB1B50888C0094AF41 /* SystemConfiguration.framework */,
 				E2FB81411B8640E8006B6690 /* AdobeCreativeSDKCore.framework */,
 				E2F182CF1B4B37BC0020F6BB /* AdobeCreativeSDKImage.framework */,
-				CAF3CBC8351F3118FD6F9491 /* Pods_Patchr.framework */,
-				4D1F81171C9B92B5EBA6D333 /* Pods_Patchr_Dev.framework */,
+				CF867EF4443716D8478B68A4 /* Pods_Teeny.framework */,
+				9699FFD4921DCD4EA0F0D802 /* Pods_Teeny_Dev.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -904,15 +898,12 @@
 		CBCFB05350CA96E040A81097 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				421F7AD838B3B4E49DF13B29 /* Pods-Patchr.debug.xcconfig */,
-				B6B2F7BDE6B4FBC649A2E3AA /* Pods-Patchr.release.xcconfig */,
-				4F4317476EBE67AF9D4058C9 /* Pods-Patchr.adhoc.xcconfig */,
-				1ABF81DC9DEDDD69FBC066D6 /* Pods-Patchr Dev.debug.xcconfig */,
-				94070891C85E295AE0F1A020 /* Pods-Patchr Dev.release.xcconfig */,
-				533DCBF83C432DADDB421074 /* Pods-Patchr Dev.adhoc.xcconfig */,
-				C6DFD98B47B1A1657ECD09B3 /* Pods-Patchr-Dev.debug.xcconfig */,
-				F3792D5363FE5E34D96DD7FA /* Pods-Patchr-Dev.release.xcconfig */,
-				34324E6AEB307329B941DA59 /* Pods-Patchr-Dev.adhoc.xcconfig */,
+				C86F973614EE206EF42E568D /* Pods-Teeny.debug.xcconfig */,
+				6A7663A8C402DE197D930CE6 /* Pods-Teeny.release.xcconfig */,
+				B9AE7D6D6BF8933855ECA54F /* Pods-Teeny.adhoc.xcconfig */,
+				2BA1012D1A691BE325EC056D /* Pods-Teeny-Dev.debug.xcconfig */,
+				5366E22FCA4E7CE62DD3E826 /* Pods-Teeny-Dev.release.xcconfig */,
+				CEEE33809BD3DB5068E015C6 /* Pods-Teeny-Dev.adhoc.xcconfig */,
 			);
 			name = Pods;
 			sourceTree = "<group>";
@@ -933,7 +924,6 @@
 			children = (
 				9FDCC87DC2923CE4A6F17C1E /* SlideAnimationController.swift */,
 				9FDCCE482E821C4491DB4117 /* SlideBounceAnimationController.swift */,
-				E2AC5FAB1E37DC6400C95A60 /* DropdownTransitionManager.swift */,
 			);
 			name = Animation;
 			sourceTree = "<group>";
@@ -1204,7 +1194,7 @@
 				E2A603221CD97B7A00FBD55B /* InfoPlist.strings */,
 				7D3D39EE1A6F09CC00A44CB2 /* BridgingHeader.h */,
 				7D3D39CD1A6F086F00A44CB2 /* Info.plist */,
-				E238BAEE1B5405380094AF41 /* Patchr.entitlements */,
+				E238BAEE1B5405380094AF41 /* Teeny.entitlements */,
 			);
 			name = Support;
 			sourceTree = "<group>";
@@ -1212,9 +1202,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		7D3D39C81A6F086F00A44CB2 /* Patchr */ = {
+		7D3D39C81A6F086F00A44CB2 /* Teeny */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 7D3D39E81A6F087000A44CB2 /* Build configuration list for PBXNativeTarget "Patchr" */;
+			buildConfigurationList = 7D3D39E81A6F087000A44CB2 /* Build configuration list for PBXNativeTarget "Teeny" */;
 			buildPhases = (
 				B80F0B659F843AABAF88EC4C /* [CP] Check Pods Manifest.lock */,
 				7D3D39C51A6F086F00A44CB2 /* Sources */,
@@ -1229,14 +1219,14 @@
 			);
 			dependencies = (
 			);
-			name = Patchr;
-			productName = Patchr;
-			productReference = 7D3D39C91A6F086F00A44CB2 /* Patchr.app */;
+			name = Teeny;
+			productName = Teeny;
+			productReference = 7D3D39C91A6F086F00A44CB2 /* Teeny.app */;
 			productType = "com.apple.product-type.application";
 		};
-		E2DB42861EB4F2C400B1F78B /* Patchr-Dev */ = {
+		E2DB42861EB4F2C400B1F78B /* Teeny-Dev */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = E2DB43551EB4F2C400B1F78B /* Build configuration list for PBXNativeTarget "Patchr-Dev" */;
+			buildConfigurationList = E2DB43551EB4F2C400B1F78B /* Build configuration list for PBXNativeTarget "Teeny-Dev" */;
 			buildPhases = (
 				42FB0501B3ED4A3CC18C7BB1 /* [CP] Check Pods Manifest.lock */,
 				E2DB42881EB4F2C400B1F78B /* Sources */,
@@ -1251,9 +1241,9 @@
 			);
 			dependencies = (
 			);
-			name = "Patchr-Dev";
-			productName = Patchr;
-			productReference = E2DB43591EB4F2C400B1F78B /* Patchr-Dev.app */;
+			name = "Teeny-Dev";
+			productName = Teeny;
+			productReference = E2DB43591EB4F2C400B1F78B /* Teeny-Dev.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -1294,7 +1284,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 7D3D39C41A6F086F00A44CB2 /* Build configuration list for PBXProject "Patchr" */;
+			buildConfigurationList = 7D3D39C41A6F086F00A44CB2 /* Build configuration list for PBXProject "Teeny" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -1307,8 +1297,8 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				7D3D39C81A6F086F00A44CB2 /* Patchr */,
-				E2DB42861EB4F2C400B1F78B /* Patchr-Dev */,
+				7D3D39C81A6F086F00A44CB2 /* Teeny */,
+				E2DB42861EB4F2C400B1F78B /* Teeny-Dev */,
 			);
 		};
 /* End PBXProject section */
@@ -1393,7 +1383,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Patchr/Pods-Patchr-frameworks.sh\"\n";
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Teeny/Pods-Teeny-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		2374440078E7354F64F5A6E6 /* [CP] Embed Pods Frameworks */ = {
@@ -1408,7 +1398,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Patchr-Dev/Pods-Patchr-Dev-frameworks.sh\"\n";
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Teeny-Dev/Pods-Teeny-Dev-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		42FB0501B3ED4A3CC18C7BB1 /* [CP] Check Pods Manifest.lock */ = {
@@ -1438,7 +1428,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Patchr/Pods-Patchr-resources.sh\"\n";
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Teeny/Pods-Teeny-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		7DFA37DB1AB7B87B00CFCEE1 /* Warn about TODO: and FIXME: */ = {
@@ -1482,7 +1472,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Patchr-Dev/Pods-Patchr-Dev-resources.sh\"\n";
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Teeny-Dev/Pods-Teeny-Dev-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		E2CF512F1D9C71CF00515506 /* Upload Symbol Files for Firebase */ = {
@@ -1628,7 +1618,6 @@
 				84EF12AC1AA904700043EBBA /* Utils.swift in Sources */,
 				E2CA16FF1DB95DDB00F99E1D /* FireAttachment.swift in Sources */,
 				E23C01111CE4F771009C56B2 /* CaptionView.swift in Sources */,
-				E2AC5FAC1E37DC6400C95A60 /* DropdownTransitionManager.swift in Sources */,
 				E27CE2801E632E4800149305 /* DropdownButton.swift in Sources */,
 				E26A02FF1DF5DC5800EE32D3 /* AirTokenView.swift in Sources */,
 				E26BBF991DB5734F00038754 /* PHPhotoLibrary+PhotoAsset.swift in Sources */,
@@ -1775,7 +1764,6 @@
 				E2DB42F11EB4F2C400B1F78B /* Utils.swift in Sources */,
 				E2DB42F21EB4F2C400B1F78B /* FireAttachment.swift in Sources */,
 				E2DB42F31EB4F2C400B1F78B /* CaptionView.swift in Sources */,
-				E2DB42F41EB4F2C400B1F78B /* DropdownTransitionManager.swift in Sources */,
 				E2DB42F51EB4F2C400B1F78B /* DropdownButton.swift in Sources */,
 				E2DB42F61EB4F2C400B1F78B /* AirTokenView.swift in Sources */,
 				E2DB42F71EB4F2C400B1F78B /* PHPhotoLibrary+PhotoAsset.swift in Sources */,
@@ -1886,7 +1874,7 @@
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_SWIFT_FLAGS = "-D DEBUG";
-				PRODUCT_NAME = Patchr;
+				PRODUCT_NAME = Teeny;
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 3.0;
@@ -1928,7 +1916,7 @@
 				MOMC_NO_INVERSE_RELATIONSHIP_WARNINGS = YES;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				ONLY_ACTIVE_ARCH = NO;
-				PRODUCT_NAME = Patchr;
+				PRODUCT_NAME = Teeny;
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
 				SWIFT_VERSION = 3.0;
@@ -1939,13 +1927,13 @@
 		};
 		7D3D39E91A6F087000A44CB2 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 421F7AD838B3B4E49DF13B29 /* Pods-Patchr.debug.xcconfig */;
+			baseConfigurationReference = C86F973614EE206EF42E568D /* Pods-Teeny.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon3;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_MODULE_DEBUGGING = YES;
-				CODE_SIGN_ENTITLEMENTS = Patchr/Patchr.entitlements;
+				CODE_SIGN_ENTITLEMENTS = Patchr/Teeny.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
@@ -2008,13 +1996,13 @@
 		};
 		7D3D39EA1A6F087000A44CB2 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = B6B2F7BDE6B4FBC649A2E3AA /* Pods-Patchr.release.xcconfig */;
+			baseConfigurationReference = 6A7663A8C402DE197D930CE6 /* Pods-Teeny.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon3;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_MODULE_DEBUGGING = NO;
-				CODE_SIGN_ENTITLEMENTS = Patchr/Patchr.entitlements;
+				CODE_SIGN_ENTITLEMENTS = Patchr/Teeny.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				ENABLE_BITCODE = NO;
@@ -2106,7 +2094,7 @@
 				MOMC_NO_INVERSE_RELATIONSHIP_WARNINGS = YES;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				ONLY_ACTIVE_ARCH = NO;
-				PRODUCT_NAME = Patchr;
+				PRODUCT_NAME = Teeny;
 				SDKROOT = iphoneos;
 				SWIFT_VERSION = 3.0;
 				VALIDATE_PRODUCT = YES;
@@ -2116,13 +2104,13 @@
 		};
 		E253C2E71D80A4AC00F8B7AB /* Adhoc */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 4F4317476EBE67AF9D4058C9 /* Pods-Patchr.adhoc.xcconfig */;
+			baseConfigurationReference = B9AE7D6D6BF8933855ECA54F /* Pods-Teeny.adhoc.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon3;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_MODULE_DEBUGGING = NO;
-				CODE_SIGN_ENTITLEMENTS = Patchr/Patchr.entitlements;
+				CODE_SIGN_ENTITLEMENTS = Patchr/Teeny.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				ENABLE_BITCODE = NO;
@@ -2181,13 +2169,13 @@
 		};
 		E2DB43561EB4F2C400B1F78B /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = C6DFD98B47B1A1657ECD09B3 /* Pods-Patchr-Dev.debug.xcconfig */;
+			baseConfigurationReference = 2BA1012D1A691BE325EC056D /* Pods-Teeny-Dev.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon3;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_MODULE_DEBUGGING = YES;
-				CODE_SIGN_ENTITLEMENTS = Patchr/Patchr.entitlements;
+				CODE_SIGN_ENTITLEMENTS = Patchr/Teeny.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
@@ -2251,13 +2239,13 @@
 		};
 		E2DB43571EB4F2C400B1F78B /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = F3792D5363FE5E34D96DD7FA /* Pods-Patchr-Dev.release.xcconfig */;
+			baseConfigurationReference = 5366E22FCA4E7CE62DD3E826 /* Pods-Teeny-Dev.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon3;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_MODULE_DEBUGGING = NO;
-				CODE_SIGN_ENTITLEMENTS = Patchr/Patchr.entitlements;
+				CODE_SIGN_ENTITLEMENTS = Patchr/Teeny.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				DEVELOPMENT_TEAM = 7542324V6B;
@@ -2318,13 +2306,13 @@
 		};
 		E2DB43581EB4F2C400B1F78B /* Adhoc */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 34324E6AEB307329B941DA59 /* Pods-Patchr-Dev.adhoc.xcconfig */;
+			baseConfigurationReference = CEEE33809BD3DB5068E015C6 /* Pods-Teeny-Dev.adhoc.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon3;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_MODULE_DEBUGGING = NO;
-				CODE_SIGN_ENTITLEMENTS = Patchr/Patchr.entitlements;
+				CODE_SIGN_ENTITLEMENTS = Patchr/Teeny.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				DEVELOPMENT_TEAM = 7542324V6B;
@@ -2385,7 +2373,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		7D3D39C41A6F086F00A44CB2 /* Build configuration list for PBXProject "Patchr" */ = {
+		7D3D39C41A6F086F00A44CB2 /* Build configuration list for PBXProject "Teeny" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				7D3D39E61A6F087000A44CB2 /* Debug */,
@@ -2395,7 +2383,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		7D3D39E81A6F087000A44CB2 /* Build configuration list for PBXNativeTarget "Patchr" */ = {
+		7D3D39E81A6F087000A44CB2 /* Build configuration list for PBXNativeTarget "Teeny" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				7D3D39E91A6F087000A44CB2 /* Debug */,
@@ -2405,7 +2393,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		E2DB43551EB4F2C400B1F78B /* Build configuration list for PBXNativeTarget "Patchr-Dev" */ = {
+		E2DB43551EB4F2C400B1F78B /* Build configuration list for PBXNativeTarget "Teeny-Dev" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				E2DB43561EB4F2C400B1F78B /* Debug */,

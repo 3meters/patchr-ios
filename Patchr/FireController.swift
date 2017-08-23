@@ -85,6 +85,7 @@ class FireController: NSObject {
         
         FireController.db.child("channel-members/\(channelId)/\(userId)").setValue(membership) { error, ref in
             if error != nil {
+                /* Could be denied because channel is missing or channel secret is bad. */
                 Log.w("Permission denied adding channel member")
                 then?(ServiceError(code: 403, message: "Permission denied"), nil)  // permission denied
                 return

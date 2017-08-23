@@ -144,15 +144,14 @@ class MemberListController: BaseTableController {
             let snap = data as! DataSnapshot
             let userId = snap.key
             
-            cell.userQuery = UserQuery(userId: userId)
-            cell.userQuery.once(with: { [weak self, weak cell, weak snap] error, user in
-                guard let this = self, let cell = cell, let snap = snap else { return }
+            cell.userQuery = UserQuery(userId: userId, membership: snap.value as? [String : Any])
+            cell.userQuery.once(with: { [weak self, weak cell] error, user in
+                guard let this = self, let cell = cell else { return }
                 if error != nil {
                     Log.w("Permission denied")
                     return
                 }
                 if user != nil {
-                    user!.membershipFrom(dict: snap.value as! [String : Any])
                     var target = "channel"
                     if this.scope == .reaction {
                         target = "reaction"

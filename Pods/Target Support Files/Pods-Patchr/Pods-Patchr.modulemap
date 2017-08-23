@@ -1,6 +1,0 @@
-framework module Pods_Patchr {
-  umbrella header "Pods-Patchr-umbrella.h"
-
-  export *
-  module * { export * }
-}

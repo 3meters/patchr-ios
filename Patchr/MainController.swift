@@ -251,63 +251,7 @@ class MainController: NSObject, iRateDelegate {
          * Not logged in: email -> username|password -> open channel
          */
         if UserController.instance.authenticated {
-            
-            guard let channelId = link["channel_id"] as? String
-                , let userId = UserController.instance.userId else { return }
-            
-            /* Must be group member or we get permission denied. Weirdly, we can get callbacks on with and withCancel
-               when there is no membership record. So we have to use a flag to prevent double handling. */
-            var inviteProcessing = false
-            self.channelQuery = ChannelQuery(channelId: channelId, userId: userId)
-            self.channelQuery!.once(with: { [weak self] error, channel in
-                guard let this = self else { return }
-                guard !inviteProcessing else { return }
-                inviteProcessing = true
-                if error != nil {
-                    /* Not a group member yet */
-                    Reporting.track("process_invite")
-                    this.processInvite(link: link, member: false, memberRole: nil, flow: flow)  // permission denied means not group member
-                    return
-                }
-                if channel == nil {
-                    /* Channel is gone */
-                    if let topController = UIViewController.topMostViewController() {
-                        let popup = PopupDialog(title: "Channel Missing", message: "Your invitation is to a channel that has been deleted.")
-                        let button = DefaultButton(title: "OK") {
-                            Reporting.track("invite_channel_missing")
-                        }
-                        button.buttonHeight = 48
-                        popup.addButton(button)
-                        topController.present(popup, animated: true)
-                    }
-                    return
-                }
-                Reporting.track("process_invite")
-                this.processInvite(link: link, member: false, memberRole: nil, flow: flow)
-            })
-            
-            
-//            FireController.db.child("channel-members/\(channelId)/\(userId)").observeSingleEvent(of: .value, with: { snap in
-//                guard !inviteProcessing else { return }
-//                inviteProcessing = true
-//                if let membership = snap.value as? [String: Any] {
-//                    /* Already a member */
-//                    let role = membership["role"] as? String
-//                    Reporting.track("process_invite")
-//                    self.processInvite(link: link, member: true, memberRole: role, flow: flow)
-//                }
-//                else {
-//                    /* Not a group member yet */
-//                    Reporting.track("process_invite")
-//                    self.processInvite(link: link, member: false, memberRole: nil, flow: flow)
-//                }
-//            }, withCancel: { error in
-//                /* Not a member yet */
-//                guard !inviteProcessing else { return }
-//                inviteProcessing = true
-//                Reporting.track("process_invite")
-//                self.processInvite(link: link, member: false, memberRole: nil, flow: flow)  // permission denied means not group member
-//            })
+            processInvite(link: link, flow: flow)
         }
         else {
             Reporting.track("pause_invite_for_login")
@@ -318,50 +262,44 @@ class MainController: NSObject, iRateDelegate {
         }
     }
     
-    func processInvite(link: [AnyHashable: Any], member: Bool = false, memberRole: String?, flow: Flow) {
+    func processInvite(link: [AnyHashable: Any], flow: Flow) {
         
-        let userId = UserController.instance.userId!
-        let channelId = link["channel_id"] as! String
+        guard let channelId = link["channel_id"] as? String
+            , let userId = UserController.instance.userId else { return }
         let channelTitle = link["channel_title"] as! String
         let code = link["code"] as! String
         let role = link["role"] as! String
         
-        let isChannelMember = (memberRole != nil)
+        Reporting.track("process_invite")
         
-        /* Check if already a member and not a channel invite */
-        if isChannelMember {
-            if let topController = UIViewController.topMostViewController() {
-                let popup = PopupDialog(title: "Already a Member", message: "You are currently a member of the \(channelTitle) channel!")
-                let button = DefaultButton(title: "OK") {
-                    if flow == .onboardInvite {
-                        StateController.instance.setChannelId(channelId: channelId)
-                        self.showChannel(channelId: channelId)
-                    }
-                }
-                button.buttonHeight = 48
-                popup.addButton(button)
-                topController.present(popup, animated: true)
+        FireController.instance.addUserToChannel(userId: userId
+            , channelId: channelId
+            , code: code
+            , role: role) { [weak self] error, result in
+                
+            guard let this = self else { return }
+            this.progress?.hide(true)
+            if error == nil {
+                this.afterInvite(channelId: channelId, channelTitle: channelTitle)
             }
-            return
-        }
-        else {
-            FireController.instance.addUserToChannel(userId: userId, channelId: channelId, code: code, role: role) { [weak self] error, result in
-                guard let this = self else { return }
-                this.progress?.hide(true)
-                if error == nil {
-                    this.afterChannelInvite(channelId: channelId, channelTitle: channelTitle)
-                }
-                else {
-                    if flow == .onboardInvite {
-                        this.showChannelsGrid()
+            else { // Channel is gone or channel secret is bad
+                if let topController = UIViewController.topMostViewController() {
+                    let popup = PopupDialog(title: "Channel Missing", message: "The \"\(channelTitle)\" channel has been deleted.")
+                    let button = DefaultButton(title: "OK", height: 48) {
+                        Reporting.track("invite_channel_missing")
+                        /* Leave the user at their current location unless onboarding */
+                        if flow == .onboardInvite {
+                            this.showChannelsGrid()
+                        }
                     }
-                    /* Otherwise leave the user at their current location */
+                    popup.addButton(button)
+                    topController.present(popup, animated: true)
                 }
             }
         }
     }
     
-    func afterChannelInvite(channelId: String, channelTitle: String) {
+    func afterInvite(channelId: String, channelTitle: String) {
         
         StateController.instance.setChannelId(channelId: channelId)
         self.showChannel(channelId: channelId) { // User permissions are in place
@@ -371,7 +309,6 @@ class MainController: NSObject, iRateDelegate {
                     let button = DefaultButton(title: "OK".uppercased(), height: 48) {
                         Reporting.track("invite_carry_on")
                     }
-                    button.buttonHeight = 48
                     popup.addButton(button)
                     topController.present(popup, animated: true)
                 }
@@ -418,10 +355,9 @@ extension MainController {
 }
 
 enum Flow: Int {
-    case onboardLogin
-    case onboardSignup
-    case onboardInvite
-    case internalCreate
-    case internalInvite
+    case onboardLogin // Entering app via login
+    case onboardSignup // Entering app via signup
+    case onboardInvite // Login/signup triggered by invite
+    case internalCreate // Authenticated user is creating a new channel
     case none
 }

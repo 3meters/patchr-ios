@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "7D3D39C81A6F086F00A44CB2"
-               BuildableName = "Patchr.app"
-               BlueprintName = "Patchr"
-               ReferencedContainer = "container:Patchr.xcodeproj">
+               BuildableName = "Teeny.app"
+               BlueprintName = "Teeny"
+               ReferencedContainer = "container:Teeny.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -33,9 +33,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "7D3D39C81A6F086F00A44CB2"
-            BuildableName = "Patchr.app"
-            BlueprintName = "Patchr"
-            ReferencedContainer = "container:Patchr.xcodeproj">
+            BuildableName = "Teeny.app"
+            BlueprintName = "Teeny"
+            ReferencedContainer = "container:Teeny.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <AdditionalOptions>
@@ -62,9 +62,9 @@
                   <BuildableReference
                      BuildableIdentifier = "primary"
                      BlueprintIdentifier = "7D3D39C81A6F086F00A44CB2"
-                     BuildableName = "Patchr.app"
-                     BlueprintName = "Patchr"
-                     ReferencedContainer = "container:Patchr.xcodeproj">
+                     BuildableName = "Teeny.app"
+                     BlueprintName = "Teeny"
+                     ReferencedContainer = "container:Teeny.xcodeproj">
                   </BuildableReference>
                </EnvironmentBuildable>
             </ActionContent>
@@ -75,9 +75,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "7D3D39C81A6F086F00A44CB2"
-            BuildableName = "Patchr.app"
-            BlueprintName = "Patchr"
-            ReferencedContainer = "container:Patchr.xcodeproj">
+            BuildableName = "Teeny.app"
+            BlueprintName = "Teeny"
+            ReferencedContainer = "container:Teeny.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <CommandLineArguments>
@@ -120,9 +120,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "7D3D39C81A6F086F00A44CB2"
-            BuildableName = "Patchr.app"
-            BlueprintName = "Patchr"
-            ReferencedContainer = "container:Patchr.xcodeproj">
+            BuildableName = "Teeny.app"
+            BlueprintName = "Teeny"
+            ReferencedContainer = "container:Teeny.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

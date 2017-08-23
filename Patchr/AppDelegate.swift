@@ -41,8 +41,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, MessagingDelegate {
         if #available(iOS 10.0, *) {
             let authOptions: UNAuthorizationOptions = [.alert, .badge, .sound]
             UNUserNotificationCenter.current().requestAuthorization(options: authOptions, completionHandler: {_, _ in })
-            UNUserNotificationCenter.current().delegate = self      // For iOS 10 display notification (sent via APNS)
-            Messaging.messaging().delegate = self   // For iOS 10 data message (sent via FCM)
+            UNUserNotificationCenter.current().delegate = self // For iOS 10 display notification (sent via APNS)
+            Messaging.messaging().delegate = self // For iOS 10 data message (sent via FCM)
         }
         else {
             /* Triggers permission UI if needed */

@@ -2,8 +2,8 @@
 source 'https://github.com/CocoaPods/Specs.git'
 
 plugin 'cocoapods-keys', {
-  :project => "Patchr",
-  :targets => ["Patchr","Patchr-Dev"],
+  :project => "Teeny",
+  :targets => ["Teeny","Teeny-Dev"],
   :keys => [
     "BingSubscriptionKey",      # p1
     "CreativeSdkClientSecret",  # p2
@@ -53,11 +53,11 @@ def shared_pods
     pod 'VTAcknowledgementsViewController','1.2.1'
 end
 
-target 'Patchr' do
+target 'Teeny' do
     shared_pods
 end
 
-target 'Patchr-Dev' do
+target 'Teeny-Dev' do
     shared_pods
 end
 
@@ -65,7 +65,7 @@ plugin 'cocoapods-no-dev-schemes'
 
 post_install do |installer|
     require 'fileutils'
-    FileUtils.cp_r('Pods/Target Support Files/Pods-Patchr/Pods-Patchr-acknowledgements.plist', 'Patchr/Pods-acknowledgements.plist', :remove_destination => true)
+    FileUtils.cp_r('Pods/Target Support Files/Pods-Teeny/Pods-Teeny-acknowledgements.plist', 'Patchr/Pods-acknowledgements.plist', :remove_destination => true)
     installer.pods_project.targets.each do |target|
         target.build_configurations.each do |config|
             config.build_settings['SWIFT_VERSION'] = '3.0'
