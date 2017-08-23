@@ -21,14 +21,14 @@
       "filter": "reaction",
       "background": "./background.png",
       "title": {
-        "text": "Reactions and comments\nlet you respond quickly with style."
+        "text": "Use reactions and comments\nto respond quickly with style."
       }
     },
     {
       "filter": "channel",
       "background": "./background.png",
       "title": {
-        "text": "Social sharing\nwith just the right people."
+        "text": "Share messages and photos\nwith just the right people."
       }
     },
     {
@@ -45,7 +45,7 @@
       "filter": "grid",
       "background": "./background.png",
       "title": {
-        "text": "Channel manager\nwith real-time notifications."
+        "text": "Jump quickly to the\nchannels with recent activity."
       }
     },
     {
