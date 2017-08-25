@@ -180,11 +180,11 @@ class ChannelViewController: BaseTableController {
 	}
 
     func editChannelAction(sender: AnyObject?) {
+        Reporting.track("view_channel_edit")
 		let controller = ChannelEditViewController()
 		let wrapper = AirNavigationController(rootViewController: controller)
 		controller.mode = .update
 		controller.inputChannelId = self.channel.id
-		Reporting.track("view_channel_edit")
 		self.present(wrapper, animated: true, completion: nil)
 	}
 
@@ -323,6 +323,8 @@ class ChannelViewController: BaseTableController {
 		button.imageEdgeInsets = UIEdgeInsetsMake(8, 16, 8, 0)
 		self.menuButton = UIBarButtonItem(customView: button)
         
+        self.headerView.setPhotoButton.addTarget(self, action: #selector(editChannelAction(sender:)), for: .touchUpInside)
+        
         self.navigationItem.hidesBackButton = true
         self.navigationItem.setLeftBarButton(backButton, animated: true)
 		self.navigationItem.setRightBarButtonItems([self.menuButton, UI.spacerFixed, self.galleryButton], animated: true)
@@ -444,6 +446,12 @@ class ChannelViewController: BaseTableController {
             /* Add edit button */
             if this.isOwner() {
                 this.navigationItem.setRightBarButtonItems([this.menuButton, UI.spacerFixed, this.galleryButton, UI.spacerFixed, this.editButton], animated: true)
+                if channel?.photo == nil {
+                    this.headerView.setPhotoButton.fadeIn()
+                }
+                else {
+                    this.headerView.setPhotoButton.fadeOut()
+                }
             }
             
 			/* We do this here so we have tableView sizing */

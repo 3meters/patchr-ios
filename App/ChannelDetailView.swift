@@ -11,6 +11,7 @@ class ChannelDetailView: UIView {
     var contentGroup = UIView()
     var titleGroup = UIView()
     var infoGroup = AirRuleView()
+    var setPhotoButton: UIButton!
     
     var photoView = AirImageView(frame: CGRect.zero)
     var titleLabel = AirLabelDisplay()
@@ -66,6 +67,8 @@ class ChannelDetailView: UIView {
         self.titleLabel.bounds.size.width = self.titleGroup.width()
         self.titleLabel.sizeToFit()
         self.titleLabel.anchorBottomLeft(withLeftPadding: 0, bottomPadding: 0, width: self.titleLabel.width(), height: self.titleLabel.height())
+        
+        self.setPhotoButton.anchorInCenter(withWidth: 48, height: 48)
 
         /* Purpose */
         if self.infoGroup.superview != nil {
@@ -84,7 +87,6 @@ class ChannelDetailView: UIView {
         self.backgroundColor = Theme.colorBackgroundForm
         
         self.infoGroup.backgroundColor = Theme.colorBackgroundTile
-        self.infoGroup.addSubview(self.purposeLabel)
         
         self.photoView.parallaxIntensity = -40
         self.photoView.clipsToBounds = true
@@ -96,10 +98,20 @@ class ChannelDetailView: UIView {
         self.titleLabel.font = UIFont(name: "HelveticaNeue-Light", size: 28)!
         self.titleLabel.textColor = Colors.white
         self.titleLabel.numberOfLines = 2
+        
+        self.setPhotoButton = UIButton(type: .custom)
+        self.setPhotoButton.setImage(UIImage(named: "UIButtonCamera"), for: .normal)
+        self.setPhotoButton.backgroundColor = Theme.colorScrimLighten
+        self.setPhotoButton.cornerRadius = 24
+        self.setPhotoButton.borderWidth = Theme.dimenButtonBorderWidth
+        self.setPhotoButton.borderColor = Colors.clear
+        self.setPhotoButton.alpha = 0
 
         self.purposeLabel.numberOfLines = 0
         
+        self.infoGroup.addSubview(self.purposeLabel)
         self.contentGroup.addSubview(self.photoView)
+        self.contentGroup.addSubview(self.setPhotoButton)
         self.addSubview(contentGroup)
         
         self.contentGroup.clipsToBounds = true
