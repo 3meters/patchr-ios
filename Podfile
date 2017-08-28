@@ -65,7 +65,7 @@ plugin 'cocoapods-no-dev-schemes'
 
 post_install do |installer|
     require 'fileutils'
-    FileUtils.cp_r('Pods/Target Support Files/Pods-Teeny/Pods-Teeny-acknowledgements.plist', 'Patchr/Pods-acknowledgements.plist', :remove_destination => true)
+    FileUtils.cp_r('Pods/Target Support Files/Pods-Teeny/Pods-Teeny-acknowledgements.plist', 'App/Pods-acknowledgements.plist', :remove_destination => true)
     installer.pods_project.targets.each do |target|
         target.build_configurations.each do |config|
             config.build_settings['SWIFT_VERSION'] = '3.0'
