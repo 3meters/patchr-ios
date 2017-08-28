@@ -1,6 +1,6 @@
 //
 //  SettingsTableViewController.swift
-//  Teeny
+//  Patchr
 //
 //  Created by Rob MacEachern on 2015-03-09.
 //  Copyright (c) 2015 3meters. All rights reserved.
@@ -121,7 +121,7 @@ extension AboutViewController {
         if selectedCell == self.softwareLicensesCell {
             Reporting.track("view_software_licenses")
             let controller = VTAcknowledgementsViewController.acknowledgementsViewController()
-            controller?.headerText = "The following third party software may be contained in portions of the Teeny mobile application. We offer our sincere thanks to the open source community for all of their contributions. Carry on!"
+            controller?.headerText = "The following third party software may be contained in portions of the \(Strings.appName) mobile application. We offer our sincere thanks to the open source community for all of their contributions. Carry on!"
             self.navigationController?.pushViewController(controller!, animated: true)
         }
     }

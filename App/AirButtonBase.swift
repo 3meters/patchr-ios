@@ -1,6 +1,6 @@
 //
 //  AirButtonBase.swift
-//  Teeny
+//  Patchr
 //
 //  Created by Jay Massena on 1/3/17.
 //  Copyright © 2017 3meters. All rights reserved.

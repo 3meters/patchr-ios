@@ -1,6 +1,6 @@
 //
 //  AirNavigationBar.swift
-//  Teeny
+//  Patchr
 //
 //  Created by Jay Massena on 3/28/17.
 //  Copyright © 2017 3meters. All rights reserved.

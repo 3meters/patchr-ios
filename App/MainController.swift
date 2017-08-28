@@ -223,12 +223,14 @@ class MainController: NSObject, iRateDelegate {
         
         if let controller = self.containerController.controller as? AirNavigationController {
             if controller.tag == nil || controller.tag != "lobby" {
+                Log.v("Inferred that channels grid already exists based on controller.tag")
                 then?()
                 return
             }
         }
         
         let channelsGrid = AirNavigationController(rootViewController: ChannelGridController(collectionViewLayout: UICollectionViewFlowLayout()))
+        Log.v("Creating channels grid")
 
         /* If transitioning from empty */
         if let emptyController = self.containerController.controller as? EmptyViewController,

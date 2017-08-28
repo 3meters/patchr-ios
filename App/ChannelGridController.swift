@@ -41,11 +41,13 @@ class ChannelGridController: UICollectionViewController {
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		initialize()
-		bind()
 	}
 
 	override func viewWillAppear(_ animated: Bool) {
 		super.viewWillAppear(animated)
+        if self.collectionView?.numberOfItems(inSection: 0) == 0 {
+            bind()
+        }
 	}
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -57,6 +59,11 @@ class ChannelGridController: UICollectionViewController {
         self.view.fillSuperview()
         self.collectionView?.fillSuperview()
 	}
+
+    deinit {
+        Log.v("ChannelGridController released")
+        unbind()
+    }
 
 	/*--------------------------------------------------------------------------------------------
 	* MARK: - Events
@@ -189,7 +196,7 @@ class ChannelGridController: UICollectionViewController {
         button.imageEdgeInsets = UIEdgeInsetsMake(8, 16, 8, 0)
         self.menuButton = UIBarButtonItem(customView: button)
 
-        self.navigationItem.title = "Teeny Channels"
+        self.navigationItem.title = "\(Strings.appName) Channels"
 		self.navigationItem.leftBarButtonItem = self.searchButton
         self.navigationItem.setRightBarButtonItems([self.menuButton, UI.spacerFixed, self.addButton], animated: true)
 
@@ -199,6 +206,8 @@ class ChannelGridController: UICollectionViewController {
 	func bind() {
 
 		if let userId = UserController.instance.userId {
+            
+            unbind()
 
 			let query = FireController.db.child("member-channels/\(userId)").queryOrdered(byChild: "activity_at_desc")
             
@@ -254,6 +263,13 @@ class ChannelGridController: UICollectionViewController {
 			self.view.setNeedsLayout()
 		}
 	}
+    
+    func unbind() {
+        if self.queryController != nil {
+            self.queryController.unbind()
+        }
+        self.totalUnreadsQuery?.remove()
+    }
     
     func showActions(sender: AnyObject?) {
         

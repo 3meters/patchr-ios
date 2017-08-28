@@ -1,6 +1,6 @@
 //
 //  DataSourceController.swift
-//  Teeny
+//  Patchr
 //
 //  Created by Jay Massena on 7/22/17.
 //  Copyright © 2017 3meters. All rights reserved.
@@ -18,7 +18,6 @@ class DataSourceController: NSObject, FUICollectionDelegate {
     
     var populate: ((UIScrollView, IndexPath, Any) -> UIView)!
     var matcher: ((String, Any) -> Bool)?
-    var mapper: ((DataSnapshot, @escaping ((Any?) -> Void)) -> Void)?
     
     var snapshots: FUIArray! // Contains snapshots
     private var dataScreened = [Any]() // Does NOT stay synchronized beyond initial pass
@@ -47,17 +46,6 @@ class DataSourceController: NSObject, FUICollectionDelegate {
         super.init()
     }
     
-    func bind(to scrollView: UIScrollView, populateCell: @escaping (UIScrollView, IndexPath, Any) -> UIView) {
-        self.scrollView = scrollView
-        self.populate = populateCell
-        if let tableView = scrollView as? UITableView {
-            tableView.dataSource = self
-        }
-        else if let collectionView = scrollView as? UICollectionView {
-            collectionView.dataSource = self
-        }
-    }
-    
     func bind(to scrollView: UIScrollView, query: FUIDataObservable, populateCell: @escaping (UIScrollView, IndexPath, Any) -> UIView) {
         self.scrollView = scrollView
         self.populate = populateCell
@@ -68,8 +56,8 @@ class DataSourceController: NSObject, FUICollectionDelegate {
             collectionView.dataSource = self
         }
         self.snapshots = FUIArray(query: query)
-        self.snapshots.delegate = self
-        self.snapshots.observeQuery()
+        self.snapshots.delegate = self // So we get called when there are changes to the synchronized array
+        self.snapshots.observeQuery() // Start synching
     }
     
     func unbind() {
@@ -119,37 +107,11 @@ class DataSourceController: NSObject, FUICollectionDelegate {
         return
     }
     
-    func clearFilter() {
-        self.dataFiltered.removeAll()
-    }
-    
     func arrayDidBeginUpdates(_ collection: FUICollection) {
         self.delegate?.arrayDidBeginUpdates?(collection)
     }
     
     func arrayDidEndUpdates(_ collection: FUICollection) {
-        if self.mapper != nil {
-            self.dataScreened.removeAll()
-            var remaining = self.snapshots.count
-            for snap in self.snapshots.items {
-                self.mapper!(snap as! DataSnapshot) { any in
-                    if any != nil {
-                        self.dataScreened.append(any!)
-                    }
-                    remaining -= 1
-                    if remaining == 0 {
-                        DispatchQueue.main.async {
-                            if let tableView = self.scrollView as? UITableView {
-                                tableView.reloadData()
-                            }
-                            else if let collectionView = self.scrollView as? UICollectionView {
-                                collectionView.reloadData()
-                            }
-                        }
-                    }
-                }
-            }
-        }
         self.delegate?.arrayDidEndUpdates?(collection)
     }
     
@@ -268,5 +230,9 @@ extension DataSourceController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         let count = self.items.count
         return count
+    }
+    
+    func numberOfSections(in collectionView: UICollectionView) -> Int {
+        return 1
     }
 }

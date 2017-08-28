@@ -1,15 +1,16 @@
 //
 //  SignInViewController.swift
-//  Teeny
+//  Patchr
 //
 //  Created by Rob MacEachern on 2015-02-17.
 //  Copyright (c) 2015 3meters. All rights reserved.
 //
 
-import UIKit
-import MBProgressHUD
 import FirebaseAuth
 import Firebase
+import MBProgressHUD
+import PopupDialog
+import UIKit
 
 class PasswordViewController: BaseEditViewController {
     
@@ -74,7 +75,7 @@ class PasswordViewController: BaseEditViewController {
                 self.progress?.minShowTime = 0.5
                 self.progress?.removeFromSuperViewOnHide = true
                 self.progress?.show(true)
-                self.progress?.labelText = "Logging in..."
+                self.progress?.labelText = self.branch == .login ? "Logging in..." : "Signing up..."
                 authenticate()
             }
         }
@@ -175,6 +176,8 @@ class PasswordViewController: BaseEditViewController {
                 if error == nil {
                     UserDefaults.standard.set(email, forKey: Prefs.lastUserEmail)
                 }
+                self.processing = false
+                self.progress?.hide(true)
                 self.authenticated(user: authUser, email: email, error: error)
             }
         }
@@ -182,45 +185,60 @@ class PasswordViewController: BaseEditViewController {
             
             Auth.auth().createUser(withEmail: email, password: password, completion: { authUser, error in
                 
-                self.processing = false
-                self.progress?.hide(true)
-
                 if error == nil, let authUser = authUser {
                     let username = self.userNameField.text!
                     let email = authUser.email!
                     Reporting.track("create_user_account", properties:["uid": authUser.uid])
                     UserDefaults.standard.set(email, forKey: Prefs.lastUserEmail)
                     
-                    FireController.instance.addUser(userId: authUser.uid, username: username) { [weak self] error, result in
+                    FireController.instance.addUser(userId: authUser.uid, username: username) { [weak self] error, channelId in
                         guard let this = self else { return }
+                        this.processing = false
+                        this.progress?.hide(true)
                         if error == nil {
                             authUser.sendEmailVerification()
-                            this.authenticated(user: authUser, email: email, error: error)
                         }
+                        this.authenticated(user: authUser, email: email, channelId: channelId, error: error)
                     }
                 }
                 else {
+                    self.processing = false
+                    self.progress?.hide(true)
                     self.passwordField.errorMessage = error?.localizedDescription
                 }
             })
         }
     }
     
-    func authenticated(user: User?, email: String?, error: Error?) {
-        self.processing = false
-        self.progress?.hide(true)
+    func authenticated(user: User?, email: String?, channelId: String? = nil, error: Error?) {
         
         if error == nil {
             Reporting.track("login", properties:["uid": user!.uid])
             UserController.instance.setUserId(userId: (user?.uid)!) { [weak self] result in
                 guard let this = self else { return }
-                if this.flow == .onboardLogin || this.flow == .onboardSignup {
-                    Reporting.track("view_channels")
-                    MainController.instance.showChannelsGrid()
+                if this.flow == .onboardSignup, let channelId = channelId {
+                    Reporting.track("view_channel")
+                    StateController.instance.setChannelId(channelId: channelId)
+                    MainController.instance.showChannel(channelId: channelId) { // User permissions are in place
+                        Utils.delay(0.5) {
+                            if let topController = UIViewController.topMostViewController() {
+                                let popup = PopupDialog(title: "Welcome to \(Strings.appName)!", message: "We've started you out with your own personal channel. Invite some friends and start posting messages!")
+                                let button = DefaultButton(title: "OK".uppercased(), height: 48) {
+                                    Reporting.track("sign_up_carry_on")
+                                }
+                                popup.addButton(button)
+                                topController.present(popup, animated: true)
+                            }
+                        }
+                    }
                 }
                 else if this.flow == .onboardInvite {
                     Reporting.track("resume_invite")
                     MainController.instance.routeDeepLink(link: this.inputInviteLink, flow: this.flow, error: nil)
+                }
+                else {
+                    Reporting.track("view_channels")
+                    MainController.instance.showChannelsGrid()
                 }
             }
         }

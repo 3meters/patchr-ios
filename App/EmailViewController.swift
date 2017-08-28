@@ -1,6 +1,6 @@
 //
 //  SignInViewController.swift
-//  Teeny
+//  Patchr
 //
 //  Created by Rob MacEachern on 2015-02-17.
 //  Copyright (c) 2015 3meters. All rights reserved.
@@ -78,7 +78,7 @@ class EmailViewController: BaseEditViewController {
             self.message.text = "Welcome."
         }
         else if self.flow == .onboardSignup {
-            self.message.text = "Teeny channels are perfect for just enough sharing."
+            self.message.text = "\(Strings.appName) channels are perfect for just enough sharing."
         }
 
         self.message.textColor = Theme.colorTextTitle

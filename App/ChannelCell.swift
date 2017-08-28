@@ -75,16 +75,8 @@ class ChannelCell: UICollectionViewCell {
         }
         else {
             self.photoView?.image = nil
-            if channel.name == "general" || channel.general! {
-                self.photoView?.backgroundColor = Colors.brandColorLight
-            }
-            else if channel.name == "chatter" {
-                self.photoView?.backgroundColor = Colors.accentColorFill
-            }
-            else {
-                let seed = Utils.numberFromName(fullname: channel.title!.lowercased())
-                self.photoView?.backgroundColor = ColorArray.randomColor(seed: seed)
-            }
+            let seed = Utils.numberFromName(fullname: channel.title!.lowercased())
+            self.photoView?.backgroundColor = ColorArray.randomColor(seed: seed)
         }
         
         self.setNeedsLayout()    // Needed because binding can change element layout

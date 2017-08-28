@@ -1,6 +1,6 @@
 //
 //  ColorArray.swift
-//  Teeny
+//  Patchr
 //
 //  Created by Jay Massena on 10/22/16.
 //  Copyright © 2016 3meters. All rights reserved.

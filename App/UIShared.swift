@@ -1,6 +1,6 @@
 //
 //  UI.swift
-//  Teeny
+//  Patchr
 //
 //  Created by Jay Massena on 5/9/15.
 //  Copyright (c) 2015 3meters. All rights reserved.
@@ -19,7 +19,7 @@ struct UIShared {
 			if let controller = UIViewController.topMostViewController() {
 				controller.UpdateConfirmationAlert(
 					title: "Update required",
-					message: "Your version of Teeny is not compatible with the Teeny service. Please update to a newer version.",
+					message: "Your version of \(Strings.appName) is not compatible with the \(Strings.appName) service. Please update to a newer version.",
 					actionTitle: "Update",
 					cancelTitle: "Later") {
 						doIt in
@@ -75,7 +75,7 @@ struct UIShared {
 			if let controller = UIViewController.topMostViewController() {
 				controller.LocationSettingsAlert(
 					title: "Location Services is disabled",
-					message: "Teeny Social uses your location to discover nearby messages. Please turn on Location Services in your device settings.",
+					message: "\(Strings.appName) uses your location to discover nearby messages. Please turn on Location Services in your device settings.",
 					actionTitle: "Settings",
 					cancelTitle: "No Thanks") {
 						doIt in

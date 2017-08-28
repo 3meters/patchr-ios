@@ -1,6 +1,6 @@
 //
 //  BaseViewController.swift
-//  Teeny
+//  Patchr
 //
 //  Created by Jay Massena on 11/27/15.
 //  Copyright © 2015 3meters. All rights reserved.
@@ -61,7 +61,7 @@ class EmptyViewController: UIViewController {
         self.imageLogo.image = UIImage(named: "imgPatchrWhite")
         self.imageLogo.contentMode = UIViewContentMode.scaleAspectFill
         
-        self.appName.text = "Teeny"
+        self.appName.text = Strings.appName
         self.appName.textAlignment = NSTextAlignment.center
         
         self.view.addSubview(self.imageBackground)

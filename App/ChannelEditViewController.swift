@@ -1,6 +1,6 @@
 //
 //  RegistrationTableViewController.swift
-//  Teeny
+//  Patchr
 //
 //  Created by Rob MacEachern on 2015-02-24.
 //  Copyright (c) 2015 3meters. All rights reserved.
@@ -224,7 +224,7 @@ class ChannelEditViewController: BaseEditViewController {
 
         if self.mode == .insert {
 
-            self.banner.text = "New Teeny Channel"
+            self.banner.text = "New \(Strings.appName) Channel"
 
             /* Navigation bar buttons */
             let closeButton = UIBarButtonItem(barButtonSystemItem: .stop, target: self, action: #selector(closeAction(sender:)))
@@ -235,7 +235,7 @@ class ChannelEditViewController: BaseEditViewController {
         }
         else if self.mode == .update  {
 
-            self.banner.text = "Edit Teeny Channel"
+            self.banner.text = "Edit \(Strings.appName) Channel"
             
             /* Navigation bar buttons */
             let closeButton = UIBarButtonItem(barButtonSystemItem: .stop, target: self, action: #selector(closeAction(sender:)))

@@ -1,6 +1,6 @@
 //
 //  MessageDetailViewController.swift
-//  Teeny
+//  Patchr
 //
 //  Created by Rob MacEachern on 2015-02-23.
 //  Copyright (c) 2015 3meters. All rights reserved.
@@ -221,6 +221,8 @@ class MemberViewController: BaseViewController, UIScrollViewDelegate, UITextFiel
         self.scrollView.delegate = self
         self.authenticatedUser = (self.inputUserId == UserController.instance.userId)
         
+        self.headerView.setPhotoButton.addTarget(self, action: #selector(editAction(sender:)), for: .touchUpInside)
+        
         if self.presented {
             let closeButton = UIBarButtonItem(barButtonSystemItem: .stop, target: self, action: #selector(self.closeAction(sender:)))
             closeButton.tintColor = Colors.white
@@ -241,6 +243,15 @@ class MemberViewController: BaseViewController, UIScrollViewDelegate, UITextFiel
         
         if self.user?.profile?.phone != nil {
             self.phone.label.text = self.user!.profile!.phone!
+        }
+        
+        if self.user.id! == UserController.instance.userId! {
+            if self.user.profile?.photo == nil {
+                self.headerView.setPhotoButton.fadeIn()
+            }
+            else {
+                self.headerView.setPhotoButton.fadeOut()
+            }
         }
         
         self.email.isHidden = true

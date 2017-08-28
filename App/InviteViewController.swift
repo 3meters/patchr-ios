@@ -93,7 +93,7 @@ class InviteViewController: BaseEditViewController {
 		self.heading.textAlignment = NSTextAlignment.center
 		self.heading.numberOfLines = 0
         
-        self.message.text = "An email invitation will be sent. Using the invitation will add them to the channel and help them install Teeny if they don't have it yet."
+        self.message.text = "An email invitation will be sent. Using the invitation will add them to the channel and help them install \(Strings.appName) if they don't have it yet."
         self.message.textColor = Theme.colorTextSecondary
         self.message.textAlignment = .center
         self.message.numberOfLines = 0

@@ -1,6 +1,6 @@
 //
 //  UI.swift
-//  Teeny
+//  Patchr
 //
 //  Created by Jay Massena on 5/9/15.
 //  Copyright (c) 2015 3meters. All rights reserved.
@@ -11,6 +11,9 @@ import MessageUI
 
 typealias CompletionBlock = (_ response: Any?, _ error: NSError?) -> Void
 
+struct Strings {
+    static let appName = "Patchr"
+}
 struct Ids {
     static let appleAppId = "983436323"
     static let creativeClientId = "924463f8481c4941a773fc9610fac9dd"

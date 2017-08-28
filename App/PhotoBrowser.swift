@@ -1,6 +1,6 @@
 //
 //  AirPhotoBrowserViewController.swift
-//  Teeny
+//  Patchr
 //
 //  Created by Jay Massena on 7/2/15.
 //  Copyright (c) 2015 3meters. All rights reserved.
@@ -75,7 +75,7 @@ class PhotoBrowser: IDMPhotoBrowser {
         }
         else {
             if self.message?.createdBy != nil {
-                super.shareMessage = "Photo by \(self.message?.createdBy) on Teeny"
+                super.shareMessage = "Photo by \(self.message?.createdBy) on \(Strings.appName)"
             }
             
             /* Configure bottom toolbar */

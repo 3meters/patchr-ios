@@ -1,6 +1,6 @@
 //
 //  AirScrollView.swift
-//  Teeny
+//  Patchr
 //
 //  Created by Jay Massena on 11/26/15.
 //  Copyright © 2015 3meters. All rights reserved.

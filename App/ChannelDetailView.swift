@@ -92,8 +92,7 @@ class ChannelDetailView: UIView {
         self.photoView.clipsToBounds = true
         self.photoView.contentMode = .scaleAspectFill
         self.photoView.backgroundColor = Theme.colorBackgroundImage
-        self.photoView.showGradient = true
-        self.photoView.gradientLayer.isHidden = true
+        self.photoView.showGradient = false
         
         self.titleLabel.font = UIFont(name: "HelveticaNeue-Light", size: 28)!
         self.titleLabel.textColor = Colors.white
@@ -152,17 +151,9 @@ class ChannelDetailView: UIView {
         }
         else {
             self.photoView.image = nil
-            self.photoView.gradientLayer.isHidden = true
-            if channel.name == "general" || channel.general! {
-                self.photoView.backgroundColor = Colors.brandColorLight
-            }
-            else if channel.name == "chatter" {
-                self.photoView.backgroundColor = Colors.accentColorFill
-            }
-            else {
-                let seed = Utils.numberFromName(fullname: channel.title!.lowercased())
-                self.photoView.backgroundColor = ColorArray.randomColor(seed: seed)
-            }
+            self.photoView.showGradient = false
+            let seed = Utils.numberFromName(fullname: channel.title!.lowercased())
+            self.photoView.backgroundColor = ColorArray.randomColor(seed: seed)
         }
 
         self.setNeedsLayout()    // Needed because binding can change element layout
@@ -182,7 +173,7 @@ class ChannelDetailView: UIView {
         if !self.photoView.associated(withUrl: url) {
             self.photoView.setImageWithUrl(url: url) { success in
                 if success {
-                    self.photoView.gradientLayer.isHidden = false
+                    self.photoView.showGradient = true
                     self.needsPhoto = false
                     if self.infoGroup.superview != nil {
                         if let image = self.photoView.image {

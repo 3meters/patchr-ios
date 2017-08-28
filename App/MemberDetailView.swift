@@ -10,6 +10,7 @@ class MemberDetailView: UIView {
     
     var contentGroup = UIView()
     var titleGroup = UIView()
+    var setPhotoButton: UIButton!
     
     var photoView = AirImageView(frame: CGRect.zero)
     var title = AirLabelDisplay()
@@ -61,6 +62,7 @@ class MemberDetailView: UIView {
         self.title.bounds.size.width = self.titleGroup.width()
         self.title.sizeToFit()
         self.title.align(above: self.subtitle, matchingLeftWithBottomPadding: 4, width: self.title.width(), height: self.title.height())
+        self.setPhotoButton.anchorInCenter(withWidth: 48, height: 48)
     }
 
     /*--------------------------------------------------------------------------------------------
@@ -68,13 +70,6 @@ class MemberDetailView: UIView {
     *--------------------------------------------------------------------------------------------*/
     
     func initialize() {
-        
-        self.titleGroup.addSubview(self.title)
-        self.titleGroup.addSubview(self.subtitle)
-        self.titleGroup.addSubview(self.presenceView)
-
-        self.contentGroup.addSubview(self.photoView)
-        self.contentGroup.addSubview(self.titleGroup)
         
         self.clipsToBounds = false
         self.backgroundColor = Theme.colorBackgroundForm
@@ -92,6 +87,22 @@ class MemberDetailView: UIView {
         self.subtitle.font = UIFont(name: "HelveticaNeue-Light", size: 18)!
         self.subtitle.textColor = Colors.white
         self.subtitle.numberOfLines = 1
+        
+        self.setPhotoButton = UIButton(type: .custom)
+        self.setPhotoButton.setImage(UIImage(named: "UIButtonCamera"), for: .normal)
+        self.setPhotoButton.backgroundColor = Theme.colorScrimLighten
+        self.setPhotoButton.cornerRadius = 24
+        self.setPhotoButton.borderWidth = Theme.dimenButtonBorderWidth
+        self.setPhotoButton.borderColor = Colors.clear
+        self.setPhotoButton.alpha = 0
+        
+        self.titleGroup.addSubview(self.title)
+        self.titleGroup.addSubview(self.subtitle)
+        self.titleGroup.addSubview(self.presenceView)
+        
+        self.contentGroup.addSubview(self.photoView)
+        self.contentGroup.addSubview(self.titleGroup)
+        self.contentGroup.addSubview(self.setPhotoButton)
 
         self.addSubview(contentGroup)
 
@@ -113,10 +124,10 @@ class MemberDetailView: UIView {
         if let photo = user.profile?.photo {
             let url = ImageProxy.url(photo: photo, category: SizeCategory.profile)
             if !self.photoView.associated(withUrl: url) {
-                self.photoView.gradientLayer.isHidden = true
+                self.photoView.showGradient = false
                 self.photoView.setImageWithUrl(url: url) { success in
                     if success {
-                        self.photoView.gradientLayer.isHidden = false
+                        self.photoView.showGradient = true
                     }
                 }
             }

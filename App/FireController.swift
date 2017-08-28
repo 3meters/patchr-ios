@@ -34,7 +34,54 @@ class FireController: NSObject {
      * MARK: - Create
      *--------------------------------------------------------------------------------------------*/
     
-    func addUser(userId: String, username: String, then: @escaping ((ServiceError?, Any?) -> Void)) {
+    func addUser(userId: String, username: String, then: ((Error?, String?) -> Void)? = nil) {
+        let timestamp = getServerTimestamp()
+        let userMap: [String: Any] = [
+            "created_at": timestamp,
+            "created_by": userId,
+            "modified_at": timestamp,
+            "username": username
+        ]
+        
+        let channelId = "ch-\(Utils.genRandomId(digits: 9))"
+        let channelCode = Utils.genRandomId(digits: 12)
+        let channelTitle = "\(username) channel"
+        let channelMap: [String: Any] = [
+            "code": channelCode,
+            "created_at": timestamp,
+            "created_by": userId,
+            "general": true,
+            "owned_by": userId,
+            "title": channelTitle,
+        ]
+        /* Username is automatically claimed */
+        FireController.db.child("users/\(userId)").setValue(userMap) { error, ref in
+            if error == nil {
+                /* Owner is automatically added as member */
+                FireController.db.child("channels/\(channelId)").setValue(channelMap) { error, ref in
+                    if error == nil {
+                        let membershipMap = self.channelMemberMap(userId: userId, timestamp: timestamp, code: channelCode, role: "owner")
+                        FireController.db.child("channel-members/\(channelId)/\(userId)").setValue(membershipMap) { error, ref in
+                            if error != nil {
+                                Log.w("Error creating membership: \(error!.localizedDescription)")
+                            }
+                            then?(error, channelId)
+                        }
+                    }
+                    else {
+                        Log.w("Error creating channel: \(error!.localizedDescription)")
+                        then?(error, channelId)
+                    }
+                }
+            }
+            else {
+                Log.w("Error creating user: \(error!.localizedDescription)")
+                then?(error, channelId)
+            }
+        }
+    }
+    
+    func addUserTask(userId: String, username: String, then: @escaping ((ServiceError?, Any?) -> Void)) {
         let timestamp = getServerTimestamp()
         let ref = FireController.db.child("tasks/create-user").childByAutoId()
         let request: [String: Any] = [

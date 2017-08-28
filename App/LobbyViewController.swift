@@ -1,6 +1,6 @@
 //
 //  LobbyViewController.swift
-//  Teeny
+//  Patchr
 //
 //  Created by Rob MacEachern on 2015-02-17.
 //  Copyright (c) 2015 3meters. All rights reserved.
@@ -120,7 +120,7 @@ class LobbyViewController: UIViewController {
 		self.imageLogo.image = UIImage(named: "imgPatchrWhite")
 		self.imageLogo.contentMode = UIViewContentMode.scaleAspectFill
 		
-		self.appName.text = "Teeny"
+		self.appName.text = Strings.appName
 		self.appName.textAlignment = NSTextAlignment.center
         
         self.view.addSubview(self.imageBackground)
@@ -219,15 +219,15 @@ class LobbyViewController: UIViewController {
             ]
             
             var descriptions = [
-                "Share with just the right people using Teeny channels.",
-                "Select people from your contacts and we handle the rest! We will email them an invite, help them install Teeny and gently launch them into your amazing channel.",
-                "Teeny has brilliant sharing features: photo search and editing, reactions, comments, realtime notifications, offline posting plus much more."
+                "Share with just the right people using \(Strings.appName) channels.",
+                "Select people from your contacts and we handle the rest! We will email them an invite, help them install \(Strings.appName) and gently launch them into your amazing channel.",
+                "\(Strings.appName) has brilliant sharing features: photo search and editing, reactions, comments, realtime notifications, offline posting plus much more."
             ]
             
             if appFirstLaunch {
                 images.insert("imgGroupChat", at: 0)
                 titles.insert("Welcome!".uppercased(), at: 0)
-                descriptions.insert("Teeny is a modern and simple way to share with just the right people!", at: 0)
+                descriptions.insert("\(Strings.appName) is a modern and simple way to share with just the right people!", at: 0)
             }
             
             self.alertView = AlertOnboarding(arrayOfImage: images, arrayOfTitle: titles, arrayOfDescription: descriptions)
