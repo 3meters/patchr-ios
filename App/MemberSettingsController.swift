@@ -11,7 +11,8 @@ import MBProgressHUD
 
 class MemberSettingsController: UITableViewController {
     
-    var inputUser: FireUser!
+    var inputUser: FireUser?
+    var inputUserId: String?
     var inputChannel: FireChannel!
     
     var progress: AirProgress?
@@ -68,7 +69,7 @@ class MemberSettingsController: UITableViewController {
 
     func initialize() {
 
-        let userTitle = self.inputUser!.profile?.fullName ?? self.inputUser!.username!
+        let userTitle = self.inputUserId != nil ? "deleted" : self.inputUser!.profile?.fullName ?? self.inputUser!.username!
         self.navigationItem.title = userTitle
 
         self.tableView = UITableView(frame: self.tableView.frame, style: .grouped)
@@ -99,7 +100,7 @@ class MemberSettingsController: UITableViewController {
     
     func bind() {
 
-        let userId = self.inputUser.id!
+        let userId = self.inputUser != nil ? self.inputUser!.id! : self.inputUserId!
         let channelId = self.inputChannel.id!
         let path = "channel-members/\(channelId)/\(userId)/role"
         FireController.db.child(path).observeSingleEvent(of: .value, with: { snap in
@@ -118,7 +119,7 @@ class MemberSettingsController: UITableViewController {
     func update() {
         
         var updates = [String: Any]()
-        let userId = self.inputUser.id!
+        let userId = self.inputUser != nil ? self.inputUser!.id! : self.inputUserId!
         let channelId = self.inputChannel.id!
 
         if self.roleNext != self.role {
@@ -130,7 +131,7 @@ class MemberSettingsController: UITableViewController {
     }
     
     func remove() {
-        let userTitle = self.inputUser!.profile?.fullName ?? self.inputUser!.username!
+        let userTitle = self.inputUserId != nil ? "deleted" : self.inputUser!.profile?.fullName ?? self.inputUser!.username!
         let targetTitle = "channel"
         
         DeleteConfirmationAlert(
@@ -149,7 +150,7 @@ class MemberSettingsController: UITableViewController {
                 self.progress!.removeFromSuperViewOnHide = true
                 self.progress!.show(true)
                 
-                let userId = self.inputUser.id!
+                let userId = self.inputUser != nil ? self.inputUser!.id! : self.inputUserId!
                 let channelId = self.inputChannel.id!
                 FireController.instance.deleteMembership(userId: userId, channelId: channelId) { [weak self] error, result in
                     guard let this = self else { return }

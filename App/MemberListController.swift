@@ -76,11 +76,17 @@ class MemberListController: BaseTableController {
     }
     
     func manageUserAction(sender: AnyObject?) {
-        if let button = sender as? AirButton, let user = button.data as? FireUser {
+        if let button = sender as? AirButton {
             let controller = MemberSettingsController()
             let wrapper = AirNavigationController(rootViewController: controller)
-            controller.inputUser = user
-            controller.inputChannel = self.channel
+            if let user = button.data as? FireUser {
+                controller.inputUser = user
+                controller.inputChannel = self.channel
+            }
+            else if let userId = button.data as? String {
+                controller.inputUserId = userId
+                controller.inputChannel = self.channel
+            }
             self.present(wrapper, animated: true)
         }
     }
@@ -151,26 +157,27 @@ class MemberListController: BaseTableController {
                     Log.w("Permission denied")
                     return
                 }
-                if user != nil {
-                    var target = "channel"
-                    if this.scope == .reaction {
-                        target = "reaction"
-                    }
-                    cell.bind(user: user!, target: target)
-                    if this.manage {
-                        if this.scope == .channel {
-                            if this.isOwner() {
-                                if this.channel.ownedBy! != user!.id {
-                                    cell.actionButton?.isHidden = false
-                                    cell.actionButton?.setTitle("Manage", for: .normal)
+                var target = "channel"
+                if this.scope == .reaction {
+                    target = "reaction"
+                }
+                cell.bind(user: user, target: target)
+                if this.manage {
+                    if this.scope == .channel {
+                        if this.isOwner() {
+                            if this.channel.ownedBy! != userId {
+                                cell.actionButton?.isHidden = false
+                                cell.actionButton?.setTitle("Manage", for: .normal)
+                                cell.actionButton?.addTarget(this, action: #selector(this.manageUserAction(sender:)), for: .touchUpInside)
+                                if user != nil {
                                     cell.actionButton?.data = user
-                                    cell.actionButton?.addTarget(this, action: #selector(this.manageUserAction(sender:)), for: .touchUpInside)
+                                }
+                                else {
+                                    cell.actionButton?.data = userId as AnyObject?
                                 }
                             }
                         }
                     }
-                } else {
-                    fatalError("User is missing for group or channel member")
                 }
             })
             return cell

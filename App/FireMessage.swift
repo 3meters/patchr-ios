@@ -56,11 +56,14 @@ class FireMessage: NSObject {
         self.text = dict["text"] as? String
     }
     
-    func getCreator(with block: @escaping (FireUser) -> Swift.Void) {
+    func getCreator(with block: @escaping (FireUser?) -> Swift.Void) {
         FireController.db.child("users/\(self.createdBy!)").observeSingleEvent(of: .value, with: { snap in
             if !(snap.value is NSNull) {
                 let user = FireUser(dict: snap.value as! [String: Any], id: snap.key)
                 block(user)
+            }
+            else {
+                block(nil)
             }
         })
     }

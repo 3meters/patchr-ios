@@ -85,9 +85,7 @@ class UserController: NSObject {
                     /* Network error: code = 17020, domain = FIRAuthErrorDomain */
                     if error.code != 17020 {
                         /* User account could have been deleted */
-                        try! Auth.auth().signOut()
-                        StateController.instance.clearChannel()
-                        return
+                        self.logout()
                     }
                 }
             })

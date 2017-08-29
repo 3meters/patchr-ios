@@ -222,27 +222,37 @@ class MessageListCell: UITableViewCell {
             self.description_?.text = description
         }
         
-        /* Username */
-        
-        self.userName.text = message.creator?.username
-        
-        /* User photo */
-        
-        if let profilePhoto = message.creator?.profile?.photo {
-            if !self.template {
-                let url = ImageProxy.url(photo: profilePhoto, category: SizeCategory.profile)
-                if !self.userPhotoControl.photoView.associated(withUrl: url) {
-                    let fullName = message.creator?.fullName
-                    self.userPhotoControl.photoView.image = nil
-                    self.userPhotoControl.bind(url: url, name: fullName, colorSeed: message.creator?.id)
+        /* User */
+        if let creator = message.creator {
+
+            /* Username */
+            self.userName.text = creator.username
+
+            /* User photo */
+            if let profilePhoto = creator.profile?.photo {
+                if !self.template {
+                    let url = ImageProxy.url(photo: profilePhoto, category: SizeCategory.profile)
+                    if !self.userPhotoControl.photoView.associated(withUrl: url) {
+                        let fullName = creator.fullName
+                        self.userPhotoControl.photoView.image = nil
+                        self.userPhotoControl.bind(url: url, name: fullName, colorSeed: creator.id)
+                    }
+                }
+            }
+            else {
+                let fullName = creator.fullName
+                if !self.template {
+                    self.userPhotoControl.bind(url: nil, name: fullName, colorSeed: creator.id)
                 }
             }
         }
         else {
-            let fullName = message.creator?.fullName
-            self.userPhotoControl.bind(url: nil, name: fullName, colorSeed: message.creator?.id)
+            self.userName.text = "deleted"
+            if !self.template {
+                self.userPhotoControl.bind(url: nil, name: "deleted", colorSeed: nil, color: Theme.colorBackgroundImage)
+            }
         }
-        
+
         /* Message photo */
         
         if let photo = message.attachments?.values.first?.photo {

@@ -80,52 +80,60 @@ class UserListCell: UITableViewCell {
         self.subtitle?.text = email!
     }
     
-    func bind(user: FireUser, target: String = "channel") {
+    func bind(user: FireUser?, target: String = "channel") {
         
-        self.user = user
-        self.presenceView?.bind(online: user.presence)
-        if let offlineSince = user.presence as? Int64 {
-            let offlineAgo = DateUtils.timeAgoShort(date: DateUtils.from(timestamp: offlineSince))
-            self.agoLabel.text = offlineAgo
-            self.agoLabel.isHidden = false
-        }
-        
-        if user.id == UserController.instance.userId! {
-            self.title?.text = "\(user.fullName!) (you)"
+        if let user = user {
+            self.user = user
+            
+            self.presenceView?.bind(online: user.presence)
+            if let offlineSince = user.presence as? Int64 {
+                let offlineAgo = DateUtils.timeAgoShort(date: DateUtils.from(timestamp: offlineSince))
+                self.agoLabel.text = offlineAgo
+                self.agoLabel.isHidden = false
+            }
+            
+            if user.id == UserController.instance.userId! {
+                self.title?.text = "\(user.fullName!) (you)"
+            }
+            else {
+                self.title?.text = user.fullName!
+            }
+            
+            if user.username != nil {
+                self.subtitle?.text = "@\(user.username!)"
+            }
+            
+            if target == "channel", let membership = user.membership {
+                if membership.role == "owner" {
+                    self.roleLabel?.text = "owner"
+                    self.roleLabel?.textColor = MaterialColor.deepOrange.base
+                }
+                else if membership.role == "editor" {
+                    self.roleLabel?.text = "contributor"
+                    self.roleLabel?.textColor = MaterialColor.lightGreen.base
+                }
+                else if membership.role == "reader" {
+                    self.roleLabel?.text = "reader"
+                    self.roleLabel?.textColor = MaterialColor.lightBlue.base
+                }
+            }
+            else if target == "reaction" {
+                self.roleLabel?.isHidden = true
+            }
+            
+            let fullName = user.profile?.fullName ?? user.username
+            if let photo = user.profile?.photo {
+                let url = ImageProxy.url(photo: photo, category: SizeCategory.profile)
+                self.photoControl!.bind(url: url, name: fullName, colorSeed: user.id)
+            }
+            else {
+                self.photoControl?.bind(url: nil, name: fullName, colorSeed: user.id)
+            }
         }
         else {
-            self.title?.text = user.fullName!
-        }
-        
-        if user.username != nil {
-            self.subtitle?.text = "@\(user.username!)"
-        }
-        
-        if target == "channel", let membership = user.membership {
-            if membership.role == "owner" {
-                self.roleLabel?.text = "owner"
-                self.roleLabel?.textColor = MaterialColor.deepOrange.base
-            }
-            else if membership.role == "editor" {
-                self.roleLabel?.text = "contributor"
-                self.roleLabel?.textColor = MaterialColor.lightGreen.base
-            }
-            else if membership.role == "reader" {
-                self.roleLabel?.text = "reader"
-                self.roleLabel?.textColor = MaterialColor.lightBlue.base
-            }
-        }
-        else if target == "reaction" {
-            self.roleLabel?.isHidden = true
-        }
-        
-        let fullName = user.profile?.fullName ?? user.username
-        if let photo = user.profile?.photo {
-            let url = ImageProxy.url(photo: photo, category: SizeCategory.profile)
-            self.photoControl!.bind(url: url, name: fullName, colorSeed: user.id)
-        }
-        else {
-            self.photoControl?.bind(url: nil, name: fullName, colorSeed: user.id)
+            self.title?.text = "deleted"
+            self.subtitle?.text = "deleted"
+            self.photoControl!.bind(url: nil, name: "deleted", colorSeed: nil, color: Theme.colorBackgroundImage)
         }
     }
 }

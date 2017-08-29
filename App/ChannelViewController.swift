@@ -364,6 +364,13 @@ class ChannelViewController: BaseTableController {
 				guard let cell = cell else { return }
 
 				message.creator = user
+                
+                if user != nil {
+                    Log.v("Message \(message.id!) has creator")
+                }
+                else {
+                    Log.v("Message \(message.id!) missing creator")
+                }
 
 				if !cell.decorated {
 
@@ -382,11 +389,6 @@ class ChannelViewController: BaseTableController {
 
                 cell.bind(message: message) // Handles hide/show of actions button based on message.selected
 
-				if message.creator != nil {
-					cell.userPhotoControl.target = message.creator
-					cell.userPhotoControl.addTarget(this, action: #selector(this.browseMemberAction(sender:)), for: .touchUpInside)
-				}
-                
 				/* Unread handling */
 
 				let messageId = message.id!
@@ -410,8 +412,13 @@ class ChannelViewController: BaseTableController {
 						}
 					})
 				}
-                
-                /* Comments */
+
+				if message.creator != nil {
+					cell.userPhotoControl.target = message.creator
+					cell.userPhotoControl.addTarget(this, action: #selector(this.browseMemberAction(sender:)), for: .touchUpInside)
+				}
+
+				/* Comments */
                 cell.commentsButton.addTarget(this, action: #selector(this.browseCommentsAction(sender:)), for: .touchUpInside)
                 
 			})

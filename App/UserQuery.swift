@@ -57,15 +57,18 @@ class UserQuery: NSObject {
 		})
 	}
 
-	func once(with block: @escaping (Error?, FireUser?) -> Swift.Void) {
+	func once(with then: @escaping (Error?, FireUser?) -> Swift.Void) {
 
-		self.block = block
+		self.block = then
 
 		FireController.db.child(self.userPath).observeSingleEvent(of: .value, with: { [weak self] snap in
 			guard let this = self else { return }
             if let value = snap.value as? [String: Any] {
                 this.user = FireUser(dict: value, membership: this.membership, id: snap.key)
                 this.block(nil, this.user)
+            }
+            else {
+                this.block(nil, nil)
             }
 		}, withCancel: { [weak self] error in
 			guard let this = self else { return }
