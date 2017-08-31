@@ -93,10 +93,10 @@ class UserListCell: UITableViewCell {
             }
             
             if user.id == UserController.instance.userId! {
-                self.title?.text = "\(user.fullName!) (you)"
+                self.title?.text = "\(user.title) (you)"
             }
             else {
-                self.title?.text = user.fullName!
+                self.title?.text = user.title
             }
             
             if user.username != nil {

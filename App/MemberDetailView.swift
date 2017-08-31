@@ -113,7 +113,7 @@ class MemberDetailView: UIView {
         
         self.user = user
         self.presenceView.bind(online: user.presence)
-        self.title.text = user.profile?.fullName ?? user.username
+        self.title.text = user.title
         
         if user.username != nil {
             self.subtitle.text = "@\(user.username!)"

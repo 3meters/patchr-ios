@@ -233,14 +233,14 @@ class MessageListCell: UITableViewCell {
                 if !self.template {
                     let url = ImageProxy.url(photo: profilePhoto, category: SizeCategory.profile)
                     if !self.userPhotoControl.photoView.associated(withUrl: url) {
-                        let fullName = creator.fullName
+                        let fullName = creator.title
                         self.userPhotoControl.photoView.image = nil
                         self.userPhotoControl.bind(url: url, name: fullName, colorSeed: creator.id)
                     }
                 }
             }
             else {
-                let fullName = creator.fullName
+                let fullName = creator.title
                 if !self.template {
                     self.userPhotoControl.bind(url: nil, name: fullName, colorSeed: creator.id)
                 }

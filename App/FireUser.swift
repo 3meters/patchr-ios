@@ -27,18 +27,9 @@ class FireUser: NSObject {
     var profile: FireProfile?
     var username: String!
     
-    var fullName: String! {
+    var title: String {
         get {
-            if profile?.fullName != nil && !profile!.fullName!.isEmpty {
-                return profile!.fullName!
-            }
-            return username!
-        }
-    }
-
-    var title: String! {
-        get {
-            var userTitle = self.id
+            var userTitle: String! = nil
             if let profile = self.profile, profile.fullName != nil {
                 userTitle = profile.fullName!
             }
@@ -50,7 +41,10 @@ class FireUser: NSObject {
                 , let displayName = Auth.auth().currentUser?.displayName {
                 userTitle = displayName
             }
-            return userTitle
+            if userTitle == nil {
+                userTitle = self.id
+            }
+            return userTitle!
         }
     }
 

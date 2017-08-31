@@ -241,18 +241,18 @@ class MessageEditViewController: BaseEditViewController {
         /* Creator */
         
         if let user = UserController.instance.user {
-            self.userName.text = user.fullName
+            self.userName.text = user.title
             
             if let profilePhoto = user.profile?.photo {
                 let url = ImageProxy.url(photo: profilePhoto, category: SizeCategory.profile)
                 if !self.userPhotoControl.photoView.associated(withUrl: url) {
-                    let fullName = user.fullName
+                    let fullName = user.title
                     self.userPhotoControl.photoView.image = nil
                     self.userPhotoControl.bind(url: url, name: fullName, colorSeed: user.id)
                 }
             }
             else {
-                let fullName = user.fullName
+                let fullName = user.title
                 self.userPhotoControl.bind(url: nil, name: fullName, colorSeed: user.id)
             }
         }
