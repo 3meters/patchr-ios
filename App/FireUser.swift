@@ -35,7 +35,25 @@ class FireUser: NSObject {
             return username!
         }
     }
-    
+
+    var title: String! {
+        get {
+            var userTitle = self.id
+            if let profile = self.profile, profile.fullName != nil {
+                userTitle = profile.fullName!
+            }
+            if userTitle == nil, let username = self.username {
+                userTitle = username
+            }
+            if userTitle == nil
+                , self.id == Auth.auth().currentUser?.uid
+                , let displayName = Auth.auth().currentUser?.displayName {
+                userTitle = displayName
+            }
+            return userTitle
+        }
+    }
+
     init(dict: [String: Any], membership: [String: Any]? = nil, id: String?) {
         self.id = id
         self.createdAt = dict["created_at"] as? Int64

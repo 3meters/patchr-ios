@@ -324,13 +324,7 @@ class ContactPickerController: BaseTableController, CLTokenInputViewDelegate {
         
         for key in self.picks.keys {
             let inviteId = "in-\(Utils.genRandomId(digits: 9))"
-            var email: String!
-            if let contact = self.picks[key] as? CNContact {
-                email = contact.emailAddresses.first?.value as? String
-            }
-            else if let contact = self.picks[key] as? String {
-                email = contact
-            }
+            let email = self.picks[key] as? String
             
             BranchProvider.invite(channel: channel
                 , code: self.inputCode!
@@ -413,7 +407,8 @@ extension ContactPickerController: UITableViewDataSource {
         
         cell.checkBox?.on = false
         if let contact = cell.contact {
-            let invited = (self.picks[contact.identifier] != nil)
+            let email = contact.emailAddresses.first!.value as String
+            let invited = (self.picks[email] != nil)
             cell.checkBox?.on = invited
         }
         
@@ -430,18 +425,19 @@ extension ContactPickerController: UITableViewDelegate  {
                 let contact = cell.contact!
                 let fullName = CNContactFormatter.string(from: contact, style: .fullName)
                 let title = fullName ?? contact.emailAddresses.first!.value as String
+                let email = contact.emailAddresses.first!.value as String
                 
-                let hasInvite = (self.picks[contact.identifier] != nil)
+                let hasInvite = (self.picks[email] != nil)
                 
                 if hasInvite {
-                    self.picks.removeValue(forKey: contact.identifier)
+                    self.picks.removeValue(forKey: email)
                     self.tokenView.remove(CLToken(displayText: title, context: cell))
                     cell.checkBox?.setOn(false, animated: true)
                 }
                 else {
                     cell.checkBox?.setOn(hasInvite, animated: true)
                     self.tokenView.add(CLToken(displayText: title, context: cell))
-                    self.picks[contact.identifier] = contact
+                    self.picks[email] = email
                 }
             }
         }
@@ -465,6 +461,7 @@ extension ContactPickerController {
     func tokenInputView(_ view: CLTokenInputView, didChangeText text: String?) {
         self.filterActive = (text != nil && !text!.trimmingCharacters(in: .whitespaces).isEmpty)
         self.filterText = (text != nil) ? text!.trimmingCharacters(in: .whitespaces) : nil
+        self.doneButton.isEnabled = (text != nil && text!.isEmail())
         filterContacts()
     }
     
@@ -510,9 +507,10 @@ extension ContactPickerController {
         }
         
         if let cell = token.context as? UserListCell, let contact = cell.contact {
+            let email = contact.emailAddresses.first!.value as String
             cell.setSelected(false, animated: true)
             cell.checkBox?.setOn(false, animated: true)
-            self.picks.removeValue(forKey: contact.identifier)
+            self.picks.removeValue(forKey: email)
         }
     }
     
@@ -527,9 +525,16 @@ extension ContactPickerController {
             let contact = cell.contact!
             let fullName = CNContactFormatter.string(from: contact, style: .fullName)
             let title = fullName ?? contact.emailAddresses.first!.value as String
-            cell.checkBox?.setOn(true, animated: true)
-            self.picks[contact.identifier] = contact
-            return CLToken(displayText: title, context: cell)
+            let email = contact.emailAddresses.first!.value as String
+            if !email.isEmail() {
+                UIShared.toast(message: "\(email) is not a valid email address")
+                return nil
+            }
+            else {
+                cell.checkBox?.setOn(true, animated: true)
+                self.picks[email] = email
+                return CLToken(displayText: title, context: cell)
+            }
         }
         else {
             if !text.isEmail() {

@@ -26,20 +26,7 @@ class UserController: NSObject {
     }
     
     var userTitle: String? {
-        var userTitle: String?
-        if let profile = self.user?.profile, profile.fullName != nil {
-            userTitle = profile.fullName
-        }
-        if userTitle == nil, let username = UserController.instance.user?.username {
-            userTitle = username
-        }
-        if userTitle == nil, let username = self.user?.username {
-            userTitle = username
-        }
-        if userTitle == nil, let displayName = Auth.auth().currentUser?.displayName {
-            userTitle = displayName
-        }
-        return userTitle
+        return self.user?.title
     }
     
     var userEmail: String? {
