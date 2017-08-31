@@ -74,7 +74,7 @@ class MessageViewController: BaseSlackController {
                 let controller = MemberViewController(userId: user.id)
                 let wrapper = AirNavigationController(rootViewController: controller)
 				Reporting.track("view_group_member")
-                UIViewController.topMostViewController()?.present(wrapper, animated: true, completion: nil)
+                UIViewController.topController?.present(wrapper, animated: true, completion: nil)
 			}
 		}
 	}

@@ -90,7 +90,7 @@ class AirReactionButton: UIControl {
                 controller.inputEmojiCount = emojiCount
                 controller.contentSizeInPopup = CGSize(width: Config.screenWidth, height: Config.screenWidth)
                 
-                if let topController = UIViewController.topMostViewController() {
+                if let topController = UIViewController.topController {
                     let popController = STPopupController(rootViewController: controller)
                     let backgroundView = UIView()
                     backgroundView.backgroundColor = Colors.opacity25pcntBlack

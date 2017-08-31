@@ -185,6 +185,6 @@ class UserController: NSObject {
         self.user = nil
         self.userId = nil
         
-        MainController.instance.route() // Showing lobby also clears group and channel
+        MainController.instance.launchUI() // Showing lobby also clears group and channel
     }
 }

@@ -66,7 +66,7 @@ class AirAddReactionButton: UIControl {
         controller.inputMessage = self.message
         controller.contentSizeInPopup = CGSize(width: Config.screenWidth, height: 192)
         
-        if let topController = UIViewController.topMostViewController() {
+        if let topController = UIViewController.topController {
             let popController = STPopupController(rootViewController: controller)
             let backgroundView = UIView()
             backgroundView.backgroundColor = Colors.opacity25pcntBlack

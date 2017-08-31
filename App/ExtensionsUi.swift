@@ -292,7 +292,45 @@ extension UIViewController {
         let navigationHeight = self.navigationController?.navigationBar.height() ?? 44
         return (statusHeight + navigationHeight)
     }
+
+    var presented: Bool {
+        if self.presentingViewController?.presentedViewController == self { return true }
+        if let wrapper = self.navigationController {
+            if (wrapper.viewControllers.count == 1 && self.presentingViewController?.presentedViewController == wrapper) { return true }
+            if (wrapper.viewControllers.count > 1 && wrapper.topViewController == self) { return false }
+            if wrapper.presentingViewController?.presentedViewController == wrapper { return true }
+        }
+        if self.tabBarController?.presentingViewController is UITabBarController { return true }
+        return false
+    }
     
+    class var root: UIViewController? {
+        return UIApplication.shared.keyWindow?.rootViewController
+    }
+    
+    var containerController: ContainerController {
+        return MainController.instance.containerController
+    }
+    
+    class var topController: UIViewController? {
+        
+        guard root != nil else { return nil }
+        
+        var pointedViewController = root
+        
+        while pointedViewController?.presentedViewController != nil {
+            switch pointedViewController?.presentedViewController {
+            case let navagationController as UINavigationController:
+                pointedViewController = navagationController.viewControllers.last
+            case let tabBarController as UITabBarController:
+                pointedViewController = tabBarController.selectedViewController
+            default:
+                pointedViewController = pointedViewController?.presentedViewController
+            }
+        }
+        return pointedViewController
+        
+    }
     // Returns the most recently presented UIViewController (visible)
     class func topMostViewController() -> UIViewController? {
         
@@ -342,17 +380,6 @@ extension UIViewController {
         return nil
     }
     
-    var presented: Bool {
-        if self.presentingViewController?.presentedViewController == self { return true }
-        if let wrapper = self.navigationController {
-            if (wrapper.viewControllers.count == 1 && self.presentingViewController?.presentedViewController == wrapper) { return true }
-            if (wrapper.viewControllers.count > 1 && wrapper.topViewController == self) { return false }
-            if wrapper.presentingViewController?.presentedViewController == wrapper { return true }
-        }
-        if self.tabBarController?.presentingViewController is UITabBarController { return true }
-        return false
-    }
-
     func close(animated: Bool = true, root: Bool = false) {
         /* Override in subclasses for control of dismiss/pop process */
         if self.presented || self.popupController != nil {

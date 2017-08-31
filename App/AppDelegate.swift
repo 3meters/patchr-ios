@@ -106,7 +106,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, MessagingDelegate {
     }
 
     func application(_ application: UIApplication, supportedInterfaceOrientationsFor window: UIWindow?) -> UIInterfaceOrientationMask {
-        if let controller = UIViewController.topMostViewController() {
+        if let controller = UIViewController.topController {
             if controller is PhotoBrowser {
                 return UIInterfaceOrientationMask.all;
             }

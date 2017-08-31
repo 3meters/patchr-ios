@@ -365,10 +365,7 @@ class ChannelViewController: BaseTableController {
 
 				message.creator = user
                 
-                if user != nil {
-                    Log.v("Message \(message.id!) has creator")
-                }
-                else {
+                if user == nil {
                     Log.v("Message \(message.id!) missing creator")
                 }
 
@@ -827,14 +824,17 @@ extension ChannelViewController {
                 UIView.animate(withDuration: 0.3
                     , delay: 0
                     , options: [.curveEaseInOut, .transitionCrossDissolve]
-                    , animations: {
+                    , animations: { [weak self] in
+                        guard let this = self else { return }
                         UIApplication.shared.statusBarStyle = .default
-                        if let backButton = self.backButton?.customView as? UIButton {
+                        if let backButton = this.backButton?.customView as? UIButton {
                             backButton.tintColor = Colors.black
                             backButton.setTitleColor(Colors.black, for: .normal)
                         }
-                        UIShared.styleChrome(navigationBar: self.navigationController!.navigationBar, translucent: false)
-                        self.isChromeTranslucent = false
+                        if let wrapper = this.navigationController {
+                            UIShared.styleChrome(navigationBar: wrapper.navigationBar, translucent: false)
+                            this.isChromeTranslucent = false
+                        }
                 }, completion: nil)
             }
         }
@@ -843,14 +843,17 @@ extension ChannelViewController {
                 UIView.animate(withDuration: 0.3
                     , delay: 0
                     , options: [.curveEaseInOut, .transitionCrossDissolve]
-                    , animations: {
+                    , animations: { [weak self] in
+                        guard let this = self else { return }
                         UIApplication.shared.statusBarStyle = .lightContent
-                        if let backButton = self.backButton?.customView as? UIButton {
+                        if let backButton = this.backButton?.customView as? UIButton {
                             backButton.tintColor = Colors.white
                             backButton.setTitleColor(Colors.white, for: .normal)
                         }
-                        UIShared.styleChrome(navigationBar: self.navigationController!.navigationBar, translucent: true)
-                        self.isChromeTranslucent = true
+                        if let wrapper = this.navigationController {
+                            UIShared.styleChrome(navigationBar: wrapper.navigationBar, translucent: true)
+                            this.isChromeTranslucent = true
+                        }
                 }, completion: nil)
             }
         }

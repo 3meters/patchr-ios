@@ -27,7 +27,7 @@ class EmptyViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        self.view.endEditing(true)
+        self.view.endEditing(true)  // Ensure keyboard is closed
         self.imageLogo.anchorInCenter(withWidth: 72, height: 72)
     }
     
@@ -76,7 +76,10 @@ class EmptyViewController: UIViewController {
         UIView.animate(withDuration: 0.3
             , delay: 0
             , animations: { [weak self] in
-                guard let this = self else { return }
+                guard let this = self else {
+                    then?()
+                    return
+                }
                 this.imageLogo.transform = CGAffineTransform(scaleX: 0.5, y: 0.5)
             }
             , completion: { finished in
@@ -87,7 +90,10 @@ class EmptyViewController: UIViewController {
                     , initialSpringVelocity: 6.0
                     , options: []
                     , animations: { [weak self] in
-                        guard let this = self else { return }
+                        guard let this = self else {
+                            then?()
+                            return
+                        }
                         this.imageLogo.transform = .identity
                     }
                     , completion: { finished in
@@ -98,14 +104,23 @@ class EmptyViewController: UIViewController {
                             , initialSpringVelocity: 6.0
                             , options: [.curveEaseIn]
                             , animations: { [weak self] in
-                                guard let this = self else { return }
+                                guard let this = self else {
+                                    then?()
+                                    return
+                                }
                                 this.imageLogo.transform = CGAffineTransform(translationX: 0, y: -156)
                             }
                             , completion: { [weak self] finished in
                                 if finished {
-                                    guard let this = self else { return }
+                                    guard let this = self else {
+                                        then?()
+                                        return
+                                    }
                                     this.appName.fadeIn(duration: 0.5) { [weak self] finished in
-                                        guard let this = self else { return }
+                                        guard let this = self else {
+                                            then?()
+                                            return
+                                        }
                                         this.scenePlayed = true
                                         then?()
                                     }

@@ -38,7 +38,7 @@ class MainController: NSObject, iRateDelegate {
         Log.d("State initialized - app state: \(Config.appState())")
         checkCompatibility() { compatible in
             if compatible {
-                self.route()
+                self.launchUI()
             }
         }
     }
@@ -145,7 +145,11 @@ class MainController: NSObject, iRateDelegate {
         NotificationCenter.default.addObserver(self, selector: #selector(stateInitialized(notification:)), name: NSNotification.Name(rawValue: Events.StateInitialized), object: nil)
     }
 
-    func route() {
+    func launchUI() {
+        
+        /* ContainerController is currently showing EmptyViewController or a 
+           deep stack with presented NavigationController wrapping
+           SettingsTableViewController on top (logout) */
         
         let channelId = StateController.instance.channelId
         
@@ -285,7 +289,7 @@ class MainController: NSObject, iRateDelegate {
                 this.afterInvite(channelId: channelId, channelTitle: channelTitle)
             }
             else { // Channel is gone or channel secret is bad
-                if let topController = UIViewController.topMostViewController() {
+                if let topController = UIViewController.topController {
                     let popup = PopupDialog(title: "Channel Missing", message: "The \"\(channelTitle)\" channel has been deleted.")
                     let button = DefaultButton(title: "OK", height: 48) {
                         Reporting.track("invite_channel_missing")
@@ -306,7 +310,7 @@ class MainController: NSObject, iRateDelegate {
         StateController.instance.setChannelId(channelId: channelId)
         self.showChannel(channelId: channelId) { // User permissions are in place
             Utils.delay(0.5) {
-                if let topController = UIViewController.topMostViewController() {
+                if let topController = UIViewController.topController {
                     let popup = PopupDialog(title: "Welcome!", message: "You have joined the \(channelTitle) channel!")
                     let button = DefaultButton(title: "OK".uppercased(), height: 48) {
                         Reporting.track("invite_carry_on")

@@ -221,7 +221,7 @@ class PasswordViewController: BaseEditViewController {
                     StateController.instance.setChannelId(channelId: channelId)
                     MainController.instance.showChannel(channelId: channelId) { // User permissions are in place
                         Utils.delay(0.5) {
-                            if let topController = UIViewController.topMostViewController() {
+                            if let topController = UIViewController.topController {
                                 let popup = PopupDialog(title: "Welcome to \(Strings.appName)!", message: "We've started you out with your own personal channel. Invite some friends and start posting messages!")
                                 let button = DefaultButton(title: "OK".uppercased(), height: 48) {
                                     Reporting.track("sign_up_carry_on")

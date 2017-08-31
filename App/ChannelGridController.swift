@@ -278,7 +278,7 @@ class ChannelGridController: UICollectionViewController {
         
         let profileAction = UIAlertAction(title: "Profile and settings", style: .default) { action in
             let wrapper = AirNavigationController(rootViewController: MemberViewController(userId: UserController.instance.userId!))
-            UIViewController.topMostViewController()?.present(wrapper, animated: true, completion: nil)
+            UIViewController.topController?.present(wrapper, animated: true, completion: nil)
         }
         
         let cancel = UIAlertAction(title: "Cancel", style: .cancel) { action in
@@ -366,18 +366,9 @@ extension ChannelGridController {
 
 extension ChannelGridController: UISearchBarDelegate {
 
-	func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
-        self.queryController.filterActive = true
-        searchBar.becomeFirstResponder()
-	}
-
 	func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        self.queryController.filterActive = !searchText.isEmpty
         self.queryController.filter(searchText: searchText.isEmpty ? nil : searchText)
-	}
-
-	func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
-		searchBar.text = nil
-        searchBar.resignFirstResponder()
 	}
 
 	func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
@@ -385,6 +376,7 @@ extension ChannelGridController: UISearchBarDelegate {
             self.queryController.filter(searchText: nil)
         }
         searchBar.endEditing(true)
+        searchBar.text = nil
         self.searchBar.resignFirstResponder()
         self.queryController.filterActive = false
         searchBar.setShowsCancelButton(false, animated: true)

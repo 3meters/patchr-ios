@@ -16,7 +16,7 @@ struct UIShared {
 		
 		OperationQueue.main.addOperation {
 			
-			if let controller = UIViewController.topMostViewController() {
+			if let controller = UIViewController.topController {
 				controller.UpdateConfirmationAlert(
 					title: "Update required",
 					message: "Your version of \(Strings.appName) is not compatible with the \(Strings.appName) service. Please update to a newer version.",
@@ -72,7 +72,7 @@ struct UIShared {
 	static func askToEnableLocationService() {
 		OperationQueue.main.addOperation {
 			
-			if let controller = UIViewController.topMostViewController() {
+			if let controller = UIViewController.topController {
 				controller.LocationSettingsAlert(
 					title: "Location Services is disabled",
 					message: "\(Strings.appName) uses your location to discover nearby messages. Please turn on Location Services in your device settings.",
@@ -122,7 +122,7 @@ struct UIShared {
         
         if !addToWindow {
             if controller == nil  {
-                targetView = UIViewController.topMostViewController()!.view
+                targetView = UIViewController.topController!.view
             }
             else {
                 targetView = controller!.view

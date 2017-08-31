@@ -129,14 +129,14 @@ class MemberViewController: BaseViewController, UIScrollViewDelegate, UITextFiel
         let controller = ProfileEditViewController()
         let wrapper = AirNavigationController()
         wrapper.viewControllers = [controller]
-        UIViewController.topMostViewController()?.present(wrapper, animated: true, completion: nil)
+        UIViewController.topController?.present(wrapper, animated: true, completion: nil)
     }
     
     func settingsAction(sender: AnyObject?) {
         Reporting.track("view_settings")
         let controller = SettingsTableViewController()
         let wrapper = AirNavigationController(rootViewController: controller)
-        UIViewController.topMostViewController()?.present(wrapper, animated: true, completion: nil)
+        UIViewController.topController?.present(wrapper, animated: true, completion: nil)
     }
     
     func phoneAction(sender: AnyObject?) {
