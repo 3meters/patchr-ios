@@ -689,6 +689,13 @@ class ChannelViewController: BaseTableController {
 		var remaining = self.queryController.items.count
 		self.displayPhotos.removeAll()
 		self.displayPhotosSorted?.removeAll()
+        
+        if self.queryController.items.count == 0 {
+            if mode == .gallery {
+                UIShared.toast(message: "This channel needs some photos!")
+            }
+            return
+        }
 
 		for data in self.queryController.items {
 			let snap = data as! DataSnapshot
