@@ -488,8 +488,10 @@ extension ContactPickerController {
     
     func tokenInputView(_ view: CLTokenInputView, didRemove token: CLToken) {
         if self.tokenView.allTokens.count == 0 {
-            self.tokenView.searchImage.fadeIn(duration: 0.1)
-            self.tokenView.placeholder.fadeIn(duration: 0.1)
+            if !self.tokenView.isEditing {
+                self.tokenView.searchImage.fadeIn(duration: 0.1)
+                self.tokenView.placeholder.fadeIn(duration: 0.1)
+            }
             if self.flow == .internalCreate || self.flow == .onboardSignup {
                 self.doneButton.title = "Done"
             }
