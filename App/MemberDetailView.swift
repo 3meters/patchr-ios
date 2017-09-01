@@ -125,7 +125,7 @@ class MemberDetailView: UIView {
             let url = ImageProxy.url(photo: photo, category: SizeCategory.profile)
             if !self.photoView.associated(withUrl: url) {
                 self.photoView.showGradient = false
-                self.photoView.setImageWithUrl(url: url) { success in
+                self.photoView.setImageWithUrl(url: url, uploading: (photo.uploading != nil)) { success in
                     if success {
                         self.photoView.showGradient = true
                     }

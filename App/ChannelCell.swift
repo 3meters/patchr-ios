@@ -66,7 +66,7 @@ class ChannelCell: UICollectionViewCell {
             let url = ImageProxy.url(photo: photo, category: SizeCategory.profile)
             
             if !(self.photoView?.associated(withUrl: url))! {
-                self.photoView?.setImageWithUrl(url: url, animate: true) { success in
+                self.photoView?.setImageWithUrl(url: url, uploading: (photo.uploading != nil), animate: true) { success in
                     if success {
                         self.needsPhoto = false
                     }

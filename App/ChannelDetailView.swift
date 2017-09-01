@@ -171,7 +171,7 @@ class ChannelDetailView: UIView {
         let url = ImageProxy.url(photo: photo, category: SizeCategory.standard)
         
         if !self.photoView.associated(withUrl: url) {
-            self.photoView.setImageWithUrl(url: url) { success in
+            self.photoView.setImageWithUrl(url: url, uploading: (photo.uploading != nil)) { success in
                 if success {
                     self.photoView.showGradient = true
                     self.needsPhoto = false
