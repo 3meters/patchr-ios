@@ -380,7 +380,6 @@
 		9FDCC15031FC0921002C6B82 /* background.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = background.png; sourceTree = "<group>"; };
 		9FDCC1577A4D0CB7D4B299DE /* Demo New Patch.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file.mp4; path = "Demo New Patch.mp4"; sourceTree = "<group>"; };
 		9FDCC171492BC6FB680DEA05 /* HBehrens-android-emulator-skins-2483cef (1).zip */ = {isa = PBXFileReference; lastKnownFileType = archive.zip; path = "HBehrens-android-emulator-skins-2483cef (1).zip"; sourceTree = "<group>"; };
-		9FDCC19D62A17A76696DF9CC /* notifications_framed.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = notifications_framed.png; sourceTree = "<group>"; };
 		9FDCC1B507E1AD6DAD845F72 /* FrameFile.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = FrameFile.json; sourceTree = "<group>"; };
 		9FDCC23341B48DB27FB32EB6 /* patchr-promo-graphic.psd */ = {isa = PBXFileReference; lastKnownFileType = file.psd; path = "patchr-promo-graphic.psd"; sourceTree = "<group>"; };
 		9FDCC23489051DEAA6B4439A /* patchr-feature2-graphic.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "patchr-feature2-graphic.jpg"; sourceTree = "<group>"; };
@@ -393,7 +392,6 @@
 		9FDCC516D8E48ABD22EE441A /* nexus_5_tilt.psd */ = {isa = PBXFileReference; lastKnownFileType = file.psd; path = nexus_5_tilt.psd; sourceTree = "<group>"; };
 		9FDCC5452372EFCC98BA01BF /* UserQuery.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserQuery.swift; sourceTree = "<group>"; };
 		9FDCC5CDEEB4DD9DDA31F876 /* single-nexus-5.psd */ = {isa = PBXFileReference; lastKnownFileType = file.psd; path = "single-nexus-5.psd"; sourceTree = "<group>"; };
-		9FDCC5E84AD8B2BDA2A67F77 /* channel_framed.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = channel_framed.png; sourceTree = "<group>"; };
 		9FDCC68ACDC02C764EE70B02 /* FireController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FireController.swift; path = App/FireController.swift; sourceTree = "<group>"; };
 		9FDCC6D9E7C9AADE45675174 /* MemberSettingsController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MemberSettingsController.swift; sourceTree = "<group>"; };
 		9FDCC7279D63732F217E85F0 /* cover-image.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "cover-image.jpg"; sourceTree = "<group>"; };
@@ -404,7 +402,6 @@
 		9FDCC7D2BF8341DCBB416DC4 /* ChannelViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChannelViewController.swift; sourceTree = "<group>"; };
 		9FDCC7F05DD5B1EB3998A138 /* nexus-5-white.psd */ = {isa = PBXFileReference; lastKnownFileType = file.psd; path = "nexus-5-white.psd"; sourceTree = "<group>"; };
 		9FDCC7F70FDCF3917DC5C784 /* 2-phone-left.psd */ = {isa = PBXFileReference; lastKnownFileType = file.psd; path = "2-phone-left.psd"; sourceTree = "<group>"; };
-		9FDCC803B919DFA96A4BAE85 /* notifications.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = notifications.png; sourceTree = "<group>"; };
 		9FDCC824712DD2F8575F766E /* Reflector Recording.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file.mp4; path = "Reflector Recording.mp4"; sourceTree = "<group>"; };
 		9FDCC82CA7DCA03118C419B1 /* patchr-square.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "patchr-square.jpg"; sourceTree = "<group>"; };
 		9FDCC87DC2923CE4A6F17C1E /* SlideAnimationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SlideAnimationController.swift; sourceTree = "<group>"; };
@@ -412,13 +409,11 @@
 		9FDCC8C47C8D789AEB916280 /* nexus-5.psd.zip */ = {isa = PBXFileReference; lastKnownFileType = archive.zip; path = "nexus-5.psd.zip"; sourceTree = "<group>"; };
 		9FDCC92495199E1EE9A9554F /* hand-dribbble2x.psd */ = {isa = PBXFileReference; lastKnownFileType = file.psd; path = "hand-dribbble2x.psd"; sourceTree = "<group>"; };
 		9FDCC95879B8093C86BEF044 /* nexus_7__psd_by_slaveoffear-d5m8vr0.zip */ = {isa = PBXFileReference; lastKnownFileType = archive.zip; path = "nexus_7__psd_by_slaveoffear-d5m8vr0.zip"; sourceTree = "<group>"; };
-		9FDCC9636DDC0646225E236C /* photo_edit.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = photo_edit.png; sourceTree = "<group>"; };
 		9FDCC985C0388C8C96A207CE /* FireMessage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FireMessage.swift; sourceTree = "<group>"; };
 		9FDCC9FB41B6849BBBB72F96 /* nexus-5-mockup.psd */ = {isa = PBXFileReference; lastKnownFileType = file.psd; path = "nexus-5-mockup.psd"; sourceTree = "<group>"; };
 		9FDCCA7AB0285558DFFDF2C1 /* SettingsTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsTableViewController.swift; sourceTree = "<group>"; };
 		9FDCCAC04E140F7D6BDCEF10 /* Roboto-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file.ttf; path = "Roboto-Regular.ttf"; sourceTree = "<group>"; };
 		9FDCCADB4957C2E128DDE9FF /* MainController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MainController.swift; path = App/MainController.swift; sourceTree = "<group>"; };
-		9FDCCB4B50E35F9A34C652AA /* channel.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = channel.png; sourceTree = "<group>"; };
 		9FDCCBBC7BF1C0419007B9F9 /* AccountEditViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = AccountEditViewController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		9FDCCC15CA72BB57D88D11CC /* patchr-promo-graphic.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "patchr-promo-graphic.jpg"; sourceTree = "<group>"; };
 		9FDCCC2AD3C89FB0B7776F9E /* nexus-5-angled.psd */ = {isa = PBXFileReference; lastKnownFileType = file.psd; path = "nexus-5-angled.psd"; sourceTree = "<group>"; };
@@ -436,7 +431,6 @@
 		9FDCCE5E0AA449B739AD0137 /* ProfileEditViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = ProfileEditViewController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		9FDCCEFC8FC05526D291A77B /* MessageQuery.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageQuery.swift; sourceTree = "<group>"; };
 		9FDCCF1B16FEE7BE42F9A731 /* channel_framed.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = channel_framed.png; sourceTree = "<group>"; };
-		9FDCCF46E5C9BD1E20E59536 /* photo_edit_framed.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = photo_edit_framed.png; sourceTree = "<group>"; };
 		9FDCCFBA14298172864A2DAB /* Free iPhone Mockup Generator & App Demo Videos by Placeit.webloc */ = {isa = PBXFileReference; lastKnownFileType = file.webloc; path = "Free iPhone Mockup Generator & App Demo Videos by Placeit.webloc"; sourceTree = "<group>"; };
 		B9AE7D6D6BF8933855ECA54F /* Pods-Teeny.adhoc.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Teeny.adhoc.xcconfig"; path = "Pods/Target Support Files/Pods-Teeny/Pods-Teeny.adhoc.xcconfig"; sourceTree = "<group>"; };
 		C86F973614EE206EF42E568D /* Pods-Teeny.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Teeny.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Teeny/Pods-Teeny.debug.xcconfig"; sourceTree = "<group>"; };
@@ -789,16 +783,10 @@
 		9FDCC8864D10E2B761942BCC /* 5.5 */ = {
 			isa = PBXGroup;
 			children = (
-				9FDCCB4B50E35F9A34C652AA /* channel.png */,
 				9FDCC3142275CEFEAC3D5BDB /* gallery.png */,
 				9FDCCD6CFF5308043FF34AC4 /* background.png */,
 				9FDCC1B507E1AD6DAD845F72 /* FrameFile.json */,
-				9FDCC9636DDC0646225E236C /* photo_edit.png */,
-				9FDCC803B919DFA96A4BAE85 /* notifications.png */,
-				9FDCC5E84AD8B2BDA2A67F77 /* channel_framed.png */,
 				9FDCCD45CAF08747C58A184B /* gallery_framed.png */,
-				9FDCCF46E5C9BD1E20E59536 /* photo_edit_framed.png */,
-				9FDCC19D62A17A76696DF9CC /* notifications_framed.png */,
 			);
 			path = 5.5;
 			sourceTree = "<group>";
