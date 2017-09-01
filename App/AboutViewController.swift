@@ -108,13 +108,13 @@ extension AboutViewController {
         
         if selectedCell == self.termsOfServiceCell {
             Reporting.track("view_terms_of_service")
-            let termsURLString = "http://teenysocial.com/terms"
+            let termsURLString = "http://patchr.com/terms"
             self.pushWebViewController(url: NSURL(string: termsURLString) as URL?)
         }
             
         if selectedCell == self.privacyPolicyCell {
             Reporting.track("view_privacy_policy")
-            let privacyPolicyURLString = "http://teenysocial.com/privacy"
+            let privacyPolicyURLString = "http://patchr.com/privacy"
             self.pushWebViewController(url: NSURL(string: privacyPolicyURLString) as URL?)
         }
             

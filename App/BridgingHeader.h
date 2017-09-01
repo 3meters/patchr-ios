@@ -21,5 +21,4 @@
 #import <AdobeCreativeSDKCore/AdobeUXAuthManager.h>
 #import <AdobeCreativeSDKImage/AdobeUXImageEditorViewController.h>
 
-
 #endif

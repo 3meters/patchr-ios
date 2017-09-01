@@ -164,7 +164,7 @@ extension SettingsTableViewController {
         
         if selectedCell == self.sendFeedbackCell {
             Reporting.track("view_feedback_compose")
-            let email = "feedback@teenysocial.com"
+            let email = "feedback@patchr.com"
             let subject = "Feedback for \(Strings.appName) iOS"
             if MFMailComposeViewController.canSendMail() {
                 UI.mailComposer!.mailComposeDelegate = self
