@@ -200,7 +200,7 @@ class MessageEditViewController: BaseEditViewController {
         self.photoEditView.photoDelegate = self
         self.photoEditView.alpha = 0
         
-        self.photoButton.setImage(#imageLiteral(resourceName: "UIButtonCamera"), for: .normal)
+        self.photoButton.setImage(UIImage(named: "UIButtonCamera"), for: .normal)
         self.photoButton.backgroundColor = Theme.colorButtonFill
         self.photoButton.cornerRadius = Theme.dimenButtonCornerRadius
         self.photoButton.borderWidth = Theme.dimenButtonBorderWidth
