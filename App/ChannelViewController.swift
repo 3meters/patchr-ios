@@ -531,11 +531,12 @@ class ChannelViewController: BaseTableController {
                 guard let channel = controller.selectedChannel else { return }
                 let fromChannelId = message.channelId!
                 let toChannelId = channel.id!
+                let channelTitle = channel.title!
                 FireController.instance.moveMessage(message: message, fromChannelId: fromChannelId, toChannelId: toChannelId)
                 { error in
                     if error == nil {
-                        UIShared.toast(message: "Message moved to: \(channel.title!)", duration: 2.0, controller: self, addToWindow: false)
-                        Log.v("Copy message to channel: \(channel.id!)")
+                        UIShared.toast(message: "Message moved to: \(channelTitle)", duration: 2.0, controller: this, addToWindow: false)
+                        Log.v("Copy message to channel: \(toChannelId)")
                         Reporting.track("move_message")
                     }
                 }
