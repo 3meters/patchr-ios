@@ -358,12 +358,15 @@ class ContactPickerController: BaseTableController, CLTokenInputViewDelegate {
             }
         }
         
-        UIShared.toast(message: "Invites sent")
+        if let controller = self.navigationController?.presentingViewController {
+            UIShared.toast(message: "Invitations sent", duration: 3.0, controller: controller, addToWindow: false)
+        }
+
         if self.flow == .internalCreate {
             self.navigateToChannel()
         }
         else {
-            self.close()
+            self.navigationController?.close()
         }
     }
 }
@@ -466,8 +469,6 @@ extension ContactPickerController: UITableViewDelegate  {
 extension ContactPickerController {
     
     func tokenInputView(_ view: CLTokenInputView, didChangeText text: String?) {
-        let texty = (text?.isEmpty)! ? "empty" : text
-        Log.v("token view text: \(texty!)")
         self.filterActive = (text != nil && !text!.trimmingCharacters(in: .whitespaces).isEmpty)
         self.filterText = (text != nil) ? text!.trimmingCharacters(in: .whitespaces) : nil
         self.doneButton.isEnabled = (text != nil && text!.isEmail()) || self.tokenView.allTokens.count > 0
@@ -542,33 +543,6 @@ extension ContactPickerController {
             self.picks[text] = text
             return CLToken(displayText: text, context: nil)
         }
-
-//        Log.d("tokenForText")
-//        if let cell = self.tableView.cellForRow(at: IndexPath(row: 0, section: 0)) as? UserListCell {
-//            let contact = cell.contact!
-//            let fullName = CNContactFormatter.string(from: contact, style: .fullName)
-//            let title = fullName ?? contact.emailAddresses.first!.value as String
-//            let email = contact.emailAddresses.first!.value as String
-//            if !email.isEmail() {
-//                UIShared.toast(message: "\(email) is not a valid email address")
-//                return nil
-//            }
-//            else {
-//                cell.checkBox?.setOn(true, animated: true)
-//                self.picks[email] = email
-//                return CLToken(displayText: title, context: cell)
-//            }
-//        }
-//        else {
-//            if !text.isEmail() {
-//                UIShared.toast(message: "\(text) is not a valid email address")
-//                return nil
-//            }
-//            else {
-//                self.picks[text] = text
-//                return CLToken(displayText: text, context: nil)
-//            }
-//        }
     }
     
     func tokenInputViewDidEndEditing(_ view: CLTokenInputView) {
