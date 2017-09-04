@@ -117,7 +117,6 @@
 		E26C80921C3AE246001514B3 /* Animation.swift in Sources */ = {isa = PBXBuildFile; fileRef = E26C80911C3AE246001514B3 /* Animation.swift */; };
 		E27C12091E6CD403003F052B /* Pods-acknowledgements.plist in Resources */ = {isa = PBXBuildFile; fileRef = E27C12081E6CD403003F052B /* Pods-acknowledgements.plist */; };
 		E27CE2801E632E4800149305 /* DropdownButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E27CE27F1E632E4800149305 /* DropdownButton.swift */; };
-		E27F80AF1C56C84700D436E3 /* run-tests.sh in Resources */ = {isa = PBXBuildFile; fileRef = E27F80AE1C56C84700D436E3 /* run-tests.sh */; };
 		E27F8A7E1DFB3A180020E852 /* FloatTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = E27F8A7D1DFB3A180020E852 /* FloatTextField.swift */; };
 		E2810BA61DC8E6930013AEA0 /* PresenceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2810BA51DC8E6930013AEA0 /* PresenceView.swift */; };
 		E2816B341F003A650049E84B /* ServiceAccountProd.json in Resources */ = {isa = PBXBuildFile; fileRef = E2816B321F003A650049E84B /* ServiceAccountProd.json */; };
@@ -168,8 +167,6 @@
 		E2C0D9311B6C415100E28CE9 /* Log.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2C0D9301B6C415100E28CE9 /* Log.swift */; };
 		E2C720C71B4EDAFE00714B53 /* AirLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2C720C61B4EDAFE00714B53 /* AirLabel.swift */; };
 		E2C7C5CB1B2CF2F80045038A /* ImageResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2C7C5CA1B2CF2F80045038A /* ImageResult.swift */; };
-		E2CA0C351C4FFEAF00E2F380 /* build.sh in Resources */ = {isa = PBXBuildFile; fileRef = E2CA0C331C4FFEAF00E2F380 /* build.sh */; };
-		E2CA0C361C4FFEAF00E2F380 /* test.sh in Resources */ = {isa = PBXBuildFile; fileRef = E2CA0C341C4FFEAF00E2F380 /* test.sh */; };
 		E2CA16FF1DB95DDB00F99E1D /* FireAttachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2CA16FE1DB95DDB00F99E1D /* FireAttachment.swift */; };
 		E2CCAAE21B67EE2C0071170C /* chirp.caf in Resources */ = {isa = PBXBuildFile; fileRef = E2CCAAE11B67EE2C0071170C /* chirp.caf */; };
 		E2D10E5C1C87AA760099EA6E /* AirHideShowButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2D10E5B1C87AA760099EA6E /* AirHideShowButton.swift */; };
@@ -329,13 +326,10 @@
 		E2DB43361EB4F2C400B1F78B /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = E2A603221CD97B7A00FBD55B /* InfoPlist.strings */; };
 		E2DB43371EB4F2C400B1F78B /* .xctool-args in Resources */ = {isa = PBXBuildFile; fileRef = E28915901C5A85CF005D7AA0 /* .xctool-args */; };
 		E2DB43381EB4F2C400B1F78B /* AdobeCreativeSDKCoreResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = E25A73751C1C87E200688EDC /* AdobeCreativeSDKCoreResources.bundle */; };
-		E2DB433A1EB4F2C400B1F78B /* run-tests.sh in Resources */ = {isa = PBXBuildFile; fileRef = E27F80AE1C56C84700D436E3 /* run-tests.sh */; };
-		E2DB433C1EB4F2C400B1F78B /* test.sh in Resources */ = {isa = PBXBuildFile; fileRef = E2CA0C341C4FFEAF00E2F380 /* test.sh */; };
 		E2DB433D1EB4F2C400B1F78B /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7D3D39D51A6F086F00A44CB2 /* Images.xcassets */; };
 		E2DB433E1EB4F2C400B1F78B /* ThumbnailCollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E26B0C911B46D01E00706F4A /* ThumbnailCollectionViewCell.xib */; };
 		E2DB43411EB4F2C400B1F78B /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E28915921C5AD528005D7AA0 /* LaunchScreen.storyboard */; };
 		E2DB43421EB4F2C400B1F78B /* silence.caf in Resources */ = {isa = PBXBuildFile; fileRef = E2064BF21BC0212B009C7B6A /* silence.caf */; };
-		E2DB43431EB4F2C400B1F78B /* build.sh in Resources */ = {isa = PBXBuildFile; fileRef = E2CA0C331C4FFEAF00E2F380 /* build.sh */; };
 		E2DB43451EB4F2C400B1F78B /* chirp.caf in Resources */ = {isa = PBXBuildFile; fileRef = E2CCAAE11B67EE2C0071170C /* chirp.caf */; };
 		E2DB43461EB4F2C400B1F78B /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 8468F8211A9D09D1007D6EE6 /* Localizable.strings */; };
 		E2DB43471EB4F2C400B1F78B /* notification_candi_discovered_soft.aac in Resources */ = {isa = PBXBuildFile; fileRef = E25327C71B13D34100990A81 /* notification_candi_discovered_soft.aac */; };
@@ -1317,9 +1311,6 @@
 				E25A73781C1C87F500688EDC /* AdobeCreativeSDKImageResources.bundle in Resources */,
 				E25A73761C1C87E200688EDC /* AdobeCreativeSDKCoreResources.bundle in Resources */,
 				E28915911C5A85CF005D7AA0 /* .xctool-args in Resources */,
-				E27F80AF1C56C84700D436E3 /* run-tests.sh in Resources */,
-				E2CA0C361C4FFEAF00E2F380 /* test.sh in Resources */,
-				E2CA0C351C4FFEAF00E2F380 /* build.sh in Resources */,
 				E258DF991F3A1CA1004687CC /* ChannelPickerCell.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1349,9 +1340,6 @@
 				E2DB43341EB4F2C400B1F78B /* AdobeCreativeSDKImageResources.bundle in Resources */,
 				E2DB43381EB4F2C400B1F78B /* AdobeCreativeSDKCoreResources.bundle in Resources */,
 				E2DB43371EB4F2C400B1F78B /* .xctool-args in Resources */,
-				E2DB433A1EB4F2C400B1F78B /* run-tests.sh in Resources */,
-				E2DB433C1EB4F2C400B1F78B /* test.sh in Resources */,
-				E2DB43431EB4F2C400B1F78B /* build.sh in Resources */,
 				E258DF9A1F3A1CA1004687CC /* ChannelPickerCell.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

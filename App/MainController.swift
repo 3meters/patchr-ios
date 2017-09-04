@@ -317,6 +317,9 @@ class MainController: NSObject, iRateDelegate {
                     }
                     popup.addButton(button)
                     topController.present(popup, animated: true)
+                    if UserDefaults.standard.bool(forKey: PerUserKey(key: Prefs.soundEffects)) {
+                        AudioController.instance.play(sound: Sound.greeting.rawValue)
+                    }
                 }
             }
         }
