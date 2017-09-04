@@ -175,13 +175,11 @@ class ChannelDetailView: UIView {
                 if success {
                     self.photoView.showGradient = true
                     self.needsPhoto = false
-                    if self.infoGroup.superview != nil {
-                        if let image = self.photoView.image {
-                            let colorImageAverage = AverageColorFromImage(image)
-                            let colorText = ContrastColorOf(colorImageAverage, returnFlat: false)
-                            self.infoGroup.backgroundColor = colorImageAverage
-                            self.purposeLabel.textColor = colorText
-                        }
+                    if let image = self.photoView.image {
+                        let colorImageAverage = AverageColorFromImage(image)
+                        let colorText = ContrastColorOf(colorImageAverage, returnFlat: false)
+                        self.infoGroup.backgroundColor = colorImageAverage
+                        self.purposeLabel.textColor = colorText
                     }
                 }
             }
