@@ -1,0 +1,17 @@
+{
+  "AppIcons" : {
+
+  },
+  "FormatVersion" : 1,
+  "WhitelistedFiles" : {
+    "App\/Images.xcassets\/imgSettingsLight.imageset\/imgSettingsLight~universal@1x.png" : {
+      "WhitelistedUsed" : true
+    },
+    "App\/Images.xcassets\/imgCancelLight.imageset\/imgCancelLight~universal@1x.png" : {
+      "WhitelistedUsed" : true
+    },
+    "App\/Images.xcassets\/imgOverflowLight.imageset\/imgOverflowLight@2x.png" : {
+      "WhitelistedUsed" : true
+    }
+  }
+}

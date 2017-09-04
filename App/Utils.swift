@@ -14,25 +14,6 @@ var temporaryFileCount = 0
 
 struct Utils {
 	
-	static var imageMedia: UIImage = { return UIImage(named: "imgMediaLight") }()!
-	static var imageMessage: UIImage = { return UIImage(named: "imgMessageLight") }()!
-	static var imageWatch: UIImage = { return UIImage(named: "imgWatchLight") }()!
-	static var imageStarOn: UIImage = { return UIImage(named: "imgStarFilledLight") }()!
-    static var imageStarOff: UIImage = { return UIImage(named: "imgStarLight") }()!
-	static var imageLike: UIImage = { return UIImage(named: "imgLikeLight") }()!
-	static var imageShare: UIImage = { return UIImage(named: "imgShareLight") }()!
-	static var imageLocation: UIImage = { return UIImage(named: "imgLocationLight") }()!
-	static var imageHeartOn: UIImage = { return UIImage(named: "imgHeartFilledLight") }()!
-	static var imageHeartOff: UIImage = { return UIImage(named: "imgHeartLight") }()!
-	static var imageBroken: UIImage = { return UIImage(named: "imgBroken250Light") }()!
-	static var imageDefaultPatch: UIImage = { return UIImage(named: "imgDefaultPatch") }()!
-	static var imageDefaultUser: UIImage = { return UIImage(named: "imgDefaultUser") }()!
-	static var imageEdit: UIImage = { return UIImage(named: "imgEdit2Light") }()!
-	static var imagePatch: UIImage = { return UIImage(named: "imgPatchLight") }()!
-	static var imageRemove: UIImage = { return UIImage(named: "imgRemoveLight") }()!
-	static var imageLock: UIImage = { return UIImage(named: "imgLockLight") }()!
-	static var imageMuted: UIImage = { return UIImage(named: "imgSoundOff3Light") }()!
-	
     static func genDateKey() -> String {
         let date = Date()     			// Initialized to current date
 		let calendar = Calendar.current // System caches currentCalendar as of iOS 7
