@@ -8,6 +8,7 @@
 
 import FirebaseAuth
 import Firebase
+import Localize_Swift
 import MBProgressHUD
 import PopupDialog
 import UIKit
@@ -22,6 +23,7 @@ class PasswordViewController: BaseEditViewController {
     var passwordField = FloatTextField(frame: CGRect.zero)
     var hideShowButton = AirHideShowButton()
     var forgotPasswordButton = AirLinkButton()
+    var nextButton: UIBarButtonItem!
 
     /*--------------------------------------------------------------------------------------------
     * MARK: - Lifecycle
@@ -75,7 +77,7 @@ class PasswordViewController: BaseEditViewController {
                 self.progress?.minShowTime = 0.5
                 self.progress?.removeFromSuperViewOnHide = true
                 self.progress?.show(true)
-                self.progress?.labelText = self.branch == .login ? "Logging in..." : "Signing up..."
+                self.progress?.labelText = self.branch == .login ? "\("progress_logging_in".localized())..." : "\("progress_signing_up".localized())..."
                 authenticate()
             }
         }
@@ -96,7 +98,7 @@ class PasswordViewController: BaseEditViewController {
         Auth.auth().sendPasswordReset(withEmail: self.inputEmail) { error in
             if error == nil {
                 Reporting.track("request_password_reset")
-                self.alert(title: "A password reset email has been sent to your email address.")
+                self.alert(title: "password_reset_email_sent".localized())
             }
         }
     }
@@ -112,24 +114,16 @@ class PasswordViewController: BaseEditViewController {
     override func initialize() {
         super.initialize()
         
-        self.message.text = (self.mode == .reauth)
-            ? "Password confirmation"
-            : "Almost to the good stuff."
-        
         self.message.textColor = Theme.colorTextTitle
         self.message.numberOfLines = 0
         self.message.textAlignment = .center
         
-        self.userNameField.placeholder = "Username"
-        self.userNameField.title = "Username (lower case)"
         self.userNameField.setDelegate(delegate: self)
         self.userNameField.keyboardType = .default
         self.userNameField.autocapitalizationType = .none
         self.userNameField.autocorrectionType = .no
         self.userNameField.returnKeyType = UIReturnKeyType.next
 
-        self.passwordField.placeholder = "Password"
-        self.passwordField.title = "Password (6+ characters)"
         self.passwordField.setDelegate(delegate: self)
         self.passwordField.isSecureTextEntry = true
         self.passwordField.autocapitalizationType = .none
@@ -146,7 +140,6 @@ class PasswordViewController: BaseEditViewController {
             self.forgotPasswordButton.isHidden = true
         }
         else {
-            self.forgotPasswordButton.setTitle("Forgot password?", for: .normal)
             self.forgotPasswordButton.addTarget(self, action: #selector(passwordResetAction(sender:)), for: .touchUpInside)
             self.contentHolder.addSubview(self.forgotPasswordButton)
         }
@@ -159,8 +152,21 @@ class PasswordViewController: BaseEditViewController {
         }
 
         /* Navigation bar buttons */
-        let nextButton = UIBarButtonItem(title: "Next", style: UIBarButtonItemStyle.plain, target: self, action: #selector(doneAction(sender:)))
+        self.nextButton = UIBarButtonItem(title: nil, style: UIBarButtonItemStyle.plain, target: self, action: #selector(doneAction(sender:)))
         self.navigationItem.rightBarButtonItems = [nextButton]
+        bindLanguage()
+    }
+    
+    func bindLanguage() {
+        self.message.text = (self.mode == .reauth)
+            ? "password_confirmation".localized()
+            : "password_view_title".localized()
+        self.userNameField.placeholder = "username".localized()
+        self.userNameField.title = "username_title".localized()
+        self.passwordField.placeholder = "password".localized()
+        self.passwordField.title = "password_title".localized()
+        self.forgotPasswordButton.setTitle("password_forgot".localized(), for: .normal)
+        self.nextButton.title = "next".localized()
     }
 
     func authenticate() {
@@ -222,8 +228,9 @@ class PasswordViewController: BaseEditViewController {
                     MainController.instance.showChannel(channelId: channelId) { // User permissions are in place
                         Utils.delay(0.5) {
                             if let topController = UIViewController.topController {
-                                let popup = PopupDialog(title: "Welcome to \(Strings.appName)!", message: "We've started you out with your own personal channel. Invite some friends and start posting messages!")
-                                let button = DefaultButton(title: "OK".uppercased(), height: 48) {
+                                let popup = PopupDialog(title: "\("channel_welcome_title".localized()) \(Strings.appName)!"
+                                    , message: "channel_welcome_message".localized())
+                                let button = DefaultButton(title: "ok".localized().uppercased(), height: 48) {
                                     Reporting.track("sign_up_carry_on")
                                 }
                                 popup.addButton(button)
@@ -246,15 +253,15 @@ class PasswordViewController: BaseEditViewController {
             var errorMessage = error?.localizedDescription
             if error!._code == AuthErrorCode.emailAlreadyInUse.rawValue {
                 Reporting.track("login_error", properties:["message": "email_already_used", "email": email!])
-                errorMessage = "Email already used"
+                errorMessage = "email_used".localized()
             }
             else if error!._code == AuthErrorCode.invalidEmail.rawValue {
                 Reporting.track("login_error", properties:["message": "email_address_not_valid", "email": email!])
-                errorMessage = "Email address is not valid"
+                errorMessage = "email_invalid".localized()
             }
             else if error!._code == AuthErrorCode.wrongPassword.rawValue {
                 Reporting.track("login_error", properties:["message": "wrong_password"])
-                errorMessage = "Wrong email and password combination"
+                errorMessage = "email_auth_fail".localized()
             }
             self.passwordField.errorMessage = errorMessage
         }
@@ -286,31 +293,31 @@ class PasswordViewController: BaseEditViewController {
     func isValid() -> Bool {
 
         if (passwordField.text!.utf16.count < 6) {
-            self.passwordField.errorMessage = "Enter a password with six characters or more."
+            self.passwordField.errorMessage = "password_too_short".localized()
             return false
         }
         
         if self.branch == .signup {
             
             if self.userNameField.isEmpty {
-                self.userNameField.errorMessage = "Choose your username"
+                self.userNameField.errorMessage = "username_empty".localized()
                 return false
             }
             
             let username = userNameField.text!
             let characterSet: NSCharacterSet = NSCharacterSet(charactersIn: "abcdefghijklmnopqrstuvwxyz0123456789_-")
             if username.rangeOfCharacter(from: characterSet.inverted) != nil {
-                self.userNameField.errorMessage = "Username must be lower case and cannot contain spaces or periods."
+                self.userNameField.errorMessage = "username_invalid_chars".localized()
                 return false
             }
             
             if (userNameField.text!.utf16.count > 21) {
-                self.userNameField.errorMessage = "Username must be 21 characters or less."
+                self.userNameField.errorMessage = "username_too_long".localized()
                 return false
             }
             
             if (userNameField.text!.utf16.count < 3) {
-                self.userNameField.errorMessage = "Username must be at least 3 characters."
+                self.userNameField.errorMessage = "username_too_short".localized()
                 return false
             }
         }

@@ -37,6 +37,7 @@ def shared_pods
     pod 'FirebaseUI/Database',      '4.1.1'
     pod 'iRate',                    '1.11.6'
     pod 'IDMPhotoBrowser',          :path => '~/code/IDMPhotoBrowser'
+    pod 'Localize-Swift',           '1.7.0'
     pod 'MBProgressHUD',            '0.9.2'
     pod 'NHBalancedFlowLayout',     '0.2'
     pod 'PBWebViewController',      '0.5.0'		# Used to show show web content for terms/policy/licensing

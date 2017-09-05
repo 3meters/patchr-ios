@@ -9,6 +9,7 @@
 import UIKit
 import MBProgressHUD
 import Firebase
+import Localize_Swift
 
 class ProfileEditViewController: BaseEditViewController {
     
@@ -95,8 +96,8 @@ class ProfileEditViewController: BaseEditViewController {
             return
         }
         DeleteConfirmationAlert(
-            title: "Do you want to discard your editing changes?",
-            actionTitle: "Discard", cancelTitle: "Cancel", delegate: self) {
+            title: "discard_changes".localized(),
+            actionTitle: "discard".localized(), cancelTitle: "cancel".localized(), delegate: self) {
                 doIt in
                 if doIt {
                     self.close(animated: true)
@@ -147,7 +148,6 @@ class ProfileEditViewController: BaseEditViewController {
     override func initialize() {
         super.initialize()
 
-        self.message.text = "Profile"
         self.message.textColor = Theme.colorTextTitle
         self.message.numberOfLines = 0
         self.message.textAlignment = .center
@@ -156,7 +156,6 @@ class ProfileEditViewController: BaseEditViewController {
         self.photoEditView.setHost(controller: self, view: self.photoEditView)
         self.photoEditView.photoDelegate = self
 
-        self.firstNameField.placeholder = "First name"
         self.firstNameField.font = Theme.fontTextDisplay
         self.firstNameField.setDelegate(delegate: self)
         self.firstNameField.autocapitalizationType = .words
@@ -164,7 +163,6 @@ class ProfileEditViewController: BaseEditViewController {
         self.firstNameField.keyboardType = .default
         self.firstNameField.returnKeyType = .next
 
-        self.lastNameField.placeholder = "Last name"
         self.lastNameField.font = Theme.fontTextDisplay
         self.lastNameField.setDelegate(delegate: self)
         self.lastNameField.autocapitalizationType = .words
@@ -172,7 +170,6 @@ class ProfileEditViewController: BaseEditViewController {
         self.lastNameField.keyboardType = .default
         self.lastNameField.returnKeyType = .next
 
-        self.phoneField.placeholder = "Phone number"
         self.phoneField.font = Theme.fontTextDisplay
         self.phoneField.setDelegate(delegate: self)
         self.phoneField.autocapitalizationType = .none
@@ -180,7 +177,6 @@ class ProfileEditViewController: BaseEditViewController {
         self.phoneField.keyboardType = .phonePad
         self.phoneField.returnKeyType = .done
         
-        self.accountButton.setTitle("Account settings".uppercased(), for: .normal)
         self.accountButton.addTarget(self, action: #selector(accountAction(sender:)), for: .touchUpInside)
         
         self.contentHolder.addSubview(self.message)
@@ -190,15 +186,14 @@ class ProfileEditViewController: BaseEditViewController {
         self.contentHolder.addSubview(self.phoneField)
         self.contentHolder.addSubview(self.accountButton)
         
+        self.doneButton = UIBarButtonItem(title: "Save", style: UIBarButtonItemStyle.plain, target: self, action: #selector(doneAction(sender:)))
         if self.presented {
-            let cancelButton = UIBarButtonItem(barButtonSystemItem: .stop, target: self, action: #selector(closeAction(sender:)))
-            self.doneButton = UIBarButtonItem(title: "Save", style: UIBarButtonItemStyle.plain, target: self, action: #selector(doneAction(sender:)))
             self.doneButton.isEnabled = false
-            self.navigationItem.leftBarButtonItems = [cancelButton]
             self.navigationItem.rightBarButtonItems = [doneButton]
+            let cancelButton = UIBarButtonItem(barButtonSystemItem: .stop, target: self, action: #selector(closeAction(sender:)))
+            self.navigationItem.leftBarButtonItems = [cancelButton]
         }
         else {
-            self.doneButton = UIBarButtonItem(title: "Save", style: UIBarButtonItemStyle.plain, target: self, action: #selector(doneAction(sender:)))
             self.doneButton.isEnabled = false
             self.navigationItem.rightBarButtonItems = [doneButton]
         }
@@ -206,12 +201,13 @@ class ProfileEditViewController: BaseEditViewController {
         self.firstNameField.addTarget(self, action: #selector(textFieldDidChange(_:)), for: .editingChanged)
         self.lastNameField.addTarget(self, action: #selector(textFieldDidChange(_:)), for: .editingChanged)
         self.phoneField.addTarget(self, action: #selector(textFieldDidChange(_:)), for: .editingChanged)
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(bindLanguage), name: NSNotification.Name(LCLLanguageChangeNotification), object: nil)
+        bindLanguage()
     }
 
     func bind() {
-        
         self.photoEditView.configureTo(photoMode: self.user.profile?.photo != nil ? .photo : .placeholder)
-        
         self.firstNameField.text = self.user.profile?.firstName
         self.lastNameField.text = self.user.profile?.lastName
         self.phoneField.text = self.user.profile?.phone
@@ -220,6 +216,15 @@ class ProfileEditViewController: BaseEditViewController {
             let photoUrl = ImageProxy.url(photo: photo, category: SizeCategory.standard)
             self.photoEditView.bind(url: photoUrl)
         }
+    }
+    
+    func bindLanguage() {
+        self.message.text = "profile".localized()
+        self.firstNameField.placeholder = "first_name".localized()
+        self.lastNameField.placeholder = "last_name".localized()
+        self.phoneField.placeholder = "phone_number".localized()
+        self.accountButton.setTitle("account_settings".localized().uppercased(), for: .normal)
+        self.doneButton.title = "save".localized()
     }
     
     func update() {

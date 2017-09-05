@@ -15,6 +15,7 @@ import Branch
 import Firebase
 import FirebaseInstanceID
 import FirebaseMessaging
+import Localize_Swift
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate, MessagingDelegate {
@@ -65,6 +66,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate, MessagingDelegate {
             self.showedLaunchOnboarding = false
             try! Auth.auth().signOut()  // Triggers cleanup by canned queries
             Reporting.track("first_launch")
+        }
+        
+        /* Default language setting */
+        if (UserDefaults.standard.object(forKey: "LCLCurrentLanguageKey") as? String) == nil {
+            if let langCode = Locale.current.languageCode {
+                Localize.setCurrentLanguage(langCode)
+            }
         }
         
         self.window = UIWindow(frame: UIScreen.main.bounds)

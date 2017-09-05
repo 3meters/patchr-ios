@@ -114,6 +114,7 @@ public struct Prefs {
     static let soundEffects = "sound_effects"
     static let lastChannelId = "last_channel_id"
     static let searchHistory = "search_history"
+    static let langCode = "en"
     
     /* Developer */
     static let developerMode = "developer_mode"

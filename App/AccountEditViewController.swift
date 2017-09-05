@@ -10,6 +10,7 @@ import UIKit
 import MBProgressHUD
 import Firebase
 import FirebaseAuth
+import Localize_Swift
 
 class AccountEditViewController: BaseEditViewController {
 
@@ -108,28 +109,22 @@ class AccountEditViewController: BaseEditViewController {
     override func initialize() {
         super.initialize()
         
-        self.message.text = "Account"
-        
         self.message.textColor = Theme.colorTextTitle
         self.message.numberOfLines = 0
         self.message.textAlignment = .center
         
-        self.emailField.placeholder = "Email"
         self.emailField.setDelegate(delegate: self)
         self.emailField.autocapitalizationType = .none
         self.emailField.autocorrectionType = .no
         self.emailField.keyboardType = .emailAddress
         self.emailField.returnKeyType = .next
         
-        self.userNameField.placeholder = "Username"
-        self.userNameField.title = "Username (lower case)"
         self.userNameField.setDelegate(delegate: self)
         self.userNameField.autocapitalizationType = .none
         self.userNameField.autocorrectionType = .no
         self.userNameField.keyboardType = .default
         self.userNameField.returnKeyType = .next
         
-        self.passwordButton.setTitle("Change password".uppercased(), for: .normal)
         self.passwordButton.addTarget(self, action: #selector(changePasswordAction(sender:)), for: .touchUpInside)
         
         self.contentHolder.addSubview(self.message)
@@ -138,12 +133,24 @@ class AccountEditViewController: BaseEditViewController {
         self.contentHolder.addSubview(self.passwordButton)
         
         /* Navigation bar buttons */
-        self.doneButton = UIBarButtonItem(title: "Update", style: UIBarButtonItemStyle.plain, target: self, action: #selector(doneAction(sender:)))
+        self.doneButton = UIBarButtonItem(title: nil, style: UIBarButtonItemStyle.plain, target: self, action: #selector(doneAction(sender:)))
         self.doneButton.isEnabled = false
         self.navigationItem.rightBarButtonItems = [self.doneButton]
         
         self.emailField.addTarget(self, action: #selector(textFieldDidChange(_:)), for: .editingChanged)
         self.userNameField.addTarget(self, action: #selector(textFieldDidChange(_:)), for: .editingChanged)
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(bindLanguage), name: NSNotification.Name(LCLLanguageChangeNotification), object: nil)
+        bindLanguage()
+    }
+    
+    func bindLanguage() {
+        self.message.text = "account".localized()
+        self.emailField.placeholder = "email".localized()
+        self.userNameField.placeholder = "username".localized()
+        self.userNameField.title = "username_title".localized()
+        self.passwordButton.setTitle("change_password".localized().uppercased(), for: .normal)
+        self.doneButton.title = "update".localized()
     }
     
     func bind() {
@@ -170,7 +177,7 @@ class AccountEditViewController: BaseEditViewController {
                 this.progress?.hide(true)
                 this.processing = false
                 Reporting.track("error_email_used", properties: ["email": email])
-                this.emailField.errorMessage = "Email is already being used"
+                this.emailField.errorMessage = "email_used".localized()
             }
             else {
                 this.updateEmail()
@@ -213,7 +220,7 @@ class AccountEditViewController: BaseEditViewController {
             }
             if exists {
                 Reporting.track("error_username_used", properties: ["username": username])
-                this.userNameField.errorMessage = "Choose another username"
+                this.userNameField.errorMessage = "username_used".localized()
             }
             else {
                 FireController.instance.updateUsername(userId: userId, username: username) { [weak self] error in
@@ -240,34 +247,34 @@ class AccountEditViewController: BaseEditViewController {
     func isValid() -> Bool {
         
         if self.emailField.isEmpty {
-            self.emailField.errorMessage = "Enter an email address."
+            self.emailField.errorMessage = "email_empty".localized()
             return false
         }
         
         if !emailField.text!.isEmail() {
-            self.emailField.errorMessage = "Enter a valid email address."
+            self.emailField.errorMessage = "email_invalid".localized()
             return false
         }
         
         if self.userNameField.isEmpty {
-            self.userNameField.errorMessage = "Choose your username"
+            self.userNameField.errorMessage = "username_empty".localized()
             return false
         }
         
         let username = self.userNameField.text!
         let characterSet: NSCharacterSet = NSCharacterSet(charactersIn: "abcdefghijklmnopqrstuvwxyz0123456789_-")
         if username.rangeOfCharacter(from: characterSet.inverted) != nil {
-            self.userNameField.errorMessage = "Lower case and no spaces or periods."
+            self.userNameField.errorMessage = "username_invalid_chars".localized()
             return false
         }
         
         if (username.utf16.count > 21) {
-            self.userNameField.errorMessage = "Username must be 21 characters or less."
+            self.userNameField.errorMessage = "username_too_long".localized()
             return false
         }
         
-        if (username.utf16.count < 2) {
-            self.userNameField.errorMessage = "Username must be at least 2 characters."
+        if (username.utf16.count < 3) {
+            self.userNameField.errorMessage = "username_too_short".localized()
             return false
         }
         

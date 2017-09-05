@@ -137,6 +137,10 @@
 		E29074A41E9D5897001E0609 /* ReactionCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E29074A31E9D5897001E0609 /* ReactionCell.xib */; };
 		E2919DB81EDC82750044F412 /* JSONResponseSerializerWithData.m in Sources */ = {isa = PBXBuildFile; fileRef = E2919DB71EDC82750044F412 /* JSONResponseSerializerWithData.m */; };
 		E2919DB91EDC82830044F412 /* JSONResponseSerializerWithData.m in Sources */ = {isa = PBXBuildFile; fileRef = E2919DB71EDC82750044F412 /* JSONResponseSerializerWithData.m */; };
+		E292D0F91F5E152C00BADB6E /* LanguageSettingsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E292D0F81F5E152C00BADB6E /* LanguageSettingsController.swift */; };
+		E292D0FA1F5E152C00BADB6E /* LanguageSettingsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E292D0F81F5E152C00BADB6E /* LanguageSettingsController.swift */; };
+		E292D0FC1F5EFC1E00BADB6E /* Language.swift in Sources */ = {isa = PBXBuildFile; fileRef = E292D0FB1F5EFC1E00BADB6E /* Language.swift */; };
+		E292D0FD1F5EFC1E00BADB6E /* Language.swift in Sources */ = {isa = PBXBuildFile; fileRef = E292D0FB1F5EFC1E00BADB6E /* Language.swift */; };
 		E297305C1C13644800B9433B /* AirTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E297305B1C13644800B9433B /* AirTextView.swift */; };
 		E297305E1C136E8300B9433B /* AirRadioButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E297305D1C136E8300B9433B /* AirRadioButton.swift */; };
 		E29730601C14A7BC00B9433B /* AirSearchField.swift in Sources */ = {isa = PBXBuildFile; fileRef = E297305F1C14A7BC00B9433B /* AirSearchField.swift */; };
@@ -531,6 +535,10 @@
 		E29074A31E9D5897001E0609 /* ReactionCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ReactionCell.xib; sourceTree = "<group>"; };
 		E2919DB61EDC82750044F412 /* JSONResponseSerializerWithData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSONResponseSerializerWithData.h; sourceTree = "<group>"; };
 		E2919DB71EDC82750044F412 /* JSONResponseSerializerWithData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JSONResponseSerializerWithData.m; sourceTree = "<group>"; };
+		E292D0F61F5E049F00BADB6E /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/Localizable.strings; sourceTree = "<group>"; };
+		E292D0F71F5E049F00BADB6E /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		E292D0F81F5E152C00BADB6E /* LanguageSettingsController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LanguageSettingsController.swift; sourceTree = "<group>"; };
+		E292D0FB1F5EFC1E00BADB6E /* Language.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Language.swift; sourceTree = "<group>"; };
 		E297305B1C13644800B9433B /* AirTextView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = AirTextView.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		E297305D1C136E8300B9433B /* AirRadioButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = AirRadioButton.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		E297305F1C14A7BC00B9433B /* AirSearchField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = AirSearchField.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
@@ -713,6 +721,7 @@
 				9FDCC3A31B4DE515C4C32CF9 /* AboutViewController.swift */,
 				9FDCCD7DF56E13112F3E35C6 /* DevelopmentViewController.swift */,
 				9FDCC6D9E7C9AADE45675174 /* MemberSettingsController.swift */,
+				E292D0F81F5E152C00BADB6E /* LanguageSettingsController.swift */,
 				9FDCCA7AB0285558DFFDF2C1 /* SettingsTableViewController.swift */,
 			);
 			name = Settings;
@@ -1144,6 +1153,7 @@
 				E22489711E5C92B900A96F27 /* Date.swift */,
 				E2BC533D1DE5E7EC00C97A2C /* Http.swift */,
 				E238BB051B571AFF0094AF41 /* ImageUtils.swift */,
+				E292D0FB1F5EFC1E00BADB6E /* Language.swift */,
 				E2C0D9301B6C415100E28CE9 /* Log.swift */,
 				9FDCC7A62C9C1A632319795D /* MaterialColor.swift */,
 				E281776D1B5B0EE200D65AC1 /* Reporting.swift */,
@@ -1273,6 +1283,7 @@
 			knownRegions = (
 				en,
 				Base,
+				ru,
 			);
 			mainGroup = 7D3D39C01A6F086F00A44CB2;
 			productRefGroup = 7D3D39CA1A6F086F00A44CB2 /* Products */;
@@ -1516,6 +1527,7 @@
 				E2499E571F3A1128002C0F16 /* ChannelPickerController.swift in Sources */,
 				E2B8A4B61CE7875400A28D3A /* AirRadialMenu.swift in Sources */,
 				E2F5C5741E086AB900FCA59C /* ChannelGridController.swift in Sources */,
+				E292D0F91F5E152C00BADB6E /* LanguageSettingsController.swift in Sources */,
 				E29A4CDA1BD077520059D5B9 /* MessageListCell.swift in Sources */,
 				E2A28E6F1B4A602200B3A2FE /* AirToggleButton.swift in Sources */,
 				E2064BF51BC18A66009C7B6A /* AirProgress.swift in Sources */,
@@ -1586,6 +1598,7 @@
 				E2D12A7B1C091C4D00DE507E /* BaseViewController.swift in Sources */,
 				E22489721E5C92B900A96F27 /* Date.swift in Sources */,
 				E2EEE9101E9C7F730085565E /* ReactionPickerController.swift in Sources */,
+				E292D0FC1F5EFC1E00BADB6E /* Language.swift in Sources */,
 				E2AA50C11F3E7152007A9D6E /* InviteMessageController.swift in Sources */,
 				E25327B21B0FCE9C00990A81 /* Constants.swift in Sources */,
 				E25908301DC69C3F00CB6C3F /* MemberDetailView.swift in Sources */,
@@ -1662,6 +1675,7 @@
 				E2499E581F3A1128002C0F16 /* ChannelPickerController.swift in Sources */,
 				E2DB42981EB4F2C400B1F78B /* AirRadialMenu.swift in Sources */,
 				E2DB429A1EB4F2C400B1F78B /* ChannelGridController.swift in Sources */,
+				E292D0FA1F5E152C00BADB6E /* LanguageSettingsController.swift in Sources */,
 				E2DB429C1EB4F2C400B1F78B /* MessageListCell.swift in Sources */,
 				E2DB429D1EB4F2C400B1F78B /* AirToggleButton.swift in Sources */,
 				E2DB429E1EB4F2C400B1F78B /* AirProgress.swift in Sources */,
@@ -1732,6 +1746,7 @@
 				E2DB42EA1EB4F2C400B1F78B /* BaseViewController.swift in Sources */,
 				E2DB42EB1EB4F2C400B1F78B /* Date.swift in Sources */,
 				E2DB42EC1EB4F2C400B1F78B /* ReactionPickerController.swift in Sources */,
+				E292D0FD1F5EFC1E00BADB6E /* Language.swift in Sources */,
 				E2AA50C21F3E7152007A9D6E /* InviteMessageController.swift in Sources */,
 				E2DB42ED1EB4F2C400B1F78B /* Constants.swift in Sources */,
 				E2DB42EE1EB4F2C400B1F78B /* MemberDetailView.swift in Sources */,
@@ -1795,6 +1810,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				8468F8201A9D09D1007D6EE6 /* en */,
+				E292D0F61F5E049F00BADB6E /* ru */,
 			);
 			name = Localizable.strings;
 			sourceTree = "<group>";
@@ -1803,6 +1819,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				E2A603231CD97B7A00FBD55B /* en */,
+				E292D0F71F5E049F00BADB6E /* ru */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
@@ -1815,6 +1832,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon4;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
@@ -1863,6 +1881,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon4;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
@@ -2041,6 +2060,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon4;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;

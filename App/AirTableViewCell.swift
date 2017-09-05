@@ -9,6 +9,8 @@
 import UIKit
 
 class AirTableViewCell: UITableViewCell {
+    
+    var data: AnyObject?
 	
 	init () {
 		super.init(style: .value1, reuseIdentifier: nil)

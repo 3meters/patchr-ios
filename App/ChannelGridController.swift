@@ -9,6 +9,7 @@ import AVFoundation
 import Firebase
 import FirebaseDatabaseUI
 import FirebaseAuth
+import Localize_Swift
 import pop
 
 class ChannelGridController: UICollectionViewController {
@@ -73,8 +74,8 @@ class ChannelGridController: UICollectionViewController {
 
 		FireController.instance.isConnected() { connected in
 			if connected == nil || !connected! {
-				let message = "Creating a channel requires a network connection."
-				self.alert(title: "Not connected", message: message, cancelButtonTitle: "OK")
+				let message = "channel_grid_not_connected_message".localized()
+				self.alert(title: "channel_grid_not_connected_title".localized(), message: message, cancelButtonTitle: "ok".localized())
 			}
 			else {
                 Reporting.track("view_channel_new")
@@ -132,7 +133,6 @@ class ChannelGridController: UICollectionViewController {
 		self.searchBar.autocapitalizationType = .none
 		self.searchBar.backgroundColor = Colors.clear
 		self.searchBar.delegate = self
-		self.searchBar.placeholder = "Search"
 		self.searchBar.searchBarStyle = .prominent
         if !self.searchBar!.isDescendant(of: self.view) {
             self.view.addSubview(self.searchBar!)
@@ -195,13 +195,21 @@ class ChannelGridController: UICollectionViewController {
         button.setImage(UIImage(named: "imgOverflowVerticalLight"), for: .normal)
         button.imageEdgeInsets = UIEdgeInsetsMake(8, 16, 8, 0)
         self.menuButton = UIBarButtonItem(customView: button)
+        
+        bindLanguage()
 
-        self.navigationItem.title = "\(Strings.appName) Channels"
 		self.navigationItem.leftBarButtonItem = self.searchButton
         self.navigationItem.setRightBarButtonItems([self.menuButton, UI.spacerFixed, self.addButton], animated: true)
 
 		NotificationCenter.default.addObserver(self, selector: #selector(userDidSwitch(notification:)), name: NSNotification.Name(rawValue: Events.UserDidSwitch), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(bindLanguage), name: NSNotification.Name(LCLLanguageChangeNotification), object: nil)
 	}
+    
+    func bindLanguage() {
+        self.searchBar.placeholder = "channel_grid_search_bar_placeholder".localized()
+        self.searchBar.setValue("cancel".localized(), forKey: "_cancelButtonText")
+        self.navigationItem.title = "channel_grid_title".localized()
+    }
 
 	func bind() {
 
@@ -276,12 +284,12 @@ class ChannelGridController: UICollectionViewController {
         Reporting.track("view_channel_grid_actions")
         let sheet = UIAlertController(title: nil, message: nil, preferredStyle: UIAlertControllerStyle.actionSheet)
         
-        let profileAction = UIAlertAction(title: "Profile and settings", style: .default) { action in
+        let profileAction = UIAlertAction(title: "profile_and_settings".localized(), style: .default) { action in
             let wrapper = AirNavigationController(rootViewController: MemberViewController(userId: UserController.instance.userId!))
             UIViewController.topController?.present(wrapper, animated: true, completion: nil)
         }
         
-        let cancel = UIAlertAction(title: "Cancel", style: .cancel) { action in
+        let cancel = UIAlertAction(title: "cancel".localized(), style: .cancel) { action in
             sheet.dismiss(animated: true, completion: nil)
         }
         

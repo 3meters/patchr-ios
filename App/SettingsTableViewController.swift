@@ -12,6 +12,7 @@ import MBProgressHUD
 import PBWebViewController
 import Firebase
 import FirebaseAuth
+import Localize_Swift
 
 class SettingsTableViewController: UITableViewController {
 
@@ -19,7 +20,8 @@ class SettingsTableViewController: UITableViewController {
 
     /* Section 1: Global settings */
     var soundEffectsCell = AirTableViewCell()
-
+    var languageCell = AirTableViewCell()
+    
     /* Section 2: Informational */
     var sendFeedbackCell = AirTableViewCell()
     var rateCell = AirTableViewCell()
@@ -46,7 +48,6 @@ class SettingsTableViewController: UITableViewController {
         if let indexPath = self.tableView.indexPathForSelectedRow {
             self.tableView.deselectRow(at: indexPath, animated: animated)
         }
-        bind()
     }
     
     deinit {
@@ -79,7 +80,7 @@ class SettingsTableViewController: UITableViewController {
         self.progress!.mode = MBProgressHUDMode.indeterminate
         self.progress!.styleAs(progressStyle: .activityWithText)
         self.progress!.minShowTime = 0.5
-        self.progress!.labelText = "Clearing..."
+        self.progress!.labelText = "progress_clearing".localized()
         self.progress!.removeFromSuperViewOnHide = true
         self.progress!.show(true)
 
@@ -99,8 +100,6 @@ class SettingsTableViewController: UITableViewController {
 
     func initialize() {
 
-        self.navigationItem.title = "Settings"
-
         self.tableView = UITableView(frame: self.tableView.frame, style: .grouped)
         self.tableView.rowHeight = 48
         self.tableView.tableFooterView = UIView()
@@ -109,20 +108,12 @@ class SettingsTableViewController: UITableViewController {
         
         self.soundEffectsCell.accessoryView = makeSwitch(notificationType: .playSoundEffects
             , state: UserDefaults.standard.bool(forKey: PerUserKey(key: Prefs.soundEffects)))
-        self.soundEffectsCell.textLabel!.text = "Play sound effects"
 
-        self.sendFeedbackCell.textLabel!.text = "Send feedback"
-        self.rateCell.textLabel!.text = "Rate \(Strings.appName)"
-        self.aboutCell.textLabel!.text = "About \(Strings.appName)"
-        self.developmentCell.textLabel!.text = "Developer"
 
         self.clearHistoryCell.contentView.addSubview(self.clearHistoryButton)
         self.logoutCell.contentView.addSubview(self.logoutButton)
         self.clearHistoryCell.accessoryType = .none
         self.logoutCell.accessoryType = .none
-
-        self.clearHistoryButton.setTitle("Clear search history".uppercased(), for: .normal)
-        self.logoutButton.setTitle("Log out".uppercased(), for: .normal)
         
         self.logoutButton.addTarget(self, action: #selector(SettingsTableViewController.logoutAction(sender:)), for: .touchUpInside)
         self.clearHistoryButton.addTarget(self, action: #selector(SettingsTableViewController.clearHistoryAction(sender:)), for: .touchUpInside)
@@ -131,9 +122,23 @@ class SettingsTableViewController: UITableViewController {
             let closeButton = UIBarButtonItem(barButtonSystemItem: .stop, target: self, action: #selector(self.closeAction(sender:)))
             self.navigationItem.leftBarButtonItems = [closeButton]
         }
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(bindLanguage), name: NSNotification.Name(LCLLanguageChangeNotification), object: nil)
+        bindLanguage()
     }
     
-    func bind() {
+    func bindLanguage() {
+        self.navigationItem.title = "settings".localized()
+        self.soundEffectsCell.textLabel!.text = "play_sound_effects".localized()
+        self.languageCell.textLabel?.text = "settings_language_label".localized()
+        self.languageCell.detailTextLabel?.text = Localize.displayNameForLanguage(Localize.currentLanguage())
+        self.sendFeedbackCell.textLabel!.text = "send_feedback".localized()
+        self.rateCell.textLabel!.text = "\("rate".localized()) \(Strings.appName)"
+        self.aboutCell.textLabel!.text = "\("about".localized()) \(Strings.appName)"
+        self.developmentCell.textLabel!.text = "developer".localized()
+        self.clearHistoryButton.setTitle("clear_search_history".localized().uppercased(), for: .normal)
+        self.logoutButton.setTitle("log_out".localized().uppercased(), for: .normal)
+        self.tableView.reloadData()
     }
 
     func makeSwitch(notificationType: Setting, state: Bool = false) -> UISwitch {
@@ -165,7 +170,7 @@ extension SettingsTableViewController {
         if selectedCell == self.sendFeedbackCell {
             Reporting.track("view_feedback_compose")
             let email = "feedback@patchr.com"
-            let subject = "Feedback for \(Strings.appName) iOS"
+            let subject = "\("feedback_subject".localized()) \(Strings.appName)"
             if MFMailComposeViewController.canSendMail() {
                 UI.mailComposer!.mailComposeDelegate = self
                 UI.mailComposer!.setToRecipients([email])
@@ -202,6 +207,12 @@ extension SettingsTableViewController {
             let controller = DevelopmentViewController()
             self.navigationController?.pushViewController(controller, animated: true)
         }
+        
+        if selectedCell == self.languageCell {
+            Reporting.track("view_language_settings")
+            let controller = LanguageSettingsController()
+            self.navigationController?.pushViewController(controller, animated: true)
+        }
     }
 
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -217,10 +228,6 @@ extension SettingsTableViewController {
             return CGFloat(0)
         }
         
-        if indexPath.section == 3 && indexPath.row == 0 {
-            return CGFloat(64)
-        }
-
         return CGFloat(44)
     }
 
@@ -229,6 +236,7 @@ extension SettingsTableViewController {
             case 0:
                 switch (indexPath.row) {
                     case 0: return self.soundEffectsCell
+                    case 1: return self.languageCell
                     default: fatalError("Unknown row in section 1")
                 }
             case 1:
@@ -237,13 +245,13 @@ extension SettingsTableViewController {
                     case 1: return self.rateCell
                     case 2: return self.aboutCell
                     case 3: return self.developmentCell
-                    default: fatalError("Unknown row in section 3")
+                    default: fatalError("Unknown row in section 2")
                 }
             case 2:
                 switch (indexPath.row) {
                     case 0: return self.clearHistoryCell
                     case 1: return self.logoutCell
-                    default: fatalError("Unknown row in section 4")
+                    default: fatalError("Unknown row in section 3")
                 }
             default: fatalError("Unknown section")
         }
@@ -251,7 +259,7 @@ extension SettingsTableViewController {
 
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         switch (section) {
-            case 0: return "Settings".uppercased()
+            case 0: return "settings".localized().uppercased()
             case 1: return nil
             case 2: return nil
             default: fatalError("Unknown number of sections")
@@ -268,7 +276,7 @@ extension SettingsTableViewController {
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch (section) {
-            case 0: return 1
+            case 0: return 2
             case 1: return 4
             case 2: return 2
             default: fatalError("Unknown number of sections")
@@ -289,15 +297,15 @@ extension SettingsTableViewController: MFMailComposeViewControllerDelegate {
         switch result {
             case MFMailComposeResult.cancelled:    // 0
                 Reporting.track("cancel_feedback")
-                UIShared.toast(message: "Feedback cancelled", controller: self, addToWindow: false)
+                UIShared.toast(message: "feedback_cancelled".localized(), controller: self, addToWindow: false)
             case MFMailComposeResult.saved:        // 1
                 Reporting.track("save_feedback")
-                UIShared.toast(message: "Feedback saved", controller: self, addToWindow: false)
+                UIShared.toast(message: "feedback_saved".localized(), controller: self, addToWindow: false)
             case MFMailComposeResult.sent:        // 2
                 Reporting.track("send_feedback")
-                UIShared.toast(message: "Feedback sent", controller: self, addToWindow: false)
+                UIShared.toast(message: "feedback_sent".localized(), controller: self, addToWindow: false)
             case MFMailComposeResult.failed:    // 3
-                UIShared.toast(message: "Feedback send failure: \(error!.localizedDescription)", controller: self, addToWindow: false)
+                UIShared.toast(message: "\("feedback_send_failure".localized()): \(error!.localizedDescription)", controller: self, addToWindow: false)
                 break
         }
 

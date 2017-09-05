@@ -11,6 +11,7 @@ import MessageUI
 import PhoneNumberKit
 import Firebase
 import FirebaseDatabase
+import Localize_Swift
 
 class MemberViewController: BaseViewController, UIScrollViewDelegate, UITextFieldDelegate {
     
@@ -89,7 +90,6 @@ class MemberViewController: BaseViewController, UIScrollViewDelegate, UITextFiel
         
         self.chromeBackground.anchorTopCenterFillingWidth(withLeftAndRightPadding: 0, topPadding: 0, height: 64)
         
-        //self.view.bounds.size.width = viewWidth
         self.contentHolder.bounds.size.width = viewWidth
         
         self.scrollView.anchorTopCenter(withTopPadding: 0, width: viewWidth, height: self.view.bounds.height)
@@ -186,22 +186,15 @@ class MemberViewController: BaseViewController, UIScrollViewDelegate, UITextFiel
         self.scrollView.contentOffset = CGPoint(x: 0, y: -(self.headerHeight))
         updateHeaderView()
         
-        self.phone.caption.text = "Phone"
         self.phone.label.textColor = Colors.brandColorTextLight
         self.phone.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(phoneAction(sender:))))
         self.phone.isHidden = true
 
-        self.email.caption.text = "Email"
         self.email.label.textColor = Colors.brandColorTextLight
         self.email.isHidden = true
         
-        self.editButton.setTitle("Edit profile".uppercased(), for: .normal)
         self.editButton.addTarget(self, action: #selector(editAction(sender:)), for: .touchUpInside)
-        
-        self.settingsButton.setTitle("Settings".uppercased(), for: .normal)
         self.settingsButton.addTarget(self, action: #selector(settingsAction(sender:)), for: .touchUpInside)
-
-        self.callButton.setTitle("Call".uppercased(), for: .normal)
         self.callButton.addTarget(self, action: #selector(phoneAction(sender:)), for: .touchUpInside)
         
         self.chromeBackground.backgroundColor = Colors.accentColor
@@ -228,7 +221,18 @@ class MemberViewController: BaseViewController, UIScrollViewDelegate, UITextFiel
             closeButton.tintColor = Colors.white
             self.navigationItem.leftBarButtonItems = [closeButton]
         }
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(bindLanguage), name: NSNotification.Name(LCLLanguageChangeNotification), object: nil)
+        bindLanguage()
 	}
+    
+    func bindLanguage() {
+        self.phone.caption.text = "phone".localized()
+        self.email.caption.text = "email".localized()
+        self.editButton.setTitle("edit_profile".localized().uppercased(), for: .normal)
+        self.settingsButton.setTitle("settings".localized().uppercased(), for: .normal)
+        self.callButton.setTitle("call".localized().uppercased(), for: .normal)
+    }
 	
 	func bind() {
         

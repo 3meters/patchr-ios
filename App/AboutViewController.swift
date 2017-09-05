@@ -58,7 +58,7 @@ class AboutViewController: UITableViewController {
 
     func initialize() {
 
-        self.navigationItem.title = "About"
+        self.navigationItem.title = "about".localized()
 
         self.tableView = UITableView(frame: self.tableView.frame, style: .grouped)
         self.tableView.rowHeight = 48
@@ -70,16 +70,16 @@ class AboutViewController: UITableViewController {
         self.buildInfoCell.accessoryType = .none
 
         let components = NSCalendar.current.dateComponents([.year, .month, .day], from: Date())
-        self.buildInfoLabel.text = "©\(components.year!) 3meters LLC\nVersion \(appVersion()) (\(build()))"
+        self.buildInfoLabel.text = "©\(components.year!) 3meters LLC\n\("version".localized()) \(appVersion()) (\(build()))"
         self.buildInfoLabel.textColor = Theme.colorTextTitle
         self.buildInfoLabel.font = Theme.fontTextDisplay
         self.buildInfoLabel.numberOfLines = 2
         self.buildInfoLabel.textAlignment = .center
         self.buildInfoCell.isUserInteractionEnabled = false
 
-        self.termsOfServiceCell.textLabel!.text = "Terms of Service"
-        self.privacyPolicyCell.textLabel!.text = "Privacy Policy"
-        self.softwareLicensesCell.textLabel!.text = "Acknowledgements"
+        self.termsOfServiceCell.textLabel!.text = "terms_of_service".localized()
+        self.privacyPolicyCell.textLabel!.text = "privacy_policy".localized()
+        self.softwareLicensesCell.textLabel!.text = "acknowledgements".localized()
     }
     
     func appVersion() -> String {
@@ -121,7 +121,7 @@ extension AboutViewController {
         if selectedCell == self.softwareLicensesCell {
             Reporting.track("view_software_licenses")
             let controller = VTAcknowledgementsViewController.acknowledgementsViewController()
-            controller?.headerText = "The following third party software may be contained in portions of the \(Strings.appName) mobile application. We offer our sincere thanks to the open source community for all of their contributions. Carry on!"
+            controller?.headerText = "licensing_comment".localized()
             self.navigationController?.pushViewController(controller!, animated: true)
         }
     }

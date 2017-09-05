@@ -121,6 +121,7 @@ PODS:
   - iRate (1.11.6)
   - Keys (1.0.0)
   - leveldb-library (1.18.3)
+  - Localize-Swift (1.7.0)
   - MBProgressHUD (0.9.2)
   - nanopb (0.3.8):
     - nanopb/decode (= 0.3.8)
@@ -175,6 +176,7 @@ DEPENDENCIES:
   - IDMPhotoBrowser (from `~/code/IDMPhotoBrowser`)
   - iRate (= 1.11.6)
   - Keys (from `Pods/CocoaPodsKeys`)
+  - Localize-Swift (= 1.7.0)
   - MBProgressHUD (= 0.9.2)
   - NHBalancedFlowLayout (= 0.2)
   - PBWebViewController (= 0.5.0)
@@ -242,6 +244,7 @@ SPEC CHECKSUMS:
   iRate: 61e558919c4a7fde63b3c22ebbd6c114a1eee658
   Keys: 9c35bf00f612ee1d48556f4a4b9b4551e224e90f
   leveldb-library: 10fb39c39e243db4af1828441162405bbcec1404
+  Localize-Swift: 61ff1bf8916155dd8e95d5e3f49df7be5e8afe9f
   MBProgressHUD: 1569cf7ace17a8bac47aabfbb8580a49690386d1
   nanopb: 5601e6bca2dbf1ed831b519092ec110f66982ca3
   NHBalancedFlowLayout: fd253023c6754e605acdb180d50123e582cc62bb
@@ -259,6 +262,6 @@ SPEC CHECKSUMS:
   UIDevice-Hardware: ecb52d9a7b223b31f81982358e2b0769ac1a7918
   VTAcknowledgementsViewController: e1de80f2c0ce31cc7e1c6f1c8aaeec2770371f09
 
-PODFILE CHECKSUM: 81ffe10d6c8d1808a9f86207c0c9eb56061ce21b
+PODFILE CHECKSUM: 89842b5056850100123f0c57d71292f1eb437a3e
 
 COCOAPODS: 1.2.1

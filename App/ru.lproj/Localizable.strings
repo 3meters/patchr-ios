@@ -1,0 +1,75 @@
+/*
+  Localizable.strings
+  Patchr
+
+  Copyright (c) 2015 3meters. All rights reserved.
+*/
+
+"about" = "относительно";
+"account" = "Счет";
+"account_settings" = "Настройки аккаунта";
+"acknowledgements" = "Подтверждения";
+"call" = "телефонировать";
+"cancel" = "Отмена";
+"change_password" = "Изменить пароль";
+"channel_grid_not_connected_message" = "Для создания канала требуется подключение к сети.";
+"channel_grid_not_connected_title" = "Не подключен";
+"channel_grid_search_bar_placeholder" = "искать";
+"channel_grid_title" = "Каналы Patchr";
+"channel_welcome_title" = "Добро пожаловать в";
+"channel_welcome_message" = "Мы начали с вашего личного канала. Пригласите друзей и начните отправлять сообщения!";
+"clear_search_history" = "Очистить историю поиска";
+"developer" = "проявитель";
+"discard" = "отбрасывать";
+"discard_changes" = "Вы хотите отказаться от изменений в вашем редактировании?";
+"edit_profile" = "Изменить описание";
+"email" = "Адрес электронной почты";
+"email_auth_fail" = "Неправильная комбинация электронной почты и пароля";
+"email_empty" = "Введите адрес электронной почты.";
+"email_invalid" = "Введите действительный адрес электронной почты.";
+"email_used" = "Электронная почта уже используется";
+"feedback_cancelled" = "Обратная связь отменена";
+"feedback_saved" = "Обратная связь сохранена";
+"feedback_sent" = "Обратная связь отправлена";
+"feedback_send_failure" = "Обратная связь отправлена";
+"feedback_subject" = "Обратная связь";
+"first_name" = "Имя";
+"language_settings_section_title" = "язык";
+"language_settings_title" = "язык";
+"last_name" = "Фамилия";
+"licensing_comment" = "Следующее стороннее программное обеспечение может содержаться в частях этого мобильного приложения. Мы выражаем искреннюю благодарность сообществу разработчиков с открытым исходным кодом за все свои взносы. Продолжать!";
+"log_out" = "выход";
+"log_in" = "войти в систему";
+"next" = "дальше";
+"ok" = "одобрение";
+"password" = "пароль";
+"password_confirmation" = "Подтверждение пароля";
+"password_forgot" = "Забыли пароль?";
+"password_reset_email_sent" = "На ваш адрес электронной почты был отправлен адрес сброса пароля.";
+"password_title" = "пароль (6+ буква)";
+"password_too_short" = "Введите пароль с шестью символами или более.";
+"password_view_title" = "Почти к хорошему.";
+"phone" = "Номер телефона";
+"phone_number" = "Номер телефона";
+"play_sound_effects" = "Воспроизводить звуковые эффекты";
+"privacy_policy" = "политика конфиденциальности";
+"profile" = "Описание";
+"profile_and_settings" = "Профиль и настройки";
+"progress_clearing" = "очистка...";
+"progress_logging_in" = "Вход в систему";
+"progress_signing_up" = "регистрирующий";
+"rate" = "степень";
+"save" = "сохранять";
+"send_feedback" = "Отправить отзыв";
+"settings" = "заход";
+"settings_language_label" = "язык";
+"terms_of_service" = "Условия использования";
+"update" = "сохранять";
+"username" = "имя пользователя";
+"username_empty" = "Выберите ваше имя пользователя";
+"username_invalid_chars" = "Нижний регистр и пробелы или периоды.";
+"username_title" = "Имя пользователя";
+"username_too_long" = "Имя пользователя должно быть не менее 21 символа.";
+"username_too_short" = "Имя пользователя должно быть не менее 3 символов.";
+"username_used" = "Выберите другое имя пользователя";
+"version" = "Версия";
