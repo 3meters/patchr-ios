@@ -117,16 +117,18 @@ class MemberSettingsController: UITableViewController {
     }
     
     func update() {
-        
-        var updates = [String: Any]()
-        let userId = self.inputUser != nil ? self.inputUser!.id! : self.inputUserId!
-        let channelId = self.inputChannel.id!
-
         if self.roleNext != self.role {
-            updates["role"] = self.roleNext!
             Reporting.track("update_channel_member_role")
-            FireController.db.child("channel-members/\(channelId)/\(userId)").updateChildValues(updates)
-            closeAction(sender: nil)
+            let userId = self.inputUser != nil ? self.inputUser!.id! : self.inputUserId!
+            let channelId = self.inputChannel.id!
+            let path = "channel-members/\(channelId)/\(userId)/role"
+            let role = self.roleNext!
+            FireController.db.child(path).setValue(role) { error, ref in
+                if error != nil {
+                    Log.w("Permission denied: \(path)")
+                }
+                self.closeAction(sender: nil)
+            }
         }
     }
     
@@ -169,7 +171,8 @@ extension MemberSettingsController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if indexPath.section == 0 {
             let selectedCell = tableView.cellForRow(at: indexPath)
-            self.roleNext = selectedCell?.textLabel!.text!.lowercased()
+            let roleLabel = (selectedCell?.textLabel!.text!.lowercased())!
+            self.roleNext = roleLabel == "contributor" ? "editor" : roleLabel
             self.roleReaderCell.accessoryType = .none
             self.roleEditorCell.accessoryType = .none
             self.roleOwnerCell.accessoryType = .none
