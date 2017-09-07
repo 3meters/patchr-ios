@@ -153,6 +153,8 @@
 		E2AA50C21F3E7152007A9D6E /* InviteMessageController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2AA50C01F3E7152007A9D6E /* InviteMessageController.swift */; };
 		E2AA50C51F3F8640007A9D6E /* ObjC.m in Sources */ = {isa = PBXBuildFile; fileRef = E2AA50C41F3F8640007A9D6E /* ObjC.m */; };
 		E2AA50C61F3F8640007A9D6E /* ObjC.m in Sources */ = {isa = PBXBuildFile; fileRef = E2AA50C41F3F8640007A9D6E /* ObjC.m */; };
+		E2B26A871F61F1100047FE00 /* PhotosQuery.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2B26A861F61F1100047FE00 /* PhotosQuery.swift */; };
+		E2B26A881F61F1100047FE00 /* PhotosQuery.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2B26A861F61F1100047FE00 /* PhotosQuery.swift */; };
 		E2B2CAB21C553A8900CAE183 /* BaseEditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2B2CAB11C553A8900CAE183 /* BaseEditViewController.swift */; };
 		E2B4590E1BC1E76C00155659 /* SwiftyJSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D01FA3A1A705D8700DD6DFA /* SwiftyJSON.swift */; };
 		E2B8A4B41CE7818B00A28D3A /* CKRadialMenu.m in Sources */ = {isa = PBXBuildFile; fileRef = E2B8A4B21CE7818B00A28D3A /* CKRadialMenu.m */; };
@@ -542,6 +544,7 @@
 		E2AA50C01F3E7152007A9D6E /* InviteMessageController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InviteMessageController.swift; sourceTree = "<group>"; };
 		E2AA50C31F3F8626007A9D6E /* ObjC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObjC.h; sourceTree = "<group>"; };
 		E2AA50C41F3F8640007A9D6E /* ObjC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ObjC.m; sourceTree = "<group>"; };
+		E2B26A861F61F1100047FE00 /* PhotosQuery.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotosQuery.swift; sourceTree = "<group>"; };
 		E2B2CAB11C553A8900CAE183 /* BaseEditViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = BaseEditViewController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		E2B8A4B21CE7818B00A28D3A /* CKRadialMenu.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = CKRadialMenu.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		E2B8A4B31CE7818B00A28D3A /* CKRadialMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CKRadialMenu.h; sourceTree = "<group>"; };
@@ -695,6 +698,7 @@
 				E2C7C5CA1B2CF2F80045038A /* ImageResult.swift */,
 				9FDCCE483C7DF6C69EC46E17 /* ChannelQuery.swift */,
 				9FDCCEFC8FC05526D291A77B /* MessageQuery.swift */,
+				E2B26A861F61F1100047FE00 /* PhotosQuery.swift */,
 				E2D654FA1E0C9EBB00714BA9 /* UnreadQuery.swift */,
 				9FDCC5452372EFCC98BA01BF /* UserQuery.swift */,
 			);
@@ -1541,6 +1545,7 @@
 				E2D10E5C1C87AA760099EA6E /* AirHideShowButton.swift in Sources */,
 				E29730601C14A7BC00B9433B /* AirSearchField.swift in Sources */,
 				E29A921E1DB19A2600B27093 /* FireProfile.swift in Sources */,
+				E2B26A871F61F1100047FE00 /* PhotosQuery.swift in Sources */,
 				7D39D3C51ABA21B200275759 /* CALayer+XibConfiguration.m in Sources */,
 				E25327C11B13942D00990A81 /* UIShared.swift in Sources */,
 				7D3D39CF1A6F086F00A44CB2 /* AppDelegate.swift in Sources */,
@@ -1685,6 +1690,7 @@
 				E2DB42BF1EB4F2C400B1F78B /* UIBarButtonItem+Badge.m in Sources */,
 				E2DB42C01EB4F2C400B1F78B /* AirHideShowButton.swift in Sources */,
 				E2DB42C11EB4F2C400B1F78B /* AirSearchField.swift in Sources */,
+				E2B26A881F61F1100047FE00 /* PhotosQuery.swift in Sources */,
 				E2DB42C21EB4F2C400B1F78B /* FireProfile.swift in Sources */,
 				E2DB42C31EB4F2C400B1F78B /* CALayer+XibConfiguration.m in Sources */,
 				E2DB42C51EB4F2C400B1F78B /* UIShared.swift in Sources */,

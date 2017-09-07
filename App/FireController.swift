@@ -294,7 +294,8 @@ class FireController: NSObject {
         FireController.db.child("channel-messages/\(channelId)")
             .queryOrdered(byChild: "attachments")
             .queryStarting(atValue: "")
-            .queryLimited(toLast: UInt(limit)).observeSingleEvent(of: .value, with: { snap in
+            .queryLimited(toLast: UInt(limit))
+            .observeSingleEvent(of: .value, with: { snap in
             if let value = snap.value as? [String: Any] {
                 for dict in value.values {
                     let message = FireMessage(dict: dict as! [String : Any], id: snap.key)

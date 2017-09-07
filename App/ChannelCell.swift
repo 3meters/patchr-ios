@@ -3,6 +3,7 @@
 //  Copyright (c) 2015 3meters. All rights reserved.
 //
 
+import FirebaseDatabase
 import Foundation
 import UIKit
 
@@ -18,6 +19,7 @@ class ChannelCell: UICollectionViewCell {
     var channel: FireChannel!
     var unreadQuery: UnreadQuery? // Passed in by table data source
     var channelQuery: ChannelQuery? // Passed in by table data source
+    var photosQuery: PhotosQuery?
     var selectedOn = false
     
     override init(frame: CGRect) {
@@ -53,6 +55,8 @@ class ChannelCell: UICollectionViewCell {
         self.channelQuery = nil
         self.unreadQuery?.remove()
         self.unreadQuery = nil
+        self.photosQuery?.remove()
+        self.photosQuery = nil
     }
     
     func bind(channel: FireChannel, searching: Bool = false) {
@@ -69,16 +73,17 @@ class ChannelCell: UICollectionViewCell {
             self.photoView?.image = nil
             let seed = Utils.numberFromName(fullname: channel.title!.lowercased())
             self.photoView?.backgroundColor = ColorArray.randomColor(seed: seed)
-            FireController.instance.messagePhotos(channelId: channel.id!, limit: 1) { error, photos in
+            self.photosQuery = PhotosQuery(channelId: channel.id!, limit: 1)
+            self.photosQuery?.observe(with: { error, photo in
                 if error == nil {
-                    if photos.count > 0 {
-                        let url = ImageProxy.url(photo: photos.last!, category: SizeCategory.profile)
+                    if photo != nil {
+                        let url = ImageProxy.url(photo: photo!, category: SizeCategory.profile)
                         if !(self.photoView?.associated(withUrl: url))! {
                             self.photoView?.setImageWithUrl(url: url, uploading: false, animate: true)
                         }
                     }
                 }
-            }
+            })
         }
         
         self.setNeedsLayout()    // Needed because binding can change element layout
@@ -92,17 +97,14 @@ class ChannelCell: UICollectionViewCell {
     }
     
     override func sizeThatFits(_ size: CGSize) -> CGSize {
-        
         var w = CGFloat(0)
         var h = CGFloat(0)
-        
         for subview in self.subviews {
             let fw = subview.frame.origin.x + subview.frame.size.width
             let fh = subview.frame.origin.y + subview.frame.size.height
             w = max(fw, w)
             h = max(fh, h)
         }
-        
         return CGSize(width: w, height: h)
     }
 }
