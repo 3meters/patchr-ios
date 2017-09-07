@@ -114,6 +114,10 @@ class ChannelViewController: BaseTableController {
     }
 
 	override func viewWillLayoutSubviews() {
+        
+        /* view -> contentView -> tableView -> headerView
+           view -> chromeBackground */
+
         self.view.fillSuperview()
         self.chromeBackground.anchorTopCenterFillingWidth(withLeftAndRightPadding: 0, topPadding: 0, height: 64)
         let viewWidth = min(Config.contentWidthMax, self.view.width())
@@ -476,8 +480,8 @@ class ChannelViewController: BaseTableController {
 				this.headerHeight = (viewWidth * 0.625) + infoHeight
                 this.tableView.contentInset = UIEdgeInsets(top: this.headerHeight, left: 0, bottom: 0, right: 0)
                 this.tableView.contentOffset = CGPoint(x: 0, y: -(this.headerHeight))
-				this.updateHeaderView()
 			}
+            this.updateHeaderView()
 		})
 
 		Log.v("Observe query triggered for channel messages")

@@ -85,11 +85,15 @@ class MemberViewController: BaseViewController, UIScrollViewDelegate, UITextFiel
     
 	override func viewWillLayoutSubviews() {
         
+        /* view -> scrollView -> contentHolder -> buttonGroup/profileGroup
+           view -> scrollView -> header
+           view -> chromeBackground */
+
         let viewWidth = min(Config.contentWidthMax, self.view.bounds.size.width)
         let buttonWidth = (viewWidth - 48) / 2
         
         self.chromeBackground.anchorTopCenterFillingWidth(withLeftAndRightPadding: 0, topPadding: 0, height: 64)
-        
+
         self.contentHolder.bounds.size.width = viewWidth
         
         self.scrollView.anchorTopCenter(withTopPadding: 0, width: viewWidth, height: self.view.bounds.height)
@@ -180,31 +184,35 @@ class MemberViewController: BaseViewController, UIScrollViewDelegate, UITextFiel
         self.view.backgroundColor = Theme.colorBackgroundWindow
         self.automaticallyAdjustsScrollViewInsets = false
         let viewWidth = min(Config.contentWidthMax, self.view.bounds.size.width)
-        
+
         self.headerHeight = viewWidth * 0.625
         self.scrollView.contentInset = UIEdgeInsets(top: self.headerHeight, left: 0, bottom: 0, right: 0)
         self.scrollView.contentOffset = CGPoint(x: 0, y: -(self.headerHeight))
+
         updateHeaderView()
-        
+
+
+        self.phone.caption.text = "Phone"
         self.phone.label.textColor = Colors.brandColorTextLight
         self.phone.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(phoneAction(sender:))))
         self.phone.isHidden = true
 
         self.email.label.textColor = Colors.brandColorTextLight
         self.email.isHidden = true
-        
+
         self.editButton.addTarget(self, action: #selector(editAction(sender:)), for: .touchUpInside)
         self.settingsButton.addTarget(self, action: #selector(settingsAction(sender:)), for: .touchUpInside)
         self.callButton.addTarget(self, action: #selector(phoneAction(sender:)), for: .touchUpInside)
         
         self.chromeBackground.backgroundColor = Colors.accentColor
-        
+
         self.buttonGroup.addSubview(self.editButton)
         self.buttonGroup.addSubview(self.callButton)
         self.buttonGroup.addSubview(self.settingsButton)
         self.profileGroup.addSubview(self.phone)
         self.profileGroup.addSubview(self.email)
         
+        /* Base class adds contentHolder to scrollView and scrollView to view */
         self.scrollView.addSubview(self.headerView)
         self.contentHolder.addSubview(self.buttonGroup)
         self.contentHolder.addSubview(self.profileGroup)
@@ -221,11 +229,11 @@ class MemberViewController: BaseViewController, UIScrollViewDelegate, UITextFiel
             closeButton.tintColor = Colors.white
             self.navigationItem.leftBarButtonItems = [closeButton]
         }
-        
+
         NotificationCenter.default.addObserver(self, selector: #selector(bindLanguage), name: NSNotification.Name(LCLLanguageChangeNotification), object: nil)
         bindLanguage()
 	}
-    
+
     func bindLanguage() {
         self.phone.caption.text = "phone".localized()
         self.email.caption.text = "email".localized()
@@ -233,7 +241,7 @@ class MemberViewController: BaseViewController, UIScrollViewDelegate, UITextFiel
         self.settingsButton.setTitle("settings".localized().uppercased(), for: .normal)
         self.callButton.setTitle("call".localized().uppercased(), for: .normal)
     }
-	
+
 	func bind() {
         
         /* Push data into form and header */
@@ -267,6 +275,7 @@ class MemberViewController: BaseViewController, UIScrollViewDelegate, UITextFiel
         }
         
         self.view?.setNeedsLayout() // Does NOT trigger layoutSubviews for header view
+        updateHeaderView()
     }
     
     func updateHeaderView() {

@@ -91,6 +91,17 @@ class MemberListController: BaseTableController {
         }
     }
     
+    func profileTapped(sender: AnyObject?) {
+        if let recognizer = sender as? UITapGestureRecognizer {
+            Reporting.track("view_member_profile")
+            let point = recognizer.location(in: self.tableView)
+            if let indexPath = self.tableView.indexPathForRow(at: point) {
+                self.tableView.selectRow(at: indexPath, animated: true, scrollPosition: .none)
+                self.tableView(self.tableView, didSelectRowAt: indexPath)
+            }
+        }
+    }
+    
     /*--------------------------------------------------------------------------------------------
      * Notifications
      *--------------------------------------------------------------------------------------------*/
@@ -106,6 +117,7 @@ class MemberListController: BaseTableController {
         self.tableView.backgroundColor = Theme.colorBackgroundTable
         self.tableView.separatorInset = UIEdgeInsets.zero
         self.tableView.tableFooterView = UIView()
+        self.tableView.allowsSelection = false
         self.tableView.delegate = self
         
         self.view.addSubview(self.tableView)
@@ -162,18 +174,22 @@ class MemberListController: BaseTableController {
                     target = "reaction"
                 }
                 cell.bind(user: user, target: target)
+                let tap = UITapGestureRecognizer(target: this, action: #selector(this.profileTapped(sender:)))
+                cell.profileView.addGestureRecognizer(tap)
+
                 if this.manage {
                     if this.scope == .channel {
                         if this.isOwner() {
                             if this.channel.ownedBy! != userId {
-                                cell.actionButton?.isHidden = false
-                                cell.actionButton?.setTitle("Manage", for: .normal)
-                                cell.actionButton?.addTarget(this, action: #selector(this.manageUserAction(sender:)), for: .touchUpInside)
+                                cell.widgetWidth.constant = 40
+                                cell.settingsButton?.isHidden = false
+                                cell.settingsButton?.hitInsets = UIEdgeInsetsMake(-24, -24, -24, -24)
+                                cell.settingsButton?.addTarget(this, action: #selector(this.manageUserAction(sender:)), for: .touchUpInside)
                                 if user != nil {
-                                    cell.actionButton?.data = user
+                                    cell.settingsButton?.data = user
                                 }
                                 else {
-                                    cell.actionButton?.data = userId as AnyObject?
+                                    cell.settingsButton?.data = userId as AnyObject?
                                 }
                             }
                         }
