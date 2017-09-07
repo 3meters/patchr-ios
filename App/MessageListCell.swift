@@ -22,7 +22,6 @@ class MessageListCell: UITableViewCell {
     var createdDate = AirLabelDisplay()
     var edited = AirLabelDisplay()
     var unread = AirLabelDisplay()
-    var hitInsets: UIEdgeInsets = UIEdgeInsets.zero
 
     var reactionToolbar: AirReactionToolbar!
     var commentsButton = CommentsButton()
@@ -304,15 +303,5 @@ class MessageListCell: UITableViewCell {
         self.userQuery = nil
         self.unreadQuery?.remove()
         self.unreadQuery = nil
-    }
-    
-    override func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
-
-        let newRect = CGRect(x: 0 + hitInsets.left,
-                             y: 0 + hitInsets.top,
-                             width: self.frame.size.width - hitInsets.left - hitInsets.right,
-                             height: self.frame.size.height - hitInsets.top - hitInsets.bottom)
-
-        return newRect.contains(point)
     }
 }

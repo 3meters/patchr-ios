@@ -80,7 +80,6 @@
 		E2499E5B1F3A1913002C0F16 /* ChannelPickerCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2499E591F3A1913002C0F16 /* ChannelPickerCell.swift */; };
 		E24A87261B2DC0AB00E6F96B /* ThumbnailCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E24A87251B2DC0AB00E6F96B /* ThumbnailCollectionViewCell.swift */; };
 		E24D74541BBAED5F0061F339 /* TaskQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = E24D74531BBAED5F0061F339 /* TaskQueue.swift */; };
-		E24D84D31E8AF1D300BFE408 /* AirNavigationBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = E24D84D21E8AF1D300BFE408 /* AirNavigationBar.swift */; };
 		E25173C71E09CB9D0030259A /* UIBarButtonItem+Badge.m in Sources */ = {isa = PBXBuildFile; fileRef = E25173C61E09CB9D0030259A /* UIBarButtonItem+Badge.m */; };
 		E25327B21B0FCE9C00990A81 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = E25327B11B0FCE9C00990A81 /* Constants.swift */; };
 		E25327B61B1000C000990A81 /* AirImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E25327B51B1000C000990A81 /* AirImageView.swift */; };
@@ -181,7 +180,6 @@
 		E2D12A831C0A58F000DE507E /* AirLabelTitle.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2D12A821C0A58F000DE507E /* AirLabelTitle.swift */; };
 		E2D12A851C0A592D00DE507E /* AirLabelBanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2D12A841C0A592D00DE507E /* AirLabelBanner.swift */; };
 		E2D654FB1E0C9EBB00714BA9 /* UnreadQuery.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2D654FA1E0C9EBB00714BA9 /* UnreadQuery.swift */; };
-		E2DA16D91DD0F7280096D86F /* AirUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2DA16D81DD0F7280096D86F /* AirUIView.swift */; };
 		E2DA16DD1DD11B7A0096D86F /* AirToggleImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2DA16DC1DD11B7A0096D86F /* AirToggleImage.swift */; };
 		E2DB42891EB4F2C400B1F78B /* UserListCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E25B0F471DCE7D7400021D5B /* UserListCell.swift */; };
 		E2DB428A1EB4F2C400B1F78B /* AirRuleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29730631C15090300B9433B /* AirRuleView.swift */; };
@@ -203,7 +201,6 @@
 		E2DB429E1EB4F2C400B1F78B /* AirProgress.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2064BF41BC18A66009C7B6A /* AirProgress.swift */; };
 		E2DB429F1EB4F2C400B1F78B /* UIView+BorderLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = E241D1591B1B3FCE00702E01 /* UIView+BorderLayer.m */; };
 		E2DB42A01EB4F2C400B1F78B /* PresenceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2810BA51DC8E6930013AEA0 /* PresenceView.swift */; };
-		E2DB42A11EB4F2C400B1F78B /* AirNavigationBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = E24D84D21E8AF1D300BFE408 /* AirNavigationBar.swift */; };
 		E2DB42A21EB4F2C400B1F78B /* Theming.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2D12A7E1C0A090200DE507E /* Theming.swift */; };
 		E2DB42A31EB4F2C400B1F78B /* BaseEditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2B2CAB11C553A8900CAE183 /* BaseEditViewController.swift */; };
 		E2DB42A51EB4F2C400B1F78B /* NGAParallaxMotion.m in Sources */ = {isa = PBXBuildFile; fileRef = E2BC533B1DE5E53600C97A2C /* NGAParallaxMotion.m */; };
@@ -299,7 +296,6 @@
 		E2DB43151EB4F2C400B1F78B /* AccountEditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FDCCBBC7BF1C0419007B9F9 /* AccountEditViewController.swift */; };
 		E2DB43161EB4F2C400B1F78B /* StateController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2BC53361DE5DE4500C97A2C /* StateController.swift */; };
 		E2DB43171EB4F2C400B1F78B /* ContainerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2274B001E8D53FB005F4CF7 /* ContainerController.swift */; };
-		E2DB43181EB4F2C400B1F78B /* AirUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2DA16D81DD0F7280096D86F /* AirUIView.swift */; };
 		E2DB43191EB4F2C400B1F78B /* SlideAnimationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FDCC87DC2923CE4A6F17C1E /* SlideAnimationController.swift */; };
 		E2DB431A1EB4F2C400B1F78B /* SlideBounceAnimationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FDCCE482E821C4491DB4117 /* SlideBounceAnimationController.swift */; };
 		E2DB431B1EB4F2C400B1F78B /* MessageQuery.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FDCCEFC8FC05526D291A77B /* MessageQuery.swift */; };
@@ -474,7 +470,6 @@
 		E2499E591F3A1913002C0F16 /* ChannelPickerCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChannelPickerCell.swift; sourceTree = "<group>"; };
 		E24A87251B2DC0AB00E6F96B /* ThumbnailCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ThumbnailCollectionViewCell.swift; sourceTree = "<group>"; };
 		E24D74531BBAED5F0061F339 /* TaskQueue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TaskQueue.swift; sourceTree = "<group>"; };
-		E24D84D21E8AF1D300BFE408 /* AirNavigationBar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = AirNavigationBar.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		E25173C51E09CB9D0030259A /* UIBarButtonItem+Badge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIBarButtonItem+Badge.h"; sourceTree = "<group>"; };
 		E25173C61E09CB9D0030259A /* UIBarButtonItem+Badge.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIBarButtonItem+Badge.m"; sourceTree = "<group>"; };
 		E25327B11B0FCE9C00990A81 /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
@@ -577,7 +572,6 @@
 		E2D12A821C0A58F000DE507E /* AirLabelTitle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirLabelTitle.swift; sourceTree = "<group>"; };
 		E2D12A841C0A592D00DE507E /* AirLabelBanner.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirLabelBanner.swift; sourceTree = "<group>"; };
 		E2D654FA1E0C9EBB00714BA9 /* UnreadQuery.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UnreadQuery.swift; sourceTree = "<group>"; };
-		E2DA16D81DD0F7280096D86F /* AirUIView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirUIView.swift; sourceTree = "<group>"; };
 		E2DA16DC1DD11B7A0096D86F /* AirToggleImage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirToggleImage.swift; sourceTree = "<group>"; };
 		E2DB43591EB4F2C400B1F78B /* Teeny-Dev.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Teeny-Dev.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E2E271281C5D1ED600E36804 /* BranchProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = BranchProvider.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
@@ -1068,7 +1062,6 @@
 				E2D12A7C1C0A03F100DE507E /* AirLabelDisplay.swift */,
 				E25908311DC7B3AA00CB6C3F /* AirLabelStack.swift */,
 				E2D12A781C08FA0E00DE507E /* AirLinkButton.swift */,
-				E24D84D21E8AF1D300BFE408 /* AirNavigationBar.swift */,
 				E2064BF41BC18A66009C7B6A /* AirProgress.swift */,
 				E2B8A4B51CE7875400A28D3A /* AirRadialMenu.swift */,
 				E297305D1C136E8300B9433B /* AirRadioButton.swift */,
@@ -1085,7 +1078,6 @@
 				E2A28E6E1B4A602200B3A2FE /* AirToggleButton.swift */,
 				E2DA16DC1DD11B7A0096D86F /* AirToggleImage.swift */,
 				E26A02FE1DF5DC5800EE32D3 /* AirTokenView.swift */,
-				E2DA16D81DD0F7280096D86F /* AirUIView.swift */,
 				E2D10E5B1C87AA760099EA6E /* AirHideShowButton.swift */,
 				E2473E8C1F42281B00F5C19E /* CommentsButton.swift */,
 				E27CE27F1E632E4800149305 /* DropdownButton.swift */,
@@ -1521,7 +1513,6 @@
 				E2064BF51BC18A66009C7B6A /* AirProgress.swift in Sources */,
 				E241D15A1B1B3FCE00702E01 /* UIView+BorderLayer.m in Sources */,
 				E2810BA61DC8E6930013AEA0 /* PresenceView.swift in Sources */,
-				E24D84D31E8AF1D300BFE408 /* AirNavigationBar.swift in Sources */,
 				E2D12A7F1C0A090200DE507E /* Theming.swift in Sources */,
 				E2B2CAB21C553A8900CAE183 /* BaseEditViewController.swift in Sources */,
 				E2BC533C1DE5E53600C97A2C /* NGAParallaxMotion.m in Sources */,
@@ -1626,7 +1617,6 @@
 				E2BC53371DE5DE4500C97A2C /* StateController.swift in Sources */,
 				E2499E5A1F3A1913002C0F16 /* ChannelPickerCell.swift in Sources */,
 				E2274B011E8D53FB005F4CF7 /* ContainerController.swift in Sources */,
-				E2DA16D91DD0F7280096D86F /* AirUIView.swift in Sources */,
 				9FDCC7933CB73AE451A0EF96 /* SlideAnimationController.swift in Sources */,
 				9FDCC2C0E1041D54A7D10BD2 /* SlideBounceAnimationController.swift in Sources */,
 				9FDCCDF24C1D1F59CBEF6E32 /* MessageQuery.swift in Sources */,
@@ -1667,7 +1657,6 @@
 				E2DB429E1EB4F2C400B1F78B /* AirProgress.swift in Sources */,
 				E2DB429F1EB4F2C400B1F78B /* UIView+BorderLayer.m in Sources */,
 				E2DB42A01EB4F2C400B1F78B /* PresenceView.swift in Sources */,
-				E2DB42A11EB4F2C400B1F78B /* AirNavigationBar.swift in Sources */,
 				E2DB42A21EB4F2C400B1F78B /* Theming.swift in Sources */,
 				E2DB42A31EB4F2C400B1F78B /* BaseEditViewController.swift in Sources */,
 				E2DB42A51EB4F2C400B1F78B /* NGAParallaxMotion.m in Sources */,
@@ -1772,7 +1761,6 @@
 				E2DB43161EB4F2C400B1F78B /* StateController.swift in Sources */,
 				E2499E5B1F3A1913002C0F16 /* ChannelPickerCell.swift in Sources */,
 				E2DB43171EB4F2C400B1F78B /* ContainerController.swift in Sources */,
-				E2DB43181EB4F2C400B1F78B /* AirUIView.swift in Sources */,
 				E2DB43191EB4F2C400B1F78B /* SlideAnimationController.swift in Sources */,
 				E2DB431A1EB4F2C400B1F78B /* SlideBounceAnimationController.swift in Sources */,
 				E2DB431B1EB4F2C400B1F78B /* MessageQuery.swift in Sources */,

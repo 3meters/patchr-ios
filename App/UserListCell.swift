@@ -17,8 +17,10 @@ class UserListCell: UITableViewCell {
     @IBOutlet weak var roleLabel: UILabel?
     @IBOutlet weak var presenceView = PresenceView()
     @IBOutlet weak var checkBox: AirCheckBox?
-    @IBOutlet weak var actionButton: AirButton?
+    @IBOutlet weak var settingsButton: AirButton?
     @IBOutlet weak var agoLabel: UILabel!
+    @IBOutlet weak var widgetWidth: NSLayoutConstraint!
+    @IBOutlet weak var profileView: UIView!
     
     var allowSelection = true
     
@@ -47,7 +49,8 @@ class UserListCell: UITableViewCell {
         self.roleLabel?.isHidden = false
         self.presenceView?.showOffline()
         self.agoLabel.isHidden = true
-        self.actionButton?.isHidden = true
+        self.settingsButton?.isHidden = true
+        self.widgetWidth.constant = 0
         self.allowSelection = true
         self.userQuery?.remove()
         self.userQuery = nil
@@ -56,7 +59,7 @@ class UserListCell: UITableViewCell {
     func bind(contact: CNContact) {
         
         self.roleLabel?.isHidden = true
-        self.actionButton?.isHidden = true
+        self.settingsButton?.isHidden = true
         self.presenceView?.isHidden = true
         self.agoLabel.isHidden = true
         self.checkBox?.isHidden = false

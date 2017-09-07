@@ -18,7 +18,6 @@ class ChannelDetailView: UIView {
     var purposeLabel = AirLabelDisplay(frame: CGRect.zero)
     
     var photo: FirePhoto!
-    var needsPhoto = false
 
     /*--------------------------------------------------------------------------------------------
     * Lifecycle
@@ -62,8 +61,8 @@ class ChannelDetailView: UIView {
 
         self.photoView.fillSuperview(withLeftPadding: -24, rightPadding: -24, topPadding: -36, bottomPadding: -36)
         self.photoView.progressView.anchorInCenter(withWidth: 150, height: 20)
+        
         self.titleGroup.anchorBottomLeft(withLeftPadding: 12, bottomPadding: 16, width: viewWidth - 72, height: 72)
-
         self.titleLabel.bounds.size.width = self.titleGroup.width()
         self.titleLabel.sizeToFit()
         self.titleLabel.anchorBottomLeft(withLeftPadding: 0, bottomPadding: 0, width: self.titleLabel.width(), height: self.titleLabel.height())
@@ -145,7 +144,6 @@ class ChannelDetailView: UIView {
         
         if let photo = channel.photo {
             self.photo = photo
-            self.needsPhoto = true
             self.photoView.backgroundColor = Theme.colorBackgroundImage
             displayPhoto()
         }
@@ -167,19 +165,19 @@ class ChannelDetailView: UIView {
     }
     
     func displayPhoto() {
-        let photo = self.photo!
-        let url = ImageProxy.url(photo: photo, category: SizeCategory.standard)
-        
-        if !self.photoView.associated(withUrl: url) {
-            self.photoView.setImageWithUrl(url: url, uploading: (photo.uploading != nil)) { success in
-                if success {
-                    self.photoView.showGradient = true
-                    self.needsPhoto = false
-                    if let image = self.photoView.image {
-                        let colorImageAverage = AverageColorFromImage(image)
-                        let colorText = ContrastColorOf(colorImageAverage, returnFlat: false)
-                        self.infoGroup.backgroundColor = colorImageAverage
-                        self.purposeLabel.textColor = colorText
+        if let photo = self.photo {
+            let url = ImageProxy.url(photo: photo, category: SizeCategory.standard)
+            if !self.photoView.associated(withUrl: url) {
+                self.photoView.showGradient = false
+                self.photoView.setImageWithUrl(url: url, uploading: (photo.uploading != nil)) { success in
+                    if success {
+                        self.photoView.showGradient = true
+                        if let image = self.photoView.image {
+                            let colorImageAverage = AverageColorFromImage(image)
+                            let colorText = ContrastColorOf(colorImageAverage, returnFlat: false)
+                            self.infoGroup.backgroundColor = colorImageAverage
+                            self.purposeLabel.textColor = colorText
+                        }
                     }
                 }
             }

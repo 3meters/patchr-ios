@@ -51,6 +51,7 @@ class MemberDetailView: UIView {
         let viewWidth = self.bounds.size.width
         
         self.contentGroup.fillSuperview()
+        
         self.photoView.fillSuperview(withLeftPadding: -24, rightPadding: -24, topPadding: -36, bottomPadding: -36)
         self.photoView.progressView.anchorInCenter(withWidth: 150, height: 20)
 
@@ -58,10 +59,13 @@ class MemberDetailView: UIView {
         self.subtitle.bounds.size.width = self.titleGroup.width()
         self.subtitle.sizeToFit()
         self.subtitle.anchorBottomLeft(withLeftPadding: 0, bottomPadding: 0, width: self.subtitle.width(), height: self.subtitle.height())
+        
         self.presenceView.align(toTheRightOf: self.subtitle, matchingCenterWithLeftPadding: 8, width: 12, height: 12, topPadding: 2)
+        
         self.title.bounds.size.width = self.titleGroup.width()
         self.title.sizeToFit()
         self.title.align(above: self.subtitle, matchingLeftWithBottomPadding: 4, width: self.title.width(), height: self.title.height())
+        
         self.setPhotoButton.anchorInCenter(withWidth: 48, height: 48)
     }
 
@@ -78,7 +82,7 @@ class MemberDetailView: UIView {
         self.photoView.clipsToBounds = true
         self.photoView.contentMode = .scaleAspectFill
         self.photoView.backgroundColor = Theme.colorBackgroundImage
-        self.photoView.showGradient = true
+        self.photoView.showGradient = false
         
         self.title.font = UIFont(name: "HelveticaNeue-Light", size: 28)!
         self.title.textColor = Colors.white
