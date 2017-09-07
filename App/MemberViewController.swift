@@ -191,8 +191,6 @@ class MemberViewController: BaseViewController, UIScrollViewDelegate, UITextFiel
 
         updateHeaderView()
 
-
-        self.phone.caption.text = "Phone"
         self.phone.label.textColor = Colors.brandColorTextLight
         self.phone.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(phoneAction(sender:))))
         self.phone.isHidden = true
