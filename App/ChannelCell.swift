@@ -14,7 +14,6 @@ class ChannelCell: UICollectionViewCell {
     @IBOutlet weak var titleLabel: UILabel?
     
     var photo: FirePhoto!
-    var needsPhoto = false
 
     var channel: FireChannel!
     var unreadQuery: UnreadQuery? // Passed in by table data source
@@ -61,22 +60,25 @@ class ChannelCell: UICollectionViewCell {
         self.titleLabel?.text = channel.title!
         if let photo = channel.photo {
             self.photo = photo
-            self.needsPhoto = true
-            
             let url = ImageProxy.url(photo: photo, category: SizeCategory.profile)
-            
             if !(self.photoView?.associated(withUrl: url))! {
-                self.photoView?.setImageWithUrl(url: url, uploading: (photo.uploading != nil), animate: true) { success in
-                    if success {
-                        self.needsPhoto = false
-                    }
-                }
+                self.photoView?.setImageWithUrl(url: url, uploading: (photo.uploading != nil), animate: true)
             }
         }
         else {
             self.photoView?.image = nil
             let seed = Utils.numberFromName(fullname: channel.title!.lowercased())
             self.photoView?.backgroundColor = ColorArray.randomColor(seed: seed)
+            FireController.instance.messagePhotos(channelId: channel.id!, limit: 1) { error, photos in
+                if error == nil {
+                    if photos.count > 0 {
+                        let url = ImageProxy.url(photo: photos.last!, category: SizeCategory.profile)
+                        if !(self.photoView?.associated(withUrl: url))! {
+                            self.photoView?.setImageWithUrl(url: url, uploading: false, animate: true)
+                        }
+                    }
+                }
+            }
         }
         
         self.setNeedsLayout()    // Needed because binding can change element layout
