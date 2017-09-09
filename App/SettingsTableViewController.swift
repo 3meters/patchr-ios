@@ -133,8 +133,8 @@ class SettingsTableViewController: UITableViewController {
         self.languageCell.textLabel?.text = "settings_language_label".localized()
         self.languageCell.detailTextLabel?.text = Localize.displayNameForLanguage(Localize.currentLanguage())
         self.sendFeedbackCell.textLabel!.text = "send_feedback".localized()
-        self.rateCell.textLabel!.text = "\("rate".localized()) \(Strings.appName)"
-        self.aboutCell.textLabel!.text = "\("about".localized()) \(Strings.appName)"
+        self.rateCell.textLabel!.text = "\("rate".localized()) \("patchr".localized())"
+        self.aboutCell.textLabel!.text = "\("about".localized()) \("patchr".localized())"
         self.developmentCell.textLabel!.text = "developer".localized()
         self.clearHistoryButton.setTitle("clear_search_history".localized().uppercased(), for: .normal)
         self.logoutButton.setTitle("log_out".localized().uppercased(), for: .normal)
@@ -170,7 +170,7 @@ extension SettingsTableViewController {
         if selectedCell == self.sendFeedbackCell {
             Reporting.track("view_feedback_compose")
             let email = "feedback@patchr.com"
-            let subject = "\("feedback_subject".localized()) \(Strings.appName)"
+            let subject = "\("feedback_subject".localized()) \("patchr".localized())"
             if MFMailComposeViewController.canSendMail() {
                 UI.mailComposer!.mailComposeDelegate = self
                 UI.mailComposer!.setToRecipients([email])

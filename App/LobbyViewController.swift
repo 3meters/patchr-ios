@@ -120,7 +120,7 @@ class LobbyViewController: UIViewController {
 		self.imageLogo.image = UIImage(named: "imgPatchrWhite")
 		self.imageLogo.contentMode = UIViewContentMode.scaleAspectFill
 		
-		self.appName.text = Strings.appName
+		self.appName.text = "patchr".localized()
 		self.appName.textAlignment = NSTextAlignment.center
         
         self.view.addSubview(self.imageBackground)
@@ -219,15 +219,15 @@ class LobbyViewController: UIViewController {
             ]
             
             var descriptions = [
-                "onboard_create_description".localizedFormat(Strings.appName),
-                "onboard_invite_description".localizedFormat(Strings.appName),
-                "onboard_features_description".localizedFormat(Strings.appName)
+                "onboard_create_description".localizedFormat("patchr".localized()),
+                "onboard_invite_description".localizedFormat("patchr".localized()),
+                "onboard_features_description".localizedFormat("patchr".localized())
             ]
             
             if appFirstLaunch {
                 images.insert("imgGroupChat", at: 0)
                 titles.insert("onboard_welcome_title".localized().uppercased(), at: 0)
-                descriptions.insert("onboard_welcome_description".localizedFormat(Strings.appName), at: 0)
+                descriptions.insert("onboard_welcome_description".localizedFormat("patchr".localized()), at: 0)
             }
             
             self.alertView = AlertOnboarding(arrayOfImage: images, arrayOfTitle: titles, arrayOfDescription: descriptions)
@@ -241,6 +241,7 @@ class LobbyViewController: UIViewController {
                 self.alertView.percentageRatioHeight = (588 / Config.screenHeight)
             }
             self.alertView.titleGotItButton = "onboard_got_it".localized().uppercased()
+            self.alertView.titleSkipButton = "skip".localized().uppercased()
         }
         
         self.alertView.show()

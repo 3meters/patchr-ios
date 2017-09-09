@@ -251,11 +251,11 @@ class ChannelEditViewController: BaseEditViewController {
         self.titleField.title = "title".localized()
         self.purposeField.placeholder = "channel_edit_purpose_placeholder".localized()
         if self.mode == .insert {
-            self.banner.text = "channel_edit_header_insert".localizedFormat(Strings.appName)
+            self.banner.text = "channel_edit_header_insert".localizedFormat("patchr".localized())
             self.doneButton.title = "create".localized()
         }
         else if self.mode == .update  {
-            self.banner.text = "channel_edit_header_update".localizedFormat(Strings.appName)
+            self.banner.text = "channel_edit_header_update".localizedFormat("patchr".localized())
             self.doneButton.title = "save".localized()
         }
     }

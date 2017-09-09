@@ -208,7 +208,7 @@ class ChannelGridController: UICollectionViewController {
     func bindLanguage() {
         self.searchBar.placeholder = "channel_grid_search_bar_placeholder".localized()
         self.searchBar.setValue("cancel".localized(), forKey: "_cancelButtonText")
-        self.navigationItem.title = "channel_grid_title".localizedFormat(Strings.appName)
+        self.navigationItem.title = "channel_grid_title".localizedFormat("patchr".localized())
     }
 
 	func bind() {

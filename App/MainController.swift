@@ -10,6 +10,7 @@ import AFNetworking
 import iRate
 import Firebase
 import FirebaseDatabase
+import Localize_Swift
 import Branch
 import PopupDialog
 import SDWebImage
@@ -142,7 +143,17 @@ class MainController: NSObject, iRateDelegate {
         /* Put anything to keep synched here */
         FireController.db.child("clients").child("ios").keepSynced(true)
 
+        NotificationCenter.default.addObserver(self, selector: #selector(bindLanguage), name: NSNotification.Name(LCLLanguageChangeNotification), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(stateInitialized(notification:)), name: NSNotification.Name(rawValue: Events.StateInitialized), object: nil)
+    }
+    
+    func bindLanguage() {
+        iRate.sharedInstance().appStoreCountry = Localize.currentLanguage()
+        iRate.sharedInstance().message = "irate_app_message".localizedFormat("patchr".localized())
+        iRate.sharedInstance().cancelButtonLabel = "irate_cancel_button".localized()
+        iRate.sharedInstance().messageTitle = "irate_message_title".localizedFormat("patchr".localized())
+        iRate.sharedInstance().rateButtonLabel = "irate_rate_button".localized()
+        iRate.sharedInstance().remindButtonLabel = "irate_remind_button".localized()
     }
 
     func launchUI() {

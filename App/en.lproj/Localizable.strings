@@ -83,6 +83,11 @@
 "invite_readers" = "Invite readers";
 "invite_title" = "Invite people to '%@'.";
 "invites_sent" = "Invitations sent";
+"irate_app_message" = "If you enjoy using %@, would you mind taking a moment to rate it? It won’t take more than a minute. Thanks for your support!";
+"irate_cancel_button" = "No, Thanks";
+"irate_message_title" = "Rate %@";
+"irate_rate_button" = "Rate It Now";
+"irate_remind_button" = "Remind Me Later";
 "language_settings_section_title" = "Language";
 "language_settings_title" = "Language";
 "last_name" = "Last name";
@@ -130,6 +135,7 @@
 "password_title" = "Password (6+ characters)";
 "password_too_short" = "Enter a password with six characters or more.";
 "password_view_title" = "Almost to the good stuff.";
+"patchr" = "Patchr";
 "people" = "people";
 "person" = "person";
 "phone" = "Phone";
@@ -165,6 +171,7 @@
 "share_description" = "%@ has invited you to the %@ channel!";
 "share_subject" = "Invitation to the %@ channel";
 "sign_up" = "Sign up";
+"skip" = "Skip";
 "terms_of_service" = "Terms of Service";
 "title" = "Title";
 "unmute" = "Unmute";

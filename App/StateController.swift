@@ -7,7 +7,6 @@
 import UIKit
 import Keys
 import AFNetworking
-import iRate
 import Firebase
 import FirebaseDatabase
 import FirebaseAuth

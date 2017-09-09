@@ -83,6 +83,11 @@
 "invite_readers" = "Пригласить читателей";
 "invite_title" = "Пригласите людей на «%@».";
 "invites_sent" = "Приглашения отправлены";
+"irate_app_message" = "Если вам нравится пользоваться %@, не будете ли вы возражать против того, чтобы уделить минуту и оценить его? Спасибо вам за поддержку!";
+"irate_cancel_button" = "Нет, спасибо";
+"irate_message_title" = "Оценить %@";
+"irate_rate_button" = "Оценить сейчас";
+"irate_remind_button" = "Напомнить позже";
 "language_settings_section_title" = "язык";
 "language_settings_title" = "язык";
 "last_name" = "Фамилия";
@@ -130,6 +135,7 @@
 "password_title" = "пароль (6+ буква)";
 "password_too_short" = "Введите пароль с шестью символами или более.";
 "password_view_title" = "Почти к хорошему.";
+"patchr" = "Patchr";
 "people" = "люди";
 "person" = "человек";
 "phone" = "Номер телефона";
@@ -165,6 +171,7 @@
 "share_description" = "%@ пригласила вас на канал %@!";
 "share_subject" = "Приглашение на канал %@";
 "sign_up" = "регистрировать";
+"skip" = "Пропускать";
 "terms_of_service" = "Условия использования";
 "title" = "Заглавие";
 "unmute" = "Unmute";

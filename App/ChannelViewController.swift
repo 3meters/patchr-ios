@@ -86,7 +86,7 @@ class ChannelViewController: BaseTableController {
             self.container?.showActionButton()
         }
         
-		iRate.sharedInstance().promptIfAllCriteriaMet()
+        iRate.sharedInstance().promptIfAllCriteriaMet()
 		if let link = MainController.instance.link {
 			MainController.instance.link = nil
 			MainController.instance.routeDeepLink(link: link, error: nil)
