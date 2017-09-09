@@ -165,7 +165,7 @@ class AirImageView: FLAnimatedImageView {
                 
                 if error != nil {
                     if !uploading {
-                        this.progressView.progressLabel.text = "Image missing"
+                        this.progressView.progressLabel.text = "image_missing".localized()
                         this.progressView.progressLabel.textColor = Theme.colorTextSecondary
                         Log.w("*** Image fetch failed: " + error!.localizedDescription)
                         Log.w("*** Failed url: \(url.absoluteString)")
@@ -202,7 +202,7 @@ class AirImageView: FLAnimatedImageView {
                 Log.w("*** Failed url: \(url.absoluteString)")
                 DispatchQueue.main.async() {
                     this.progressView.progressLabel.textColor = Theme.colorTextSecondary
-                    this.progressView.progressLabel.text = "Image unavailable"
+                    this.progressView.progressLabel.text = "image_missing".localized()
                 }
                 this.fromUrl = nil
                 return

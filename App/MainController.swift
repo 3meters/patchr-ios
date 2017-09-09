@@ -290,8 +290,9 @@ class MainController: NSObject, iRateDelegate {
             }
             else { // Channel is gone or channel secret is bad
                 if let topController = UIViewController.topController {
-                    let popup = PopupDialog(title: "Channel Missing", message: "The \"\(channelTitle)\" channel has been deleted.")
-                    let button = DefaultButton(title: "OK", height: 48) {
+                    let popup = PopupDialog(title: "channel_missing_title".localized()
+                        , message: "channel_missing_message".localizedFormat(channelTitle))
+                    let button = DefaultButton(title: "ok".localized().uppercased(), height: 48) {
                         Reporting.track("invite_channel_missing")
                         /* Leave the user at their current location unless onboarding */
                         if flow == .onboardInvite {
@@ -311,8 +312,9 @@ class MainController: NSObject, iRateDelegate {
         self.showChannel(channelId: channelId) { // User permissions are in place
             Utils.delay(0.5) {
                 if let topController = UIViewController.topController {
-                    let popup = PopupDialog(title: "Welcome!", message: "You have joined the \(channelTitle) channel!")
-                    let button = DefaultButton(title: "OK".uppercased(), height: 48) {
+                    let popup = PopupDialog(title: "channel_joined_title".localized()
+                        , message: "channel_joined_message".localizedFormat(channelTitle))
+                    let button = DefaultButton(title: "ok".localized().uppercased(), height: 48) {
                         Reporting.track("invite_carry_on")
                     }
                     popup.addButton(button)

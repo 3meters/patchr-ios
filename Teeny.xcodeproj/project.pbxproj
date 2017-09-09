@@ -142,7 +142,6 @@
 		E292D0FD1F5EFC1E00BADB6E /* Language.swift in Sources */ = {isa = PBXBuildFile; fileRef = E292D0FB1F5EFC1E00BADB6E /* Language.swift */; };
 		E297305C1C13644800B9433B /* AirTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E297305B1C13644800B9433B /* AirTextView.swift */; };
 		E297305E1C136E8300B9433B /* AirRadioButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E297305D1C136E8300B9433B /* AirRadioButton.swift */; };
-		E29730601C14A7BC00B9433B /* AirSearchField.swift in Sources */ = {isa = PBXBuildFile; fileRef = E297305F1C14A7BC00B9433B /* AirSearchField.swift */; };
 		E29730641C15090300B9433B /* AirRuleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29730631C15090300B9433B /* AirRuleView.swift */; };
 		E2999EE31DC25AAE005C69D8 /* EmptyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2999EE21DC25AAE005C69D8 /* EmptyViewController.swift */; };
 		E2999EE51DC2CD3B005C69D8 /* PhotoBrowser.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2999EE41DC2CD3B005C69D8 /* PhotoBrowser.swift */; };
@@ -231,7 +230,6 @@
 		E2DB42BE1EB4F2C400B1F78B /* BaseDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20C3A801BDC1D57008CCED1 /* BaseDetailView.swift */; };
 		E2DB42BF1EB4F2C400B1F78B /* UIBarButtonItem+Badge.m in Sources */ = {isa = PBXBuildFile; fileRef = E25173C61E09CB9D0030259A /* UIBarButtonItem+Badge.m */; };
 		E2DB42C01EB4F2C400B1F78B /* AirHideShowButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2D10E5B1C87AA760099EA6E /* AirHideShowButton.swift */; };
-		E2DB42C11EB4F2C400B1F78B /* AirSearchField.swift in Sources */ = {isa = PBXBuildFile; fileRef = E297305F1C14A7BC00B9433B /* AirSearchField.swift */; };
 		E2DB42C21EB4F2C400B1F78B /* FireProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29A921D1DB19A2600B27093 /* FireProfile.swift */; };
 		E2DB42C31EB4F2C400B1F78B /* CALayer+XibConfiguration.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D39D3C41ABA21B200275759 /* CALayer+XibConfiguration.m */; };
 		E2DB42C51EB4F2C400B1F78B /* UIShared.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20C1FB61AFE462500A471E9 /* UIShared.swift */; };
@@ -514,7 +512,6 @@
 		E2737DC91B8F7EA100C176B1 /* UIImage+RoundedCorner.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIImage+RoundedCorner.swift"; sourceTree = "<group>"; };
 		E27C12081E6CD403003F052B /* Pods-acknowledgements.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Pods-acknowledgements.plist"; sourceTree = "<group>"; };
 		E27CE27F1E632E4800149305 /* DropdownButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DropdownButton.swift; sourceTree = "<group>"; };
-		E27F80AE1C56C84700D436E3 /* run-tests.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = "run-tests.sh"; sourceTree = "<group>"; };
 		E27F8A7D1DFB3A180020E852 /* FloatTextField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FloatTextField.swift; sourceTree = "<group>"; };
 		E2810BA51DC8E6930013AEA0 /* PresenceView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PresenceView.swift; sourceTree = "<group>"; };
 		E2816B311F003A650049E84B /* ServiceAccountDev.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = ServiceAccountDev.json; sourceTree = "<group>"; };
@@ -538,7 +535,6 @@
 		E292D0FB1F5EFC1E00BADB6E /* Language.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Language.swift; sourceTree = "<group>"; };
 		E297305B1C13644800B9433B /* AirTextView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = AirTextView.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		E297305D1C136E8300B9433B /* AirRadioButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = AirRadioButton.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
-		E297305F1C14A7BC00B9433B /* AirSearchField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = AirSearchField.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		E29730631C15090300B9433B /* AirRuleView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirRuleView.swift; sourceTree = "<group>"; };
 		E2999EE21DC25AAE005C69D8 /* EmptyViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EmptyViewController.swift; sourceTree = "<group>"; };
 		E2999EE41DC2CD3B005C69D8 /* PhotoBrowser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotoBrowser.swift; sourceTree = "<group>"; };
@@ -567,8 +563,6 @@
 		E2C0D9301B6C415100E28CE9 /* Log.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Log.swift; sourceTree = "<group>"; };
 		E2C720C61B4EDAFE00714B53 /* AirLabel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirLabel.swift; sourceTree = "<group>"; };
 		E2C7C5CA1B2CF2F80045038A /* ImageResult.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageResult.swift; sourceTree = "<group>"; };
-		E2CA0C331C4FFEAF00E2F380 /* build.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = build.sh; sourceTree = SOURCE_ROOT; };
-		E2CA0C341C4FFEAF00E2F380 /* test.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = test.sh; sourceTree = SOURCE_ROOT; };
 		E2CA16FE1DB95DDB00F99E1D /* FireAttachment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FireAttachment.swift; sourceTree = "<group>"; };
 		E2CCAAE11B67EE2C0071170C /* chirp.caf */ = {isa = PBXFileReference; lastKnownFileType = file; path = chirp.caf; sourceTree = "<group>"; };
 		E2D10E5B1C87AA760099EA6E /* AirHideShowButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirHideShowButton.swift; sourceTree = "<group>"; };
@@ -1051,9 +1045,6 @@
 			isa = PBXGroup;
 			children = (
 				E28915901C5A85CF005D7AA0 /* .xctool-args */,
-				E2CA0C331C4FFEAF00E2F380 /* build.sh */,
-				E2CA0C341C4FFEAF00E2F380 /* test.sh */,
-				E27F80AE1C56C84700D436E3 /* run-tests.sh */,
 			);
 			name = Scripts;
 			path = ..;
@@ -1083,7 +1074,6 @@
 				E29730631C15090300B9433B /* AirRuleView.swift */,
 				E25617F31E02F8D000E31240 /* AirScrimButton.swift */,
 				E2D12A701C0778C100DE507E /* AirScrollView.swift */,
-				E297305F1C14A7BC00B9433B /* AirSearchField.swift */,
 				E20C3A7C1BD70DD2008CCED1 /* AirTableView.swift */,
 				E256B4271BD3DDC900EBF894 /* AirTableViewCell.swift */,
 				E2BC532A1DE20E6F00C97A2C /* AirTextFieldCell.swift */,
@@ -1555,7 +1545,6 @@
 				E20C3A811BDC1D57008CCED1 /* BaseDetailView.swift in Sources */,
 				E25173C71E09CB9D0030259A /* UIBarButtonItem+Badge.m in Sources */,
 				E2D10E5C1C87AA760099EA6E /* AirHideShowButton.swift in Sources */,
-				E29730601C14A7BC00B9433B /* AirSearchField.swift in Sources */,
 				E29A921E1DB19A2600B27093 /* FireProfile.swift in Sources */,
 				E2B26A871F61F1100047FE00 /* PhotosQuery.swift in Sources */,
 				7D39D3C51ABA21B200275759 /* CALayer+XibConfiguration.m in Sources */,
@@ -1703,7 +1692,6 @@
 				E2DB42BE1EB4F2C400B1F78B /* BaseDetailView.swift in Sources */,
 				E2DB42BF1EB4F2C400B1F78B /* UIBarButtonItem+Badge.m in Sources */,
 				E2DB42C01EB4F2C400B1F78B /* AirHideShowButton.swift in Sources */,
-				E2DB42C11EB4F2C400B1F78B /* AirSearchField.swift in Sources */,
 				E2B26A881F61F1100047FE00 /* PhotosQuery.swift in Sources */,
 				E2DB42C21EB4F2C400B1F78B /* FireProfile.swift in Sources */,
 				E2DB42C31EB4F2C400B1F78B /* CALayer+XibConfiguration.m in Sources */,

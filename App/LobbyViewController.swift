@@ -127,21 +127,21 @@ class LobbyViewController: UIViewController {
         self.view.addSubview(self.imageLogo)
 		self.view.addSubview(self.appName)
 		
-		self.buttonLogin.setTitle("Log in", for: .normal)
+		self.buttonLogin.setTitle("log_in".localized(), for: .normal)
 		self.buttonLogin.setTitleColor(Colors.white, for: .normal)
 		self.buttonLogin.setTitleColor(Theme.colorTint, for: .highlighted)
 		self.buttonLogin.borderColor = Colors.white
 		self.buttonLogin.borderWidth = Theme.dimenButtonBorderWidth
 		self.buttonLogin.cornerRadius = Theme.dimenButtonCornerRadius
 		
-		self.buttonSignup.setTitle("Sign up", for: .normal)
+		self.buttonSignup.setTitle("sign_up".localized(), for: .normal)
 		self.buttonSignup.setTitleColor(Colors.white, for: .normal)
 		self.buttonSignup.setTitleColor(Theme.colorTint, for: .highlighted)
 		self.buttonSignup.borderColor = Colors.white
 		self.buttonSignup.borderWidth = Theme.dimenButtonBorderWidth
 		self.buttonSignup.cornerRadius = Theme.dimenButtonCornerRadius
         
-        self.buttonOnboard.setTitle("Onboard me!", for: .normal)
+        self.buttonOnboard.setTitle("onboard_me".localized(), for: .normal)
         self.buttonOnboard.setTitleColor(Colors.white, for: .normal)
         self.buttonOnboard.setTitleColor(Theme.colorTint, for: .highlighted)
         self.buttonOnboard.borderColor = Colors.clear
@@ -213,21 +213,21 @@ class LobbyViewController: UIViewController {
                 "imgGroupChat"]
             
             var titles = [
-                "Create a Channel".uppercased(),
-                "Invite".uppercased(),
-                "Carry On!".uppercased()
+                "onboard_create_title".localized().uppercased(),
+                "onboard_invite_title".localized().uppercased(),
+                "onboard_features_title".localized().uppercased()
             ]
             
             var descriptions = [
-                "Share with just the right people using \(Strings.appName) channels.",
-                "Select people from your contacts and we handle the rest! We will email them an invite, help them install \(Strings.appName) and gently launch them into your amazing channel.",
-                "\(Strings.appName) has brilliant sharing features: photo search and editing, reactions, comments, realtime notifications, offline posting plus much more."
+                "onboard_create_description".localizedFormat(Strings.appName),
+                "onboard_invite_description".localizedFormat(Strings.appName),
+                "onboard_features_description".localizedFormat(Strings.appName)
             ]
             
             if appFirstLaunch {
                 images.insert("imgGroupChat", at: 0)
-                titles.insert("Welcome!".uppercased(), at: 0)
-                descriptions.insert("\(Strings.appName) is a modern and simple way to share with just the right people!", at: 0)
+                titles.insert("onboard_welcome_title".localized().uppercased(), at: 0)
+                descriptions.insert("onboard_welcome_description".localizedFormat(Strings.appName), at: 0)
             }
             
             self.alertView = AlertOnboarding(arrayOfImage: images, arrayOfTitle: titles, arrayOfDescription: descriptions)
@@ -240,7 +240,7 @@ class LobbyViewController: UIViewController {
                 self.alertView.percentageRatioWidth = (331 / Config.screenWidth)
                 self.alertView.percentageRatioHeight = (588 / Config.screenHeight)
             }
-            self.alertView.titleGotItButton = "Got it!".uppercased()
+            self.alertView.titleGotItButton = "onboard_got_it".localized().uppercased()
         }
         
         self.alertView.show()

@@ -17,6 +17,7 @@ class EmailViewController: BaseEditViewController {
 
     var emailField = FloatTextField(frame: CGRect.zero)
     var message = AirLabelTitle()
+    var nextButton: UIBarButtonItem!
 
     /*--------------------------------------------------------------------------------------------
     * Lifecycle
@@ -52,7 +53,7 @@ class EmailViewController: BaseEditViewController {
             self.progress?.mode = MBProgressHUDMode.indeterminate
             self.progress?.styleAs(progressStyle: .activityWithText)
             self.progress?.minShowTime = 0.5
-            self.progress?.labelText = "Verifying..."
+            self.progress?.labelText = "progress_verifying".localized()
             self.progress?.removeFromSuperViewOnHide = true
             self.progress?.show(true)
             Reporting.track("validate_email")
@@ -71,21 +72,10 @@ class EmailViewController: BaseEditViewController {
     override func initialize() {
         super.initialize()
         
-        if self.flow == .onboardLogin {
-            self.message.text = "Welcome back."
-        }
-        else if self.flow == .onboardInvite {
-            self.message.text = "Welcome."
-        }
-        else if self.flow == .onboardSignup {
-            self.message.text = "\(Strings.appName) channels are perfect for just enough sharing."
-        }
-
         self.message.textColor = Theme.colorTextTitle
         self.message.numberOfLines = 0
         self.message.textAlignment = .center
 
-        self.emailField.placeholder = "Email"
         self.emailField.setDelegate(delegate: self)
         self.emailField.keyboardType = UIKeyboardType.emailAddress
         self.emailField.autocapitalizationType = .none
@@ -99,8 +89,24 @@ class EmailViewController: BaseEditViewController {
         self.contentHolder.addSubview(self.emailField)
         
         /* Navigation bar buttons */
-        let nextButton = UIBarButtonItem(title: "Next", style: UIBarButtonItemStyle.plain, target: self, action: #selector(doneAction(sender:)))
+        self.nextButton = UIBarButtonItem(title: nil, style: UIBarButtonItemStyle.plain, target: self, action: #selector(doneAction(sender:)))
         self.navigationItem.rightBarButtonItems = [nextButton]
+        
+        bindLanguage()
+    }
+    
+    func bindLanguage() {
+        if self.flow == .onboardLogin {
+            self.message.text = "email_title_log_in".localized()
+        }
+        else if self.flow == .onboardInvite {
+            self.message.text = "email_title_invite".localized()
+        }
+        else if self.flow == .onboardSignup {
+            self.message.text = "email_title_sign_up".localizedFormat(Strings.appName)
+        }
+        self.emailField.placeholder = "email".localized()
+        self.nextButton.title = "next".localized()
     }
     
     func validateEmail() {
@@ -123,7 +129,7 @@ class EmailViewController: BaseEditViewController {
             if self.flow == .onboardLogin {
                 if !exists {
                     Reporting.track("email_account_not_found", properties: ["email": email])
-                    self.emailField.errorMessage = "No account found."
+                    self.emailField.errorMessage = "email_no_account".localized()
                 }
                 else {
                     Reporting.track("email_found")
@@ -158,12 +164,12 @@ class EmailViewController: BaseEditViewController {
     func isValid() -> Bool {
 
         if emailField.isEmpty {
-            self.emailField.errorMessage = "Enter an email address."
+            self.emailField.errorMessage = "email_empty".localized()
             return false
         }
 
         if !emailField.text!.isEmail() {
-            self.emailField.errorMessage = "Enter a valid email address."
+            self.emailField.errorMessage = "email_invalid".localized()
             return false
         }
 

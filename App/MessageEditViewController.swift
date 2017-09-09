@@ -89,8 +89,8 @@ class MessageEditViewController: BaseEditViewController {
         }
         
         DeleteConfirmationAlert(
-            title: "Do you want to discard your editing changes?",
-            actionTitle: "Discard", cancelTitle: "Cancel", delegate: self) {
+            title: "discard_changes".localized(),
+            actionTitle: "discard".localized(), cancelTitle: "cancel".localized(), delegate: self) {
                 doIt in
                 if doIt {
                     self.close(animated: true)
@@ -115,9 +115,9 @@ class MessageEditViewController: BaseEditViewController {
 		guard !self.processing else { return }
 
 		DeleteConfirmationAlert(
-            title: "Confirm Delete",
-				message: "Are you sure you want to delete this?",
-				actionTitle: "Delete", cancelTitle: "Cancel", delegate: self) {
+            title: "message_delete_title".localized(),
+				message: "message_delete_message".localized(),
+				actionTitle: "delete".localized(), cancelTitle: "cancel".localized(), delegate: self) {
 			doIt in
 			if doIt {
                 let channelId = self.message.channelId!
@@ -190,7 +190,6 @@ class MessageEditViewController: BaseEditViewController {
         self.userGroup.thickness = 0.5
         
         self.messageField = AirTextView()
-        self.messageField.placeholder = "What\'s happening?"
         self.messageField.initialize()
         self.messageField.delegate = self
         
@@ -219,22 +218,33 @@ class MessageEditViewController: BaseEditViewController {
 		if self.mode == .insert {
 			/* Navigation bar buttons */
 			let closeButton = UIBarButtonItem(barButtonSystemItem: .stop, target: self, action: #selector(closeAction(sender:)))
-			self.doneButton = UIBarButtonItem(title: "Post", style: .plain, target: self, action: #selector(doneAction(sender:)))
+			self.doneButton = UIBarButtonItem(title: nil, style: .plain, target: self, action: #selector(doneAction(sender:)))
 			self.doneButton.isEnabled = false
 			self.navigationItem.leftBarButtonItems = [closeButton]
 			self.navigationItem.rightBarButtonItems = [doneButton]
 		}
 		else {
 			/* Navigation bar buttons */
-			self.navigationItem.title = "Edit message"
 			let closeButton = UIBarButtonItem(barButtonSystemItem: .stop, target: self, action: #selector(closeAction(sender:)))
 			let deleteButton = UIBarButtonItem(barButtonSystemItem: .trash, target: self, action: #selector(deleteAction(sender:)))
-			self.doneButton = UIBarButtonItem(title: "Save", style: .plain, target: self, action: #selector(doneAction(sender:)))
+			self.doneButton = UIBarButtonItem(title: nil, style: .plain, target: self, action: #selector(doneAction(sender:)))
 			self.doneButton.isEnabled = false
 			self.navigationItem.leftBarButtonItems = [closeButton]
 			self.navigationItem.rightBarButtonItems = [doneButton, UI.spacerFixed, deleteButton]
 		}
+        bindLanguage()
 	}
+    
+    func bindLanguage() {
+        self.messageField.placeholder = "message_placeholder".localized()
+        if self.mode == .insert {
+            self.doneButton.title = "post".localized()
+        }
+        else {
+            self.navigationItem.title = "message_edit_title".localized()
+            self.doneButton.title = "save".localized()
+        }
+    }
 
 	func bind() {
         
@@ -394,7 +404,7 @@ class MessageEditViewController: BaseEditViewController {
 	func isValid() -> Bool {
         if ((self.messageField.text == nil || self.messageField.text!.isEmpty)
                 && !self.photoEditView.photoActive) {
-            UIShared.toast(message: "Add message or photo")
+            UIShared.toast(message: "message_edit_empty".localized())
             return false
         }
 		return true

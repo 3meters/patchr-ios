@@ -96,7 +96,7 @@ class UserListCell: UITableViewCell {
             }
             
             if user.id == UserController.instance.userId! {
-                self.title?.text = "\(user.title) (you)"
+                self.title?.text = "\(user.title) \("you_parens".localized())"
             }
             else {
                 self.title?.text = user.title
@@ -108,15 +108,15 @@ class UserListCell: UITableViewCell {
             
             if target == "channel", let membership = user.membership {
                 if membership.role == "owner" {
-                    self.roleLabel?.text = "owner"
+                    self.roleLabel?.text = "owner".localized()
                     self.roleLabel?.textColor = MaterialColor.deepOrange.base
                 }
                 else if membership.role == "editor" {
-                    self.roleLabel?.text = "contributor"
+                    self.roleLabel?.text = "contributor".localized()
                     self.roleLabel?.textColor = MaterialColor.lightGreen.base
                 }
                 else if membership.role == "reader" {
-                    self.roleLabel?.text = "reader"
+                    self.roleLabel?.text = "reader".localized()
                     self.roleLabel?.textColor = MaterialColor.lightBlue.base
                 }
             }
@@ -134,9 +134,9 @@ class UserListCell: UITableViewCell {
             }
         }
         else {
-            self.title?.text = "deleted"
-            self.subtitle?.text = "deleted"
-            self.photoControl!.bind(url: nil, name: "deleted", colorSeed: nil, color: Theme.colorBackgroundImage)
+            self.title?.text = "deleted".localized()
+            self.subtitle?.text = "deleted".localized()
+            self.photoControl!.bind(url: nil, name: "deleted".localized(), colorSeed: nil, color: Theme.colorBackgroundImage)
         }
     }
 }

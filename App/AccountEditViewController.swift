@@ -55,7 +55,7 @@ class AccountEditViewController: BaseEditViewController {
                 self.progress?.mode = MBProgressHUDMode.indeterminate
                 self.progress?.styleAs(progressStyle: .activityWithText)
                 self.progress?.minShowTime = 0.5
-                self.progress?.labelText = "Updating..."
+                self.progress?.labelText = "progress_updating".localized()
                 self.progress?.removeFromSuperViewOnHide = true
                 self.progress?.show(true)
                 

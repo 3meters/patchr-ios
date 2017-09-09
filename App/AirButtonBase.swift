@@ -37,12 +37,5 @@ class AirButtonBase: UIButton {
             return hitFrame.contains(point)
         }
         return true
-        
-//        let newRect = CGRect(x: 0 + hitInsets.left,
-//                             y: 0 + hitInsets.top,
-//                             width: self.frame.size.width - hitInsets.left - hitInsets.right,
-//                             height: self.frame.size.height - hitInsets.top - hitInsets.bottom)
-//        let hit = newRect.contains(point)
-//        return hit
     }
 }

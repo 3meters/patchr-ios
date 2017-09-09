@@ -94,7 +94,7 @@ class BaseSlackController: SLKTextViewController {
         self.shouldScrollToBottomAfterKeyboardShows = false
         self.isInverted = false
         
-        self.rightButton.setTitle(NSLocalizedString("Send", comment: ""), for: UIControlState())
+        self.rightButton.setTitle("send".localized(), for: UIControlState())
         
         self.textInputbar.autoHideRightButton = false
         self.textInputbar.editorTitle.textColor = UIColor.darkGray

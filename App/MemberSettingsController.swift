@@ -69,7 +69,7 @@ class MemberSettingsController: UITableViewController {
 
     func initialize() {
 
-        let userTitle = self.inputUserId != nil ? "deleted" : self.inputUser!.profile?.fullName ?? self.inputUser!.username!
+        let userTitle = self.inputUserId != nil ? "deleted".localized() : self.inputUser!.profile?.fullName ?? self.inputUser!.username!
         self.navigationItem.title = userTitle
 
         self.tableView = UITableView(frame: self.tableView.frame, style: .grouped)
@@ -79,9 +79,9 @@ class MemberSettingsController: UITableViewController {
         self.tableView.backgroundColor = Colors.gray95pcntColor
         self.tableView.sectionFooterHeight = 0
 
-        self.roleOwnerCell.textLabel?.text = "Owner"
-        self.roleEditorCell.textLabel?.text = "Contributor"
-        self.roleReaderCell.textLabel?.text = "Reader"
+        self.roleOwnerCell.textLabel?.text = "owner".localized()
+        self.roleEditorCell.textLabel?.text = "contributor".localized()
+        self.roleReaderCell.textLabel?.text = "reader".localized()
         
         self.roleEditorCell.selectionStyle = .none
         self.roleReaderCell.selectionStyle = .none
@@ -89,12 +89,12 @@ class MemberSettingsController: UITableViewController {
         let targetTitle = self.inputChannel.title!
         self.removeCell.contentView.addSubview(self.removeButton)
         self.removeCell.accessoryType = .none
-        self.removeButton.setTitle("Remove from \(targetTitle) ".uppercased(), for: .normal)
+        self.removeButton.setTitle("member_settings_remove".localizedFormat(targetTitle).uppercased(), for: .normal)
         self.removeButton.addTarget(self, action: #selector(removeAction(sender:)), for: .touchUpInside)
         
         let closeButton = UIBarButtonItem(barButtonSystemItem: .stop, target: self, action: #selector(closeAction(sender:)))
         self.navigationItem.leftBarButtonItems = [closeButton]
-        let doneButton = UIBarButtonItem(title: "Done", style: .plain, target: self, action: #selector(doneAction(sender:)))
+        let doneButton = UIBarButtonItem(title: "done".localized(), style: .plain, target: self, action: #selector(doneAction(sender:)))
         self.navigationItem.rightBarButtonItems = [doneButton]
     }
     
@@ -133,13 +133,12 @@ class MemberSettingsController: UITableViewController {
     }
     
     func remove() {
-        let userTitle = self.inputUserId != nil ? "deleted" : self.inputUser!.profile?.fullName ?? self.inputUser!.username!
-        let targetTitle = "channel"
+        let userTitle = self.inputUserId != nil ? "deleted".localized() : self.inputUser!.profile?.fullName ?? self.inputUser!.username!
         
         DeleteConfirmationAlert(
-            title: "Confirm",
-            message: "Are you sure you want to remove \(userTitle) from this \(targetTitle)?",
-            actionTitle: "Remove", cancelTitle: "Cancel", delegate: self) { doIt in
+            title: "confirm".localized(),
+            message: "member_remove_message".localizedFormat(userTitle),
+            actionTitle: "remove".localized(), cancelTitle: "cancel".localized(), delegate: self) { doIt in
             if doIt {
                 
                 Reporting.track("remove_channel_member")
@@ -148,7 +147,7 @@ class MemberSettingsController: UITableViewController {
                 self.progress!.mode = MBProgressHUDMode.indeterminate
                 self.progress!.styleAs(progressStyle: .activityWithText)
                 self.progress!.minShowTime = 0.5
-                self.progress!.labelText = "Removing..."
+                self.progress!.labelText = "progress_removing".localized()
                 self.progress!.removeFromSuperViewOnHide = true
                 self.progress!.show(true)
                 
@@ -203,14 +202,14 @@ extension MemberSettingsController {
 
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         if section == 0 {
-            return "Channel role".uppercased()
+            return "member_settings_role_header".localized().uppercased()
         }
         return nil
     }
     
     override func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
         if section == 0 {
-            return "Contributors can post new messages. Both contributors and readers can browse and comment on posted messages. Only owners can invite users and edit the channel."
+            return "member_settings_role_footer".localized()
         }
         return nil
     }

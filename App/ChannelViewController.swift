@@ -177,7 +177,6 @@ class ChannelViewController: BaseTableController {
             let point = recognizer.location(in: self.tableView)
             if let indexPath = self.tableView.indexPathForRow(at: point) {
                 self.tableView.selectRow(at: indexPath, animated: true, scrollPosition: .none)
-                self.tableView(self.tableView, didSelectRowAt: indexPath)
             }
 			showPhotos(mode: .browse, fromView: control, initialUrl: url)
 		}
@@ -195,9 +194,9 @@ class ChannelViewController: BaseTableController {
 	func leaveChannelAction(sender: AnyObject?) {
         
         DeleteConfirmationAlert(
-            title: "Confirm",
-            message: "Are you sure you want to leave this channel? A new invitation may be required to rejoin.",
-            actionTitle: "Leave", cancelTitle: "Cancel", delegate: self) { doIt in
+            title: "confirm".localized(),
+            message: "channel_leave_message".localized(),
+            actionTitle: "leave".localized(), cancelTitle: "cancel".localized(), delegate: self) { doIt in
                 if doIt {
                     let userId = UserController.instance.userId!
                     Reporting.track("leave_channel")
@@ -205,7 +204,7 @@ class ChannelViewController: BaseTableController {
                     FireController.instance.deleteMembership(userId: userId, channelId: self.channel.id!, then: { [weak self] error, result in
                         guard self != nil else { return }
                         if error == nil {
-                            UIShared.toast(message: "You have left this channel.")
+                            UIShared.toast(message: "channel_left_message".localized())
                             StateController.instance.clearChannel() // Only clears last channel default
                             self?.close()
                             if UserDefaults.standard.bool(forKey: PerUserKey(key: Prefs.soundEffects)) {
@@ -293,7 +292,7 @@ class ChannelViewController: BaseTableController {
         /* Back to channels button */
         var button = UIButton(type: .custom)
         button.setImage(#imageLiteral(resourceName: "imgArrowLeftLight"), for: .normal)
-        button.setTitle("Channels", for: .normal)
+        button.setTitle("channels".localized(), for: .normal)
         button.imageEdgeInsets = UIEdgeInsetsMake(8, 0, 8, 100)
         button.titleEdgeInsets = UIEdgeInsetsMake(0, -36, 0, 0)
         button.frame = CGRect(x: 0, y: 0, width: 120, height: 36)
@@ -516,7 +515,7 @@ class ChannelViewController: BaseTableController {
         if message.createdBy != userId && !isOwner() { return }
 		let sheet = UIAlertController(title: nil, message: nil, preferredStyle: UIAlertControllerStyle.actionSheet)
         
-		let edit = UIAlertAction(title: "Edit message", style: .default) { [weak self] action in
+		let edit = UIAlertAction(title: "edit_message".localized(), style: .default) { [weak self] action in
             
             guard let this = self else { return }
             Reporting.track("view_message_edit")
@@ -528,7 +527,7 @@ class ChannelViewController: BaseTableController {
             this.present(wrapper, animated: true, completion: nil)
 		}
         
-        let move = UIAlertAction(title: "Move to", style: .default) { [weak self] action in
+        let move = UIAlertAction(title: "message_move_to".localized(), style: .default) { [weak self] action in
             guard let this = self else { return }
             let controller = ChannelPickerController()
             let popup = PopupDialog(viewController: controller, gestureDismissal: false) {
@@ -539,13 +538,13 @@ class ChannelViewController: BaseTableController {
                 FireController.instance.moveMessage(message: message, fromChannelId: fromChannelId, toChannelId: toChannelId)
                 { error in
                     if error == nil {
-                        UIShared.toast(message: "Message moved to: \(channelTitle)", duration: 2.0, controller: this, addToWindow: false)
+                        UIShared.toast(message: "message_moved".localizedFormat(channelTitle), duration: 2.0, controller: this, addToWindow: false)
                         Log.v("Copy message to channel: \(toChannelId)")
                         Reporting.track("move_message")
                     }
                 }
             }
-            let cancel = DefaultButton(title: "Cancel".uppercased(), height: 48) {
+            let cancel = DefaultButton(title: "cancel".localized().uppercased(), height: 48) {
                 Log.v("Cancel copy")
             }
             cancel.buttonHeight = 48
@@ -554,12 +553,12 @@ class ChannelViewController: BaseTableController {
             this.present(popup, animated: true)
         }
         
-		let delete = UIAlertAction(title: "Delete message", style: .destructive) { [weak self] action in
+		let delete = UIAlertAction(title: "message_delete".localized(), style: .destructive) { [weak self] action in
             guard let this = self else { return }
 			this.deleteMessage(message: message)
 		}
         
-		let cancel = UIAlertAction(title: "Cancel", style: .cancel) { action in
+		let cancel = UIAlertAction(title: "cancel".localized(), style: .cancel) { action in
 			sheet.dismiss(animated: true, completion: nil)
 		}
 
@@ -591,7 +590,7 @@ class ChannelViewController: BaseTableController {
 			let sheet = UIAlertController(title: nil, message: nil, preferredStyle: UIAlertControllerStyle.actionSheet)
 			let isOwner = self.isOwner()
             
-			let statusAction = UIAlertAction(title: "Leave", style: .default) { [weak self] action in
+			let statusAction = UIAlertAction(title: "leave".localized(), style: .default) { [weak self] action in
 				guard let this = self else { return }
                 this.leaveChannelAction(sender: nil)
 			}
@@ -600,7 +599,7 @@ class ChannelViewController: BaseTableController {
             
             if let notifications = self.channel.membership?.notifications {
                 let muted = (notifications == "none")
-                let mutedTitle = muted ? "Unmute" : "Mute"
+                let mutedTitle = muted ? "unmute".localized() : "mute".localized()
                 muteAction = UIAlertAction(title: mutedTitle, style: .default) { [weak self] action in
                     guard let this = self else { return }
                     Reporting.track(muted ? "unmute_channel" : "mute_channel")
@@ -608,7 +607,7 @@ class ChannelViewController: BaseTableController {
                 }
             }
 
-			let browseMembersAction = UIAlertAction(title: "Members", style: .default) { [weak self] action in
+			let browseMembersAction = UIAlertAction(title: "members".localized(), style: .default) { [weak self] action in
                 guard let this = self else { return }
 				let controller = MemberListController()
                 controller.scope = .channel
@@ -617,7 +616,7 @@ class ChannelViewController: BaseTableController {
                 this.present(wrapper, animated: true, completion: nil)
 			}
 
-			let inviteAction = UIAlertAction(title: "Invite", style: .default) { [weak self] action in
+			let inviteAction = UIAlertAction(title: "invite".localized(), style: .default) { [weak self] action in
 				guard let this = self else { return }
 				Reporting.track("view_channel_invite")
 				let controller = InviteViewController()
@@ -629,13 +628,13 @@ class ChannelViewController: BaseTableController {
 				this.present(wrapper, animated: true, completion: nil)
 			}
             
-            let profileAction = UIAlertAction(title: "Profile and settings", style: .default) { [weak self] action in
+            let profileAction = UIAlertAction(title: "profile_and_settings".localized(), style: .default) { [weak self] action in
                 guard let this = self else { return }
                 let wrapper = AirNavigationController(rootViewController: MemberViewController(userId: UserController.instance.userId!))
                 this.present(wrapper, animated: true, completion: nil)
             }
 
-			let cancel = UIAlertAction(title: "Cancel", style: .cancel) { action in
+			let cancel = UIAlertAction(title: "cancel".localized(), style: .cancel) { action in
 				sheet.dismiss(animated: true, completion: nil)
 			}
 
@@ -697,7 +696,7 @@ class ChannelViewController: BaseTableController {
         
         if self.queryController.items.count == 0 {
             if mode == .gallery {
-                UIShared.toast(message: "This channel needs some photos!")
+                UIShared.toast(message: "channel_no_photos".localized())
             }
             return
         }
@@ -721,14 +720,14 @@ class ChannelViewController: BaseTableController {
 					if mode == .gallery {
 
 						if this.displayPhotos.count == 0 {
-							UIShared.toast(message: "This channel needs some photos!")
+							UIShared.toast(message: "channel_no_photos".localized())
 							return
 						}
 						let layout = NHBalancedFlowLayout()
 						layout.preferredRowSize = 150
 						let controller = GalleryGridViewController(collectionViewLayout: layout)
 						controller.displayPhotos = this.displayPhotos
-						controller.inputTitle = "Channel gallery"
+						controller.inputTitle = "gallery_title".localized()
 						let wrapper = AirNavigationController(rootViewController: controller)
 						this.navigationController!.present(wrapper, animated: true, completion: nil)
 					}
@@ -768,9 +767,9 @@ class ChannelViewController: BaseTableController {
 
     func deleteMessage(message: FireMessage) {
         DeleteConfirmationAlert(
-            title: "Confirm Delete",
-            message: "Are you sure you want to delete this?",
-            actionTitle: "Delete", cancelTitle: "Cancel", delegate: self) {
+            title: "channel_delete_title".localized(),
+            message: "channel_delete_message".localized(),
+            actionTitle: "delete".localized(), cancelTitle: "cancel".localized(), delegate: self) {
                 doIt in
                 if doIt {
                     let channelId = message.channelId!
@@ -908,17 +907,6 @@ extension ChannelViewController: UITableViewDelegate {
 
 		return viewHeight
 	}
-    
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-//        for visibleCell in tableView.visibleCells {
-//            if let cell = visibleCell as? MessageListCell {
-//                cell.actionsButton.isHidden = true
-//            }
-//        }
-//        if let cell = self.tableView.cellForRow(at: indexPath) as? MessageListCell {
-//            cell.actionsButton.isHidden = false
-//        }
-    }
 }
 
 extension ChannelViewController: FUICollectionDelegate {
@@ -985,53 +973,4 @@ extension ChannelViewController: TTTAttributedLabelDelegate {
 	func attributedLabel(_ label: TTTAttributedLabel!, didSelectLinkWith url: URL!) {
 		UIApplication.shared.openURL(url)
 	}
-}
-
-class ChannelItem: NSObject, UIActivityItemSource {
-
-	func activityViewControllerPlaceholderItem(_ activityViewController: UIActivityViewController) -> Any {
-		/* Called before the share actions are displayed */
-		return ""
-	}
-
-	func activityViewController(_ activityViewController: UIActivityViewController, thumbnailImageForActivityType activityType: UIActivityType?, suggestedSize size: CGSize) -> UIImage? {
-		/* Not currently called by any of the share extensions I could test. */
-		return nil
-	}
-
-	func activityViewController(_ activityViewController: UIActivityViewController, itemForActivityType activityType: UIActivityType) -> Any? {
-		let text = "\(UserController.instance.user!.profile!.fullName!) has invited you to the patch!"
-		return text
-	}
-
-	func activityViewController(_ activityViewController: UIActivityViewController, subjectForActivityType activityType: UIActivityType?) -> String {
-		/*
-		 * Outlook: Doesn't call this.
-		 * Gmail constructs their own using the value from itemForActivityType
-		 * Apple email calls this.
-		 * Apple message calls this (I believe as an alternative if nothing provided via itemForActivityType).
-		 */
-		if activityType == UIActivityType.mail {
-			return "Invitation to the patch"
-		}
-		return ""
-	}
-}
-
-private enum ShareButtonFunction {
-	case Share
-	case ShareFacebook
-	case ShareVia
-}
-
-private enum ActionButtonFunction {
-	case Leave
-	case Report
-}
-
-enum ShareRoute {
-	case Patchr
-	case Facebook
-	case AirDrop
-	case Actions
 }

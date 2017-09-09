@@ -26,7 +26,6 @@ class PhotoSearchController: UICollectionViewController, UITableViewDelegate, UI
     var pickerDelegate : PhotoBrowseControllerDelegate?
 	var activity : UIActivityIndicatorView?
 	var footerView : UIView!
-	var loadMoreMessage = "LOAD MORE"
 	var autocompleteList = AirTableView()
 	var autocompleteData = [String]()
 	var searches = [String]()
@@ -114,7 +113,7 @@ class PhotoSearchController: UICollectionViewController, UITableViewDelegate, UI
             self.searchBar = UISearchBar(frame: CGRect(x:0, y:0, width: Config.screenWidth, height:44))
             self.searchBar!.autocapitalizationType = .none
             self.searchBar!.delegate = self
-            self.searchBar!.placeholder = "Search for photos"
+            self.searchBar!.placeholder = "photo_search_bar_placeholder".localized()
             self.searchBar!.searchBarStyle = .prominent
         }
         

@@ -186,7 +186,7 @@ class ProfileEditViewController: BaseEditViewController {
         self.contentHolder.addSubview(self.phoneField)
         self.contentHolder.addSubview(self.accountButton)
         
-        self.doneButton = UIBarButtonItem(title: "Save", style: UIBarButtonItemStyle.plain, target: self, action: #selector(doneAction(sender:)))
+        self.doneButton = UIBarButtonItem(title: nil, style: UIBarButtonItemStyle.plain, target: self, action: #selector(doneAction(sender:)))
         if self.presented {
             self.doneButton.isEnabled = false
             self.navigationItem.rightBarButtonItems = [doneButton]

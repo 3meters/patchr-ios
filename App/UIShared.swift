@@ -18,10 +18,10 @@ struct UIShared {
 			
 			if let controller = UIViewController.topController {
 				controller.UpdateConfirmationAlert(
-					title: "Update required",
-					message: "Your version of \(Strings.appName) is not compatible with the \(Strings.appName) service. Please update to a newer version.",
-					actionTitle: "Update",
-					cancelTitle: "Later") {
+					title: "update_title".localized(),
+					message: "update_message".localizedFormat(Strings.appName, Strings.appName),
+					actionTitle: "update".localized(),
+					cancelTitle: "later".localized()) {
 						doIt in
 						if doIt {
                             Log.w("Incompatible version: Update selected")
@@ -69,31 +69,6 @@ struct UIShared {
 		return (clientVersionCode >= versionMin)
 	}
 	
-	static func askToEnableLocationService() {
-		OperationQueue.main.addOperation {
-			
-			if let controller = UIViewController.topController {
-				controller.LocationSettingsAlert(
-					title: "Location Services is disabled",
-					message: "\(Strings.appName) uses your location to discover nearby messages. Please turn on Location Services in your device settings.",
-					actionTitle: "Settings",
-					cancelTitle: "No Thanks") {
-						doIt in
-						if doIt {
-							Log.w("Prompt to enable location: Go to settings option selected")
-							let settingsURL = UIApplicationOpenSettingsURLString
-							if let url = NSURL(string: settingsURL) {
-								UIApplication.shared.openURL(url as URL)
-							}
-						}
-						else {
-							Log.w("Prompt to enable location: Declined")
-						}
-				}
-			}
-		}
-	}
-
     @discardableResult static func showPhotos(photos: [String: DisplayPhoto]
         , animateFromView: UIView!
         , viewController: UIViewController!

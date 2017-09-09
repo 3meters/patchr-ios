@@ -42,14 +42,14 @@ class CommentsButton: AirButton {
     func bind(message: FireMessage) {
         self.message = message
         if message.commentCount == nil || message.commentCount == 0 {
-            self.setTitle("Comment", for: .normal)
+            self.setTitle("comment".localized(), for: .normal)
             return
         }
         if message.commentCount! > 1 {
-            self.setTitle("\(message.commentCount!) Comments", for: .normal)
+            self.setTitle("comment_count_plural".localizedFormat(String(message.commentCount!)), for: .normal)
         }
         else {
-            self.setTitle("1 Comment", for: .normal)
+            self.setTitle("comment_count".localized(), for: .normal)
         }
     }
     

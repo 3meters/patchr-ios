@@ -6,3 +6,6 @@
   Copyright © 2016 3meters. All rights reserved.
 */
 "CFBundleDisplayName" = "Patchr";
+"NSCameraUsageDescription" = "Take a photo to include with your message.";
+"NSContactsUsageDescription" = "Invite people to your channel using your contacts.";
+"NSPhotoLibraryUsageDescription" = "Select a library photo to include with your message.";

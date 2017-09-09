@@ -17,6 +17,7 @@ class PhotoBrowser: IDMPhotoBrowser {
     var reactionToolbar: AirReactionToolbar!
     var message: FireMessage?  // Needed to make the reaction button work
     var mode: PhotoBrowserMode = .browse
+    var selectButton: UIBarButtonItem?
     
     /* UI specialized for previewing photos from the photo picker. */
     var browseDelegate: PhotoBrowseControllerDelegate?  // Used by photo preview feature in photo search
@@ -58,24 +59,25 @@ class PhotoBrowser: IDMPhotoBrowser {
             
             let toolbar: UIToolbar = super.toolbar
             
-            let selectButton = UIBarButtonItem(title: "Use photo", style: UIBarButtonItemStyle.plain, target: self.target, action: #selector(selectAction))
+            self.selectButton = UIBarButtonItem(title: nil, style: UIBarButtonItemStyle.plain, target: self.target, action: #selector(selectAction))
             let flexSpacer = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: self, action: nil)
             let fixedSpacer = UIBarButtonItem(barButtonSystemItem: .fixedSpace, target: self, action: nil)
             
-            selectButton.tintColor = Theme.colorTint
+            selectButton!.tintColor = Theme.colorTint
             
             fixedSpacer.width = 16
             
             var items = [UIBarButtonItem]()
             items.append(flexSpacer)
-            items.append(selectButton)
+            items.append(selectButton!)
             items.append(flexSpacer)
             
             toolbar.items = items
         }
         else {
             if self.message?.createdBy != nil {
-                super.shareMessage = "Photo by \(self.message?.createdBy) on \(Strings.appName)"
+                let createdBy = (self.message?.createdBy)!
+                super.shareMessage = "photo_share_message".localizedFormat(createdBy, Strings.appName)
             }
             
             /* Configure bottom toolbar */
@@ -106,12 +108,17 @@ class PhotoBrowser: IDMPhotoBrowser {
                 self.reactionToolbar.isHidden = false
             }
         }
+        bindLanguage()
+    }
+    
+    func bindLanguage() {
+        self.selectButton?.title = "photo_use".localized()
     }
     
     override func performLayout() {
         super.performLayout()
         if self.mode == .browse {
-            let doneButton = UIBarButtonItem(title: "Done", style: .plain, target: self, action: #selector(IDMPhotoBrowser.doneButtonPressed(_:)))
+            let doneButton = UIBarButtonItem(title: "done".localized(), style: .plain, target: self, action: #selector(IDMPhotoBrowser.doneButtonPressed(_:)))
             self.navigationItem.rightBarButtonItems = [doneButton]
         }
         else {

@@ -95,8 +95,8 @@ class ContactPickerController: BaseTableController, CLTokenInputViewDelegate {
         if self.picks.count > 0 {
             let controller = InviteMessageController()
             let popup = PopupDialog(viewController: controller, gestureDismissal: false)
-            let cancelButton = DefaultButton(title: "Back".uppercased(), height: 48, action: nil)
-            let inviteButton = DefaultButton(title: "Invite".uppercased(), height: 48) {
+            let cancelButton = DefaultButton(title: "back".localized().uppercased(), height: 48, action: nil)
+            let inviteButton = DefaultButton(title: "invite".localized().uppercased(), height: 48) {
                 let message = controller.textView.text
                 self.invite(message: message)
             }
@@ -156,10 +156,12 @@ class ContactPickerController: BaseTableController, CLTokenInputViewDelegate {
         
         self.automaticallyAdjustsScrollViewInsets = false
         
-        self.navigationItem.title = (self.inputRole == "reader") ? "Invite Readers" : "Invite Contributors"
+        self.navigationItem.title = (self.inputRole == "reader")
+            ? "contact_picker_title_readers".localized()
+            : "contact_picker_title_contributors".localized()
 
         self.tokenView = AirTokenView(frame: CGRect(x: 0, y: 0, width: self.view.width(), height: 44))
-        self.tokenView.placeholder.text = "Search"
+        self.tokenView.placeholder.text = "search".localized()
         self.tokenView.placeholder.textColor = Theme.colorTextPlaceholder
         self.tokenView.placeholder.font = Theme.fontComment
         self.tokenView.backgroundColor = Colors.white
@@ -187,7 +189,7 @@ class ContactPickerController: BaseTableController, CLTokenInputViewDelegate {
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(notification:)), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(notification:)), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
         
-        let doneTitle = (self.flow == .internalCreate) ? "Done" : "Invite"
+        let doneTitle = (self.flow == .internalCreate) ? "done".localized() : "invite".localized()
         self.doneButton = UIBarButtonItem(title: doneTitle, style: .plain, target: self, action: #selector(doneAction(sender:)))
         self.doneButton.isEnabled = (self.flow == .internalCreate) ? true : false
         self.navigationItem.rightBarButtonItems = [doneButton]
@@ -216,7 +218,7 @@ class ContactPickerController: BaseTableController, CLTokenInputViewDelegate {
             }
         }
         else {
-            self.alert(title: "Access to contacts has been denied. Check your privacy settings to allow access.")
+            self.alert(title: "contacts_permission_denied".localized())
         }
     }
     
@@ -359,7 +361,7 @@ class ContactPickerController: BaseTableController, CLTokenInputViewDelegate {
         }
         
         if let controller = self.navigationController?.presentingViewController {
-            UIShared.toast(message: "Invitations sent", duration: 3.0, controller: controller, addToWindow: false)
+            UIShared.toast(message: "invites_sent".localized(), duration: 3.0, controller: controller, addToWindow: false)
         }
 
         if self.flow == .internalCreate {
@@ -478,7 +480,7 @@ extension ContactPickerController {
     func tokenInputView(_ view: CLTokenInputView, didAdd token: CLToken) {
         if self.tokenView.allTokens.count == 0 {
             if self.flow == .internalCreate || self.flow == .onboardSignup {
-                self.doneButton.title = "Done"
+                self.doneButton.title = "done".localized()
             }
             else {
                 self.doneButton.isEnabled = false
@@ -486,7 +488,7 @@ extension ContactPickerController {
         }
         else {
             if self.flow == .internalCreate || self.flow == .onboardSignup {
-                self.doneButton.title = "Invite"
+                self.doneButton.title = "invite".localized()
             }
             else {
                 self.doneButton.isEnabled = true
@@ -503,7 +505,7 @@ extension ContactPickerController {
                 self.tokenView.placeholder.fadeIn(duration: 0.1)
             }
             if self.flow == .internalCreate || self.flow == .onboardSignup {
-                self.doneButton.title = "Done"
+                self.doneButton.title = "done".localized()
             }
             else {
                 self.doneButton.isEnabled = false
@@ -511,7 +513,7 @@ extension ContactPickerController {
         }
         else {
             if self.flow == .internalCreate || self.flow == .onboardSignup {
-                self.doneButton.title = "Invite"
+                self.doneButton.title = "invite".localized()
             }
             else {
                 self.doneButton.isEnabled = true
@@ -536,7 +538,7 @@ extension ContactPickerController {
         /* Only called when trying to use entered text as an email address */
         Log.d("tokenForText")
         if !text.isEmail() {
-            UIShared.toast(message: "\(text) is not a valid email address")
+            UIShared.toast(message: "email_invalid_alert".localizedFormat(text))
             return nil
         }
         else {

@@ -74,8 +74,8 @@ class ChannelGridController: UICollectionViewController {
 
 		FireController.instance.isConnected() { connected in
 			if connected == nil || !connected! {
-				let message = "channel_grid_not_connected_message".localized()
-				self.alert(title: "channel_grid_not_connected_title".localized(), message: message, cancelButtonTitle: "ok".localized())
+				let message = "channel_not_connected_message".localizedFormat("creating".localized())
+				self.alert(title: "channel_not_connected_title".localized(), message: message, cancelButtonTitle: "ok".localized())
 			}
 			else {
                 Reporting.track("view_channel_new")
@@ -176,7 +176,7 @@ class ChannelGridController: UICollectionViewController {
         
         /* Buttons (*/
 		self.searchButton = UIBarButtonItem(barButtonSystemItem: .search, target: self, action: #selector(searchAction(sender:)))
-        self.addButton = UIBarButtonItem(title: "Create", style: .plain, target: self, action: #selector(addAction(sender:)))
+        self.addButton = UIBarButtonItem(title: nil, style: .plain, target: self, action: #selector(addAction(sender:)))
         
         /* New channel button */
         var button = UIButton(type: .custom)
@@ -208,7 +208,7 @@ class ChannelGridController: UICollectionViewController {
     func bindLanguage() {
         self.searchBar.placeholder = "channel_grid_search_bar_placeholder".localized()
         self.searchBar.setValue("cancel".localized(), forKey: "_cancelButtonText")
-        self.navigationItem.title = "channel_grid_title".localized()
+        self.navigationItem.title = "channel_grid_title".localizedFormat(Strings.appName)
     }
 
 	func bind() {

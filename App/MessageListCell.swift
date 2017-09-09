@@ -6,6 +6,7 @@
 //  Copyright © 2015 3meters. All rights reserved.
 //
 
+import Localize_Swift
 import UIKit
 import TTTAttributedLabel
 
@@ -173,13 +174,13 @@ class MessageListCell: UITableViewCell {
         self.createdDate.textColor = Theme.colorTextSecondary
         self.createdDate.textAlignment = .right
 
-        self.edited.text = "(edited)"
+        self.edited.text = "edited_parens".localized()
         self.edited.font = Theme.fontCommentSmall
         self.edited.numberOfLines = 1
         self.edited.textColor = Colors.gray66pcntColor
         self.edited.textAlignment = .left
 
-        self.unread.text = "new"
+        self.unread.text = "new".localized()
         self.unread.font = Theme.fontText
         self.unread.numberOfLines = 1
         self.unread.textColor = Theme.colorBackgroundBadge
@@ -246,9 +247,9 @@ class MessageListCell: UITableViewCell {
             }
         }
         else {
-            self.userName.text = "deleted"
+            self.userName.text = "deleted".localized()
             if !self.template {
-                self.userPhotoControl.bind(url: nil, name: "deleted", colorSeed: nil, color: Theme.colorBackgroundImage)
+                self.userPhotoControl.bind(url: nil, name: "deleted".localized(), colorSeed: nil, color: Theme.colorBackgroundImage)
             }
         }
 

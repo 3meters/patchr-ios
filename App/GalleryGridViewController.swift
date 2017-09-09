@@ -19,7 +19,6 @@ class GalleryGridViewController: UICollectionViewController {
 	var processing = false
 	var activity: UIActivityIndicatorView?
 	var footerView: UIView!
-	var loadMoreMessage: String = "LOAD MORE"
     var inputTitle: String?
 	var morePhotos = false
 	
@@ -211,7 +210,6 @@ extension GalleryGridViewController : NHBalancedFlowLayoutDelegate {
         , preferredSizeForItemAt indexPath: IndexPath!) -> CGSize {
 		
 		let displayPhoto = self.displayPhotosSorted[indexPath.item]
-        //return displayPhoto.size ?? CGSize(width:500, height:500)
         return displayPhoto.size ?? CGSize(width:300, height:300)
 	}
 }

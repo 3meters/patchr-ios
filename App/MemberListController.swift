@@ -132,14 +132,14 @@ class MemberListController: BaseTableController {
         
         if (self.scope == .channel && isOwner()) {
             if self.scope != .reaction {
-                let addButton = UIBarButtonItem(title: "Invite", style: .plain, target: self, action: #selector(channelInviteAction(sender:)))
+                let addButton = UIBarButtonItem(title: "invite".localized(), style: .plain, target: self, action: #selector(channelInviteAction(sender:)))
                 self.navigationItem.rightBarButtonItems = [addButton]
             }
         }
         
         if self.scope == .reaction {
-            let noun = (self.inputEmojiCount == 1) ? "person" : "people"
-            self.navigationItem.title = "\(self.inputEmoji!)  \(self.inputEmojiCount!) \(noun) reacted with \(self.inputEmojiCode!)"
+            let noun = (self.inputEmojiCount == 1) ? "person".localized() : "people".localized()
+            self.navigationItem.title = "reaction_list_title".localizedFormat(self.inputEmoji!, String(self.inputEmojiCount!), noun, self.inputEmojiCode!)
         }
         else {
             self.navigationItem.title = self.channel!.title!

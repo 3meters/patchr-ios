@@ -16,6 +16,7 @@ class PasswordEditViewController: BaseEditViewController {
     var message	= AirLabelTitle()
     var passwordField = FloatTextField()
 	var hideShowButton = AirHideShowButton()
+    var doneButton: UIBarButtonItem!
 	
 	/*--------------------------------------------------------------------------------------------
 	* Lifecycle
@@ -50,7 +51,7 @@ class PasswordEditViewController: BaseEditViewController {
             self.progress?.mode = MBProgressHUDMode.indeterminate
             self.progress?.styleAs(progressStyle: .activityWithText)
             self.progress?.minShowTime = 0.5
-            self.progress?.labelText = "Updating..."
+            self.progress?.labelText = "progress_updating".localized()
             self.progress?.removeFromSuperViewOnHide = true
             self.progress?.show(true)
 
@@ -83,11 +84,9 @@ class PasswordEditViewController: BaseEditViewController {
 	override func initialize() {
 		super.initialize()
 		
-		self.message.text = "Change password"
 		self.message.numberOfLines = 0
 		self.message.textAlignment = .center
 		
-		self.passwordField.placeholder = "New password"
 		self.passwordField.setDelegate(delegate: self)
 		self.passwordField.isSecureTextEntry = true
         self.passwordField.autocapitalizationType = .none
@@ -104,9 +103,17 @@ class PasswordEditViewController: BaseEditViewController {
         self.contentHolder.addSubview(self.passwordField)
 
 		/* Navigation bar buttons */
-		let doneButton   = UIBarButtonItem(title: "Done", style: UIBarButtonItemStyle.plain, target: self, action: #selector(doneAction(sender:)))
+		self.doneButton = UIBarButtonItem(title: nil, style: UIBarButtonItemStyle.plain, target: self, action: #selector(doneAction(sender:)))
 		self.navigationItem.rightBarButtonItems = [doneButton]
+        
+        bindLanguage()
 	}
+    
+    func bindLanguage() {
+        self.message.text = "password_edit_header".localized()
+        self.passwordField.placeholder = "password_placeholder".localized()
+        self.doneButton.title = "done".localized()
+    }
 	
     func updatePassword() {
         
@@ -130,7 +137,7 @@ class PasswordEditViewController: BaseEditViewController {
     func isValid() -> Bool {
 		
         if (passwordField.text!.utf16.count < 6) {
-			self.passwordField.errorMessage = "Enter a password with six characters or more."
+			self.passwordField.errorMessage = "password_too_short".localized()
             return false
         }
         return true

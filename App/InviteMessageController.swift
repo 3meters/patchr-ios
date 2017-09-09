@@ -11,7 +11,7 @@ class InviteMessageController: BaseViewController, UITextViewDelegate {
     
     lazy var textView: AirTextView = {
         let textView = AirTextView(frame: .zero)
-        textView.placeholder = "Add personal message (optional)"
+        textView.placeholder = "invite_message_placeholder".localized()
         textView.initialize()
         textView.autocapitalizationType = .sentences
         textView.autocorrectionType = .yes

@@ -151,7 +151,7 @@ class PhotoEditView: UIView {
                 self.imageView.setImageWithUrl(url: URL(string: imageResult!.contentUrl!)!, imageType: .animatedGif) { [weak self] success in
                     guard let this = self else { return }
                     if !success {
-                        UIShared.toast(message: "Unable to download image")
+                        UIShared.toast(message: "image_unavailable".localized())
                         return
                     }
                     this.photoDelegate?.didSetPhoto?()
@@ -166,7 +166,7 @@ class PhotoEditView: UIView {
                         this.photoDelegate?.didSetPhoto?()
                     }
                     else {
-                        UIShared.toast(message: "Unable to download image")
+                        UIShared.toast(message: "image_unavailable".localized())
                     }
                 }  // Downloads and pushes into photoImage
             }

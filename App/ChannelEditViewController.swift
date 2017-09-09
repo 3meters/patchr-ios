@@ -82,8 +82,8 @@ class ChannelEditViewController: BaseEditViewController {
         }
         
         DeleteConfirmationAlert(
-            title: "Do you want to discard your editing changes?",
-            actionTitle: "Discard", cancelTitle: "Cancel", delegate: self) {
+            title: "discard_changes".localized(),
+            actionTitle: "discard".localized(), cancelTitle: "cancel".localized(), delegate: self) {
                 doIt in
                 if doIt {
                     self.close(animated: true)
@@ -102,7 +102,7 @@ class ChannelEditViewController: BaseEditViewController {
                 self.progress?.mode = MBProgressHUDMode.indeterminate
                 self.progress?.styleAs(progressStyle: .activityWithText)
                 self.progress?.minShowTime = 0.5
-                self.progress?.labelText = "Updating..."
+                self.progress?.labelText = "progress_updating".localized()
                 self.progress?.removeFromSuperViewOnHide = true
                 self.progress?.show(true)
                 Reporting.track("update_channel")
@@ -112,8 +112,10 @@ class ChannelEditViewController: BaseEditViewController {
         else if self.mode == .insert {
             FireController.instance.isConnected() { connected in
                 if connected == nil || !connected! {
-                    let message = "Creating a channel requires a network connection."
-                    self.alert(title: "Not connected", message: message, cancelButtonTitle: "OK")
+                    let message = "channel_not_connected_message".localizedFormat("creating".localized())
+                    self.alert(title: "channel_not_connected_title".localized()
+                        , message: message
+                        , cancelButtonTitle: "ok".localized())
                 }
                 else {
                     if self.isValid() {
@@ -121,7 +123,7 @@ class ChannelEditViewController: BaseEditViewController {
                         self.progress?.mode = MBProgressHUDMode.indeterminate
                         self.progress?.styleAs(progressStyle: .activityWithText)
                         self.progress?.minShowTime = 0.5
-                        self.progress?.labelText = "Creating..."
+                        self.progress?.labelText = "progress_creating".localized()
                         self.progress?.removeFromSuperViewOnHide = true
                         self.progress?.show(true)
                         Reporting.track("create_channel")
@@ -138,14 +140,18 @@ class ChannelEditViewController: BaseEditViewController {
         
         FireController.instance.isConnected() { connected in
             if connected == nil || !connected! {
-                let message = "Deleting a channel requires a network connection."
-                self.alert(title: "Not connected", message: message, cancelButtonTitle: "OK")
+                let message = "channel_not_connected_message".localizedFormat("deleting".localized())
+                self.alert(title: "channel_not_connected_title".localized()
+                    , message: message
+                    , cancelButtonTitle: "ok".localized())
             }
             else {
                 self.DeleteConfirmationAlert(
-                    title: "Confirm Delete",
-                    message: "Are you sure you want to delete this?",
-                    actionTitle: "Delete", cancelTitle: "Cancel", delegate: self) {
+                    title: "channel_delete_title".localized(),
+                    message: "channel_delete_message".localized(),
+                    actionTitle: "delete".localized(),
+                    cancelTitle: "cancel".localized(),
+                    delegate: self) {
                         doIt in
                         if doIt {
                             Reporting.track("delete_channel")
@@ -203,15 +209,12 @@ class ChannelEditViewController: BaseEditViewController {
         self.photoEditView.configureTo(photoMode: .placeholder)
         self.photoEditView.photoDelegate = self
 
-        self.titleField.placeholder = "Channel title"
-        self.titleField.title = "Title"
         self.titleField.setDelegate(delegate: self)
         self.titleField.autocapitalizationType = .words
         self.titleField.autocorrectionType = .no
         self.titleField.keyboardType = .default
         self.titleField.returnKeyType = .next
         
-        self.purposeField.placeholder = "Channel purpose (optional)"
         self.purposeField.autocapitalizationType = .sentences
         self.purposeField.autocorrectionType = .yes
         self.purposeField.initialize()
@@ -223,29 +226,38 @@ class ChannelEditViewController: BaseEditViewController {
         self.contentHolder.addSubview(self.photoEditView)
 
         if self.mode == .insert {
-
-            self.banner.text = "New \(Strings.appName) Channel"
-
             /* Navigation bar buttons */
             let closeButton = UIBarButtonItem(barButtonSystemItem: .stop, target: self, action: #selector(closeAction(sender:)))
-            self.doneButton = UIBarButtonItem(title: "Create", style: .plain, target: self, action: #selector(doneAction(sender:)))
+            self.doneButton = UIBarButtonItem(title: nil, style: .plain, target: self, action: #selector(doneAction(sender:)))
             self.doneButton.isEnabled = false
             self.navigationItem.leftBarButtonItems = [closeButton]
             self.navigationItem.rightBarButtonItems = [doneButton]
         }
         else if self.mode == .update  {
-
-            self.banner.text = "Edit \(Strings.appName) Channel"
-            
             /* Navigation bar buttons */
             let closeButton = UIBarButtonItem(barButtonSystemItem: .stop, target: self, action: #selector(closeAction(sender:)))
-            self.doneButton = UIBarButtonItem(title: "Save", style: .plain, target: self, action: #selector(doneAction(sender:)))
+            self.doneButton = UIBarButtonItem(title: nil, style: .plain, target: self, action: #selector(doneAction(sender:)))
             self.doneButton.isEnabled = false
             self.navigationItem.leftBarButtonItems = [closeButton]
             self.navigationItem.rightBarButtonItems = [doneButton]
         }
         
-        self.titleField.addTarget(self, action: #selector(textFieldDidChange(_:)), for: .editingChanged)        
+        self.titleField.addTarget(self, action: #selector(textFieldDidChange(_:)), for: .editingChanged)
+        bindLanguage()
+    }
+    
+    func bindLanguage() {
+        self.titleField.placeholder = "channel_edit_title_placeholder".localized()
+        self.titleField.title = "title".localized()
+        self.purposeField.placeholder = "channel_edit_purpose_placeholder".localized()
+        if self.mode == .insert {
+            self.banner.text = "channel_edit_header_insert".localizedFormat(Strings.appName)
+            self.doneButton.title = "create".localized()
+        }
+        else if self.mode == .update  {
+            self.banner.text = "channel_edit_header_update".localizedFormat(Strings.appName)
+            self.doneButton.title = "save".localized()
+        }
     }
 
     func bind() {
@@ -412,17 +424,17 @@ class ChannelEditViewController: BaseEditViewController {
     func isValid() -> Bool {
         
         if self.titleField.isEmpty {
-            self.titleField.errorMessage = "Name your channel"
+            self.titleField.errorMessage = "channel_title_empty".localized()
             return false
         }
         
         if (titleField.text!.utf16.count > 200) {
-            self.titleField.errorMessage = "Channel name must be 200 characters or less."
+            self.titleField.errorMessage = "channel_title_too_long".localized()
             return false
         }
 
         if (titleField.text!.utf16.count < 3) {
-            self.titleField.errorMessage = "Channel name must be at least 3 characters."
+            self.titleField.errorMessage = "channel_title_too_short".localized()
             return false
         }
         return true

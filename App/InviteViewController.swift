@@ -89,28 +89,28 @@ class InviteViewController: BaseEditViewController {
 	override func initialize() {
 		super.initialize()
 		
-        self.heading.text = "Invite people to '\(self.inputChannelTitle!)'."
+        self.heading.text = "invite_title".localizedFormat(self.inputChannelTitle!)
 		self.heading.textAlignment = NSTextAlignment.center
 		self.heading.numberOfLines = 0
         
-        self.message.text = "An email invitation will be sent. Using the invitation will add them to the channel and help them install \(Strings.appName) if they don't have it yet."
+        self.message.text = "invite_message".localizedFormat(Strings.appName)
         self.message.textColor = Theme.colorTextSecondary
         self.message.textAlignment = .center
         self.message.numberOfLines = 0
         
-        self.inviteReadersButton.setTitle("Invite readers".uppercased(), for: .normal)
+        self.inviteReadersButton.setTitle("invite_readers".localized().uppercased(), for: .normal)
         self.inviteReadersButton.imageRight = UIImageView(image: UIImage(named: "imgArrowRightLight"))
         self.inviteReadersButton.imageRight?.bounds.size = CGSize(width: 10, height: 14)
         self.inviteReadersButton.rightPadding = 12
         self.inviteReadersButton.addTarget(self, action: #selector(inviteReadersAction(sender:)), for: .touchUpInside)
         
-        self.inviteEditorsButton.setTitle("Invite contributors".uppercased(), for: .normal)
+        self.inviteEditorsButton.setTitle("invite_contributors".localized().uppercased(), for: .normal)
         self.inviteEditorsButton.imageRight = UIImageView(image: UIImage(named: "imgArrowRightLight"))
         self.inviteEditorsButton.imageRight?.bounds.size = CGSize(width: 10, height: 14)
         self.inviteEditorsButton.rightPadding = 12
         self.inviteEditorsButton.addTarget(self, action: #selector(inviteEditorsAction(sender:)), for: .touchUpInside)
         
-        self.inviteComment.text = "Contributors can post new messages. Both contributors and readers can browse and comment on posted messages."
+        self.inviteComment.text = "invite_comment".localized()
         self.inviteComment.textColor = Theme.colorTextSecondary
         self.inviteComment.textAlignment = .center
         self.inviteComment.numberOfLines = 0
@@ -122,7 +122,7 @@ class InviteViewController: BaseEditViewController {
         self.contentHolder.addSubview(self.inviteComment)
         
         if self.flow == .internalCreate {   // Invite to new channel
-            let doneButton = UIBarButtonItem(title: "Done", style: UIBarButtonItemStyle.plain, target: self, action: #selector(doneAction(sender:)))
+            let doneButton = UIBarButtonItem(title: "done".localized(), style: UIBarButtonItemStyle.plain, target: self, action: #selector(doneAction(sender:)))
             self.navigationItem.rightBarButtonItems = [doneButton]
         }
         else {  // Invite to existing channel

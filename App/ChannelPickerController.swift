@@ -44,7 +44,7 @@ class ChannelPickerController: BaseTableController {
     override func initialize() {
         super.initialize()
         
-        self.baseView.titleLabel.text = "Select the channel"
+        self.baseView.titleLabel.text = "channel_picker_title".localized()
         
         self.baseView.searchBar.delegate = self
         

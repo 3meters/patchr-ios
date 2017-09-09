@@ -48,10 +48,10 @@ class BranchProvider: NSObject {
         }
         
         /* $og_title */
-        applink.title = "Invite by \(inviterName!) to the '\(channel["title"]!)' channel"
+        applink.title = "link_title".localizedFormat(inviterName!, channel["title"]!)
         
         /* $og_description */
-        applink.contentDescription = message ?? "\(inviterName!) has invited you to the '\(channel["title"]!)' channel."
+        applink.contentDescription = message ?? "link_description".localizedFormat(inviterName!, channel["title"]!)
         
         let linkProperties = BranchLinkProperties()
         linkProperties.channel = "teeny-ios"
@@ -92,7 +92,9 @@ class InviteItem: NSObject, UIActivityItemSource {
     }
     
     func activityViewController(_ activityViewController: UIActivityViewController, itemForActivityType activityType: UIActivityType) -> Any? {
-        let text = "\(UserController.instance.user?.profile?.fullName) has invited you to the \(self.channel?.title!) channel!"
+        let userTitle = (UserController.instance.user?.title)!
+        let channelTitle = (self.channel?.title!)!
+        let text = "share_description".localizedFormat(userTitle, channelTitle)
         return text
     }
     
@@ -104,7 +106,8 @@ class InviteItem: NSObject, UIActivityItemSource {
          * Apple message calls this (I believe as an alternative if nothing provided via itemForActivityType).
          */
         if activityType == UIActivityType.mail {
-            return "Invitation to the \(self.channel!.title!) channel"
+            let channelTitle = (self.channel?.title!)!
+            return "share_subject".localizedFormat(channelTitle)
         }
         return ""
     }

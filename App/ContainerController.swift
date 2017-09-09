@@ -63,7 +63,7 @@ class ContainerController: UIViewController {
         
         /* Message bar */
         self.messageBar.font = Theme.fontTextDisplay
-        self.messageBar.text = "Connection is offline"
+        self.messageBar.text = "connection_offline".localized()
         self.messageBar.numberOfLines = 0
         self.messageBar.textAlignment = NSTextAlignment.center
         self.messageBar.textColor = Colors.white
