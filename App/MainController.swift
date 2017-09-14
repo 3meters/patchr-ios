@@ -148,6 +148,15 @@ class MainController: NSObject, iRateDelegate {
     }
     
     func bindLanguage() {
+        /* Update language in user profile */
+        let userId = UserController.instance.userId!
+        let language = Localize.currentLanguage()
+        var updates = [String: Any]()
+        updates["language"] = language
+        Reporting.track("update_language")
+        FireController.db.child("users/\(userId)/profile").updateChildValues(updates)
+        NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.UserDidUpdate), object: self, userInfo: ["user_id": userId])
+
         iRate.sharedInstance().appStoreCountry = Localize.currentLanguage()
         iRate.sharedInstance().message = "irate_app_message".localizedFormat("patchr".localized())
         iRate.sharedInstance().cancelButtonLabel = "irate_cancel_button".localized()
