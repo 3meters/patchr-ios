@@ -6,6 +6,7 @@ import UIKit
 import AVFoundation
 import Firebase
 import FirebaseDatabaseUI
+import Localize_Swift
 import pop
 import CLTokenInputView
 import Contacts
@@ -344,12 +345,14 @@ class ContactPickerController: BaseTableController, CLTokenInputViewDelegate {
                 if error == nil {
                     let inviteItem = response as! InviteItem
                     let inviteUrl = inviteItem.url
+                    let language = Localize.currentLanguage()
                     var invite: [String: Any] = [
                         "channel": channel,
                         "created_at": timestamp,
                         "created_by": userId,
                         "email": email!,
                         "inviter": inviter,
+                        "language": language,
                         "link": inviteUrl,
                         "role": self.inputRole!]
                     if message != nil {

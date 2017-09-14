@@ -122,6 +122,7 @@ extension AboutViewController {
             Reporting.track("view_software_licenses")
             let controller = VTAcknowledgementsViewController.acknowledgementsViewController()
             controller?.headerText = "licensing_comment".localized()
+            controller?.navigationItem.title = "licensing_title".localized()
             self.navigationController?.pushViewController(controller!, animated: true)
         }
     }

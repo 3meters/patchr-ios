@@ -8,6 +8,7 @@
 
 import Keys
 import Branch
+import Localize_Swift
 
 class BranchProvider: NSObject {
 	
@@ -33,6 +34,7 @@ class BranchProvider: NSObject {
         applink.metadata?["channel_title"] = channel["title"]
         applink.metadata?["created_at"] = DateUtils.now()
         applink.metadata?["code"] = code
+        applink.metadata?["language"] = Localize.currentLanguage()
         applink.metadata?["role"] = role
         applink.metadata?["email"] = email
         applink.metadata?["invited_by"] = inviterId
