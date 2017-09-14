@@ -7,6 +7,28 @@
 "account" = "Account";
 "account_settings" = "Account settings";
 "acknowledgements" = "Acknowledgements";
+"appstore_description" = "
+Some sharing apps can overshare making it hard to tell if messages and photos are shared with just the right people. Patchr stops oversharing with private invitations that let you control who can see messages and how they can participate:
+- Invite the right people using invitations.
+- Invite people as readers to share without adding chatter. Readers can browse messages and add reactions and comments.
+- Invite people as contributors and they can post new messages to the channel. They can also edit and delete their messages.
+Share events, topics or just life using a Patchr channel.
+Patchr has brilliant messaging features: photo search and editing, reactions, comments, realtime notifications, offline posting plus much more.
+Invite members from your contacts and we handle the rest! We email them an invitation, help them install Patchr and gently launch them into your amazing channel.";
+"appstore_keywords" = "patchr,share,social,photo,channel,group,event,project,message, chat,post,top,best,media";
+"appstore_whats_new" = "
+- A user experience that is clean, fast and simple.
+- Invite users to channels as readers or contributors.
+- Add comments to posted messages.
+- Fix layout issues with smaller screens.
+- If photo hasn't been set for a channel, we show the last posted photo
+- Other stability and performance improvements.";
+"appstore_screen_channel" = "Share messages and photos with just the right people.";
+"appstore_screen_gallery" = "Photo gallery for easy photo browsing.";
+"appstore_screen_grid" = "Jump quickly to the channels with recent activity.";
+"appstore_screen_photo_edit" = "Get creative with photo edit.";
+"appstore_screen_photo_search" = "Say it perfectly with photo search.";
+"appstore_screen_reactions" = "Use reactions and comments to respond quickly with style.";
 "back" = "Back";
 "call" = "Call";
 "cancel" = "Cancel";
@@ -46,9 +68,11 @@
 "contacts_permission_denied" = "Access to contacts has been denied. Check your privacy settings to allow access.";
 "contributor" = "Contributor";
 "creating" = "Creating";
+"deepview_message" = "See this content immediately after install";
+"deepview_button" = "Get Patchr";
 "delete" = "Delete";
 "deleting" = "Deleting";
-"deleted" = "deleted";
+"deleted" = "Deleted";
 "developer" = "Developer";
 "discard" = "Discard";
 "discard_changes" = "Do you want to discard your editing changes?";
@@ -94,6 +118,7 @@
 "later" = "Later";
 "leave" = "Leave";
 "licensing_comment" = "The following third party software may be contained in portions of this mobile application. We offer our sincere thanks to the open source community for all of their contributions. Carry on!";
+"licensing_title" = "Acknowledgements";
 "link_description" = "%@ has invited you to the '%@' channel.";
 "link_title" = "Invite by %@ to the '%@' channel";
 "log_in" = "Log in";
@@ -112,8 +137,12 @@
 "message_moved" = "Message moved to: %@";
 "message_placeholder" = "What\'s happening?";
 "mute" = "Mute";
-"new" = "new";
+"new" = "New";
 "next" = "Next";
+"notification_message_text_only" = "#${channelName} @${username}: ${message.text}";
+"notification_message_photo_only" = "#${channelName}: @${username} posted a photo";
+"notification_messate_text_and_photo" = "#${channelName}: @${username} posted a photo and commented: ${message.text}";
+"notification_comment" = "#${channelName} @${username}: commented on a post: ${comment.text}";
 "ok" = "OK";
 "onboard_create_title" = "Create a Channel";
 "onboard_create_description" = "Share with just the right people using %@ channels.";
@@ -136,8 +165,8 @@
 "password_too_short" = "Enter a password with six characters or more.";
 "password_view_title" = "Almost to the good stuff.";
 "patchr" = "Patchr";
-"people" = "people";
-"person" = "person";
+"people" = "People";
+"person" = "Person";
 "phone" = "Phone";
 "phone_number" = "Phone number";
 "photo_action_camera" = "Take a new photo";
@@ -172,6 +201,16 @@
 "share_subject" = "Invitation to the %@ channel";
 "sign_up" = "Sign up";
 "skip" = "Skip";
+"tagline" = "Just enough sharing";
+"template_subject" = "-user.title- invited you to '-channel.title-' on Patchr";
+"template_title" = "Join '-channel.title-' channel on Patchr";
+"template_body" = "-user.title- (-user.email-) uses Patchr, the social sharing app for people who want just enough sharing. They have invited you to join their Patchr channel -channel.title- as a -role-.";
+"template_message" = "-user.title- says: \"-message-\"";
+"template_button" = "Join Channel";
+"template_browser_link" = "You may copy/paste this link into your browser: -link-";
+"template_closing" = "Carry on, the team at Patchr";
+"template_footer_message" = "Made with love by 3meters";
+"template_footer_address" = "999 N. Northlake Way, Suite 232  •  Seattle, WA  •  98103";
 "terms_of_service" = "Terms of Service";
 "title" = "Title";
 "unmute" = "Unmute";
