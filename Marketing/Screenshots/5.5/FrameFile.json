@@ -2,65 +2,40 @@
   "device_frame_version": "latest",
   "default": {
     "title": {
-      "font": "../../Fonts/Roboto-Regular.ttf",
+      "font": "../Roboto-Regular.ttf",
+      "supported": ["en-US", "ru-RU"],
       "color": "#ffffff"
     },
     "font_scale_factor": 0.06,
     "padding": 50,
-    "show_complete_frame": false,
-    "stack_title" : false
+    "show_complete_frame": false
   },
-  "data": [
-    {
-      "filter": "web",
-      "title": {
-        "text": "Just some placeholder text."
-      }
-    },
-    {
-      "filter": "reaction",
-      "background": "./background.png",
-      "title": {
-        "text": "Use reactions and comments\nto respond quickly with style."
-      }
+  "data": [{
+      "filter": "reactions",
+      "background": "../background.jpg"
     },
     {
       "filter": "channel",
-      "background": "./background.png",
-      "title": {
-        "text": "Share messages and photos\nwith just the right people."
-      }
+      "background": "../background.jpg"
     },
     {
       "filter": "gallery",
-      "background": "./background.png",
-      "title": {
-        "text": "Photo gallery\nfor easy photo browsing."
-      }
+      "background": "../background.jpg"
     },
     {
       "filter": "grid_2"
     },
     {
       "filter": "grid",
-      "background": "./background.png",
-      "title": {
-        "text": "Jump quickly to the\nchannels with recent activity."
-      }
+      "background": "../background.jpg"
     },
     {
       "filter": "photo_edit",
-      "background": "./background.png",
-      "title": {
-        "text": "Get creative with\nphoto edit."
-      }
+      "background": "../background.jpg"
     },
     {
       "filter": "photo_search",
-      "background": "./background.png",
-      "title": {
-        "text": "Say it perfectly\nwith photo search."
-      }
+      "background": "../background.jpg"
     }
   ]
 }

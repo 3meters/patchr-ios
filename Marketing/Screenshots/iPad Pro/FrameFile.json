@@ -2,23 +2,16 @@
   "device_frame_version": "latest",
   "default": {
     "title": {
-      "font": "../../Fonts/Roboto-Regular.ttf",
+      "font": "../Roboto-Regular.ttf",
+      "supported": ["en-US", "ru-RU"],
       "color": "#ffffff"
     },
-    "font_scale_factor": 0.06,
-    "background": "./background.png",
-    "padding": 50,
-    "show_complete_frame": false,
-    "stack_title" : false
+    "background": "../background.jpg",
+    "font_scale_factor": 0.05,
+    "padding": 100,
+    "show_complete_frame": false
   },
-  "data": [
-    {
-      "filter": "channel",
-      "font_scale_factor": 0.05,
-      "padding": 100,
-      "title": {
-        "text": "Share messages and photos\nwith just the right people."
-      }
-    }
-  ]
+  "data": [{
+    "filter": "channel"
+  }]
 }
