@@ -56,18 +56,20 @@ class FireChannel: NSObject {
     
     func star(on: Bool) {
         let userId = UserController.instance.userId!
-        let updates: [String: Any] = [
-            "starred": on
-        ]
-        FireController.db.child("channel-members/\(self.id!)/\(userId)").updateChildValues(updates)
+        let channelId = self.id!
+        var updates = [String: Any]()
+        updates["channel-members/\(channelId)/\(userId)/starred"] = on
+        updates["member-channels/\(userId)/\(channelId)/starred"] = on
+        FireController.db.updateChildValues(updates)
     }
     
     func mute(on: Bool) {
         let userId = UserController.instance.userId!
+        let channelId = self.id!
         let state = on ? "all" : "none"
-        let updates: [String: Any] = [
-            "notifications": state
-        ]
-        FireController.db.child("channel-members/\(self.id!)/\(userId)").updateChildValues(updates)
+        var updates = [String: Any]()
+        updates["channel-members/\(channelId)/\(userId)/notifications"] = state
+        updates["member-channels/\(userId)/\(channelId)/notifications"] = state
+        FireController.db.updateChildValues(updates)
     }
 }

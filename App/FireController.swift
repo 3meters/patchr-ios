@@ -81,21 +81,6 @@ class FireController: NSObject {
         }
     }
     
-    func addUserTask(userId: String, username: String, then: @escaping ((ServiceError?, Any?) -> Void)) {
-        let timestamp = getServerTimestamp()
-        let ref = FireController.db.child("tasks/create-user").childByAutoId()
-        let request: [String: Any] = [
-            "user_id": userId,
-            "username": username,
-        ]
-        let task: [String: Any] = [
-            "created_at": timestamp,
-            "created_by": userId,
-            "request": request,
-        ]
-        submitTask(task: task, ref: ref, then: then) // Error used, result ignored
-    }
-    
     func addChannel(channelId: String, channelMap: [String: Any], then: ((Bool) -> Void)? = nil) {
         FireController.db.child("channels/\(channelId)").setValue(channelMap) { error, ref in
             if error != nil {
@@ -130,7 +115,11 @@ class FireController: NSObject {
         let timestamp = getServerTimestamp()
         let membership = channelMemberMap(userId: userId, timestamp: timestamp, code: code, role: role)
         
-        FireController.db.child("channel-members/\(channelId)/\(userId)").setValue(membership) { error, ref in
+        var updates = [String: Any]()
+        updates["channel-members/\(channelId)/\(userId)"] = membership
+        updates["member-channels/\(userId)/\(channelId)"] = membership
+        FireController.db.updateChildValues(updates) { error, ref in
+            
             if error != nil {
                 /* Could be denied because channel is missing or channel secret is bad. */
                 Log.w("Permission denied adding channel member")
@@ -314,42 +303,6 @@ class FireController: NSObject {
      * MARK: - Utility
      *--------------------------------------------------------------------------------------------*/
     
-    func submitTask(task: [String: Any], ref: DatabaseReference, then: ((ServiceError?, Any?) -> Void)? = nil) {
-        ref.setValue(task) { error, ref in
-            if error == nil {
-                var handle: UInt = 0
-                handle = ref.child("response").observe(.value, with: { snap in
-                    if let response = snap.value as? [String: Any] {
-                        
-                        snap.ref.removeObserver(withHandle: handle)
-                        ref.removeValue()   // Delete task from queue
-                        
-                        let errorMessage = response["error"] as? String
-                        let result = response["result"] as Any?
-                        
-                        if errorMessage != nil {
-                            let error = ServiceError(message: errorMessage!)
-                            Log.d("Task error: \(errorMessage!)")
-                            then?(error, result)
-                            return
-                        }
-                        then?(nil, result)
-                    }
-                }
-                , withCancel: { error in
-                    Log.w("Permission denied observing task response: \(ref.url)")
-                    then?(ServiceError(code: 403, message: "Permission denied"), nil)  // permission denied
-                })
-                return
-            }
-            /* This can be triggered by an already used invite since the rules check
-               if invite status == "pending". Could also be triggered if invite has 
-               been revoked (deleted). */
-            Log.w("Permission denied submitting task: \(ref.url)")
-            then?(ServiceError(code: 403, message: "Permission denied"), nil)  // permission denied
-        }
-    }
- 
     func isConnected(then: @escaping ((Bool?) -> Void)) {
         FireController.db.child(".info/connected").observeSingleEvent(of: .value, with: { snap in
             if let connected = snap.value as? Bool {
