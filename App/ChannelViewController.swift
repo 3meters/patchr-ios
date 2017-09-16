@@ -6,6 +6,7 @@ import UIKit
 import MessageUI
 import iRate
 import IDMPhotoBrowser
+import Localize_Swift
 import NHBalancedFlowLayout
 import ReachabilitySwift
 import Firebase
@@ -292,7 +293,7 @@ class ChannelViewController: BaseTableController {
         /* Back to channels button */
         var button = UIButton(type: .custom)
         button.setImage(#imageLiteral(resourceName: "imgArrowLeftLight"), for: .normal)
-        button.setTitle("channels".localized(), for: .normal)
+        button.setTitle(nil, for: .normal)
         button.imageEdgeInsets = UIEdgeInsetsMake(8, 0, 8, 100)
         button.titleEdgeInsets = UIEdgeInsetsMake(0, -36, 0, 0)
         button.frame = CGRect(x: 0, y: 0, width: 120, height: 36)
@@ -334,7 +335,14 @@ class ChannelViewController: BaseTableController {
 
 		NotificationCenter.default.addObserver(self, selector: #selector(messageDidChange(notification:)), name: NSNotification.Name(rawValue: Events.MessageDidUpdate), object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(userDidUpdate(notification:)), name: NSNotification.Name(rawValue: Events.UserDidUpdate), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(bindLanguage), name: NSNotification.Name(LCLLanguageChangeNotification), object: nil)
+        bindLanguage()
 	}
+    
+    func bindLanguage() {
+        let button = self.backButton.customView as! UIButton
+        button.setTitle("channels".localized(), for: .normal)
+    }
 
 	fileprivate func bind(channelId: String) {
 

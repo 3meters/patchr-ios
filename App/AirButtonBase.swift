@@ -33,7 +33,6 @@ class AirButtonBase: UIButton {
             let relativeFrame = self.bounds
             let hitTestEdgeInsets = self.hitInsets
             let hitFrame = UIEdgeInsetsInsetRect(relativeFrame, hitTestEdgeInsets)
-            Log.v("Hit test: \(hitFrame.contains(point))")
             return hitFrame.contains(point)
         }
         return true

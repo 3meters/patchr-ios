@@ -12,9 +12,17 @@ import Foundation
  * @author Phil Teare
  * using wikipedia data
  */
+struct Locales {
+    static let en = "en_US"
+    static let ru = "ru_RU"
+}
+
 struct Language {
-    static let iso = [
-        "ab":[
+    static let locale = [
+        "en": "en_US", "ru": "ru_RU"
+    ]
+
+    static let iso = [        "ab":[
             "name":"Abkhaz",
             "nativeName":"аҧсуа"
         ],

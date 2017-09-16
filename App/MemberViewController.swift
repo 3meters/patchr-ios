@@ -234,7 +234,9 @@ class MemberViewController: BaseViewController, UIScrollViewDelegate, UITextFiel
 
     func bindLanguage() {
         self.phone.caption.text = "phone".localized()
+        self.phone.setNeedsLayout()
         self.email.caption.text = "email".localized()
+        self.email.setNeedsLayout()
         self.editButton.setTitle("edit_profile".localized().uppercased(), for: .normal)
         self.settingsButton.setTitle("settings".localized().uppercased(), for: .normal)
         self.callButton.setTitle("call".localized().uppercased(), for: .normal)
