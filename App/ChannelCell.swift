@@ -74,12 +74,13 @@ class ChannelCell: UICollectionViewCell {
             let seed = Utils.numberFromName(fullname: channel.title!.lowercased())
             self.photoView?.backgroundColor = ColorArray.randomColor(seed: seed)
             self.photosQuery = PhotosQuery(channelId: channel.id!, limit: 1)
-            self.photosQuery?.observe(with: { error, photo in
+            self.photosQuery?.observe(with: { [weak self] error, photo in
+                guard let this = self else { return }
                 if error == nil {
                     if photo != nil {
                         let url = ImageProxy.url(photo: photo!, category: SizeCategory.profile)
-                        if !(self.photoView?.associated(withUrl: url))! {
-                            self.photoView?.setImageWithUrl(url: url, uploading: false, animate: true)
+                        if !(this.photoView?.associated(withUrl: url))! {
+                            this.photoView?.setImageWithUrl(url: url, uploading: false, animate: true)
                         }
                     }
                 }
