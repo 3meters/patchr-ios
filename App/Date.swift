@@ -9,6 +9,7 @@
 import Foundation
 import ObjectiveC
 import AVFoundation
+import Localize_Swift
 import UIKit
 
 struct DateUtils {
@@ -31,18 +32,27 @@ struct DateUtils {
     static func dateMediumString(timestamp: Int64) -> String {
         let dateFormatter = DateFormatter()
         let date = from(timestamp: timestamp)
+        let language = Localize.currentLanguage()
+        let localeString = Language.locale[language]!
+        let locale = Locale(identifier: localeString)
+        dateFormatter.locale = locale
         dateFormatter.dateStyle = .medium
         return dateFormatter.string(from: date as Date)
     }
     
     static func timeAgoShort(date: Date) -> String {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateStyle = .short
-        if (date as NSDate).monthsAgo() >= 1 {
+        let daysAgo = date.since(Date(), in: .day)
+        if daysAgo <= -7 {
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateStyle = .short
+            let language = Localize.currentLanguage()
+            let localeString = Language.locale[language]!
+            let locale = Locale(identifier: localeString)
+            dateFormatter.locale = locale
             return dateFormatter.string(from: date as Date)
         }
         else {
-            return (date as NSDate).shortTimeAgoSinceNow()
+            return date.timeAgoSinceNow
         }
     }
 }

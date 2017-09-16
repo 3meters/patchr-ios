@@ -81,12 +81,13 @@
 
 /* Short format for */
 "%dy" = "%dy"; // year
-"%dM" = "%dM"; // month
-"%dw" = "%dw"; // week
+"%dM" = "%dmo"; // month
+"%dw" = "%dwk"; // week
 "%dd" = "%dd"; // day
 "%dh" = "%dh"; // hour
-"%dm" = "%dm"; // minute
+"%dm" = "%dmin"; // minute
 "%ds" = "%ds"; // second
+"now" = "now"; // now
 
 /* Week format for */
 "Mon" = "Mon";

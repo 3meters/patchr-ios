@@ -24,7 +24,6 @@ def shared_pods
     pod 'ChameleonFramework/Swift', :git => 'https://github.com/ViccAlexander/Chameleon.git'
     pod 'CocoaLumberjack/Swift',    '3.0.0'
     pod 'CLTokenInputView',         '2.3.0'
-    pod 'DateTools',                :git => 'https://github.com/MatthewYork/DateTools', :branch => 'swift'
     pod 'DLRadioButton',            '1.4.9'
     pod 'Emoji-swift',              '0.1.0'
     pod 'Facade',                   '1.1.1'	    # Convenience methods for frame based layout

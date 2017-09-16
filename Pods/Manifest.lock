@@ -42,7 +42,6 @@ PODS:
   - CocoaLumberjack/Swift (3.0.0):
     - CocoaLumberjack/Extensions
   - DACircularProgress (2.3.1)
-  - DateTools (2.0.0)
   - DLRadioButton (1.4.9)
   - Emoji-swift (0.1.0)
   - Facade (1.1.1)
@@ -162,7 +161,6 @@ DEPENDENCIES:
   - ChameleonFramework/Swift (from `https://github.com/ViccAlexander/Chameleon.git`)
   - CLTokenInputView (= 2.3.0)
   - CocoaLumberjack/Swift (= 3.0.0)
-  - DateTools (from `https://github.com/MatthewYork/DateTools`, branch `swift`)
   - DLRadioButton (= 1.4.9)
   - Emoji-swift (= 0.1.0)
   - Facade (= 1.1.1)
@@ -195,9 +193,6 @@ DEPENDENCIES:
 EXTERNAL SOURCES:
   ChameleonFramework:
     :git: https://github.com/ViccAlexander/Chameleon.git
-  DateTools:
-    :branch: swift
-    :git: https://github.com/MatthewYork/DateTools
   IDMPhotoBrowser:
     :path: ~/code/IDMPhotoBrowser
   Keys:
@@ -209,9 +204,6 @@ CHECKOUT OPTIONS:
   ChameleonFramework:
     :commit: 6dd284bde21ea2e7f9fd89bc36f40df16e16369d
     :git: https://github.com/ViccAlexander/Chameleon.git
-  DateTools:
-    :commit: c36311e6c0b28103f32311b54f1d27a334785bcc
-    :git: https://github.com/MatthewYork/DateTools
 
 SPEC CHECKSUMS:
   AFNetworkActivityLogger: 121486778117d53b3ab1c61d264b88081d0c3eee
@@ -223,7 +215,6 @@ SPEC CHECKSUMS:
   CLTokenInputView: 9dc1ffb7c9d2d81787e69a63c75bd97b0b2d1e76
   CocoaLumberjack: c823149bccc5519a9447aeb433be7b1212a7d6a5
   DACircularProgress: 4dd437c0fc3da5161cb289e07ac449493d41db71
-  DateTools: 9a92563d4567296fb6fa8ae586321159c514c8c6
   DLRadioButton: 7bb8a6e3768b572469ace553391ab4d2af6f9c19
   Emoji-swift: 20010383183f4d85e6e5a2b9642b96ebdb4f06ae
   Facade: 3c5c6fb1ba042d20885cfe5a290050f5b9351ca2
@@ -262,6 +253,6 @@ SPEC CHECKSUMS:
   UIDevice-Hardware: ecb52d9a7b223b31f81982358e2b0769ac1a7918
   VTAcknowledgementsViewController: e1de80f2c0ce31cc7e1c6f1c8aaeec2770371f09
 
-PODFILE CHECKSUM: 89842b5056850100123f0c57d71292f1eb437a3e
+PODFILE CHECKSUM: c72776bbc6c2492d80f022a274f11cdb90591861
 
 COCOAPODS: 1.2.1
