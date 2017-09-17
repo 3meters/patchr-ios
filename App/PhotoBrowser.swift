@@ -77,7 +77,7 @@ class PhotoBrowser: IDMPhotoBrowser {
         else {
             if self.message?.createdBy != nil {
                 let createdBy = (self.message?.createdBy)!
-                super.shareMessage = "photo_share_message".localizedFormat(createdBy, "patchr".localized())
+                super.shareMessage = "photo_share_message".localizedFormat(createdBy, Strings.appName)
             }
             
             /* Configure bottom toolbar */

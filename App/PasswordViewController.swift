@@ -228,7 +228,7 @@ class PasswordViewController: BaseEditViewController {
                     MainController.instance.showChannel(channelId: channelId) { // User permissions are in place
                         Utils.delay(0.5) {
                             if let topController = UIViewController.topController {
-                                let popup = PopupDialog(title: "\("channel_welcome_title".localized()) \("patchr".localized())!"
+                                let popup = PopupDialog(title: "\("channel_welcome_title".localized()) \(Strings.appName)!"
                                     , message: "channel_welcome_message".localized())
                                 let button = DefaultButton(title: "ok".localized().uppercased(), height: 48) {
                                     Reporting.track("sign_up_carry_on")

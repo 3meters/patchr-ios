@@ -93,7 +93,7 @@ class InviteViewController: BaseEditViewController {
 		self.heading.textAlignment = NSTextAlignment.center
 		self.heading.numberOfLines = 0
         
-        self.message.text = "invite_message".localizedFormat("patchr".localized())
+        self.message.text = "invite_message".localized()
         self.message.textColor = Theme.colorTextSecondary
         self.message.textAlignment = .center
         self.message.numberOfLines = 0

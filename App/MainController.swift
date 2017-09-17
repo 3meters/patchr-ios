@@ -158,9 +158,9 @@ class MainController: NSObject, iRateDelegate {
         NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.UserDidUpdate), object: self, userInfo: ["user_id": userId])
 
         iRate.sharedInstance().appStoreCountry = Localize.currentLanguage()
-        iRate.sharedInstance().message = "irate_app_message".localizedFormat("patchr".localized())
+        iRate.sharedInstance().message = "irate_app_message".localized()
         iRate.sharedInstance().cancelButtonLabel = "irate_cancel_button".localized()
-        iRate.sharedInstance().messageTitle = "irate_message_title".localizedFormat("patchr".localized())
+        iRate.sharedInstance().messageTitle = "irate_message_title".localized()
         iRate.sharedInstance().rateButtonLabel = "irate_rate_button".localized()
         iRate.sharedInstance().remindButtonLabel = "irate_remind_button".localized()
     }

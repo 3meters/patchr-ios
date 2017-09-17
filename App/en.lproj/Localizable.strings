@@ -1,46 +1,24 @@
 /*
   Localizable.strings
-  Copyright (c) 2015 3meters. All rights reserved.
+  Copyright (c) 2017 3meters. All rights reserved.
 */
 
 "about" = "About";
 "account" = "Account";
 "account_settings" = "Account settings";
 "acknowledgements" = "Acknowledgements";
-"appstore_description" = "
-Some sharing apps can overshare making it hard to tell if messages and photos are shared with just the right people. Patchr stops oversharing with private invitations that let you control who can see messages and how they can participate:
-- Invite the right people using invitations.
-- Invite people as readers to share without adding chatter. Readers can browse messages and add reactions and comments.
-- Invite people as contributors and they can post new messages to the channel. They can also edit and delete their messages.
-Share events, topics or just life using a Patchr channel.
-Patchr has brilliant messaging features: photo search and editing, reactions, comments, realtime notifications, offline posting plus much more.
-Invite members from your contacts and we handle the rest! We email them an invitation, help them install Patchr and gently launch them into your amazing channel.";
-"appstore_keywords" = "patchr,share,social,photo,channel,group,event,project,message, chat,post,top,best,media";
-"appstore_whats_new" = "
-- A user experience that is clean, fast and simple.
-- Invite users to channels as readers or contributors.
-- Add comments to posted messages.
-- Fix layout issues with smaller screens.
-- If photo hasn't been set for a channel, we show the last posted photo
-- Other stability and performance improvements.";
-"appstore_screen_channel" = "Share messages and photos with just the right people.";
-"appstore_screen_gallery" = "Photo gallery for easy photo browsing.";
-"appstore_screen_grid" = "Jump quickly to the channels with recent activity.";
-"appstore_screen_photo_edit" = "Get creative with photo edit.";
-"appstore_screen_photo_search" = "Say it perfectly with photo search.";
-"appstore_screen_reactions" = "Use reactions and comments to respond quickly with style.";
 "back" = "Back";
 "call" = "Call";
 "cancel" = "Cancel";
 "change_password" = "Change password";
 "channel_delete_title" = "Confirm Delete";
 "channel_delete_message" = "Are you sure you want to delete this?";
-"channel_edit_header_insert" = "New %@ Channel";
-"channel_edit_header_update" = "Edit %@ Channel";
+"channel_edit_header_insert" = "New Patchr Channel";
+"channel_edit_header_update" = "Edit Patchr Channel";
 "channel_edit_purpose_placeholder" = "Channel purpose (optional)";
 "channel_edit_title_placeholder" = "Channel title";
 "channel_grid_search_bar_placeholder" = "Search";
-"channel_grid_title" = "%@ Channels";
+"channel_grid_title" = "Patchr Channels";
 "channel_joined_title" = "Welcome!";
 "channel_joined_message" = "You have joined the %@ channel!";
 "channel_leave_message" = "Are you sure you want to leave this channel? A new invitation may be required to rejoin.";
@@ -67,9 +45,8 @@ Invite members from your contacts and we handle the rest! We email them an invit
 "contact_picker_title_readers" = "Invite Readers";
 "contacts_permission_denied" = "Access to contacts has been denied. Check your privacy settings to allow access.";
 "contributor" = "Contributor";
+"create" = "Create";
 "creating" = "Creating";
-"deepview_message" = "See this content immediately after install";
-"deepview_button" = "Get Patchr";
 "delete" = "Delete";
 "deleting" = "Deleting";
 "deleted" = "Deleted";
@@ -86,9 +63,9 @@ Invite members from your contacts and we handle the rest! We email them an invit
 "email_invalid" = "Enter a valid email address.";
 "email_invalid_alert" = "%@ is not a valid email address";
 "email_no_account" = "No account found.";
-"email_title_log_in" = "Welcome back.";
-"email_title_invite" = "Welcome.";
-"email_title_sign_up" = "%@ channels are perfect for just enough sharing.";
+"email_title_log_in" = "Welcome back!";
+"email_title_invite" = "Welcome!";
+"email_title_sign_up" = "Patchr channels are perfect for just enough sharing.";
 "email_used" = "Email is already being used";
 "feedback_cancelled" = "Feedback cancelled";
 "feedback_saved" = "Feedback saved";
@@ -102,14 +79,14 @@ Invite members from your contacts and we handle the rest! We email them an invit
 "invite" = "Invite";
 "invite_comment" = "Contributors can post new messages. Both contributors and readers can browse and comment on posted messages.";
 "invite_contributors" = "Invite contributors";
-"invite_message" = "An email invitation will be sent. Using the invitation will add them to the channel and help them install %@ if they don't have it yet.";
+"invite_message" = "An email invitation will be sent. Using the invitation will add them to the channel and help them install Patchr if they don't have it yet.";
 "invite_message_placeholder" = "Add personal message (optional)";
 "invite_readers" = "Invite readers";
 "invite_title" = "Invite people to '%@'.";
 "invites_sent" = "Invitations sent";
-"irate_app_message" = "If you enjoy using %@, would you mind taking a moment to rate it? It won’t take more than a minute. Thanks for your support!";
+"irate_app_message" = "If you enjoy using Patchr, would you mind taking a moment to rate it? It won’t take more than a minute. Thanks for your support!";
 "irate_cancel_button" = "No, Thanks";
-"irate_message_title" = "Rate %@";
+"irate_message_title" = "Rate Patchr";
 "irate_rate_button" = "Rate It Now";
 "irate_remind_button" = "Remind Me Later";
 "language_settings_section_title" = "Language";
@@ -119,8 +96,6 @@ Invite members from your contacts and we handle the rest! We email them an invit
 "leave" = "Leave";
 "licensing_comment" = "The following third party software may be contained in portions of this mobile application. We offer our sincere thanks to the open source community for all of their contributions. Carry on!";
 "licensing_title" = "Acknowledgements";
-"link_description" = "%@ has invited you to the '%@' channel.";
-"link_title" = "Invite by %@ to the '%@' channel";
 "log_in" = "Log in";
 "log_out" = "Log out";
 "member_remove_message" = "Are you sure you want to remove %@ from this channel?";
@@ -139,21 +114,17 @@ Invite members from your contacts and we handle the rest! We email them an invit
 "mute" = "Mute";
 "new" = "New";
 "next" = "Next";
-"notification_message_text_only" = "#${channelName} @${username}: ${message.text}";
-"notification_message_photo_only" = "#${channelName}: @${username} posted a photo";
-"notification_messate_text_and_photo" = "#${channelName}: @${username} posted a photo and commented: ${message.text}";
-"notification_comment" = "#${channelName} @${username}: commented on a post: ${comment.text}";
 "ok" = "OK";
 "onboard_create_title" = "Create a Channel";
-"onboard_create_description" = "Share with just the right people using %@ channels.";
+"onboard_create_description" = "Share with just the right people using Patchr channels.";
 "onboard_features_title" = "Carry On!";
-"onboard_features_description" = "%@ has brilliant sharing features: photo search and editing, reactions, comments, realtime notifications, offline posting plus much more.";
+"onboard_features_description" = "Patchr has brilliant sharing features: photo search and editing, reactions, comments, realtime notifications, offline posting plus much more.";
 "onboard_got_it" = "Got it!";
 "onboard_invite_title" = "Invite";
-"onboard_invite_description" = "Select people from your contacts and we handle the rest! We will email them an invite, help them install %@ and gently launch them into your amazing channel.";
+"onboard_invite_description" = "Select people from your contacts and we handle the rest! We will email them an invite, help them install Patchr and gently launch them into your amazing channel.";
 "onboard_me" = "Onboard me!";
 "onboard_welcome_title" = "Welcome!";
-"onboard_welcome_description" = "%@ is a modern and simple way to share with just the right people!";
+"onboard_welcome_description" = "Patchr is a modern and simple way to share with just the right people!";
 "owner" = "Owner";
 "password" = "Password";
 "password_confirmation" = "Password confirmation";
@@ -164,7 +135,6 @@ Invite members from your contacts and we handle the rest! We email them an invit
 "password_title" = "Password (6+ characters)";
 "password_too_short" = "Enter a password with six characters or more.";
 "password_view_title" = "Almost to the good stuff.";
-"patchr" = "Patchr";
 "people" = "People";
 "person" = "Person";
 "phone" = "Phone";
@@ -173,7 +143,7 @@ Invite members from your contacts and we handle the rest! We email them an invit
 "photo_action_library" = "Select a library photo";
 "photo_action_search" = "Search for photos";
 "photo_search_bar_placeholder" = "Search for photos";
-"photo_share_message" = "Photo by %@ on %@";
+"photo_share_message" = "Photo by %@ on Patchr";
 "photo_use" = "Use photo";
 "play_sound_effects" = "Play sound effects";
 "post" = "Post";
@@ -202,20 +172,11 @@ Invite members from your contacts and we handle the rest! We email them an invit
 "sign_up" = "Sign up";
 "skip" = "Skip";
 "tagline" = "Just enough sharing";
-"template_subject" = "-user.title- invited you to '-channel.title-' on Patchr";
-"template_title" = "Join '-channel.title-' channel on Patchr";
-"template_body" = "-user.title- (-user.email-) uses Patchr, the social sharing app for people who want just enough sharing. They have invited you to join their Patchr channel -channel.title- as a -role-.";
-"template_message" = "-user.title- says: \"-message-\"";
-"template_button" = "Join Channel";
-"template_browser_link" = "You may copy/paste this link into your browser: -link-";
-"template_closing" = "Carry on, the team at Patchr";
-"template_footer_message" = "Made with love by 3meters";
-"template_footer_address" = "999 N. Northlake Way, Suite 232  •  Seattle, WA  •  98103";
 "terms_of_service" = "Terms of Service";
 "title" = "Title";
 "unmute" = "Unmute";
 "update" = "Update";
-"update_message" = "Your version of %@ is not compatible with the %@ service. Please update to the latest version.";
+"update_message" = "Your version of Patchr is not compatible with the Patchr service. Please update to the latest version.";
 "update_title" = "Update required";
 "username" = "Username";
 "username_empty" = "Choose your username";

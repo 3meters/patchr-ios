@@ -18,7 +18,7 @@ struct UIShared {
 			if let controller = UIViewController.topController {
 				controller.UpdateConfirmationAlert(
 					title: "update_title".localized(),
-					message: "update_message".localizedFormat("patchr".localized(), "patchr".localized()),
+					message: "update_message".localized(),
 					actionTitle: "update".localized(),
 					cancelTitle: "later".localized()) {
 						doIt in

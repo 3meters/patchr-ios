@@ -192,8 +192,8 @@ extension PhotoChooserUI: UIImagePickerControllerDelegate {
             if self.chosenPhotoFunction == .TakePhoto {
                 hostViewController?.dismiss(animated: true, completion: nil)
                 if PHPhotoLibrary.authorizationStatus() == .authorized {
-                    self.addPhotoToAlbum(image: image, toAlbum: "patchr".localized()) { success in
-                        print("Image added to \("patchr".localized()) album: \(success)");
+                    self.addPhotoToAlbum(image: image, toAlbum: Strings.appName) { success in
+                        print("Image added to \(Strings.appName) album: \(success)");
                         self.completion!(image, nil, asset, false)
                     }
                 }

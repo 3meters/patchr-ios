@@ -1,0 +1,10 @@
+/*
+  Deepview.strings
+  Copyright (c) 2017 3meters. All rights reserved.
+*/
+
+/* Branch deepview templates */
+"deepview_button" = "Get Patchr";
+"deepview_description" = "%@ has invited you to the '%@' channel.";
+"deepview_message" = "See this content immediately after install";
+"deepview_title" = "Invite by %@ to the '%@' channel";

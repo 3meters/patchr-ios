@@ -103,7 +103,7 @@ class EmailViewController: BaseEditViewController {
             self.message.text = "email_title_invite".localized()
         }
         else if self.flow == .onboardSignup {
-            self.message.text = "email_title_sign_up".localizedFormat("patchr".localized())
+            self.message.text = "email_title_sign_up".localized()
         }
         self.emailField.placeholder = "email".localized()
         self.nextButton.title = "next".localized()

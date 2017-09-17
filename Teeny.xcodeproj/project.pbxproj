@@ -146,6 +146,10 @@
 		E2983C151F6C330B000F72D4 /* Date+TimeAgo.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2983C141F6C330B000F72D4 /* Date+TimeAgo.swift */; };
 		E2983C181F6C3355000F72D4 /* DateTools.strings in Resources */ = {isa = PBXBuildFile; fileRef = E2983C161F6C3355000F72D4 /* DateTools.strings */; };
 		E2983C1B1F6C9FD6000F72D4 /* DateHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2983C1A1F6C9FD6000F72D4 /* DateHelper.swift */; };
+		E2983C221F6EE00B000F72D4 /* Appstore.strings in Resources */ = {isa = PBXBuildFile; fileRef = E2983C1C1F6EE00B000F72D4 /* Appstore.strings */; };
+		E2983C231F6EE00B000F72D4 /* Deepview.strings in Resources */ = {isa = PBXBuildFile; fileRef = E2983C1E1F6EE00B000F72D4 /* Deepview.strings */; };
+		E2983C241F6EE00B000F72D4 /* InviteEmail.strings in Resources */ = {isa = PBXBuildFile; fileRef = E2983C201F6EE00B000F72D4 /* InviteEmail.strings */; };
+		E2983C2A1F6EE239000F72D4 /* Service.strings in Resources */ = {isa = PBXBuildFile; fileRef = E2983C281F6EE239000F72D4 /* Service.strings */; };
 		E2999EE31DC25AAE005C69D8 /* EmptyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2999EE21DC25AAE005C69D8 /* EmptyViewController.swift */; };
 		E2999EE51DC2CD3B005C69D8 /* PhotoBrowser.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2999EE41DC2CD3B005C69D8 /* PhotoBrowser.swift */; };
 		E29A4CDA1BD077520059D5B9 /* MessageListCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29A4CD91BD077520059D5B9 /* MessageListCell.swift */; };
@@ -603,6 +607,14 @@
 		E2983C171F6C3355000F72D4 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/DateTools.strings; sourceTree = "<group>"; };
 		E2983C191F6C3369000F72D4 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/DateTools.strings; sourceTree = "<group>"; };
 		E2983C1A1F6C9FD6000F72D4 /* DateHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DateHelper.swift; sourceTree = "<group>"; };
+		E2983C1D1F6EE00B000F72D4 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Appstore.strings; sourceTree = "<group>"; };
+		E2983C1F1F6EE00B000F72D4 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Deepview.strings; sourceTree = "<group>"; };
+		E2983C211F6EE00B000F72D4 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InviteEmail.strings; sourceTree = "<group>"; };
+		E2983C251F6EE07A000F72D4 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/Appstore.strings; sourceTree = "<group>"; };
+		E2983C261F6EE0E7000F72D4 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/Deepview.strings; sourceTree = "<group>"; };
+		E2983C271F6EE158000F72D4 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/InviteEmail.strings; sourceTree = "<group>"; };
+		E2983C291F6EE239000F72D4 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Service.strings; sourceTree = "<group>"; };
+		E2983C2B1F6EE29D000F72D4 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/Service.strings; sourceTree = "<group>"; };
 		E2999EE21DC25AAE005C69D8 /* EmptyViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = EmptyViewController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		E2999EE41DC2CD3B005C69D8 /* PhotoBrowser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = PhotoBrowser.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		E29A4CD91BD077520059D5B9 /* MessageListCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = MessageListCell.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
@@ -989,8 +1001,12 @@
 				E26B0C911B46D01E00706F4A /* ThumbnailCollectionViewCell.xib */,
 				E25B0F491DCE803B00021D5B /* UserListCell.xib */,
 				E28915921C5AD528005D7AA0 /* LaunchScreen.storyboard */,
+				E2983C1C1F6EE00B000F72D4 /* Appstore.strings */,
 				E2983C161F6C3355000F72D4 /* DateTools.strings */,
+				E2983C1E1F6EE00B000F72D4 /* Deepview.strings */,
+				E2983C201F6EE00B000F72D4 /* InviteEmail.strings */,
 				8468F8211A9D09D1007D6EE6 /* Localizable.strings */,
+				E2983C281F6EE239000F72D4 /* Service.strings */,
 				E25A73771C1C87F500688EDC /* AdobeCreativeSDKImageResources.bundle */,
 				E25A73751C1C87E200688EDC /* AdobeCreativeSDKCoreResources.bundle */,
 				E25327CA1B13D34B00990A81 /* Sounds */,
@@ -1450,6 +1466,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E2816B3A1F003D700049E84B /* GoogleService-Info.plist in Resources */,
+				E2983C231F6EE00B000F72D4 /* Deepview.strings in Resources */,
 				E2816B341F003A650049E84B /* ServiceAccountProd.json in Resources */,
 				E2A603241CD97B7A00FBD55B /* InfoPlist.strings in Resources */,
 				E27C12091E6CD403003F052B /* Pods-acknowledgements.plist in Resources */,
@@ -1462,6 +1479,7 @@
 				E207B5021E2978140019C2A1 /* ChannelCell.xib in Resources */,
 				E2064BF31BC0212B009C7B6A /* silence.caf in Resources */,
 				E2CCAAE21B67EE2C0071170C /* chirp.caf in Resources */,
+				E2983C2A1F6EE239000F72D4 /* Service.strings in Resources */,
 				E25327CE1B13DB3000990A81 /* notification_candi_discovered_soft.aac in Resources */,
 				E25327CF1B13DB3000990A81 /* notification_carme.aac in Resources */,
 				E25327D01B13DB3000990A81 /* notification_pop.aac in Resources */,
@@ -1471,6 +1489,8 @@
 				E25A73761C1C87E200688EDC /* AdobeCreativeSDKCoreResources.bundle in Resources */,
 				E2983C181F6C3355000F72D4 /* DateTools.strings in Resources */,
 				E28915911C5A85CF005D7AA0 /* .xctool-args in Resources */,
+				E2983C221F6EE00B000F72D4 /* Appstore.strings in Resources */,
+				E2983C241F6EE00B000F72D4 /* InviteEmail.strings in Resources */,
 				E258DF991F3A1CA1004687CC /* ChannelPickerCell.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1969,6 +1989,42 @@
 				E2983C191F6C3369000F72D4 /* en */,
 			);
 			name = DateTools.strings;
+			sourceTree = "<group>";
+		};
+		E2983C1C1F6EE00B000F72D4 /* Appstore.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				E2983C1D1F6EE00B000F72D4 /* en */,
+				E2983C251F6EE07A000F72D4 /* ru */,
+			);
+			name = Appstore.strings;
+			sourceTree = "<group>";
+		};
+		E2983C1E1F6EE00B000F72D4 /* Deepview.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				E2983C1F1F6EE00B000F72D4 /* en */,
+				E2983C261F6EE0E7000F72D4 /* ru */,
+			);
+			name = Deepview.strings;
+			sourceTree = "<group>";
+		};
+		E2983C201F6EE00B000F72D4 /* InviteEmail.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				E2983C211F6EE00B000F72D4 /* en */,
+				E2983C271F6EE158000F72D4 /* ru */,
+			);
+			name = InviteEmail.strings;
+			sourceTree = "<group>";
+		};
+		E2983C281F6EE239000F72D4 /* Service.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				E2983C291F6EE239000F72D4 /* en */,
+				E2983C2B1F6EE29D000F72D4 /* ru */,
+			);
+			name = Service.strings;
 			sourceTree = "<group>";
 		};
 		E2A603221CD97B7A00FBD55B /* InfoPlist.strings */ = {

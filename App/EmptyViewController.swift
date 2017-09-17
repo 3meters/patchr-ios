@@ -61,7 +61,7 @@ class EmptyViewController: UIViewController {
         self.imageLogo.image = UIImage(named: "imgPatchrWhite")
         self.imageLogo.contentMode = UIViewContentMode.scaleAspectFill
         
-        self.appName.text = "patchr".localized()
+        self.appName.text = Strings.appName
         self.appName.textAlignment = NSTextAlignment.center
         
         self.view.addSubview(self.imageBackground)

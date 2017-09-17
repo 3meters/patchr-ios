@@ -50,14 +50,19 @@ class BranchProvider: NSObject {
         }
         
         /* $og_title */
-        applink.title = "link_title".localizedFormat(inviterName!, channel["title"]!)
+        applink.title = "deepview_title".localizedFormat(inviterName!, channel["title"]!)
         
         /* $og_description */
-        applink.contentDescription = message ?? "link_description".localizedFormat(inviterName!, channel["title"]!)
+        applink.contentDescription = message ?? "deepview_description".localizedFormat(inviterName!, channel["title"]!)
         
         let linkProperties = BranchLinkProperties()
         linkProperties.channel = "teeny-ios"
         linkProperties.feature = BRANCH_FEATURE_TAG_INVITE
+        
+        /* Select deepview based on language */
+        let language = Localize.currentLanguage()
+        let deepViewId = language == "en" ? "patchr_deepview_wskd" : "patchr_deepview_ru"
+        linkProperties.addControlParam("$ios_deepview", withValue: deepViewId)
         
         applink.getShortUrl(with: linkProperties, andCallback: { url, error in
             if error != nil {

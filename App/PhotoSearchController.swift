@@ -98,8 +98,8 @@ class PhotoSearchController: UICollectionViewController, UITableViewDelegate, UI
 		loadSearches()
 		
 		/* Navigation bar buttons */
-		let cancelButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.cancel, target: self, action: #selector(PhotoSearchController.cancelAction(sender:)))
-		self.navigationItem.rightBarButtonItems = [cancelButton]
+		let cancelButton = UIBarButtonItem(barButtonSystemItem: .stop, target: self, action: #selector(PhotoSearchController.cancelAction(sender:)))
+		self.navigationItem.leftBarButtonItems = [cancelButton]
 	}
 
 	override func viewWillAppear(_ animated: Bool) {
@@ -114,6 +114,7 @@ class PhotoSearchController: UICollectionViewController, UITableViewDelegate, UI
             self.searchBar!.autocapitalizationType = .none
             self.searchBar!.delegate = self
             self.searchBar!.placeholder = "photo_search_bar_placeholder".localized()
+            self.searchBar.setValue("cancel".localized(), forKey: "_cancelButtonText")
             self.searchBar!.searchBarStyle = .prominent
         }
         
