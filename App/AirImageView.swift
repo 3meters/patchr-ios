@@ -118,6 +118,7 @@ class AirImageView: FLAnimatedImageView {
 
     func initialize(){
         self.layer.delegate = self
+        self.backgroundColor = Theme.colorBackgroundTable
         self.progressView = DALabeledCircularProgressView(frame: CGRect.zero)
         self.progressView.trackTintColor = Colors.white
         self.progressView.progressTintColor = Colors.accentColor
@@ -126,7 +127,13 @@ class AirImageView: FLAnimatedImageView {
     
     func reset() {
         self.processing = false
-        self.hideProgress()
+        if !ReachabilityManager.instance.isReachable() {
+            self.backgroundColor = Theme.colorBackgroundTable
+            self.image = nil
+        }
+        else {
+            self.hideProgress()
+        }
     }
     
     func showProgress() {
@@ -165,8 +172,10 @@ class AirImageView: FLAnimatedImageView {
                 
                 if error != nil {
                     if !uploading {
-                        this.progressView.progressLabel.text = "image_missing".localized()
-                        this.progressView.progressLabel.textColor = Theme.colorTextSecondary
+                        if ReachabilityManager.instance.isReachable() {
+                            this.progressView.progressLabel.text = "image_missing".localized()
+                            this.progressView.progressLabel.textColor = Theme.colorTextSecondary
+                        }
                         Log.w("*** Image fetch failed: " + error!.localizedDescription)
                         Log.w("*** Failed url: \(url.absoluteString)")
                     }

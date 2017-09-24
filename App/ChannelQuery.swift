@@ -55,7 +55,6 @@ class ChannelQuery: NSObject {
 			}
 		}, withCancel: { [weak self] error in
 			guard let this = self else { return }
-            //Log.v("Permission denied trying to observe channel: \(this.channelPath!)")
 			this.block(error, nil)
 		})
 

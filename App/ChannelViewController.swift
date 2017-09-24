@@ -8,7 +8,6 @@ import iRate
 import IDMPhotoBrowser
 import Localize_Swift
 import NHBalancedFlowLayout
-import ReachabilitySwift
 import Firebase
 import FirebaseDatabaseUI
 import TTTAttributedLabel

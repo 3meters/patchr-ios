@@ -39,6 +39,8 @@
 		E20004DF1B094ACA00425694 /* PasswordEditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20004DE1B094ACA00425694 /* PasswordEditViewController.swift */; };
 		E200E62F1DDD2A3E00E3457F /* EmailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E200E62E1DDD2A3E00E3457F /* EmailViewController.swift */; };
 		E203BBCB1E69CDDA00589071 /* InviteViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E203BBCA1E69CDDA00589071 /* InviteViewController.swift */; };
+		E204D39A1F781DDA0031E7B0 /* Reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = E204D3991F781DDA0031E7B0 /* Reachability.swift */; };
+		E204D39B1F781E2E0031E7B0 /* Reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = E204D3991F781DDA0031E7B0 /* Reachability.swift */; };
 		E20555061DBC178F003C8398 /* ColorArray.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20555051DBC178F003C8398 /* ColorArray.swift */; };
 		E2064BF31BC0212B009C7B6A /* silence.caf in Resources */ = {isa = PBXBuildFile; fileRef = E2064BF21BC0212B009C7B6A /* silence.caf */; };
 		E2064BF51BC18A66009C7B6A /* AirProgress.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2064BF41BC18A66009C7B6A /* AirProgress.swift */; };
@@ -434,6 +436,7 @@
 		E20004DE1B094ACA00425694 /* PasswordEditViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = PasswordEditViewController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		E200E62E1DDD2A3E00E3457F /* EmailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = EmailViewController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		E203BBCA1E69CDDA00589071 /* InviteViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = InviteViewController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
+		E204D3991F781DDA0031E7B0 /* Reachability.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Reachability.swift; sourceTree = "<group>"; };
 		E20555051DBC178F003C8398 /* ColorArray.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ColorArray.swift; sourceTree = "<group>"; };
 		E2064BF21BC0212B009C7B6A /* silence.caf */ = {isa = PBXFileReference; lastKnownFileType = file; path = silence.caf; sourceTree = "<group>"; };
 		E2064BF41BC18A66009C7B6A /* AirProgress.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = AirProgress.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
@@ -1096,15 +1099,16 @@
 		E26B0C8A1B4570BB00706F4A /* Components */ = {
 			isa = PBXGroup;
 			children = (
+				E25B4ABA1E00BA6B00D17613 /* FireArray.swift */,
+				E2FFD38A1DF32D3200FD75C7 /* Debouncer.swift */,
 				E2919DB61EDC82750044F412 /* JSONResponseSerializerWithData.h */,
 				E2919DB71EDC82750044F412 /* JSONResponseSerializerWithData.m */,
 				E2AA50C31F3F8626007A9D6E /* ObjC.h */,
 				E2AA50C41F3F8640007A9D6E /* ObjC.m */,
-				E2FFD38A1DF32D3200FD75C7 /* Debouncer.swift */,
+				E204D3991F781DDA0031E7B0 /* Reachability.swift */,
+				E20C3A841BE04BBC008CCED1 /* Stopwatch.swift */,
 				7D01FA3A1A705D8700DD6DFA /* SwiftyJSON.swift */,
 				E24D74531BBAED5F0061F339 /* TaskQueue.swift */,
-				E20C3A841BE04BBC008CCED1 /* Stopwatch.swift */,
-				E25B4ABA1E00BA6B00D17613 /* FireArray.swift */,
 			);
 			name = Components;
 			sourceTree = "<group>";
@@ -1708,6 +1712,7 @@
 				E297305E1C136E8300B9433B /* AirRadioButton.swift in Sources */,
 				E256B4281BD3DDC900EBF894 /* AirTableViewCell.swift in Sources */,
 				E25327B61B1000C000990A81 /* AirImageView.swift in Sources */,
+				E204D39A1F781DDA0031E7B0 /* Reachability.swift in Sources */,
 				E2999EE31DC25AAE005C69D8 /* EmptyViewController.swift in Sources */,
 				E23C010F1CE4D73B009C56B2 /* DisplayPhoto.swift in Sources */,
 				E2473E8B1F40A00800F5C19E /* MessageViewController.swift in Sources */,
@@ -1926,6 +1931,7 @@
 				E2DB42F51EB4F2C400B1F78B /* DropdownButton.swift in Sources */,
 				E2DB42F61EB4F2C400B1F78B /* AirTokenView.swift in Sources */,
 				E2DB42F71EB4F2C400B1F78B /* PHPhotoLibrary+PhotoAsset.swift in Sources */,
+				E204D39B1F781E2E0031E7B0 /* Reachability.swift in Sources */,
 				E2499E521F265136002C0F16 /* MessageEditViewController.swift in Sources */,
 				E2DB42F81EB4F2C400B1F78B /* BranchProvider.swift in Sources */,
 				E2DB42F91EB4F2C400B1F78B /* PhotoChooserUI.swift in Sources */,

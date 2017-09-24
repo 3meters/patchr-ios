@@ -7,7 +7,6 @@ import MessageUI
 import iRate
 import IDMPhotoBrowser
 import NHBalancedFlowLayout
-import ReachabilitySwift
 import Firebase
 import FirebaseDatabaseUI
 import TTTAttributedLabel

@@ -59,7 +59,7 @@ class ChannelCell: UICollectionViewCell {
         self.photosQuery = nil
     }
     
-    func bind(channel: FireChannel, searching: Bool = false) {
+    func bind(channel: FireChannel!, searching: Bool = false) {
         self.channel = channel
         self.titleLabel?.text = channel.title!
         if let photo = channel.photo {

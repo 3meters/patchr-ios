@@ -7,7 +7,6 @@
 //
 import MBProgressHUD
 import IDMPhotoBrowser
-import ReachabilitySwift
 
 struct UIShared {
 	

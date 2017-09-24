@@ -4,7 +4,9 @@
 */
 
 /* Branch deepview templates */
+
+/* button that takes the user to the app store to install Patchr */
 "deepview_button" = "Get Patchr";
-"deepview_description" = "%@ has invited you to the '%@' channel.";
-"deepview_message" = "See this content immediately after install";
+
+/* show the invitee the context of the invitation */
 "deepview_title" = "Invite by %@ to the '%@' channel";

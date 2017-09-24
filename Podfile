@@ -43,7 +43,6 @@ def shared_pods
     pod 'PhoneNumberKit',           '1.0.1'
     pod 'pop',                      '1.0.9'		# Animation library
     pod 'PopupDialog',              '0.5.3'
-    pod 'ReachabilitySwift',        '3'
     pod 'SDWebImage/GIF',           '4.0.0'
     pod 'SkyFloatingLabelTextField','2.0.0'
     pod 'SlackTextViewController',  :path => '~/code/SlackTextViewController'

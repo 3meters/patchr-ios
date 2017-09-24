@@ -138,7 +138,6 @@ PODS:
   - pop (1.0.9)
   - PopupDialog (0.5.3)
   - Protobuf (3.4.0)
-  - ReachabilitySwift (3)
   - SDWebImage (4.0.0):
     - SDWebImage/Core (= 4.0.0)
   - SDWebImage/Core (4.0.0)
@@ -181,7 +180,6 @@ DEPENDENCIES:
   - PhoneNumberKit (= 1.0.1)
   - pop (= 1.0.9)
   - PopupDialog (= 0.5.3)
-  - ReachabilitySwift (= 3)
   - SDWebImage/GIF (= 4.0.0)
   - SkyFloatingLabelTextField (= 2.0.0)
   - SlackTextViewController (from `~/code/SlackTextViewController`)
@@ -244,7 +242,6 @@ SPEC CHECKSUMS:
   pop: f667631a5108a2e60d9e8797c9b32ddaf2080bce
   PopupDialog: 533dd564f8781633375505b9fbd406f8f146ccc9
   Protobuf: 03eef2ee0b674770735cf79d9c4d3659cf6908e8
-  ReachabilitySwift: f5b9bb30a0777fac8f09ce8b067e32faeb29bb64
   SDWebImage: 76a6348bdc74eb5a55dd08a091ef298e56b55e41
   SkyFloatingLabelTextField: a81a0eaed2785d1599f11484c6ebc1c4eb5d1228
   SlackTextViewController: fbcdadbb8090673f604484ff5b6eb8d77baed42a
@@ -253,6 +250,6 @@ SPEC CHECKSUMS:
   UIDevice-Hardware: ecb52d9a7b223b31f81982358e2b0769ac1a7918
   VTAcknowledgementsViewController: e1de80f2c0ce31cc7e1c6f1c8aaeec2770371f09
 
-PODFILE CHECKSUM: c72776bbc6c2492d80f022a274f11cdb90591861
+PODFILE CHECKSUM: ae4ce57e98fbd78d961f65b0efab4f14c43fd438
 
 COCOAPODS: 1.2.1

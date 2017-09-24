@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import ReachabilitySwift
 
 class ReachabilityManager: NSObject {
 
@@ -39,19 +38,19 @@ class ReachabilityManager: NSObject {
     }
 
     func isReachable() -> Bool {
-        return self.reach.isReachable
+        return (self.reach.connection != .none)
     }
 
     func isUnreachable() -> Bool {
-        return !self.reach.isReachable
+        return !(self.reach.connection != .none)
     }
 
-    func isReachableViaWWAN() -> Bool {
-        return self.reach.isReachableViaWWAN
+    func isReachableViaCellular() -> Bool {
+        return (self.reach.connection == .cellular)
     }
 
     func isReachableViaWiFi() -> Bool {
-        return self.reach.isReachableViaWiFi
+        return self.reach.connection == .wifi
     }
     
     func prepare() {}

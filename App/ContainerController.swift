@@ -6,8 +6,6 @@
 //  Copyright © 2017 3meters. All rights reserved.
 //
 
-import ReachabilitySwift
-
 class ContainerController: UIViewController {
     
     var controller: UIViewController!
@@ -32,6 +30,11 @@ class ContainerController: UIViewController {
      * MARK: - Lifecycle
      *--------------------------------------------------------------------------------------------*/
     
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        initialize()
+    }
+    
     open override func viewWillLayoutSubviews() {
         setupController(controller: self.controller)
     }
@@ -40,16 +43,16 @@ class ContainerController: UIViewController {
      * MARK: - Notifications
      *--------------------------------------------------------------------------------------------*/
     
-    func viewDidBecomeActive(sender: NSNotification) {
-        reachabilityChanged()
+    func viewDidBecomeActive(sender: Notification) {
+        reachabilityChanged(notification: sender)
         Log.d("Container controller is active")
     }
     
-    func viewWillResignActive(sender: NSNotification) {
+    func viewWillResignActive(sender: Notification) {
         Log.d("Container controller will resign active")
     }
     
-    func unreadChange(notification: NSNotification?) {
+    func unreadChange(notification: Notification?) {
         /* Sent two ways:
          - when counter observer in user controller get a callback with changed count.
          - app delegate receives new message notification and app is active. */
@@ -70,7 +73,7 @@ class ContainerController: UIViewController {
         self.messageBar.layer.backgroundColor = Colors.accentColorFill.cgColor
         self.messageBar.alpha = 0.0
         
-        NotificationCenter.default.addObserver(self, selector: #selector(reachabilityChanged), name: ReachabilityChangedNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(reachabilityChanged(notification:)), name: Notification.Name.reachabilityChanged, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(viewWillResignActive(sender:)), name: NSNotification.Name.UIApplicationWillResignActive, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(viewDidBecomeActive(sender:)), name: NSNotification.Name.UIApplicationDidBecomeActive, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(unreadChange(notification:)), name: NSNotification.Name(rawValue: Events.UnreadChange), object: nil)
@@ -118,7 +121,7 @@ class ContainerController: UIViewController {
         }
     }
     
-    func reachabilityChanged() {
+    func reachabilityChanged(notification: Notification) {
         if ReachabilityManager.instance.isReachable() {
             Reporting.track("network_available")
             hideMessageBar()
@@ -179,8 +182,7 @@ class ContainerController: UIViewController {
         if self.messageBar.alpha == 0 && self.messageBar.superview == nil {
             Log.d("Showing message bar")
             self.view.insertSubview(self.messageBar, at: self.view.subviews.count)
-            self.messageBar.alignUnder(self.navigationController?.navigationBar, centeredFillingWidthWithLeftAndRightPadding: 0, topPadding: 0, height: 40)
-            self.messageBarTop = self.messageBar.frame.origin.y
+            self.messageBar.anchorBottomCenterFillingWidth(withLeftAndRightPadding: 0, bottomPadding: 0, height: 40)
             UIView.animate(
                 withDuration: 0.20,
                 delay: 0,

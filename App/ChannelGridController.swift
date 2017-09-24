@@ -249,20 +249,18 @@ class ChannelGridController: UICollectionViewController {
                             Log.v("Removing channel from grid: \(channelId)")
                             return
                         }
-                        if channel != nil {
-                            cell.bind(channel: channel!)
-                            cell.unreadQuery = UnreadQuery(level: .channel, userId: userId, channelId: channelId)
-                            cell.unreadQuery!.observe(with: { [weak cell] error, total, isComment in
-                                guard let cell = cell else { return }
-                                if total != nil && total! > 0 {
-                                    cell.badge?.text = "\(total!)"
-                                    cell.badge?.isHidden = false
-                                }
-                                else {
-                                    cell.badge?.isHidden = true
-                                }
-                            })
-                        }
+                        cell.bind(channel: channel!)
+                        cell.unreadQuery = UnreadQuery(level: .channel, userId: userId, channelId: channelId)
+                        cell.unreadQuery!.observe(with: { [weak cell] error, total, isComment in
+                            guard let cell = cell else { return }
+                            if total != nil && total! > 0 {
+                                cell.badge?.text = "\(total!)"
+                                cell.badge?.isHidden = false
+                            }
+                            else {
+                                cell.badge?.isHidden = true
+                            }
+                        })
                     })
                     
                 }

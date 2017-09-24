@@ -10,7 +10,6 @@ import Foundation
 import ObjectiveC
 import Firebase
 import FirebaseAuth
-import ReachabilitySwift
 
 struct Reporting {
     
