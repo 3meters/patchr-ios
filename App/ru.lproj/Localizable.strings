@@ -1,189 +1,245 @@
-/*
-  Localizable.strings
-  Copyright (c) 2017 3meters. All rights reserved.
-*/
 
-"about" = "относительно";
-"account" = "Счет";
-"account_settings" = "Настройки аккаунта";
-"acknowledgements" = "Подтверждения";
+/*Localizable.strings
+  Copyright (c) 2017 3meters. All rights reserved.*/
+"about" = "О нас";
+"account" = "Учетная запись";
+"account_settings" = "Настройки учетной записи";
+"acknowledgements" = "Признание источников";
 "back" = "Назад";
-"call" = "телефонировать";
+"call" = "Позвонить";
 "cancel" = "Отмена";
 "change_password" = "Изменить пароль";
-"channel_delete_title" = "Подтвердите удаление";
-"channel_delete_message" = "Вы действительно хотите удалить это?";
+"channel_delete_title" = "Подтвердить удаление";
+"channel_delete_message" = "Вы уверены, что хотите удалить это?";
 "channel_edit_header_insert" = "Новый канал Patchr";
-"channel_edit_header_update" = "Изменить канал Patchr";
+"channel_edit_header_update" = "Редактировать канал Patchr";
 "channel_edit_purpose_placeholder" = "Назначение канала (необязательно)";
 "channel_edit_title_placeholder" = "Название канала";
-"channel_grid_search_bar_placeholder" = "искать";
+"channel_grid_search_bar_placeholder" = "Поиск";
 "channel_grid_title" = "Каналы Patchr";
 "channel_joined_title" = "Добро пожаловать!";
-"channel_joined_message" = "Вы присоединились к каналу %@!";
-"channel_leave_message" = "Вы уверены, что хотите покинуть этот канал? Может потребоваться новое приглашение для воссоединения.";
+"channel_joined_message" = "Вы присоединились к каналу «%@»!";
+"channel_leave_message" = "Вы уверены, что хотите покинуть этот канал?\nДля того чтобы присоединиться снова, может потребоваться новое приглашение.";
 "channel_left_message" = "Вы покинули этот канал.";
-"channel_missing_title" = "Отсутствие канала";
-"channel_missing_message" = "Канал \"%@\" удален.";
-"channel_no_photos" = "Этот канал нуждается в некоторых фотографиях!";
-"channel_not_connected_message" = "Для создания канала требуется подключение к сети.";
-"channel_not_connected_title" = "Не подключен";
+"channel_missing_title" = "Канал отсутствует";
+"channel_missing_message" = "Канал «%@» удален.";
+"channel_no_photos" = "Этому каналу нужны фотографии!";
+"channel_not_connected_message" = "Для канала «%@» требуется подключение к сети.";
+"channel_not_connected_title" = "Нет подключения";
 "channel_picker_title" = "Выберите канал";
 "channel_title_empty" = "Назовите свой канал";
-"channel_title_too_long" = "Имя канала должно быть не менее 200 символов.";
-"channel_title_too_short" = "Имя канала должно быть не менее 3 символов.";
-"channel_welcome_title" = "Добро пожаловать в";
-"channel_welcome_message" = "Мы начали с вашего личного канала. Пригласите друзей и начните отправлять сообщения!";
+"channel_title_too_long" = "Название канала должно быть не более 200 символов.";
+"channel_title_too_short" = "Название канала должно быть не менее 3 символов.";
+"channel_welcome_title" = "Добро пожаловать на";
+"channel_welcome_message" = "Мы начали с вашего личного канала. Пригласите друзей и начните публиковать сообщения!";
 "channels" = "Каналы";
 "clear_search_history" = "Очистить историю поиска";
 "comment" = "Комментарий";
-"comment_count" = "1 Комментарий";
-"comment_count_plural" = "%@ комментария";
+"comment_count" = "1 комментарий";
+"comment_count_plural" = "%@ комментариев";
 "confirm" = "Подтвердить";
-"connection_offline" = "Посмотреть сообщение";
-"contact_picker_title_contributors" = "Пригласить участников";
-"contact_picker_title_readers" = "Пригласите читателей";
-"contacts_permission_denied" = "Доступ к контактам был отклонен. Проверьте настройки конфиденциальности, чтобы разрешить доступ.";
-"contributor" = "Вкладчик";
-"create" = "создавать";
-"creating" = "Создание";
-"delete" = "удалять";
+"connection_offline" = "Нет соединения";
+"contact_picker_title_contributors" = "Пригласить авторов";
+"contact_picker_title_readers" = "Пригласить читателей";
+"contacts_permission_denied" = "Доступ к контактам отклонен. Проверьте настройки конфиденциальности, чтобы разрешить доступ.";
+"contributor" = "Автор";
+"create" = "Создать";
+"creating" = "Создается";
+"delete" = "Удалить";
 "deleting" = "Удаление";
-"deleted" = "удаленный";
-"developer" = "проявитель";
-"discard" = "отбрасывать";
-"discard_changes" = "Вы хотите отказаться от изменений в вашем редактировании?";
-"done" = "Законченный";
+"deleted" = "Удален";
+"developer" = "Разработчик";
+"discard" = "Отменить";
+"discard_changes" = "Хотите отменить внесенные изменения?";
+"done" = "Готово";
 "edit_message" = "Изменить сообщение";
-"edit_profile" = "Изменить описание";
-"edited_parens" = "(Изм)";
-"email" = "Адрес электронной почты";
-"email_auth_fail" = "Неправильная комбинация электронной почты и пароля";
+"edit_profile" = "Изменить профиль";
+"edited_parens" = "(изменено)";
+
+/*removed address and abbreviated one of the words describing the term for email*/
+"email" = "Эл. почта";
+"email_auth_fail" = "Неверная комбинация адреса электронной почты и пароля";
 "email_empty" = "Введите адрес электронной почты.";
 "email_invalid" = "Введите действительный адрес электронной почты.";
-"email_invalid_alert" = "%@ недействительный адрес электронной почты";
-"email_no_account" = "Ничего не найдено.";
-"email_title_log_in" = "Добро пожаловать.";
-"email_title_invite" = "желанный.";
-"email_title_sign_up" = "Каналы Patchr идеально подходят для совместного использования.";
-"email_used" = "Электронная почта уже используется";
-"feedback_cancelled" = "Обратная связь отменена";
-"feedback_saved" = "Обратная связь сохранена";
-"feedback_send_failure" = "Обратная связь отправлена";
-"feedback_sent" = "Обратная связь отправлена";
-"feedback_subject" = "Обратная связь";
+"email_invalid_alert" = "%@ не является действительным адресом электронной почты";
+"email_no_account" = "Учетная запись не найдена";
+"email_title_log_in" = "С возвращением!";
+"email_title_invite" = "Добро пожаловать!";
+"email_title_sign_up" = "Каналы Patchr дают Вам контроль над тем, кто может просматривать и отправлять сообщения.";
+"email_used" = "Адрес электронной почты уже используется";
+"feedback_cancelled" = "Отзыв отменен";
+"feedback_saved" = "Отзыв сохранен";
+"feedback_send_failure" = "Ошибка отправки отзыва";
+"feedback_sent" = "Отзыв отправлен";
+"feedback_subject" = "Обратная связь для";
 "first_name" = "Имя";
-"gallery_title" = "Галерея каналов";
+"gallery_title" = "Фото галерея канала";
 "image_missing" = "Отсутствует изображение";
 "image_unavailable" = "Не удалось скачать изображение";
-"invite" = "приглашать";
-"invite_comment" = "Авторы могут публиковать новые сообщения. Оба участника и читатели могут просматривать и комментировать опубликованные сообщения.";
-"invite_contributors" = "Пригласите участников";
-"invite_message" = "Будет отправлено приглашение по электронной почте. Использование приглашения добавит их в канал и поможет установить Patchr, если они еще не установлены.";
+"invite" = "Пригласить";
+
+/*changed order a little bit to correct the grammar*/
+"invite_comment" = "Авторы могут публиковать новые сообщения. И авторы, и читатели могут просматривать и комментировать опубликованные сообщения.";
+"invite_contributors" = "Пригласить авторов";
+"invite_message" = "Будет отправлено электронное письмо с приглашением. С помощью приглашения можно будет присоединиться к каналу и установить Patchr, если он еще не установлен.";
 "invite_message_placeholder" = "Добавить личное сообщение (необязательно)";
 "invite_readers" = "Пригласить читателей";
-"invite_title" = "Пригласите людей на «%@».";
+"invite_title" = "Пригласить людей на «%@»";
 "invites_sent" = "Приглашения отправлены";
-"irate_app_message" = "Если вам нравится пользоваться Patchr, не будете ли вы возражать против того, чтобы уделить минуту и оценить его? Спасибо вам за поддержку!";
+"irate_app_message" = "Если Вам нравится использовать Patchr, не против ли Вы выделить время на его оценку? Это займет не больше минуты. Спасибо за поддержку!";
 "irate_cancel_button" = "Нет, спасибо";
-"irate_message_title" = "Оценить Patchr";
-"irate_rate_button" = "Оценить сейчас";
-"irate_remind_button" = "Напомнить позже";
-"language_settings_section_title" = "язык";
-"language_settings_title" = "язык";
+"irate_message_title" = "Оцените Patchr";
+"irate_rate_button" = "Оцените сейчас";
+"irate_remind_button" = "Напомните мне позже";
+"language_settings_section_title" = "Язык";
+"language_settings_title" = "Язык";
 "last_name" = "Фамилия";
 "later" = "Позже";
-"leave" = "Оставлять";
-"licensing_comment" = "Следующее стороннее программное обеспечение может содержаться в частях этого мобильного приложения. Мы выражаем искреннюю благодарность сообществу разработчиков с открытым исходным кодом за все свои взносы. Продолжать!";
-"licensing_title" = "Подтверждения";
-"log_in" = "войти в систему";
-"log_out" = "выход";
-"member_remove_message" = "Вы действительно хотите удалить %@ с этого канала?";
+"leave" = "Покинуть";
+"licensing_comment" = "Нижеупомянутое программное обеспечение третьей стороны может содержаться в частях этого мобильного приложения. Мы выражаем искреннюю признательность за вклад сообществу, работающему с открытыми источниками. Так держать!";
+
+/*changed to a different clause to convey the context*/
+"licensing_title" = "Признание источников";
+"log_in" = "Войти в приложение";
+"log_out" = "Выйти из приложения";
+"member_remove_message" = "Уверены, что хотите удалить %@ с этого канала?";
 "member_settings_remove" = "Удалить из %@";
-"member_settings_role_footer" = "Авторы могут публиковать новые сообщения. Оба участника и читатели могут просматривать и комментировать опубликованные сообщения. Только владельцы могут приглашать пользователей и редактировать канал.";
-"member_settings_role_header" = "Роль канала";
-"members" = "Пользователи.";
-"message_delete" = "Удаленное сообщение";
-"message_delete_message" = "Вы действительно хотите удалить это?";
-"message_delete_title" = "Подтвердите удаление";
+"member_settings_role_footer" = "Авторы могут публиковать новые сообщения. И авторы, и читатели могут просматривать и комментировать опубликованные сообщения. Только владельцы могут приглашать пользователей и редактировать канал.";
+"member_settings_role_header" = "Роль в канале";
+"members" = "Члены";
+"message_delete" = "Удалить сообщение";
+"message_delete_message" = "Уверены, что хотите это удалить?";
+"message_delete_title" = "Подтвердить удаление";
 "message_edit_empty" = "Добавить сообщение или фотографию";
 "message_edit_title" = "Изменить сообщение";
-"message_move_to" = "Перейдите к";
-"message_moved" = "Сообщение перемещено в: %@";
+"message_move_to" = "Перенести к";
+"message_moved" = "Сообщение перенесено в: %@";
 "message_placeholder" = "Что происходит?";
-"mute" = "немой";
-"new" = "немой";
-"next" = "дальше";
-"ok" = "одобрение";
+"mute" = "Отключить звук";
+"new" = "Новый";
+"next" = "Следующий";
+
+/*changed the word based on the context*/
+"ok" = "Хорошо";
 "onboard_create_title" = "Создать канал";
-"onboard_create_description" = "Поделитесь с нужными людьми, использующими каналы Patchr.";
-"onboard_features_title" = "Продолжать!";
-"onboard_features_description" = "У Patchr есть блестящие функции обмена: поиск и редактирование фотографий, реакции, комментарии, уведомления в реальном времени, офлайн-публикация и многое другое.";
-"onboard_got_it" = "Понял!";
-"onboard_invite_title" = "приглашать";
-"onboard_invite_description" = "Выберите людей из ваших контактов, и мы справимся с остальными! Мы отправим им приглашение, помогите им установить Patchr и аккуратно запустите их в ваш удивительный канал.";
-"onboard_me" = "На борту меня!";
+"onboard_create_description" = "Поделиться только с нужными людьми, использующими каналы Patchr.";
+"onboard_features_title" = "Так держать!";
+"onboard_features_description" = "У Patchr есть выдающиеся функции совместного использования: поиск и редактирование фотографий, реакции, комментарии, уведомления в реальном времени, публикация вне сети и многое другое.";
+"onboard_got_it" = "Ясно!";
+"onboard_invite_title" = "Пригласить";
+
+/*changed some wording for a better grammar*/
+"onboard_invite_description" = "Выберите людей из Ваших контактов, а мы позаботимся об остальном! Мы отправим им приглашение по электронной почте, поможем установить Patchr и впустим их на Ваш потрясающий канал.";
+"onboard_me" = "Научите меня!";
 "onboard_welcome_title" = "Добро пожаловать!";
-"onboard_welcome_description" = "Patchr - это современный и простой способ поделиться с нужными людьми!";
+"onboard_welcome_description" = "Patchr – это современный и простой способ для обмена информации только с определенными людьми!";
 "owner" = "Владелец";
-"password" = "пароль";
+"password" = "Пароль";
 "password_confirmation" = "Подтверждение пароля";
 "password_edit_header" = "Изменить пароль";
 "password_forgot" = "Забыли пароль?";
 "password_placeholder" = "Новый пароль";
-"password_reset_email_sent" = "На ваш адрес электронной почты был отправлен адрес сброса пароля.";
-"password_title" = "пароль (6+ буква)";
-"password_too_short" = "Введите пароль с шестью символами или более.";
-"password_view_title" = "Почти к хорошему.";
-"people" = "люди";
-"person" = "человек";
-"phone" = "Номер телефона";
+"password_reset_email_sent" = "Электронное письмо по смене пароля отправлено на адрес Вашей электронной почты.";
+"password_title" = "Пароль (6+ символов)";
+"password_too_short" = "Введите пароль с шестью или более символами.";
+"password_view_title" = "Приближаемся к самому интересному.";
+"people" = "Люди";
+"person" = "Лицо";
+"phone" = "Телефон";
 "phone_number" = "Номер телефона";
 "photo_action_camera" = "Сделайте новую фотографию";
-"photo_action_library" = "Выберите фотографию библиотеки";
-"photo_action_search" = "Поиск фотографий";
-"photo_search_bar_placeholder" = "Поиск фотографий";
-"photo_share_message" = "Фото: %@ on Patchr";
+"photo_action_library" = "Выберите фотографию из Вашей коллекции";
+"photo_action_search" = "Поиск фотографий на интернете";
+"photo_search_bar_placeholder" = "Поиск фотографий на интернете";
+"photo_share_message" = "Фотография %@ на Patchr";
 "photo_use" = "Использовать фотографию";
 "play_sound_effects" = "Воспроизводить звуковые эффекты";
-"post" = "Послать.";
-"privacy_policy" = "политика конфиденциальности";
-"profile" = "Описание";
+"post" = "Публиковать";
+"privacy_policy" = "Политика конфиденциальности";
+"profile" = "Профиль";
 "profile_and_settings" = "Профиль и настройки";
-"progress_clearing" = "очистка...";
-"progress_creating" = "создающий...";
-"progress_logging_in" = "Вход в систему";
-"progress_removing" = "удалять...";
-"progress_signing_up" = "регистрирующий";
+"progress_clearing" = "Очистка...";
+"progress_creating" = "Создание...";
+"progress_logging_in" = "Вход в приложение";
+"progress_removing" = "Удаление...";
+"progress_signing_up" = "Регистрация";
 "progress_updating" = "Обновление...";
 "progress_verifying" = "Проверка...";
-"rate" = "степень";
-"reaction_list_title" = "%@  %@ %@ отреагировали на %@";
+"rate" = "Оценить";
+"reaction_list_title" = "%@  %@ %@ прореагировал с %@";
 "reader" = "Читатель";
-"remove" = "удалять";
-"save" = "сохранять";
+"remove" = "Удалить";
+"save" = "Сохранить";
 "search" = "Поиск";
-"send" = "Послать";
+"send" = "Отправить";
 "send_feedback" = "Отправить отзыв";
-"settings" = "заход";
-"settings_language_label" = "язык";
-"share_description" = "%@ пригласила вас на канал %@!";
+"settings" = "Настройки";
+"settings_language_label" = "Язык";
+"share_description" = "%@ приглашает Вас на канал %@!";
 "share_subject" = "Приглашение на канал %@";
-"sign_up" = "регистрировать";
-"skip" = "Пропускать";
-"tagline" = "Just enough sharing";
-"terms_of_service" = "Условия использования";
-"title" = "Заглавие";
-"unmute" = "Unmute";
-"update" = "сохранять";
-"update_message" = "Ваша версия Patchr не совместима с сервисом Patchr. Обновите последнюю версию.";
+"sign_up" = "Регистрация";
+"skip" = "Пропустить";
+"tagline" = "Делиться в меру";
+"terms_of_service" = "Условия обслуживания";
+"title" = "Название";
+"unmute" = "Включить звук";
+"update" = "Обновить";
+"update_message" = "Ваша версия Patchr не поддерживается сервисом Patchr. Пожалуйста, установите самую последнюю версию.";
 "update_title" = "Требуется обновление";
-"username" = "имя пользователя";
-"username_empty" = "Выберите ваше имя пользователя";
-"username_invalid_chars" = "Нижний регистр и пробелы или периоды.";
-"username_title" = "Имя пользователя";
-"username_too_long" = "Имя пользователя должно быть не менее 21 символа.";
-"username_too_short" = "Имя пользователя должно быть не менее 3 символов.";
-"username_used" = "Выберите другое имя пользователя";
+"username" = "Имя пользователя";
+"username_empty" = "Выберите имя пользователя";
+"username_invalid_chars" = "Используйте строчные буквы без пробелов и точек.";
+"username_title" = "Имя пользователя (строчными буквами)";
+"username_too_long" = "Имя пользователя должно быть не более 21 знака.";
+"username_too_short" = "Имя пользователя должно быть не менее 3 знаков.";
+"username_used" = "Выбрать другое имя пользователя";
 "version" = "Версия";
-"you_parens" = "(вы)";
+"you_parens" = "(Вы)";
+
+/*Deepview.strings
+  Copyright (c) 2017 3meters. All rights reserved.
+
+ Branch deepview templates 
+ button that takes the user to the app store to install Patchr*/
+"deepview_button" = "Загрузи приложение Patchr";
+
+/*show the invitee the context of the invitation*/
+"deepview_title" = "Приглашение от %@ на «%@» канал";
+
+/*Localizable.strings
+  Copyright (c) 2015 3meters. All rights reserved.
+
+ iPhone App Store*/
+"appstore_description" = "Некоторые социальные приложения публикуют слишком много информации, из-за чего трудно определить, попали ли сообщения и фото только к нужным людям. Patchr устраняет эту проблему при помощи личных приглашений, которые позволяют вам контролировать, кто может видеть сообщения, а также их степень причастности:\n- Приглашайте нужных людей при помощи приглашений.\n- Приглашайте людей в качестве читателей, чтобы делиться без добавления болталки. Читатели могут просматривать сообщения и добавлять реакции и комментарии.\n- Приглашайте людей в качестве соавторов, и они смогут публиковать новые сообщения на канале. Они также смогут редактировать и удалять свои сообщения.\nДелитесь событиями, темами или просто моментами из жизни при помощи канала Patchr.\nPatchr имеет великолепные средства обмена сообщениями: поиск и редактирование фото, реакции, комментарии, уведомления в реальном времени, публикование вне сети и многое другое.\nПриглашайте членов из своего списка контактов, а остальное мы возьмем на себя! Мы отправим им приглашение по эл. почте, поможем установить Patchr и ненавязчиво познакомим с вашим потрясающим каналом.";
+"appstore_keywords" = "patchr,делиться,соцсеть,фото,канал,группа,событие,проект,сообщение,чат,публикация,топ,лучшее,медиа";
+"appstore_whats_new" = "- Ясный, быстрый и простой пользовательский опыт.\n- Приглашайте пользователей на каналы в качестве читателей или соавторов.\n- Добавляйте комментарии к опубликованным сообщениям.\n- Исправлены проблемы з показом на меньших экранах.\n- Если для канала не выбрано фото, мы показываем последнее опубликованное\n- Другие улучшения стабильности и производительности.";
+"appstore_screen_channel" = "Обмен сообщениями и фотографии только с нужными людьми.";
+"appstore_screen_gallery" = "Галерея фотографий с легким просмотром.";
+"appstore_screen_grid" = "Быстрый переход к каналам с наиболее недавней активностью.";
+"appstore_screen_photo_edit" = "Проявите творческий подход с фото редактированием.";
+"appstore_screen_photo_search" = "Замечательно скажите это с поиском фотографий на интернете.";
+"appstore_screen_reactions" = "Используйте реакции и комментарии для быстрого ответа со стилем.";
+
+/*InviteEmail.strings
+  Copyright (c) 2017 3meters. All rights reserved.
+
+ SendGrid templates*/
+"template_subject" = "-user.title - пригласил Вас на «- channel.title-» в Patchr ";
+"template_title" = "Присоединяйтесь к каналу «- channel.title-» на Patchr ";
+"template_body" = "-.user.title- (-user.email-) использует Patchr, приложение для социального обмена для людей, которые хотят обмена в меру. Они пригласили Вас присоединиться к их Patchr каналу - channel.title - в -role-.";
+"template_message" = "-user.title - говорит: «-message-» ";
+"template_button" = "Присоединитесь к каналу";
+"template_browser_link" = "Вы можете скопировать эту ссылку и вставить ее в своем браузере: -link-";
+"template_closing" = "Продолжайте, команда Patchr";
+"template_footer_message" = "Сделано с любовью компанией 3meters";
+"template_footer_address" = "999 N. Northlake Way, офис 232  •  Сиэтл, штат Вашингтон  •  98103";
+
+/*Service.strings
+  Copyright (c) 2015 3meters. All rights reserved.*/
+"notification_message_text_only" = "#${channelName} @${username}: ${message.text}";
+"notification_message_photo_only" = "#${channelName}: @${username} опубликовал(а) фото";
+"notification_messate_text_and_photo" = "#${channelName}: @${username} опубликовал(а) фото и прокомментировал(а): ${message.text}";
+"notification_comment" = "#${channelName} @${username}: прокомментировал(а) публикацию: ${comment.text}";
+"template_role_reader" = "Читатель";
+"template_role_contributor" = "Соавтор";
+"template_role_owner" = "Владелец";
