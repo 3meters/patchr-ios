@@ -240,10 +240,22 @@ class FireController: NSObject {
     
     func clearMessageUnread(messageId: String, channelId: String) {
         let userId = UserController.instance.userId!
-        let unreadPath = "unreads/\(userId)/\(channelId)/\(messageId)"
+        let unreadPath = "unreads/\(userId)/\(channelId)/\(messageId)/message"
+        FireController.db.child(unreadPath).removeValue()
+    }
+
+    func clearCommentUnreads(messageId: String, channelId: String) {
+        let userId = UserController.instance.userId!
+        let unreadPath = "unreads/\(userId)/\(channelId)/\(messageId)/comments"
         FireController.db.child(unreadPath).removeValue()
     }
     
+    func clearCommentUnread(commentId: String, messageId: String, channelId: String) {
+        let userId = UserController.instance.userId!
+        let unreadPath = "unreads/\(userId)/\(channelId)/\(messageId)/comments/\(commentId)"
+        FireController.db.child(unreadPath).removeValue()
+    }
+
     /*--------------------------------------------------------------------------------------------
      * MARK: - Lookups
      *--------------------------------------------------------------------------------------------*/

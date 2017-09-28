@@ -251,14 +251,14 @@ class ChannelGridController: UICollectionViewController {
                         }
                         cell.bind(channel: channel!)
                         cell.unreadQuery = UnreadQuery(level: .channel, userId: userId, channelId: channelId)
-                        cell.unreadQuery!.observe(with: { [weak cell] error, total, isComment in
+                        cell.unreadQuery!.observe(with: { [weak cell] error, total in
                             guard let cell = cell else { return }
                             if total != nil && total! > 0 {
                                 cell.badge?.text = "\(total!)"
-                                cell.badge?.isHidden = false
+                                cell.badgeIsHidden = false
                             }
                             else {
-                                cell.badge?.isHidden = true
+                                cell.badgeIsHidden = true
                             }
                         })
                     })

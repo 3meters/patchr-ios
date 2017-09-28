@@ -12,9 +12,11 @@ import TTTAttributedLabel
 
 class MessageListCell: UITableViewCell {
 
+    var inputUserQuery: UserQuery! // Passed in by table data source
+    var inputUnreadQuery: UnreadQuery? // Passed in by table data source
+
+    var unreadCommentsQuery: UnreadQuery?
     var message: FireMessage!
-    var userQuery: UserQuery! // Passed in by table data source
-    var unreadQuery: UnreadQuery? // Passed in by table data source
 
     var description_: UILabel!
     var photoView: AirImageView!
@@ -23,12 +25,16 @@ class MessageListCell: UITableViewCell {
     var createdDate = AirLabelDisplay()
     var edited = AirLabelDisplay()
     var unread = AirLabelDisplay()
-
     var reactionToolbar: AirReactionToolbar!
     var commentsButton = CommentsButton()
 
     var template = false
     var decorated = false
+    var isUnread = false {
+        didSet {
+            self.unread.isHidden = !isUnread
+        }
+    }
 
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -180,7 +186,7 @@ class MessageListCell: UITableViewCell {
         self.edited.textColor = Colors.gray66pcntColor
         self.edited.textAlignment = .left
 
-        self.unread.text = "new".localized()
+        self.unread.text = "new".localized().lowercased()
         self.unread.font = Theme.fontText
         self.unread.numberOfLines = 1
         self.unread.textColor = Theme.colorBackgroundBadge
@@ -276,6 +282,9 @@ class MessageListCell: UITableViewCell {
         let createdAtDate = DateUtils.from(timestamp: message.createdAt!)
         self.createdDate.text = DateUtils.timeAgoShort(date: createdAtDate)
         
+        /* Unread indicator */
+        self.unread.isHidden = !self.isUnread
+        
         /* Reaction toolbar */
         
         if self.reactionToolbar.superview != nil {
@@ -287,7 +296,20 @@ class MessageListCell: UITableViewCell {
         /* Comments button */
         
         if self.commentsButton.superview != nil {
-            self.commentsButton.bind(message: message)
+            self.commentsButton.bind(message: message) // Message has commentCount property
+            let userId = UserController.instance.userId!
+            let channelId = message.channelId!
+            let messageId = message.id!
+            self.unreadCommentsQuery = UnreadQuery(level: .comments, userId: userId, channelId: channelId, messageId: messageId)
+            self.unreadCommentsQuery!.observe(with: { [weak commentsButton] error, total in
+                guard let button = commentsButton else { return }
+                if total != nil && total! > 0 {
+                    button.setTitleColor(Theme.colorBackgroundBadge, for: .normal)
+                }
+                else {
+                    button.setTitleColor(Theme.colorButtonBorder, for: .normal)
+                }
+            })
         }
         
         self.setNeedsLayout()
@@ -300,9 +322,12 @@ class MessageListCell: UITableViewCell {
         self.description_?.textColor = Colors.black
         self.description_!.font = Theme.fontTextList
         self.unread.isHidden = true
-        self.userQuery?.remove()
-        self.userQuery = nil
-        self.unreadQuery?.remove()
-        self.unreadQuery = nil
+        self.isUnread = false
+        self.inputUserQuery?.remove()
+        self.inputUserQuery = nil
+        self.inputUnreadQuery?.remove()
+        self.inputUnreadQuery = nil
+        self.unreadCommentsQuery?.remove()
+        self.unreadCommentsQuery = nil
     }
 }

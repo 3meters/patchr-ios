@@ -19,31 +19,30 @@ class ChannelViewController: BaseTableController {
 
 	var inputChannelId: String?
 
-	var channelQuery: ChannelQuery?
     var channel: FireChannel!
+	var channelQuery: ChannelQuery?
+    var unreadQuery: UnreadQuery?
 
     var container: ContainerController?
     var contentView = UIView(frame: .zero)
     var chromeBackground = UIView(frame: .zero)
 	var headerView = ChannelDetailView()
     var actionButton: AirRadialMenu!
-	var unreads = [String: Bool]()
+    weak var sheetController: STPopupController!
+    
+    var backButtonView: ChannelBackView!
+    var backButton: UIBarButtonItem!
+    var galleryButton: UIBarButtonItem!
+    var editButton: UIBarButtonItem!
+    var menuButton: UIBarButtonItem!
+    
 	var displayPhotos = [String: DisplayPhoto]()
 	var displayPhotosSorted: [Any]!
     var lastContentOffset = CGFloat(0)
     var isChromeTranslucent = false
     var postingEnabled = false
-
     var selectedRow: Int?
-
 	var headerHeight = CGFloat(0)
-
-	weak var sheetController: STPopupController!
-
-	var backButton: UIBarButtonItem!
-    var galleryButton: UIBarButtonItem!
-    var editButton: UIBarButtonItem!
-    var menuButton: UIBarButtonItem!
 
 	/* Only used for row sizing */
 	var rowHeights: NSMutableDictionary = [:]
@@ -91,12 +90,6 @@ class ChannelViewController: BaseTableController {
 			MainController.instance.link = nil
 			MainController.instance.routeDeepLink(link: link, error: nil)
 		}
-        
-        if self.unreads.count > 0, let channelId = StateController.instance.channelId {
-            for messageId in self.unreads.keys {
-                FireController.instance.clearMessageUnread(messageId: messageId, channelId: channelId)
-            }
-        }
 	}
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -248,6 +241,19 @@ class ChannelViewController: BaseTableController {
 	func userDidUpdate(notification: NSNotification) {
 		self.tableView.reloadData()
 	}
+    
+    func unreadChange(notification: NSNotification?) {
+        /* Triggered when counter observer in user controller get a callback with changed count. */
+        if UserController.instance.unreads! > 0 {
+            self.backButtonView.badge.text = "\(UserController.instance.unreads)"
+            self.backButtonView.badgeIsHidden = false
+        }
+        else {
+            self.backButtonView.badge.text = nil
+            self.backButtonView.badgeIsHidden = true
+        }
+    }
+
 
 	/*--------------------------------------------------------------------------------------------
 	 * MARK: - Methods
@@ -290,17 +296,23 @@ class ChannelViewController: BaseTableController {
 		self.itemTemplate.template = true
         
         /* Back to channels button */
-        var button = UIButton(type: .custom)
-        button.setImage(#imageLiteral(resourceName: "imgArrowLeftLight"), for: .normal)
-        button.setTitle(nil, for: .normal)
-        button.imageEdgeInsets = UIEdgeInsetsMake(8, 0, 8, 100)
-        button.titleEdgeInsets = UIEdgeInsetsMake(0, -36, 0, 0)
-        button.frame = CGRect(x: 0, y: 0, width: 120, height: 36)
-        button.addTarget(self, action: #selector(backAction(sender:)), for: .touchUpInside)
-        self.backButton = UIBarButtonItem(customView: button)
+        
+        self.backButtonView = ChannelBackView()
+        self.backButtonView.frame = CGRect(x: 0, y: 0, width: 120, height: 36)
+        self.backButtonView.buttonScrim.addTarget(self, action: #selector(backAction(sender:)), for: .touchUpInside)
+        self.backButton = UIBarButtonItem(customView: self.backButtonView)
+        
+        if UserController.instance.unreads! > 0 {
+            self.backButtonView.badge.text = "\(UserController.instance.unreads!)"
+            self.backButtonView.badgeIsHidden = false
+        }
+        else {
+            self.backButtonView.badge.text = nil
+            self.backButtonView.badgeIsHidden = true
+        }
 
         /* Edit button */
-        button = UIButton(type: .custom)
+        var button = UIButton(type: .custom)
         button.frame = CGRect(x: 0, y: 0, width: 36, height: 36)
         button.addTarget(self, action: #selector(editChannelAction(sender:)), for: .touchUpInside)
         button.showsTouchWhenHighlighted = true
@@ -329,26 +341,41 @@ class ChannelViewController: BaseTableController {
         self.headerView.setPhotoButton.addTarget(self, action: #selector(editChannelAction(sender:)), for: .touchUpInside)
         
         self.navigationItem.hidesBackButton = true
-        self.navigationItem.setLeftBarButton(backButton, animated: true)
+        self.navigationItem.setLeftBarButton(self.backButton, animated: true)
 		self.navigationItem.setRightBarButtonItems([self.menuButton, UI.spacerFixed, self.galleryButton], animated: true)
 
 		NotificationCenter.default.addObserver(self, selector: #selector(messageDidChange(notification:)), name: NSNotification.Name(rawValue: Events.MessageDidUpdate), object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(userDidUpdate(notification:)), name: NSNotification.Name(rawValue: Events.UserDidUpdate), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(bindLanguage), name: NSNotification.Name(LCLLanguageChangeNotification), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(unreadChange(notification:)), name: NSNotification.Name(rawValue: Events.UnreadChange), object: nil)
         bindLanguage()
 	}
     
-    func bindLanguage() {
-        let button = self.backButton.customView as! UIButton
-        button.setTitle("channels".localized(), for: .normal)
-    }
-
-	fileprivate func bind(channelId: String) {
+	func bind(channelId: String) {
 
 		/* Only called once */
 
 		Log.v("Binding to: \(channelId)")
+        
 		let userId = UserController.instance.userId!
+        
+        var badgeTotal = UserController.instance.unreads!
+        self.unreadQuery = UnreadQuery(level: .channel, userId: userId, channelId: channelId)
+        self.unreadQuery!.observe(with: { [weak self] error, channelTotal in
+            guard let this = self else { return }
+            if channelTotal != nil && channelTotal! > 0 {
+                badgeTotal -= channelTotal!
+            }
+            if badgeTotal > 0 {
+                this.backButtonView.badge.text = "\(badgeTotal)"
+                this.backButtonView.badgeIsHidden = false
+            }
+            else {
+                this.backButtonView.badge.text = nil
+                this.backButtonView.badgeIsHidden = true
+            }
+        })
+        
 		let query = FireController.db.child("channel-messages/\(channelId)").queryOrdered(byChild: "created_at_desc")
 		self.queryController = DataSourceController(name: "channel_view")
 		self.queryController.bind(to: self.tableView, query: query) { [weak self] scrollView, indexPath, data in
@@ -367,8 +394,8 @@ class ChannelViewController: BaseTableController {
 				return cell
 			}
             
-			cell.userQuery = UserQuery(userId: message.createdBy!)
-			cell.userQuery.once(with: { [weak this, weak cell] error, user in
+			cell.inputUserQuery = UserQuery(userId: message.createdBy!)
+			cell.inputUserQuery.once(with: { [weak this, weak cell] error, user in
 
 				guard let this = this else { return }
 				guard let cell = cell else { return }
@@ -397,28 +424,17 @@ class ChannelViewController: BaseTableController {
                 cell.bind(message: message) // Handles hide/show of actions button based on message.selected
 
 				/* Unread handling */
-
-				let messageId = message.id!
-				if this.unreads[messageId] != nil {
-					cell.unread.isHidden = false
-				}
-				else {
-					cell.unreadQuery = UnreadQuery(level: .message, userId: userId, channelId: channelId, messageId: messageId)
-					cell.unreadQuery!.observe(with: { [weak this, weak cell] error, total, isComment in
-						guard let this = this else { return }
-						guard let cell = cell else { return }
-						if total != nil && total! > 0 {
-                            if isComment != nil && isComment! {
-                                cell.commentsButton.setTitleColor(Theme.colorBackgroundBadge, for: .normal)
-                            }
-                            else {
-                                cell.unread.isHidden = false
-                            }
-							this.unreads[messageId] = true // Cache it
-                            FireController.instance.clearMessageUnread(messageId: messageId, channelId: channelId)
-						}
-					})
-				}
+                
+                let messageId = message.id!
+                
+                cell.inputUnreadQuery = UnreadQuery(level: .message, userId: userId, channelId: channelId, messageId: messageId)
+                cell.inputUnreadQuery!.once(with: { [weak cell] error, total in
+                    guard let cell = cell else { return }
+                    if total != nil && total! > 0 {
+                        cell.isUnread = true
+                        FireController.instance.clearMessageUnread(messageId: messageId, channelId: channelId)
+                    }
+                })
 
 				if message.creator != nil {
 					cell.userPhotoControl.target = message.creator
@@ -493,6 +509,11 @@ class ChannelViewController: BaseTableController {
 		Log.v("Observe query triggered for channel messages")
 	}
 
+    func bindLanguage() {
+        let button = self.backButton.customView as! ChannelBackView
+        button.label.text = "channels".localized()
+    }
+    
 	func unbind() {
 		if self.queryController != nil {
 			self.queryController.unbind()
@@ -674,7 +695,7 @@ class ChannelViewController: BaseTableController {
     
     func showComments(message: FireMessage) {
         Reporting.track("view_comment_list")
-        let controller = MessageViewController()
+        let controller = CommentListController()
         controller.inputMessageId = message.id!
         controller.inputChannelId = message.channelId!
         controller.contentSizeInPopup = CGSize(width: Config.screenWidth, height: Config.screenHeight * 0.40 )

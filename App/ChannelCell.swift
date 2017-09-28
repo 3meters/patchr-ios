@@ -14,6 +14,13 @@ class ChannelCell: UICollectionViewCell {
     @IBOutlet weak var photoView: AirImageView?
     @IBOutlet weak var titleLabel: UILabel?
     
+    var badgeIsHidden = true {
+        didSet {
+            self.badge?.isHidden = badgeIsHidden
+            self.setNeedsDisplay()
+        }
+    }
+    
     var photo: FirePhoto!
 
     var channel: FireChannel!
@@ -34,29 +41,19 @@ class ChannelCell: UICollectionViewCell {
     
     override func layoutSubviews() {
         super.layoutSubviews()
-        self.badge?.layer.cornerRadius = (self.badge?.frame.size.height)! / 2
         self.selectedBackgroundView?.fillSuperview()
     }
     
     func initialize() {
         self.clipsToBounds = true
-        self.badge?.backgroundColor = Theme.colorBackgroundBadge
+        self.badge?.textColor = Colors.white
+        self.badge?.layer.backgroundColor = Theme.colorBackgroundBadge.cgColor
+        self.badge?.clipsToBounds = true
+        self.badge?.showShadow(offset: CGSize(width: 1, height: 2),
+                              radius: 2.0,
+                              rounded: true,
+                              cornerRadius: 11)
         self.backgroundColor = Theme.colorBackgroundCell
-    }
-    
-    func reset() {
-        self.photoView?.reset()
-        self.titleLabel?.text = nil
-        self.badge?.backgroundColor = Theme.colorBackgroundBadge
-        self.badge?.text = nil
-        self.badge?.isHidden = true
-        self.channel = nil
-        self.channelQuery?.remove()
-        self.channelQuery = nil
-        self.unreadQuery?.remove()
-        self.unreadQuery = nil
-        self.photosQuery?.remove()
-        self.photosQuery = nil
     }
     
     func bind(channel: FireChannel!, searching: Bool = false) {
@@ -90,6 +87,22 @@ class ChannelCell: UICollectionViewCell {
         self.setNeedsLayout()    // Needed because binding can change element layout
         self.layoutIfNeeded()
         self.sizeToFit()
+    }
+    
+    func reset() {
+        self.photoView?.reset()
+        self.titleLabel?.text = nil
+        self.badge?.backgroundColor = Theme.colorBackgroundBadge
+        self.badge?.text = nil
+        self.badge?.isHidden = true
+        self.badgeIsHidden = true
+        self.channel = nil
+        self.channelQuery?.remove()
+        self.channelQuery = nil
+        self.unreadQuery?.remove()
+        self.unreadQuery = nil
+        self.photosQuery?.remove()
+        self.photosQuery = nil
     }
     
     override var layoutMargins: UIEdgeInsets {

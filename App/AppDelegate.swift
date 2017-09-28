@@ -65,14 +65,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate, MessagingDelegate {
             self.firstLaunch = true
             self.showedLaunchOnboarding = false
             try! Auth.auth().signOut()  // Triggers cleanup by canned queries
-            Reporting.track("first_launch")
-        }
-        
-        /* Default language setting */
-        if (UserDefaults.standard.object(forKey: "LCLCurrentLanguageKey") as? String) == nil {
-            if let langCode = Locale.current.languageCode {
-                Localize.setCurrentLanguage(langCode)
+            
+            /* Initial language setting */
+            if (UserDefaults.standard.object(forKey: "LCLCurrentLanguageKey") as? String) == nil {
+                if let langCode = Locale.current.languageCode {
+                    Localize.setCurrentLanguage(langCode)
+                }
             }
+
+            Reporting.track("first_launch")
         }
         
         self.window = UIWindow(frame: UIScreen.main.bounds)
@@ -88,6 +89,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate, MessagingDelegate {
         
         /* Auto login user, initialize current channel state */
         StateController.instance.prepare()
+        
+        /* App started because user tapped push notification */
+        if let notification = launchOptions?[.remoteNotification] as? [String: AnyObject] {
+            if !StateController.instance.stateIntialized {
+                self.pendingNotification = notification
+                NotificationCenter.default.addObserver(self, selector: #selector(stateInitialized(notification:)), name: NSNotification.Name(rawValue: Events.StateInitialized), object: nil)
+            }
+            else {
+                showChannel(notification: notification)
+            }
+        }
 
         return true
     }
@@ -155,31 +167,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate, MessagingDelegate {
     
     func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable: Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
         /*
-         * Inactive:    Always means that the user tapped on remote notification.
-         * Active:      Notification received while app is active (foreground).
-         * Background:  Notification received while app is not active (background or dead)
+         * .inactive:    Always means that the user tapped on remote notification and app was covered by notification drawer.
+         * .active:      Notification received while app is active (foreground).
          *
          * We have thirty seconds to process and call the completion handler before being
          * terminated if the app was started to process the notification.
          */
         Log.d("Notification received - app state: \(Config.appState())")
-        
-        if application.applicationState == .inactive {
-            if !StateController.instance.stateIntialized {
-                self.pendingNotification = userInfo
-                NotificationCenter.default.addObserver(self, selector: #selector(stateInitialized(notification:)), name: NSNotification.Name(rawValue: Events.StateInitialized), object: nil)
-            }
-            else {
-                showChannel(notification: userInfo)
-            }
-        }
-        else if application.applicationState == .active {
-            if UserDefaults.standard.bool(forKey: PerUserKey(key: Prefs.soundEffects)) {
-                AudioController.instance.play(sound: Sound.notification.rawValue)
-            }
-        }
-        
-        Messaging.messaging().appDidReceiveMessage(userInfo)
+        //sendLocalNotification(notification: userInfo)
+        Messaging.messaging().appDidReceiveMessage(userInfo) // For analytics tracking
         completionHandler(.noData)
     }
     
@@ -197,6 +193,31 @@ class AppDelegate: UIResponder, UIApplicationDelegate, MessagingDelegate {
         }
     }
     
+    func sendLocalNotification(notification: [AnyHashable: Any]) {
+        let aps = notification["aps"] as! [AnyHashable: Any]
+        let body = aps["alert"] as! String
+        let sound = aps["sound"] as? String
+        
+        if #available(iOS 10.0, *) {
+            let content = UNMutableNotificationContent()
+            content.body = body
+            if sound != nil {
+                content.sound = UNNotificationSound.init(named: sound!)
+            }
+            content.userInfo = notification
+            let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 1, repeats: false)
+            let request = UNNotificationRequest(identifier: "Local", content: content, trigger: trigger) // Schedule the notification.
+            UNUserNotificationCenter.current().add(request) { error in
+                if error != nil {
+                    Log.e("User notification error: \(error as Any)")
+                }
+            }
+        }
+        else {
+            // Fallback on earlier versions
+        }
+    }
+    
     func stateInitialized(notification: AnyObject?) {
         NotificationCenter.default.removeObserver(self, name: NSNotification.Name(rawValue: Events.StateInitialized), object: nil)
         if self.pendingNotification != nil {
@@ -207,8 +228,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate, MessagingDelegate {
     func showChannel(notification: [AnyHashable: Any]?) {
         if notification != nil {
             if let channelId = notification!["channel_id"] as? String {
-                StateController.instance.setChannelId(channelId: channelId)
-                MainController.instance.showChannel(channelId: channelId)
+                if StateController.instance.channelId != channelId {
+                    StateController.instance.setChannelId(channelId: channelId)
+                    MainController.instance.showChannel(channelId: channelId)
+                }
             }
         }
     }
@@ -222,7 +245,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, MessagingDelegate {
          * Receive data message on iOS 10 devices while app is in the foreground. Must
          * include data object in notification and NOT include notification object.
          */
-        Log.d(remoteMessage.appData.description)
+        Log.d("Received firebase message: \(remoteMessage.appData.description)")
     }
     
     func messaging(_ messaging: Messaging, didRefreshRegistrationToken fcmToken: String) {
@@ -235,12 +258,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate, MessagingDelegate {
     
     func connectToFcm() {
         Messaging.messaging().shouldEstablishDirectChannel = true
-        Log.d("Connected from FCM.")
+        Log.d("Connected to FCM")
     }
     
     func disconnectFromFcm() {
         Messaging.messaging().shouldEstablishDirectChannel = false
-        Log.d("Disconnected from FCM.")
+        Log.d("Disconnected from FCM")
     }
     
     /*--------------------------------------------------------------------------------------------

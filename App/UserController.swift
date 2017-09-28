@@ -16,7 +16,7 @@ class UserController: NSObject {
 
     fileprivate(set) internal var userId: String?
     fileprivate(set) internal var user: FireUser?
-    fileprivate(set) internal var unreads = 0 // Read interally by channel view controller to set nav button badge
+    fileprivate(set) internal var unreads: Int? // Read interally by channel view controller to set nav button badge
 
     fileprivate var counterRef: DatabaseReference?
     fileprivate var counterHandle: UInt?
@@ -141,6 +141,12 @@ class UserController: NSObject {
                 if let unreads = snap.value as? [String: Any] {
                     count = unreads["unreads"] as! Int
                 }
+                if UserDefaults.standard.bool(forKey: PerUserKey(key: Prefs.soundEffects)) {
+                    if this.unreads != nil && count > this.unreads! {
+                        AudioController.instance.playSystemSound(soundId: 1004) // sms bloop
+                    }
+                }
+
                 this.unreads = count
                 UIApplication.shared.applicationIconBadgeNumber = count
                 NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.UnreadChange), object: this, userInfo: nil)

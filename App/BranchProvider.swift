@@ -52,9 +52,6 @@ class BranchProvider: NSObject {
         /* $og_title */
         applink.title = "deepview_title".localizedFormat(inviterName!, channel["title"]!)
         
-        /* $og_description */
-        applink.contentDescription = message ?? "deepview_description".localizedFormat(inviterName!, channel["title"]!)
-        
         let linkProperties = BranchLinkProperties()
         linkProperties.channel = "teeny-ios"
         linkProperties.feature = BRANCH_FEATURE_TAG_INVITE

@@ -14,7 +14,7 @@ import STPopup
 import SlackTextViewController
 import BEMCheckBox
 
-class MessageViewController: BaseSlackController {
+class CommentListController: BaseSlackController {
 
     weak var sheetController: STPopupController!
 
@@ -53,7 +53,7 @@ class MessageViewController: BaseSlackController {
 	}
 
 	deinit {
-		Log.v("MessageViewController released: \(self.inputMessageId!)")
+		Log.v("CommentListController released: \(self.inputMessageId!)")
 		unbind()
 	}
 
@@ -139,6 +139,7 @@ class MessageViewController: BaseSlackController {
 
 		/* Only called once */
 
+        let userId = UserController.instance.userId!
         let messageId = self.inputMessageId!
         let channelId = self.inputChannelId!
 		Log.v("Binding to: \(messageId)")
@@ -164,8 +165,8 @@ class MessageViewController: BaseSlackController {
 				return cell
 			}
             
-			cell.userQuery = UserQuery(userId: message.createdBy!)
-			cell.userQuery.once(with: { [weak this, weak cell] error, user in
+			cell.inputUserQuery = UserQuery(userId: message.createdBy!)
+			cell.inputUserQuery.once(with: { [weak this, weak cell] error, user in
 
 				guard let this = this else { return }
 				guard let cell = cell else { return }
@@ -182,6 +183,18 @@ class MessageViewController: BaseSlackController {
 				}
 
                 cell.bind(message: message) // Handles hide/show of actions button based on message.selected
+
+                /* Unread handling */
+                
+                let commentId = message.id!
+                cell.inputUnreadQuery = UnreadQuery(level: .comment, userId: userId, channelId: channelId, messageId: messageId, commentId: commentId)
+                cell.inputUnreadQuery!.once(with: { [weak cell] error, total in
+                    guard let cell = cell else { return }
+                    if total != nil && total! > 0 {
+                        cell.isUnread = true
+                        FireController.instance.clearCommentUnread(commentId: commentId, messageId: messageId, channelId: channelId)
+                    }
+                })
 
 				if message.creator != nil {
 					cell.userPhotoControl.target = message.creator
@@ -214,7 +227,7 @@ class MessageViewController: BaseSlackController {
 	}
 }
 
-extension MessageViewController {
+extension CommentListController {
 
 	override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
 		/*
@@ -250,7 +263,7 @@ extension MessageViewController {
 	}
 }
 
-extension MessageViewController {
+extension CommentListController {
     
     override func textViewShouldBeginEditing(_ textView: UITextView) -> Bool {
         self.view.setNeedsLayout()
@@ -263,7 +276,7 @@ extension MessageViewController {
     }
 }
 
-extension MessageViewController: FUICollectionDelegate {
+extension CommentListController: FUICollectionDelegate {
 
 	func array(_ array: FUICollection, didChange object: Any, at index: UInt) {
 		let indexPath = IndexPath(row: Int(index), section: 0)
@@ -281,7 +294,7 @@ extension MessageViewController: FUICollectionDelegate {
 	}
 }
 
-extension MessageViewController: TTTAttributedLabelDelegate {
+extension CommentListController: TTTAttributedLabelDelegate {
 	func attributedLabel(_ label: TTTAttributedLabel!, didSelectLinkWith url: URL!) {
 		UIApplication.shared.openURL(url)
 	}
