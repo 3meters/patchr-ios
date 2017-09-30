@@ -22,6 +22,7 @@ class ChannelViewController: BaseTableController {
     var channel: FireChannel!
 	var channelQuery: ChannelQuery?
     var unreadQuery: UnreadQuery?
+    var unreadsChannelTotal = 0
 
     var container: ContainerController?
     var contentView = UIView(frame: .zero)
@@ -244,8 +245,12 @@ class ChannelViewController: BaseTableController {
     
     func unreadChange(notification: NSNotification?) {
         /* Triggered when counter observer in user controller get a callback with changed count. */
-        if UserController.instance.unreads! > 0 {
-            self.backButtonView.badge.text = "\(UserController.instance.unreads)"
+        var badgeTotal = UserController.instance.unreads!
+        if self.unreadsChannelTotal > 0 {
+            badgeTotal -= self.unreadsChannelTotal
+        }
+        if badgeTotal > 0 {
+            self.backButtonView.badge.text = "\(badgeTotal)"
             self.backButtonView.badgeIsHidden = false
         }
         else {
@@ -363,8 +368,11 @@ class ChannelViewController: BaseTableController {
         self.unreadQuery = UnreadQuery(level: .channel, userId: userId, channelId: channelId)
         self.unreadQuery!.observe(with: { [weak self] error, channelTotal in
             guard let this = self else { return }
-            if channelTotal != nil && channelTotal! > 0 {
-                badgeTotal -= channelTotal!
+            if channelTotal != nil {
+                self?.unreadsChannelTotal = channelTotal!
+                if channelTotal! > 0 {
+                    badgeTotal -= channelTotal!
+                }
             }
             if badgeTotal > 0 {
                 this.backButtonView.badge.text = "\(badgeTotal)"
@@ -428,7 +436,7 @@ class ChannelViewController: BaseTableController {
                 let messageId = message.id!
                 
                 cell.inputUnreadQuery = UnreadQuery(level: .message, userId: userId, channelId: channelId, messageId: messageId)
-                cell.inputUnreadQuery!.once(with: { [weak cell] error, total in
+                cell.inputUnreadQuery!.observe(with: { [weak cell] error, total in
                     guard let cell = cell else { return }
                     if total != nil && total! > 0 {
                         cell.isUnread = true

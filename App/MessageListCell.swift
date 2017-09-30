@@ -24,7 +24,7 @@ class MessageListCell: UITableViewCell {
     var userPhotoControl = PhotoControl()
     var createdDate = AirLabelDisplay()
     var edited = AirLabelDisplay()
-    var unread = AirLabelDisplay()
+    var unreadIndicator = UIView()
     var reactionToolbar: AirReactionToolbar!
     var commentsButton = CommentsButton()
 
@@ -32,7 +32,7 @@ class MessageListCell: UITableViewCell {
     var decorated = false
     var isUnread = false {
         didSet {
-            self.unread.isHidden = !isUnread
+            self.unreadIndicator.isHidden = !isUnread
         }
     }
 
@@ -77,11 +77,11 @@ class MessageListCell: UITableViewCell {
 
         self.createdDate.sizeToFit()
         self.edited.sizeToFit()
-        self.unread.sizeToFit()
         self.userName.sizeToFit()
         self.userName.align(toTheRightOf: self.userPhotoControl, matchingTopWithLeftPadding: 8, width: self.userName.width(), height: 22)
         self.createdDate.align(toTheRightOf: self.userName, matchingBottomWithLeftPadding: 8, width: self.createdDate.width(), height: self.createdDate.height())
-        self.unread.align(toTheRightOf: self.createdDate, matchingBottomWithLeftPadding: 8, width: self.unread.width(), height: self.unread.height())
+        self.unreadIndicator.cornerRadius = 6
+        self.unreadIndicator.align(toTheRightOf: self.createdDate, matchingCenterWithLeftPadding: 8, width: 12, height: 12)
 
         /* Body */
 
@@ -186,12 +186,9 @@ class MessageListCell: UITableViewCell {
         self.edited.textColor = Colors.gray66pcntColor
         self.edited.textAlignment = .left
 
-        self.unread.text = "new".localized().lowercased()
-        self.unread.font = Theme.fontText
-        self.unread.numberOfLines = 1
-        self.unread.textColor = Theme.colorBackgroundBadge
-        self.unread.textAlignment = .left
-        self.unread.isHidden = true
+        self.unreadIndicator.backgroundColor = Theme.colorBackgroundBadge
+        self.unreadIndicator.clipsToBounds = true
+        self.unreadIndicator.isHidden = true
         
         self.selectionStyle = .none
         
@@ -206,7 +203,7 @@ class MessageListCell: UITableViewCell {
         self.contentView.addSubview(self.userName)
         self.contentView.addSubview(self.createdDate)
         self.contentView.addSubview(self.edited)
-        self.contentView.addSubview(self.unread)
+        self.contentView.addSubview(self.unreadIndicator)
     }
 
     func bind(message: FireMessage) {
@@ -283,7 +280,7 @@ class MessageListCell: UITableViewCell {
         self.createdDate.text = DateUtils.timeAgoShort(date: createdAtDate)
         
         /* Unread indicator */
-        self.unread.isHidden = !self.isUnread
+        self.unreadIndicator.isHidden = !self.isUnread
         
         /* Reaction toolbar */
         
@@ -321,7 +318,7 @@ class MessageListCell: UITableViewCell {
         self.commentsButton.reset()
         self.description_?.textColor = Colors.black
         self.description_!.font = Theme.fontTextList
-        self.unread.isHidden = true
+        self.unreadIndicator.isHidden = true
         self.isUnread = false
         self.inputUserQuery?.remove()
         self.inputUserQuery = nil

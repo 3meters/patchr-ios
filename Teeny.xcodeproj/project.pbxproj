@@ -42,6 +42,7 @@
 		E204D39A1F781DDA0031E7B0 /* Reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = E204D3991F781DDA0031E7B0 /* Reachability.swift */; };
 		E204D39B1F781E2E0031E7B0 /* Reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = E204D3991F781DDA0031E7B0 /* Reachability.swift */; };
 		E204D39D1F79A97F0031E7B0 /* ChannelBackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E204D39C1F79A97F0031E7B0 /* ChannelBackView.swift */; };
+		E204D3A21F7E8E1E0031E7B0 /* ChannelGridCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E204D3A11F7E8E1E0031E7B0 /* ChannelGridCell.swift */; };
 		E20555061DBC178F003C8398 /* ColorArray.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20555051DBC178F003C8398 /* ColorArray.swift */; };
 		E2064BF31BC0212B009C7B6A /* silence.caf in Resources */ = {isa = PBXBuildFile; fileRef = E2064BF21BC0212B009C7B6A /* silence.caf */; };
 		E2064BF51BC18A66009C7B6A /* AirProgress.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2064BF41BC18A66009C7B6A /* AirProgress.swift */; };
@@ -433,6 +434,7 @@
 		E203BBCA1E69CDDA00589071 /* InviteViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = InviteViewController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		E204D3991F781DDA0031E7B0 /* Reachability.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Reachability.swift; sourceTree = "<group>"; };
 		E204D39C1F79A97F0031E7B0 /* ChannelBackView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChannelBackView.swift; sourceTree = "<group>"; };
+		E204D3A11F7E8E1E0031E7B0 /* ChannelGridCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChannelGridCell.swift; sourceTree = "<group>"; };
 		E20555051DBC178F003C8398 /* ColorArray.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ColorArray.swift; sourceTree = "<group>"; };
 		E2064BF21BC0212B009C7B6A /* silence.caf */ = {isa = PBXFileReference; lastKnownFileType = file; path = silence.caf; sourceTree = "<group>"; };
 		E2064BF41BC18A66009C7B6A /* AirProgress.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = AirProgress.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
@@ -1004,6 +1006,7 @@
 			isa = PBXGroup;
 			children = (
 				E23EC4CD1DBD44DB00EBCD42 /* ChannelCell.swift */,
+				E204D3A11F7E8E1E0031E7B0 /* ChannelGridCell.swift */,
 				E2499E591F3A1913002C0F16 /* ChannelPickerCell.swift */,
 				E2EEE9111E9C82680085565E /* EmojiViewCell.swift */,
 				E227294C1CEA7D0600913041 /* GalleryViewCell.swift */,
@@ -1762,6 +1765,7 @@
 				E2CA16FF1DB95DDB00F99E1D /* FireAttachment.swift in Sources */,
 				E23C01111CE4F771009C56B2 /* CaptionView.swift in Sources */,
 				E2983C151F6C330B000F72D4 /* Date+TimeAgo.swift in Sources */,
+				E204D3A21F7E8E1E0031E7B0 /* ChannelGridCell.swift in Sources */,
 				E26A02FF1DF5DC5800EE32D3 /* AirTokenView.swift in Sources */,
 				E26BBF991DB5734F00038754 /* PHPhotoLibrary+PhotoAsset.swift in Sources */,
 				E2499E511F265136002C0F16 /* MessageEditViewController.swift in Sources */,

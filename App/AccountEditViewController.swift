@@ -85,6 +85,7 @@ class AccountEditViewController: BaseEditViewController {
     func changePasswordAction(sender: AnyObject) {
         Reporting.track("view_password_edit")
         let controller = PasswordEditViewController()
+        self.navigationItem.backBarButtonItem = UIBarButtonItem(title: "back".localized(), style: .plain, target: nil, action: nil)
         self.navigationController?.pushViewController(controller, animated: true)
     }
     

@@ -281,6 +281,7 @@ class PasswordViewController: BaseEditViewController {
 
                 if error == nil {
                     let controller = AccountEditViewController()
+                    self.navigationItem.backBarButtonItem = UIBarButtonItem(title: "back".localized(), style: .plain, target: nil, action: nil)
                     self.navigationController?.pushViewController(controller, animated: true)
                 }
                 else {

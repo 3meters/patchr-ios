@@ -122,12 +122,12 @@ class CommentListController: BaseSlackController {
         self.itemTemplate.commentsButton.removeFromSuperview()
         self.itemTemplate.reactionToolbar.removeFromSuperview()
         
-        self.textView.placeholder = "Write a comment..."
+        self.textView.placeholder = "comment_placeholder".localized()
         
 		/* Navigation bar */
         let closeButton = UIBarButtonItem(barButtonSystemItem: .stop, target: self, action: #selector(closeAction(sender:)))
         self.navigationItem.leftBarButtonItems = [closeButton]
-        self.navigationItem.title = "Comments"
+        self.navigationItem.title = "comments".localized()
         
         /* Trigger layout pass */
 		self.textInputbar.contentInset = UIEdgeInsetsMake(5, 8, 5, 8)
@@ -164,7 +164,6 @@ class CommentListController: BaseSlackController {
 			guard message.createdBy != nil else {
 				return cell
 			}
-            
 			cell.inputUserQuery = UserQuery(userId: message.createdBy!)
 			cell.inputUserQuery.once(with: { [weak this, weak cell] error, user in
 
@@ -188,7 +187,7 @@ class CommentListController: BaseSlackController {
                 
                 let commentId = message.id!
                 cell.inputUnreadQuery = UnreadQuery(level: .comment, userId: userId, channelId: channelId, messageId: messageId, commentId: commentId)
-                cell.inputUnreadQuery!.once(with: { [weak cell] error, total in
+                cell.inputUnreadQuery!.observe(with: { [weak cell] error, total in
                     guard let cell = cell else { return }
                     if total != nil && total! > 0 {
                         cell.isUnread = true

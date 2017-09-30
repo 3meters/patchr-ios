@@ -172,7 +172,7 @@ class ChannelGridController: UICollectionViewController {
         self.collectionView!.backgroundColor = Theme.colorBackgroundForm
         self.collectionView!.contentInset = UIEdgeInsets(top: self.chromeHeight, left: 0, bottom: 44, right: 0)
         self.collectionView!.contentOffset = CGPoint(x: 0, y: -self.chromeHeight)
-        self.collectionView!.register(UINib(nibName: "ChannelCell", bundle: nil), forCellWithReuseIdentifier: "cell")
+        self.collectionView!.register(ChannelGridCell.self, forCellWithReuseIdentifier: "cell")
         
         /* Buttons (*/
 		self.searchButton = UIBarButtonItem(barButtonSystemItem: .search, target: self, action: #selector(searchAction(sender:)))
@@ -232,7 +232,7 @@ class ChannelGridController: UICollectionViewController {
             self.queryController.bind(to: self.collectionView!, query: query) { [weak self] scrollView, indexPath, data in
                 
                 let collectionView = scrollView as! UICollectionView
-                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as! ChannelCell
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as! ChannelGridCell
                 cell.reset()    // Releases previous data observers
                 
                 guard self != nil else { return cell }
@@ -254,7 +254,7 @@ class ChannelGridController: UICollectionViewController {
                         cell.unreadQuery!.observe(with: { [weak cell] error, total in
                             guard let cell = cell else { return }
                             if total != nil && total! > 0 {
-                                cell.badge?.text = "\(total!)"
+                                cell.badge.text = "\(total!)"
                                 cell.badgeIsHidden = false
                             }
                             else {
@@ -345,11 +345,12 @@ extension ChannelGridController {
          */
         Reporting.track("select_channel")
         
-        let cell = collectionView.cellForItem(at: indexPath) as! ChannelCell
-        let channelId = cell.channel.id!
-        if channelId != StateController.instance.channelId {
-            StateController.instance.setChannelId(channelId: channelId)
-            MainController.instance.showChannel(channelId: channelId, animated: true)
+        let cell = collectionView.cellForItem(at: indexPath) as! ChannelGridCell
+        if let channelId = cell.channel?.id {
+            if channelId != StateController.instance.channelId {
+                StateController.instance.setChannelId(channelId: channelId)
+                MainController.instance.showChannel(channelId: channelId, animated: true)
+            }            
         }
         
         if let indexPath = self.collectionView?.indexPathsForSelectedItems?[0] {

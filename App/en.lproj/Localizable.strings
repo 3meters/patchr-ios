@@ -39,6 +39,8 @@
 "comment" = "Comment";
 "comment_count" = "1 Comment";
 "comment_count_plural" = "%@ Comments";
+"comments" = "Comments";
+"comment_placeholder" = "Write a comment...";
 "confirm" = "Confirm";
 "connection_offline" = "Connection is offline";
 "contact_picker_title_contributors" = "Invite Contributors";
@@ -112,7 +114,8 @@
 "message_moved" = "Message moved to: %@";
 "message_placeholder" = "What\'s happening?";
 "mute" = "Mute";
-"new" = "New";
+"new_message" = "New";
+"new_comment" = "New";
 "next" = "Next";
 "ok" = "OK";
 "onboard_create_title" = "Create a Channel";

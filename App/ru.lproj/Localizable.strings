@@ -1,7 +1,7 @@
 
 /*Localizable.strings
   Copyright (c) 2017 3meters. All rights reserved.*/
-"about" = "О нас";
+"about" = "О";
 "account" = "Учетная запись";
 "account_settings" = "Настройки учетной записи";
 "acknowledgements" = "Признание источников";
@@ -37,6 +37,8 @@
 "comment" = "Комментарий";
 "comment_count" = "1 комментарий";
 "comment_count_plural" = "%@ комментариев";
+"comments" = "Комментарии";
+"comment_placeholder" = "Написать комментарий...";
 "confirm" = "Подтвердить";
 "connection_offline" = "Нет соединения";
 "contact_picker_title_contributors" = "Пригласить авторов";
@@ -116,7 +118,8 @@
 "message_moved" = "Сообщение перенесено в: %@";
 "message_placeholder" = "Что происходит?";
 "mute" = "Отключить звук";
-"new" = "Новый";
+"new_message" = "Новое";
+"new_comment" = "Новый";
 "next" = "Следующий";
 
 /*changed the word based on the context*/
@@ -147,10 +150,10 @@
 "person" = "Лицо";
 "phone" = "Телефон";
 "phone_number" = "Номер телефона";
-"photo_action_camera" = "Сделайте новую фотографию";
-"photo_action_library" = "Выберите фотографию из Вашей коллекции";
-"photo_action_search" = "Поиск фотографий на интернете";
-"photo_search_bar_placeholder" = "Поиск фотографий на интернете";
+"photo_action_camera" = "Сделайте новое фото";
+"photo_action_library" = "Выберите фото из библиотеки";
+"photo_action_search" = "Поиск фото на интернете";
+"photo_search_bar_placeholder" = "Поиск фото на интернете";
 "photo_share_message" = "Фотография %@ на Patchr";
 "photo_use" = "Использовать фотографию";
 "play_sound_effects" = "Воспроизводить звуковые эффекты";

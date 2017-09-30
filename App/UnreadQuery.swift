@@ -5,6 +5,7 @@
 
 import Foundation
 import FirebaseAuth
+import FirebaseDatabase
 
 class UnreadQuery: NSObject {
     
@@ -37,7 +38,7 @@ class UnreadQuery: NSObject {
         }
     }
     
-    func observe(with block: @escaping (Error?, Int?) -> Void) {
+    func observe(event: DataEventType = .value, with block: @escaping (Error?, Int?) -> Void) {
         
         self.block = block
         
@@ -48,7 +49,7 @@ class UnreadQuery: NSObject {
             }
         }
 
-        self.handle = FireController.db.child(self.path).observe(.value, with: { [weak self] snap in
+        self.handle = FireController.db.child(self.path).observe(event, with: { [weak self] snap in
             guard let this = self else { return }
             var total = 0
             if !(snap.value is NSNull) {
@@ -87,11 +88,11 @@ class UnreadQuery: NSObject {
         })
     }
 
-    func once(with then: @escaping (Error?, Int?) -> Void) {
+    func once(event: DataEventType = .value, with then: @escaping (Error?, Int?) -> Void) {
         
         self.block = then
         
-        FireController.db.child(self.path).observeSingleEvent(of: .value, with: { [weak self] snap in
+        FireController.db.child(self.path).observeSingleEvent(of: event, with: { [weak self] snap in
             guard let this = self else { return }
             var total = 0
             if !(snap.value is NSNull) {

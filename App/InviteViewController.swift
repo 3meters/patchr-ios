@@ -138,6 +138,7 @@ class InviteViewController: BaseEditViewController {
         controller.inputCode = self.inputCode
         controller.inputChannelId = self.inputChannelId
         controller.inputChannelTitle = self.inputChannelTitle
+        self.navigationItem.backBarButtonItem = UIBarButtonItem(title: "back".localized(), style: .plain, target: nil, action: nil)
         self.navigationController?.pushViewController(controller, animated: true)
     }
 }

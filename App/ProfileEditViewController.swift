@@ -87,6 +87,7 @@ class ProfileEditViewController: BaseEditViewController {
         Reporting.track("view_password_entry")
         let controller = PasswordViewController()
         controller.mode = .reauth
+        self.navigationItem.backBarButtonItem = UIBarButtonItem(title: "back".localized(), style: .plain, target: nil, action: nil)
         self.navigationController?.pushViewController(controller, animated: true)
     }
     
