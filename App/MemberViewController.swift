@@ -100,8 +100,18 @@ class MemberViewController: BaseViewController, UIScrollViewDelegate, UITextFiel
         self.buttonGroup.anchorTopCenterFillingWidth(withLeftAndRightPadding: 16, topPadding: 8, height: self.buttonGroup.isHidden ? 0 : 56)
         
         if self.authenticatedUser {
-            self.settingsButton.anchorCenterLeft(withLeftPadding: 0, width: buttonWidth, height: 40)
-            self.editButton.align(toTheRightOf: self.settingsButton, matchingCenterWithLeftPadding: 16, width: self.editButton.isHidden ? 0 : buttonWidth, height: 40)
+            self.settingsButton.sizeToFit()
+            self.editButton.sizeToFit()
+            if self.editButton.width() + 32 > buttonWidth { // Take room from settings button and add to edit button
+                let editButtonWidth = self.editButton.width() + 32
+                let settingsButtonWidth = viewWidth - (editButtonWidth + 48)
+                self.settingsButton.anchorCenterLeft(withLeftPadding: 0, width: settingsButtonWidth, height: 40)
+                self.editButton.align(toTheRightOf: self.settingsButton, matchingCenterWithLeftPadding: 16, width: self.editButton.isHidden ? 0 : editButtonWidth, height: 40)
+            }
+            else {
+                self.settingsButton.anchorCenterLeft(withLeftPadding: 0, width: buttonWidth, height: 40)
+                self.editButton.align(toTheRightOf: self.settingsButton, matchingCenterWithLeftPadding: 16, width: self.editButton.isHidden ? 0 : buttonWidth, height: 40)
+            }
         }
         else {
             self.callButton.anchorCenterLeft(withLeftPadding: 0, width: self.callButton.isHidden ? 0 : buttonWidth, height: 40)
@@ -197,6 +207,10 @@ class MemberViewController: BaseViewController, UIScrollViewDelegate, UITextFiel
 
         self.email.label.textColor = Colors.brandColorTextLight
         self.email.isHidden = true
+        
+        self.settingsButton.setImage(#imageLiteral(resourceName: "imgSettingsLight"), for: .normal)
+        self.settingsButton.imageEdgeInsets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
+        self.settingsButton.imageView?.contentMode = .scaleAspectFit
 
         self.editButton.addTarget(self, action: #selector(editAction(sender:)), for: .touchUpInside)
         self.settingsButton.addTarget(self, action: #selector(settingsAction(sender:)), for: .touchUpInside)
@@ -238,7 +252,6 @@ class MemberViewController: BaseViewController, UIScrollViewDelegate, UITextFiel
         self.email.caption.text = "email".localized()
         self.email.setNeedsLayout()
         self.editButton.setTitle("edit_profile".localized().uppercased(), for: .normal)
-        self.settingsButton.setTitle("settings".localized().uppercased(), for: .normal)
         self.callButton.setTitle("call".localized().uppercased(), for: .normal)
     }
 
