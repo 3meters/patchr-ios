@@ -187,23 +187,23 @@ public extension UIView {
             subview.removeFromSuperview()
         }
     }
-	
-	func resizeToFitSubviews() {
-		var w: CGFloat = 0
-		var h: CGFloat = 0
-		
-		for subview in subviews {
-			if !subview.isHidden {
-				let fw = subview.frame.origin.x + subview.frame.size.width
-				let fh = subview.frame.origin.y + subview.frame.size.height
-				w = max(fw, w)
-				h = max(fh, h)
-			}
-		}
-		
-        self.frame = CGRect(x:self.frame.origin.x, y:self.frame.origin.y, width:w, height:h)
-	}
-	
+
+    func resizeToFitSubviews(padding: CGFloat = 0) {
+        var w: CGFloat = 0
+        var h: CGFloat = 0
+        
+        for subview in subviews {
+            if !subview.isHidden {
+                let fw = subview.frame.origin.x + subview.frame.size.width
+                let fh = subview.frame.origin.y + subview.frame.size.height
+                w = max(fw, w)
+                h = max(fh, h)
+            }
+        }
+        
+        self.frame = CGRect(x: self.frame.origin.x, y: self.frame.origin.y, width: w + padding, height: h + padding)
+    }
+
 	func sizeThatFitsSubviews() -> CGSize {
 		var w: CGFloat = 0
 		var h: CGFloat = 0

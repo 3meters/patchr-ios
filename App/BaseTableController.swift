@@ -12,11 +12,9 @@ import FirebaseAuth
 
 class BaseTableController: UIViewController {
     
-    var handleAuth: AuthStateDidChangeListenerHandle!
-	
+    var authHandle: AuthStateDidChangeListenerHandle!
     var tableView = UITableView(frame: CGRect.zero, style: .plain)
     var queryController: DataSourceController!
-    var activity = UIActivityIndicatorView(activityIndicatorStyle: .whiteLarge)
     
 	/*--------------------------------------------------------------------------------------------
 	* Lifecycle
@@ -32,14 +30,12 @@ class BaseTableController: UIViewController {
 	*--------------------------------------------------------------------------------------------*/
 	
 	func initialize() {
-        self.handleAuth = Auth.auth().addStateDidChangeListener() { [weak self] auth, user in
+        self.authHandle = Auth.auth().addStateDidChangeListener() { [weak self] auth, user in
             guard let this = self else { return }
             if user == nil && this.queryController != nil {
                 this.queryController.unbind()
             }
         }
         self.view.backgroundColor = Theme.colorBackgroundForm
-        self.activity.color = Theme.colorActivityIndicator
-        self.activity.hidesWhenStopped = true
 	}
 }

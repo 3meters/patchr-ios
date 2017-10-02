@@ -231,9 +231,6 @@ class ContactPickerController: BaseTableController, CLTokenInputViewDelegate {
     }
 
     func loadContacts() {
-        DispatchQueue.main.async {
-            self.activity.startAnimating()
-        }
         do {
             let fetchRequest = CNContactFetchRequest(keysToFetch: self.keysToFetch as! [CNKeyDescriptor])
             fetchRequest.sortOrder = .givenName
@@ -246,9 +243,6 @@ class ContactPickerController: BaseTableController, CLTokenInputViewDelegate {
                 }
             }
             filterContacts()
-            DispatchQueue.main.async {
-                self.activity.stopAnimating()
-            }
         }
         catch {
             Log.w("Error enumerating contacts: \(error.localizedDescription)")

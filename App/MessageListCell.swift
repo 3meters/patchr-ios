@@ -10,7 +10,7 @@ import Localize_Swift
 import UIKit
 import TTTAttributedLabel
 
-class MessageListCell: UITableViewCell {
+class MessageListCell: UICollectionViewCell {
 
     var inputUserQuery: UserQuery! // Passed in by table data source
     var inputUnreadQuery: UnreadQuery? // Passed in by table data source
@@ -36,8 +36,8 @@ class MessageListCell: UITableViewCell {
         }
     }
 
-    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
+    override init(frame: CGRect) {
+        super.init(frame: frame)
         initialize()
     }
     
@@ -65,19 +65,18 @@ class MessageListCell: UITableViewCell {
         */
         guard self.message != nil else { return }
         
-        self.contentView.bounds.size.width = self.bounds.size.width - 24
-        
-        let columnLeft = CGFloat(48 + 8)
-        let columnWidth = self.contentView.width() - columnLeft
-        let photoHeight = columnWidth * 0.5625        // 16:9 aspect ratio
+        let columnLeft = CGFloat(6 + 48 + 8)
+        let columnWidth = self.width() - (columnLeft + 18 /* Allow for padding */)
+        let photoHeight = columnWidth * 0.5625 // 16:9 aspect ratio
 
-        self.userPhotoControl.anchorTopLeft(withLeftPadding: 0, topPadding: 0, width: 48, height: 48)
+        self.userPhotoControl.anchorTopLeft(withLeftPadding: 6, topPadding: 6, width: 48, height: 48)
 
         /* Header */
 
         self.createdDate.sizeToFit()
         self.edited.sizeToFit()
         self.userName.sizeToFit()
+
         self.userName.align(toTheRightOf: self.userPhotoControl, matchingTopWithLeftPadding: 8, width: self.userName.width(), height: 22)
         self.createdDate.align(toTheRightOf: self.userName, matchingBottomWithLeftPadding: 8, width: self.createdDate.width(), height: self.createdDate.height())
         self.unreadIndicator.cornerRadius = 6
@@ -90,18 +89,18 @@ class MessageListCell: UITableViewCell {
             bottomView = self.description_
             self.description_?.bounds.size.width = columnWidth
             self.description_?.sizeToFit()
-            self.description_?.alignUnder(self.userName, matchingLeftAndFillingWidthWithRightPadding: 0, topPadding: 2, height: self.description_!.height())
+            self.description_?.alignUnder(self.userName, matchingLeftWithTopPadding: 2, width: columnWidth, height: self.description_!.height())
         }
 
         if self.message.text != nil && self.message.attachments != nil {
             self.description_?.bounds.size.width = columnWidth
             self.description_?.sizeToFit()
-            self.description_?.alignUnder(self.userName, matchingLeftAndFillingWidthWithRightPadding: 0, topPadding: 2, height: self.description_!.height())
-            self.photoView?.alignUnder(self.description_!, matchingLeftAndFillingWidthWithRightPadding: 0, topPadding: 10, height: photoHeight)
+            self.description_?.alignUnder(self.userName, matchingLeftWithTopPadding: 2, width: columnWidth, height: self.description_!.height())
+            self.photoView?.alignUnder(self.description_!, matchingLeftWithTopPadding: 10, width: columnWidth, height: photoHeight)
             self.photoView.progressView.anchorInCenter(withWidth: 150, height: 20)
         }
         else if (self.message.attachments?.first) != nil {
-            self.photoView?.alignUnder(self.userName, matchingLeftAndFillingWidthWithRightPadding: 0, topPadding: 10, height: photoHeight)
+            self.photoView?.alignUnder(self.userName, matchingLeftWithTopPadding: 10, width: columnWidth, height: photoHeight)
             self.photoView.progressView.anchorInCenter(withWidth: 150, height: 20)
         }
         
@@ -130,9 +129,15 @@ class MessageListCell: UITableViewCell {
                 , height: self.reactionToolbar.height())
         }
         
-        self.contentView.resizeToFitSubviews()
-        self.bounds.size.height = self.contentView.height() + 24
-        self.contentView.fillSuperview(withLeftPadding: 12, rightPadding: 12, topPadding: 12, bottomPadding: 12)
+        self.contentView.resizeToFitSubviews(padding: CGFloat(6))
+        self.bounds.size.height = self.contentView.height()
+        
+        self.contentView.layer.cornerRadius = 3
+        self.contentView.showShadow(offset: CGSize(width: 1, height: 1)
+            , radius: 2.0
+            , rounded: true
+            , cornerRadius: 3)
+
     }
 
     /*--------------------------------------------------------------------------------------------
@@ -190,10 +195,11 @@ class MessageListCell: UITableViewCell {
         self.unreadIndicator.clipsToBounds = true
         self.unreadIndicator.isHidden = true
         
-        self.selectionStyle = .none
-        
         self.reactionToolbar = AirReactionToolbar()
         self.reactionToolbar.alwaysShowAddButton = true
+
+        self.backgroundColor = Colors.gray90pcntColor
+        self.contentView.backgroundColor = Colors.white
         
         self.contentView.addSubview(self.reactionToolbar)
         self.contentView.addSubview(self.commentsButton)

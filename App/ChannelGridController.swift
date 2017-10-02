@@ -15,10 +15,9 @@ import pop
 class ChannelGridController: UICollectionViewController {
     
     var authHandle: AuthStateDidChangeListenerHandle!
-    
+    var queryController: DataSourceController!
 	var totalUnreadsQuery: UnreadQuery?
     var searchController = UISearchController(searchResultsController: nil)
-    var queryController: DataSourceController!
     var titles: [String: String] = [:]
 
 	var searchBar: UISearchBar!
@@ -56,7 +55,6 @@ class ChannelGridController: UICollectionViewController {
     }
 
 	override func viewWillLayoutSubviews() {
-		super.viewWillLayoutSubviews()
         self.view.fillSuperview()
         self.collectionView?.fillSuperview()
 	}
@@ -114,16 +112,13 @@ class ChannelGridController: UICollectionViewController {
             guard let this = self else { return }
             if user == nil {
                 this.totalUnreadsQuery?.remove()
-            }
-            if user == nil && this.queryController != nil {
-                this.queryController.unbind()
+                this.queryController?.unbind()
             }
         }
         
         self.view.backgroundColor = Theme.colorBackgroundForm
         
         self.automaticallyAdjustsScrollViewInsets = false
-        self.collectionView?.delaysContentTouches = false
         
         self.searchController.dimsBackgroundDuringPresentation = false
         self.definesPresentationContext = true
@@ -167,11 +162,11 @@ class ChannelGridController: UICollectionViewController {
         layout.minimumInteritemSpacing = 8
         layout.minimumLineSpacing = 8
         
-        self.collectionView!.collectionViewLayout = layout
-        
         self.collectionView!.backgroundColor = Theme.colorBackgroundForm
+        self.collectionView!.collectionViewLayout = layout
         self.collectionView!.contentInset = UIEdgeInsets(top: self.chromeHeight, left: 0, bottom: 44, right: 0)
         self.collectionView!.contentOffset = CGPoint(x: 0, y: -self.chromeHeight)
+        self.collectionView?.delaysContentTouches = false
         self.collectionView!.register(ChannelGridCell.self, forCellWithReuseIdentifier: "cell")
         
         /* Buttons (*/
@@ -205,12 +200,6 @@ class ChannelGridController: UICollectionViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(bindLanguage), name: NSNotification.Name(LCLLanguageChangeNotification), object: nil)
 	}
     
-    func bindLanguage() {
-        self.searchBar.placeholder = "channel_grid_search_bar_placeholder".localized()
-        self.searchBar.setValue("cancel".localized(), forKey: "_cancelButtonText")
-        self.navigationItem.title = "channel_grid_title".localized()
-    }
-
 	func bind() {
 
 		if let userId = UserController.instance.userId {
@@ -218,7 +207,6 @@ class ChannelGridController: UICollectionViewController {
             unbind()
 
 			let query = FireController.db.child("member-channels/\(userId)").queryOrdered(byChild: "activity_at_desc")
-            
             self.queryController = DataSourceController(name: "channel_switcher")
             self.queryController.delegate = self
             self.queryController.matcher = { [weak self] searchText, data in
@@ -269,6 +257,12 @@ class ChannelGridController: UICollectionViewController {
 			self.view.setNeedsLayout()
 		}
 	}
+    
+    func bindLanguage() {
+        self.searchBar.placeholder = "channel_grid_search_bar_placeholder".localized()
+        self.searchBar.setValue("cancel".localized(), forKey: "_cancelButtonText")
+        self.navigationItem.title = "channel_grid_title".localized()
+    }
     
     func unbind() {
         if self.queryController != nil {

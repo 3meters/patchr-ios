@@ -234,10 +234,10 @@ class MainController: NSObject, iRateDelegate {
     
     func showChannel(channelId: String, animated: Bool = false, then: (() -> Void)? = nil) {
         showChannelsGrid {
-            if let channelsGrid = self.containerController.controller as? AirNavigationController {
+            if let wrapper = self.containerController.controller as? AirNavigationController {
                 Reporting.track("view_channel")
                 let controller = ChannelViewController(channelId: channelId)
-                channelsGrid.pushViewController(controller, animated: animated)
+                wrapper.pushViewController(controller, animated: animated)
             }
             then?()
         }
@@ -253,20 +253,21 @@ class MainController: NSObject, iRateDelegate {
             }
         }
         
-        let channelsGrid = AirNavigationController(rootViewController: ChannelGridController(collectionViewLayout: UICollectionViewFlowLayout()))
+        let channelsGrid = ChannelGridController(collectionViewLayout: UICollectionViewLayout())
+        let wrapper = AirNavigationController(rootViewController: channelsGrid)
         Log.v("Creating channels grid")
 
         /* If transitioning from empty */
         if let emptyController = self.containerController.controller as? EmptyViewController,
             !emptyController.scenePlayed {
             emptyController.startScene() {
-                self.containerController.changeController(controller: channelsGrid)
+                self.containerController.changeController(controller: wrapper)
                 then?()
             }
             return
         }
         else {
-            self.containerController.changeController(controller: channelsGrid)
+            self.containerController.changeController(controller: wrapper)
             then?()
         }
     }
