@@ -80,7 +80,7 @@ class ChannelGridCell: UICollectionViewCell {
         self.photoView.contentMode = .scaleAspectFill
         self.photoView.backgroundColor = Theme.colorBackgroundForm
         
-        self.titleLabel.font = Theme.fontCommentSmall
+        self.titleLabel.font = UIDevice.current.userInterfaceIdiom == .phone ? Theme.fontCommentSmall : Theme.fontComment
         self.titleLabel.textColor = Theme.colorText
         self.titleLabel.numberOfLines = 2
         self.titleLabel.textAlignment = .center

@@ -20,7 +20,7 @@ class CommentListController: BaseSlackController {
 
 	/* Only used for row sizing */
 	var rowHeights: NSMutableDictionary = [:]
-	var itemTemplate = MessageListCell()
+	var itemTemplate = CommentListCell()
 
 	/*--------------------------------------------------------------------------------------------
 	 * MARK: - Lifecycle
@@ -116,7 +116,7 @@ class CommentListController: BaseSlackController {
 		self.tableView.separatorInset = .zero
 		self.tableView.tableFooterView = UIView()
 		self.tableView.delegate = self
-		self.tableView.register(MessageListCell.self, forCellReuseIdentifier: "cell")
+		self.tableView.register(CommentListCell.self, forCellReuseIdentifier: "cell")
 
 		self.itemTemplate.template = true
         self.itemTemplate.commentsButton.removeFromSuperview()
@@ -155,7 +155,7 @@ class CommentListController: BaseSlackController {
 
 			/* If cell.prepareToReuse is called, userQuery observer is removed */
             let tableView = scrollView as! UITableView
-			let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! MessageListCell
+			let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! CommentListCell
 			guard let this = self else { return cell }
 
 			let snap = data as! DataSnapshot
@@ -281,7 +281,7 @@ extension CommentListController: FUICollectionDelegate {
 		let indexPath = IndexPath(row: Int(index), section: 0)
 		if let cell = self.tableView.cellForRow(at: indexPath) {
 			if let snap = object as? DataSnapshot {
-				let cell = cell as! MessageListCell
+				let cell = cell as! CommentListCell
 				self.rowHeights.removeObject(forKey: snap.key)
 				let message = FireMessage(dict: snap.value as! [String: Any], id: snap.key)
 				message.creator = cell.message?.creator

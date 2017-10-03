@@ -23,6 +23,7 @@
 		9FDCC30FF30E86567AA6374F /* ChannelViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FDCC7D2BF8341DCBB416DC4 /* ChannelViewController.swift */; };
 		9FDCC36F029C0222AB24D09F /* FireController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FDCC68ACDC02C764EE70B02 /* FireController.swift */; };
 		9FDCC52A639B1102E1771A34 /* MemberSettingsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FDCC6D9E7C9AADE45675174 /* MemberSettingsController.swift */; };
+		9FDCC5802D83556E7B07E91F /* CommentListCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FDCCF320A80197FE4610956 /* CommentListCell.swift */; };
 		9FDCC63A0CB7D27F8D76B48E /* AboutViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FDCC3A31B4DE515C4C32CF9 /* AboutViewController.swift */; };
 		9FDCC6C37ECC4CE0D7B2070E /* MainController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FDCCADB4957C2E128DDE9FF /* MainController.swift */; };
 		9FDCC6D6A597066D975595FA /* DevelopmentViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FDCCD7DF56E13112F3E35C6 /* DevelopmentViewController.swift */; };
@@ -34,7 +35,10 @@
 		9FDCCDF24C1D1F59CBEF6E32 /* MessageQuery.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FDCCEFC8FC05526D291A77B /* MessageQuery.swift */; };
 		9FDCCE62CE764FDC39D41C5F /* ProfileEditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FDCCE5E0AA449B739AD0137 /* ProfileEditViewController.swift */; };
 		9FDCCEE8BA867A541B95EB3A /* SettingsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FDCCA7AB0285558DFFDF2C1 /* SettingsTableViewController.swift */; };
+		9FDCCEEAD47CF9018B1A88D7 /* CommentListCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FDCCF320A80197FE4610956 /* CommentListCell.swift */; };
+		9FDCCF88C456374A6A0912A4 /* ChromeViewBase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FDCCAC830E92218F5B21067 /* ChromeViewBase.swift */; };
 		9FDCCFD4969C57E5231CF509 /* AccountEditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FDCCBBC7BF1C0419007B9F9 /* AccountEditViewController.swift */; };
+		9FDCCFF17A1736878F943450 /* ChromeViewBase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FDCCAC830E92218F5B21067 /* ChromeViewBase.swift */; };
 		B54501825B36289EE7AA7376 /* Pods_Teeny_Dev.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9699FFD4921DCD4EA0F0D802 /* Pods_Teeny_Dev.framework */; };
 		E20004DF1B094ACA00425694 /* PasswordEditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20004DE1B094ACA00425694 /* PasswordEditViewController.swift */; };
 		E200E62F1DDD2A3E00E3457F /* EmailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E200E62E1DDD2A3E00E3457F /* EmailViewController.swift */; };
@@ -174,6 +178,11 @@
 		E2BC533C1DE5E53600C97A2C /* NGAParallaxMotion.m in Sources */ = {isa = PBXBuildFile; fileRef = E2BC533B1DE5E53600C97A2C /* NGAParallaxMotion.m */; };
 		E2BC533E1DE5E7EC00C97A2C /* Http.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2BC533D1DE5E7EC00C97A2C /* Http.swift */; };
 		E2C0D9311B6C415100E28CE9 /* Log.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2C0D9301B6C415100E28CE9 /* Log.swift */; };
+		E2C5A6AE1F82F96900CC9731 /* ChromeViewRuled.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2C5A6AD1F82F96900CC9731 /* ChromeViewRuled.swift */; };
+		E2C5A6AF1F82F96900CC9731 /* ChromeViewRuled.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2C5A6AD1F82F96900CC9731 /* ChromeViewRuled.swift */; };
+		E2C5A6B11F83E58600CC9731 /* ChromeViewTile.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2C5A6B01F83E58600CC9731 /* ChromeViewTile.swift */; };
+		E2C5A6B21F83E58600CC9731 /* ChromeViewTile.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2C5A6B01F83E58600CC9731 /* ChromeViewTile.swift */; };
+		E2C5A6B41F83EC6400CC9731 /* BouncyLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2C5A6B31F83EC6400CC9731 /* BouncyLayout.swift */; };
 		E2C720C71B4EDAFE00714B53 /* AirLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2C720C61B4EDAFE00714B53 /* AirLabel.swift */; };
 		E2C7C5CB1B2CF2F80045038A /* ImageResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2C7C5CA1B2CF2F80045038A /* ImageResult.swift */; };
 		E2CA16FF1DB95DDB00F99E1D /* FireAttachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2CA16FE1DB95DDB00F99E1D /* FireAttachment.swift */; };
@@ -407,6 +416,7 @@
 		9FDCC9FB41B6849BBBB72F96 /* nexus-5-mockup.psd */ = {isa = PBXFileReference; lastKnownFileType = file.psd; path = "nexus-5-mockup.psd"; sourceTree = "<group>"; };
 		9FDCCA7AB0285558DFFDF2C1 /* SettingsTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = SettingsTableViewController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		9FDCCAC04E140F7D6BDCEF10 /* Roboto-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file.ttf; path = "Roboto-Regular.ttf"; sourceTree = "<group>"; };
+		9FDCCAC830E92218F5B21067 /* ChromeViewBase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChromeViewBase.swift; sourceTree = "<group>"; };
 		9FDCCADB4957C2E128DDE9FF /* MainController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; name = MainController.swift; path = App/MainController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		9FDCCBBC7BF1C0419007B9F9 /* AccountEditViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = AccountEditViewController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		9FDCCC15CA72BB57D88D11CC /* patchr-promo-graphic.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "patchr-promo-graphic.jpg"; sourceTree = "<group>"; };
@@ -422,6 +432,7 @@
 		9FDCCE483C7DF6C69EC46E17 /* ChannelQuery.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChannelQuery.swift; sourceTree = "<group>"; };
 		9FDCCE5E0AA449B739AD0137 /* ProfileEditViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = ProfileEditViewController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		9FDCCEFC8FC05526D291A77B /* MessageQuery.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageQuery.swift; sourceTree = "<group>"; };
+		9FDCCF320A80197FE4610956 /* CommentListCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommentListCell.swift; sourceTree = "<group>"; };
 		9FDCCFBA14298172864A2DAB /* Free iPhone Mockup Generator & App Demo Videos by Placeit.webloc */ = {isa = PBXFileReference; lastKnownFileType = file.webloc; path = "Free iPhone Mockup Generator & App Demo Videos by Placeit.webloc"; sourceTree = "<group>"; };
 		B9AE7D6D6BF8933855ECA54F /* Pods-Teeny.adhoc.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Teeny.adhoc.xcconfig"; path = "Pods/Target Support Files/Pods-Teeny/Pods-Teeny.adhoc.xcconfig"; sourceTree = "<group>"; };
 		C86F973614EE206EF42E568D /* Pods-Teeny.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Teeny.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Teeny/Pods-Teeny.debug.xcconfig"; sourceTree = "<group>"; };
@@ -629,6 +640,9 @@
 		E2BC533B1DE5E53600C97A2C /* NGAParallaxMotion.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NGAParallaxMotion.m; sourceTree = "<group>"; };
 		E2BC533D1DE5E7EC00C97A2C /* Http.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Http.swift; sourceTree = "<group>"; };
 		E2C0D9301B6C415100E28CE9 /* Log.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Log.swift; sourceTree = "<group>"; };
+		E2C5A6AD1F82F96900CC9731 /* ChromeViewRuled.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChromeViewRuled.swift; sourceTree = "<group>"; };
+		E2C5A6B01F83E58600CC9731 /* ChromeViewTile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChromeViewTile.swift; sourceTree = "<group>"; };
+		E2C5A6B31F83EC6400CC9731 /* BouncyLayout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BouncyLayout.swift; sourceTree = "<group>"; };
 		E2C720C61B4EDAFE00714B53 /* AirLabel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirLabel.swift; sourceTree = "<group>"; };
 		E2C7C5CA1B2CF2F80045038A /* ImageResult.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageResult.swift; sourceTree = "<group>"; };
 		E2CA16FE1DB95DDB00F99E1D /* FireAttachment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FireAttachment.swift; sourceTree = "<group>"; };
@@ -973,6 +987,7 @@
 		E20C74321DD8C15800D90A4D /* Animation */ = {
 			isa = PBXGroup;
 			children = (
+				E2C5A6B31F83EC6400CC9731 /* BouncyLayout.swift */,
 				9FDCC87DC2923CE4A6F17C1E /* SlideAnimationController.swift */,
 				9FDCCE482E821C4491DB4117 /* SlideBounceAnimationController.swift */,
 			);
@@ -1004,6 +1019,7 @@
 			children = (
 				E204D3A11F7E8E1E0031E7B0 /* ChannelGridCell.swift */,
 				E2499E591F3A1913002C0F16 /* ChannelPickerCell.swift */,
+				9FDCCF320A80197FE4610956 /* CommentListCell.swift */,
 				E2EEE9111E9C82680085565E /* EmojiViewCell.swift */,
 				E227294C1CEA7D0600913041 /* GalleryViewCell.swift */,
 				E29A4CD91BD077520059D5B9 /* MessageListCell.swift */,
@@ -1021,6 +1037,9 @@
 				E23C01101CE4F771009C56B2 /* CaptionView.swift */,
 				E204D39C1F79A97F0031E7B0 /* ChannelBackView.swift */,
 				E2FB2C491DBFD33E00E97050 /* ChannelDetailView.swift */,
+				9FDCCAC830E92218F5B21067 /* ChromeViewBase.swift */,
+				E2C5A6AD1F82F96900CC9731 /* ChromeViewRuled.swift */,
+				E2C5A6B01F83E58600CC9731 /* ChromeViewTile.swift */,
 				E259082F1DC69C3F00CB6C3F /* MemberDetailView.swift */,
 				E2A5A8841B703B9B006D6E81 /* PhotoEditView.swift */,
 				E258DF9B1F3B6D26004687CC /* PopupTableView.swift */,
@@ -1664,6 +1683,7 @@
 			files = (
 				E25B0F481DCE7D7400021D5B /* UserListCell.swift in Sources */,
 				E29730641C15090300B9433B /* AirRuleView.swift in Sources */,
+				E2C5A6AE1F82F96900CC9731 /* ChromeViewRuled.swift in Sources */,
 				E2D12A851C0A592D00DE507E /* AirLabelBanner.swift in Sources */,
 				E26B0C891B456F8A00706F4A /* ExtensionsUi.swift in Sources */,
 				E2C0D9311B6C415100E28CE9 /* Log.swift in Sources */,
@@ -1675,6 +1695,7 @@
 				E20C3A851BE04BBC008CCED1 /* Stopwatch.swift in Sources */,
 				E2999EE51DC2CD3B005C69D8 /* PhotoBrowser.swift in Sources */,
 				E2499E571F3A1128002C0F16 /* ChannelPickerController.swift in Sources */,
+				E2C5A6B11F83E58600CC9731 /* ChromeViewTile.swift in Sources */,
 				E2B8A4B61CE7875400A28D3A /* AirRadialMenu.swift in Sources */,
 				E2F5C5741E086AB900FCA59C /* ChannelGridController.swift in Sources */,
 				E292D0F91F5E152C00BADB6E /* LanguageSettingsController.swift in Sources */,
@@ -1714,6 +1735,7 @@
 				E29A921E1DB19A2600B27093 /* FireProfile.swift in Sources */,
 				E2B26A871F61F1100047FE00 /* PhotosQuery.swift in Sources */,
 				7D39D3C51ABA21B200275759 /* CALayer+XibConfiguration.m in Sources */,
+				E2C5A6B41F83EC6400CC9731 /* BouncyLayout.swift in Sources */,
 				E25327C11B13942D00990A81 /* UIShared.swift in Sources */,
 				7D3D39CF1A6F086F00A44CB2 /* AppDelegate.swift in Sources */,
 				E2B4590E1BC1E76C00155659 /* SwiftyJSON.swift in Sources */,
@@ -1804,6 +1826,8 @@
 				9FDCCEE8BA867A541B95EB3A /* SettingsTableViewController.swift in Sources */,
 				9FDCC02817FBC4B31C6CB796 /* AirReactionToolbar.swift in Sources */,
 				E24493C91F2396A100C705FD /* DataSourceController.swift in Sources */,
+				9FDCCF88C456374A6A0912A4 /* ChromeViewBase.swift in Sources */,
+				9FDCC5802D83556E7B07E91F /* CommentListCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1823,6 +1847,7 @@
 				E2DB42951EB4F2C400B1F78B /* Debouncer.swift in Sources */,
 				E2DB42961EB4F2C400B1F78B /* Stopwatch.swift in Sources */,
 				E2DB42971EB4F2C400B1F78B /* PhotoBrowser.swift in Sources */,
+				E2C5A6B21F83E58600CC9731 /* ChromeViewTile.swift in Sources */,
 				E2499E581F3A1128002C0F16 /* ChannelPickerController.swift in Sources */,
 				E2DB42981EB4F2C400B1F78B /* AirRadialMenu.swift in Sources */,
 				E2DB429A1EB4F2C400B1F78B /* ChannelGridController.swift in Sources */,
@@ -1870,6 +1895,7 @@
 				E2DB42CA1EB4F2C400B1F78B /* ChannelDetailView.swift in Sources */,
 				E2DB42CB1EB4F2C400B1F78B /* AirLabelTitle.swift in Sources */,
 				E2DB42CE1EB4F2C400B1F78B /* MBProgressHUD+MBProgressHudAccessible.m in Sources */,
+				E2C5A6AF1F82F96900CC9731 /* ChromeViewRuled.swift in Sources */,
 				E2DB42CF1EB4F2C400B1F78B /* AirLinkButton.swift in Sources */,
 				E2DB42D01EB4F2C400B1F78B /* FloatPhoneField.swift in Sources */,
 				E2DB42D11EB4F2C400B1F78B /* ImageResult.swift in Sources */,
@@ -1949,6 +1975,8 @@
 				E2DB43241EB4F2C400B1F78B /* SettingsTableViewController.swift in Sources */,
 				E2DB43251EB4F2C400B1F78B /* AirReactionToolbar.swift in Sources */,
 				E24493CA1F2396A100C705FD /* DataSourceController.swift in Sources */,
+				9FDCCFF17A1736878F943450 /* ChromeViewBase.swift in Sources */,
+				9FDCCEEAD47CF9018B1A88D7 /* CommentListCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

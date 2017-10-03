@@ -126,12 +126,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, MessagingDelegate {
     }
 
     func application(_ application: UIApplication, supportedInterfaceOrientationsFor window: UIWindow?) -> UIInterfaceOrientationMask {
-        if let controller = UIViewController.topController {
-            if controller is PhotoBrowser {
-                return UIInterfaceOrientationMask.all;
-            }
-        }
-        return UIInterfaceOrientationMask.portrait;
+        return UIInterfaceOrientationMask.all;
     }
 
     func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([Any]?) -> Void) -> Bool {

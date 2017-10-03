@@ -150,7 +150,7 @@ class ChannelGridController: UICollectionViewController {
         
         /* Calculate desired cell size */
         self.availableWidth = Config.screenWidth - (self.sectionInsets!.left + self.sectionInsets!.right)
-        let requestedColumnWidth: CGFloat = 100
+        let requestedColumnWidth: CGFloat = (UIDevice.current.userInterfaceIdiom == .phone) ? 100 : 150
         let numColumns: CGFloat = floor(CGFloat(self.availableWidth!) / CGFloat(requestedColumnWidth))
         let spaceLeftOver = self.availableWidth! - (numColumns * requestedColumnWidth) - ((numColumns - 1) * 8)
         self.cellWidth = requestedColumnWidth + (spaceLeftOver / numColumns)
@@ -162,8 +162,8 @@ class ChannelGridController: UICollectionViewController {
         layout.minimumInteritemSpacing = 8
         layout.minimumLineSpacing = 8
         
-        self.collectionView!.backgroundColor = Theme.colorBackgroundForm
         self.collectionView!.collectionViewLayout = layout
+        self.collectionView!.backgroundColor = Theme.colorBackgroundForm
         self.collectionView!.contentInset = UIEdgeInsets(top: self.chromeHeight, left: 0, bottom: 44, right: 0)
         self.collectionView!.contentOffset = CGPoint(x: 0, y: -self.chromeHeight)
         self.collectionView?.delaysContentTouches = false
@@ -300,7 +300,16 @@ class ChannelGridController: UICollectionViewController {
         let indexPath = IndexPath(row: 0, section: 0)
         self.collectionView?.scrollToItem(at: indexPath, at: .top, animated: true)
     }
-}
+    
+    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        if UIDevice.current.orientation.isLandscape {
+            Log.v("Changing to landscape orientation")
+        }
+        else {
+            Log.v("Changing to portrait orientation")
+        }
+        self.collectionView?.collectionViewLayout.invalidateLayout()
+    }}
 
 extension ChannelGridController: FUICollectionDelegate {
     
@@ -320,7 +329,7 @@ extension ChannelGridController: FUICollectionDelegate {
     }
 }
 
-extension ChannelGridController {
+extension ChannelGridController { // UICollectionViewDelegate
     
     override func collectionView(_ collectionView: UICollectionView, didHighlightItemAt indexPath: IndexPath) {
         let cell = collectionView.cellForItem(at: indexPath)
@@ -344,13 +353,16 @@ extension ChannelGridController {
             if channelId != StateController.instance.channelId {
                 StateController.instance.setChannelId(channelId: channelId)
                 MainController.instance.showChannel(channelId: channelId, animated: true)
-            }            
+            }
         }
         
         if let indexPath = self.collectionView?.indexPathsForSelectedItems?[0] {
             self.collectionView?.deselectItem(at: indexPath, animated: false)
         }
     }
+}
+
+extension ChannelGridController: UICollectionViewDelegateFlowLayout {
     
     func collectionView(_ collectionView: UICollectionView
         , layout collectionViewLayout: UICollectionViewLayout

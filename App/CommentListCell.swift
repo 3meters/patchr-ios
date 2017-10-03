@@ -1,23 +1,15 @@
-//
-//  MessageCell.swift
-//  Patchr
-//
-//  Created by Jay Massena on 10/15/15.
-//  Copyright © 2015 3meters. All rights reserved.
-//
-
 import Localize_Swift
 import UIKit
 import TTTAttributedLabel
 
-class MessageListCell: UICollectionViewCell {
-
+class CommentListCell: UITableViewCell {
+    
     var inputUserQuery: UserQuery! // Passed in by table data source
     var inputUnreadQuery: UnreadQuery? // Passed in by table data source
-
+    
     var unreadCommentsQuery: UnreadQuery?
     var message: FireMessage!
-
+    
     var description_: UILabel!
     var photoView: AirImageView!
     var userName = AirLabelDisplay()
@@ -27,9 +19,7 @@ class MessageListCell: UICollectionViewCell {
     var unreadIndicator = UIView()
     var reactionToolbar: AirReactionToolbar!
     var commentsButton = CommentsButton()
-    var chrome: ChromeViewBase!
-    var payload = UIView()
-
+    
     var template = false
     var decorated = false
     var isUnread = false {
@@ -37,9 +27,9 @@ class MessageListCell: UICollectionViewCell {
             self.unreadIndicator.isHidden = !isUnread
         }
     }
-
-    override init(frame: CGRect) {
-        super.init(frame: frame)
+    
+    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
         initialize()
     }
     
@@ -47,72 +37,71 @@ class MessageListCell: UICollectionViewCell {
         super.init(coder: aDecoder)
         initialize()
     }
-
+    
     /*--------------------------------------------------------------------------------------------
-    * Events
-    *--------------------------------------------------------------------------------------------*/
-
+     * Events
+     *--------------------------------------------------------------------------------------------*/
+    
     override func layoutSubviews() {
         super.layoutSubviews()
         /*
-        * Triggers:
-        * - foo.addSubview(bar) triggers layoutSubviews on foo, bar and all subviews of foo
-        * - Bounds (not frame) change for foo or foo.subviews (frame.size is propogated to bounds.size)
-        * - foo.addSubview does not trigger layoutSubviews if foo.autoresize mask == false
-        * - foo.setNeedsLayout is called
-        *
-        * Note: above triggers set dirty flag using setNeedsLayout which gets
-        * checked for all views in the view hierarchy for every run loop iteration.
-        * If dirty, layoutSubviews is called in hierarchy order and flag is reset.
-        */
+         * Triggers:
+         * - foo.addSubview(bar) triggers layoutSubviews on foo, bar and all subviews of foo
+         * - Bounds (not frame) change for foo or foo.subviews (frame.size is propogated to bounds.size)
+         * - foo.addSubview does not trigger layoutSubviews if foo.autoresize mask == false
+         * - foo.setNeedsLayout is called
+         *
+         * Note: above triggers set dirty flag using setNeedsLayout which gets
+         * checked for all views in the view hierarchy for every run loop iteration.
+         * If dirty, layoutSubviews is called in hierarchy order and flag is reset.
+         */
         guard self.message != nil else { return }
         
-        self.contentView.bounds.size.width = self.bounds.size.width
+        self.contentView.bounds.size.width = self.bounds.size.width - 24
         
         let columnLeft = CGFloat(48 + 8)
-        let columnWidth = min(Config.contentWidthMax, Config.screenWidth) - (columnLeft + self.chrome.padding.left + self.chrome.padding.right)
-        let photoHeight = columnWidth * 0.5625 // 16:9 aspect ratio
-
+        let columnWidth = self.contentView.width() - columnLeft
+        let photoHeight = columnWidth * 0.5625        // 16:9 aspect ratio
+        
         self.userPhotoControl.anchorTopLeft(withLeftPadding: 0, topPadding: 0, width: 48, height: 48)
-
+        
         /* Header */
-
+        
         self.createdDate.sizeToFit()
         self.edited.sizeToFit()
         self.userName.sizeToFit()
-
         self.userName.align(toTheRightOf: self.userPhotoControl, matchingTopWithLeftPadding: 8, width: self.userName.width(), height: 22)
         self.createdDate.align(toTheRightOf: self.userName, matchingBottomWithLeftPadding: 8, width: self.createdDate.width(), height: self.createdDate.height())
         self.unreadIndicator.cornerRadius = 6
         self.unreadIndicator.align(toTheRightOf: self.createdDate, matchingCenterWithLeftPadding: 8, width: 12, height: 12)
-
+        
         /* Body */
-
+        
         var bottomView: UIView? = self.photoView
         if self.message.attachments == nil {
             bottomView = self.description_
             self.description_?.bounds.size.width = columnWidth
             self.description_?.sizeToFit()
-            self.description_?.alignUnder(self.userName, matchingLeftWithTopPadding: 2, width: columnWidth, height: self.description_!.height())
+            self.description_?.alignUnder(self.userName, matchingLeftAndFillingWidthWithRightPadding: 0, topPadding: 2, height: self.description_!.height())
         }
-
+        
         if self.message.text != nil && self.message.attachments != nil {
             self.description_?.bounds.size.width = columnWidth
             self.description_?.sizeToFit()
-            self.description_?.alignUnder(self.userName, matchingLeftWithTopPadding: 2, width: columnWidth, height: self.description_!.height())
-            self.photoView?.alignUnder(self.description_!, matchingLeftWithTopPadding: 10, width: columnWidth, height: photoHeight)
+            self.description_?.alignUnder(self.userName, matchingLeftAndFillingWidthWithRightPadding: 0, topPadding: 2, height: self.description_!.height())
+            self.photoView?.alignUnder(self.description_!, matchingLeftAndFillingWidthWithRightPadding: 0, topPadding: 10, height: photoHeight)
             self.photoView.progressView.anchorInCenter(withWidth: 150, height: 20)
         }
         else if (self.message.attachments?.first) != nil {
-            self.photoView?.alignUnder(self.userName, matchingLeftWithTopPadding: 10, width: columnWidth, height: photoHeight)
+            self.photoView?.alignUnder(self.userName, matchingLeftAndFillingWidthWithRightPadding: 0, topPadding: 10, height: photoHeight)
             self.photoView.progressView.anchorInCenter(withWidth: 150, height: 20)
         }
         
         let isEdited = (self.message.createdAt != self.message.modifiedAt)
         self.edited.alignUnder(bottomView!, matchingLeftWithTopPadding: isEdited ? 2 : 0, width: self.edited.width(), height: isEdited ? self.edited.height() : 0)
-
+        
         /* Footer */
-
+        
         if self.reactionToolbar.superview != nil {
             let toolbarSize = self.reactionToolbar.intrinsicContentSize
             var toolbarWidth = columnWidth
@@ -133,33 +122,26 @@ class MessageListCell: UICollectionViewCell {
                 , height: self.reactionToolbar.height())
         }
         
-        self.payload.resizeToFitSubviews()
-        self.bounds.size.height = self.payload.height() + self.chrome.padding.top + self.chrome.padding.bottom
-        self.contentView.fillSuperview()
-        self.chrome.fillSuperview() // super is contentView
-        self.payload.fillSuperview(withLeftPadding: self.chrome.padding.left // super is contentView
-            , rightPadding: self.chrome.padding.right
-            , topPadding: self.chrome.padding.top
-            , bottomPadding: self.chrome.padding.bottom)
+        self.contentView.resizeToFitSubviews()
+        self.bounds.size.height = self.contentView.height() + 24
+        self.contentView.fillSuperview(withLeftPadding: 12, rightPadding: 12, topPadding: 12, bottomPadding: 12)
     }
-
+    
     /*--------------------------------------------------------------------------------------------
-    * Methods
-    *--------------------------------------------------------------------------------------------*/
-
+     * Methods
+     *--------------------------------------------------------------------------------------------*/
+    
     func initialize() {
         /*
          * The calls to addSubview will trigger a call to layoutSubviews for
          * the current update cycle.
          */
-        self.chrome = ChromeViewRuled()
-        self.payload.backgroundColor = Colors.white
         
         /* Description */
         self.description_ = TTTAttributedLabel(frame: CGRect.zero)
         self.description_!.numberOfLines = 0
         self.description_!.font = Theme.fontTextList
-
+        
         if let label = self.description_ as? TTTAttributedLabel {
             let linkColor = Theme.colorTint
             let linkActiveColor = Theme.colorTint
@@ -167,66 +149,65 @@ class MessageListCell: UICollectionViewCell {
             label.activeLinkAttributes = [kCTForegroundColorAttributeName as AnyHashable: linkActiveColor]
             label.enabledTextCheckingTypes = NSTextCheckingResult.CheckingType.link.rawValue | NSTextCheckingResult.CheckingType.address.rawValue
         }
-
+        
         /* Photo: give initial size in case the image displays before call to layoutSubviews		 */
         let columnLeft = CGFloat(48 + 8)
         let columnWidth = min(Config.contentWidthMax, Config.screenWidth) - columnLeft
-        let photoHeight = columnWidth * 0.5625 // 16:9 aspect ratio
-
+        let photoHeight = columnWidth * 0.5625        // 16:9 aspect ratio
+        
         self.photoView = AirImageView(frame: CGRect(x: 0, y: 0, width: columnWidth, height: photoHeight))
         self.photoView!.clipsToBounds = true
         self.photoView!.cornerRadius = 4
         self.photoView!.contentMode = .scaleAspectFill
         self.photoView!.backgroundColor = Theme.colorBackgroundImage
         self.photoView!.isHidden = true
-
+        
         /* Header */
         self.userName.font = Theme.fontTextBold
         self.userName.numberOfLines = 1
         self.userName.lineBreakMode = .byTruncatingMiddle
-
+        
         self.createdDate.font = Theme.fontComment
         self.createdDate.numberOfLines = 1
         self.createdDate.textColor = Theme.colorTextSecondary
         self.createdDate.textAlignment = .right
-
+        
         self.edited.text = "edited_parens".localized()
         self.edited.font = Theme.fontCommentSmall
         self.edited.numberOfLines = 1
         self.edited.textColor = Colors.gray66pcntColor
         self.edited.textAlignment = .left
-
+        
         self.unreadIndicator.backgroundColor = Theme.colorBackgroundBadge
         self.unreadIndicator.clipsToBounds = true
         self.unreadIndicator.isHidden = true
         
+        self.selectionStyle = .none
+        
         self.reactionToolbar = AirReactionToolbar()
         self.reactionToolbar.alwaysShowAddButton = true
-
-        self.payload.addSubview(self.reactionToolbar)
-        self.payload.addSubview(self.commentsButton)
-        self.payload.addSubview(self.description_!)
-        self.payload.addSubview(self.photoView!)
-        self.payload.addSubview(self.userPhotoControl)
-        self.payload.addSubview(self.userName)
-        self.payload.addSubview(self.createdDate)
-        self.payload.addSubview(self.edited)
-        self.payload.addSubview(self.unreadIndicator)
-
-        self.contentView.addSubview(self.chrome)
-        self.contentView.addSubview(self.payload)
+        
+        self.contentView.addSubview(self.reactionToolbar)
+        self.contentView.addSubview(self.commentsButton)
+        self.contentView.addSubview(self.description_!)
+        self.contentView.addSubview(self.photoView!)
+        self.contentView.addSubview(self.userPhotoControl)
+        self.contentView.addSubview(self.userName)
+        self.contentView.addSubview(self.createdDate)
+        self.contentView.addSubview(self.edited)
+        self.contentView.addSubview(self.unreadIndicator)
     }
-
+    
     func bind(message: FireMessage) {
         
         guard message.createdAt != nil else { return }
-
+        
         self.message = message
         
         /* Text */
-
+        
         self.description_?.isHidden = true
-
+        
         if let description = message.text {
             self.description_?.isHidden = false
             let label = self.description_ as! TTTAttributedLabel
@@ -238,10 +219,10 @@ class MessageListCell: UICollectionViewCell {
         
         /* User */
         if let creator = message.creator {
-
+            
             /* Username */
             self.userName.text = creator.username
-
+            
             /* User photo */
             if let profilePhoto = creator.profile?.photo {
                 if !self.template {
@@ -266,7 +247,7 @@ class MessageListCell: UICollectionViewCell {
                 self.userPhotoControl.bind(url: nil, name: "deleted".localized(), colorSeed: nil, color: Theme.colorBackgroundImage)
             }
         }
-
+        
         /* Message photo */
         
         if let photo = message.attachments?.values.first?.photo {
@@ -286,7 +267,7 @@ class MessageListCell: UICollectionViewCell {
         }
         
         /* Created date and edited flag */
-
+        
         let createdAtDate = DateUtils.from(timestamp: message.createdAt!)
         self.createdDate.text = DateUtils.timeAgoShort(date: createdAtDate)
         

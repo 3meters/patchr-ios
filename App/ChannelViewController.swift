@@ -279,16 +279,18 @@ class ChannelViewController: UICollectionViewController { // Sets itself as data
 		}
 
 		self.chromeBackground.backgroundColor = Colors.accentColor
+        self.view.addSubview(self.chromeBackground)
+        self.view.sendSubview(toBack: self.chromeBackground)
 
 		self.collectionView?.addSubview(self.headerView)
         
-		let layout = UICollectionViewFlowLayout()
+        let layout = UICollectionViewFlowLayout()
 		layout.itemSize = CGSize(width: viewWidth, height: 100)
-		layout.sectionInset = UIEdgeInsets(top: 0, left: 6, bottom: 0, right: 0)
+		layout.sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
 		layout.minimumInteritemSpacing = 0
-		layout.minimumLineSpacing = 6
+		layout.minimumLineSpacing = 0
 
-		self.collectionView?.backgroundColor = Colors.gray90pcntColor
+		self.collectionView?.backgroundColor = Colors.gray95pcntColor
 		self.collectionView?.collectionViewLayout = layout
 		self.collectionView?.contentInset = UIEdgeInsets(top: self.headerHeight, left: 0, bottom: 0, right: 0)
 		self.collectionView?.contentOffset = CGPoint(x: 0, y: -(self.headerHeight))
@@ -919,7 +921,7 @@ extension ChannelViewController: UICollectionViewDelegateFlowLayout { // UIColle
 		self.itemTemplate.bind(message: message)
 		self.itemTemplate.layoutIfNeeded()
 
-		viewHeight = self.itemTemplate.height() + 1
+		viewHeight = self.itemTemplate.height()
 
 		if message.id != nil {
 			self.itemHeights[message.id!] = viewHeight
@@ -950,7 +952,7 @@ extension ChannelViewController: FUICollectionDelegate {
 				let message = FireMessage(dict: snap.value as! [String: Any], id: snap.key)
 				message.creator = cell.message?.creator
 				cell.bind(message: message)
-				self.collectionView?.invalidateIntrinsicContentSize()
+                self.collectionView?.collectionViewLayout.invalidateLayout()
 			}
 		}
 	}
@@ -974,6 +976,7 @@ extension ChannelViewController: FUICollectionDelegate {
 }
 
 extension ChannelViewController: SDWebImagePrefetcherDelegate {
+    
 	func imagePrefetcher(_ imagePrefetcher: SDWebImagePrefetcher, didFinishWithTotalCount totalCount: UInt, skippedCount: UInt) {
 		Log.v("Channel view prefetch complete: total: \(totalCount), skipped: \(skippedCount)")
 	}
