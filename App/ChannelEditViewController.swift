@@ -59,6 +59,7 @@ class ChannelEditViewController: BaseEditViewController {
          * - setting frame on self.view if size is different
          * - scrolling when self.view is a scrollview
          */
+        super.viewWillLayoutSubviews()
         let bannerSize = self.banner.sizeThatFits(CGSize(width: Config.contentWidth, height:CGFloat.greatestFiniteMagnitude))
         let purposeSize = self.purposeField.sizeThatFits(CGSize(width: Config.contentWidth, height:CGFloat.greatestFiniteMagnitude))
 
@@ -66,8 +67,6 @@ class ChannelEditViewController: BaseEditViewController {
         self.titleField.alignUnder(self.banner, matchingCenterWithTopPadding: 24, width: Config.contentWidth, height: 48)
         self.photoEditView.alignUnder(self.titleField, matchingCenterWithTopPadding: 16, width: Config.contentWidth, height: Config.contentWidth * 0.56)
         self.purposeField.alignUnder(self.photoEditView, matchingCenterWithTopPadding: 16, width: Config.contentWidth, height: max(48, purposeSize.height))
-        
-        super.viewWillLayoutSubviews()
     }
 
     /*--------------------------------------------------------------------------------------------

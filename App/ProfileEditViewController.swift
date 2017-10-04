@@ -65,6 +65,7 @@ class ProfileEditViewController: BaseEditViewController {
     }
     
     override func viewWillLayoutSubviews() {
+        super.viewWillLayoutSubviews()
 
         let messageSize = self.message.sizeThatFits(CGSize(width: Config.contentWidth, height: CGFloat.greatestFiniteMagnitude))
         self.message.anchorTopCenter(withTopPadding: 0, width: Config.contentWidth, height: messageSize.height)
@@ -74,8 +75,6 @@ class ProfileEditViewController: BaseEditViewController {
         self.phoneField.alignUnder(self.lastNameField, matchingCenterWithTopPadding: 8, width: Config.contentWidth, height: 48)
 
         self.accountButton.alignUnder(self.phoneField, matchingCenterWithTopPadding: 12, width: Config.contentWidth, height: 48)
-
-        super.viewWillLayoutSubviews()
     }
     
     /*--------------------------------------------------------------------------------------------

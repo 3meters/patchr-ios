@@ -276,13 +276,7 @@ extension UIViewController {
     }
     
     var chromeHeight: CGFloat {
-        var statusHeight = UIApplication.shared.statusBarFrame.size.height
-        if UIDevice.current.userInterfaceIdiom == .phone {
-            if UIApplication.shared.statusBarOrientation == .landscapeLeft
-                || UIApplication.shared.statusBarOrientation == .landscapeRight {
-                statusHeight = 0
-            }
-        }
+        let statusHeight = UIApplication.shared.statusBarFrame.size.height
         let navigationHeight = self.navigationController?.navigationBar.height() ?? 44
         return (statusHeight + navigationHeight)
     }
@@ -298,12 +292,16 @@ extension UIViewController {
         return false
     }
     
-    class var root: UIViewController? {
-        return UIApplication.shared.keyWindow?.rootViewController
+    var orientationIsLandscape: Bool {
+        return UIDeviceOrientationIsLandscape(UIDevice.current.orientation)
     }
     
     var containerController: ContainerController {
         return MainController.instance.containerController
+    }
+    
+    class var root: UIViewController? {
+        return UIApplication.shared.keyWindow?.rootViewController
     }
     
     class var topController: UIViewController? {
@@ -325,8 +323,9 @@ extension UIViewController {
         return pointedViewController
         
     }
-    // Returns the most recently presented UIViewController (visible)
+    
     class func topMostViewController() -> UIViewController? {
+        // Returns the most recently presented UIViewController (visible)
         
         // If the root view is a navigation controller, we can just return the visible ViewController
         if let tabBarController = getTabBarController() {
@@ -357,17 +356,16 @@ extension UIViewController {
         return nil
     }
     
-    // Returns the navigation controller if it exists
     class func getNavigationController() -> UINavigationController? {
-        
+        // Returns the navigation controller if it exists
         if let navigationController = UIApplication.shared.keyWindow?.rootViewController  {
             return navigationController as? UINavigationController
         }
         return nil
     }
     
-    // Returns the navigation controller if it exists
-    class func getTabBarController() -> UITabBarController? {        
+    class func getTabBarController() -> UITabBarController? {
+        // Returns the navigation controller if it exists
         if let controller = UIApplication.shared.keyWindow?.rootViewController  {
             return controller as? UITabBarController
         }

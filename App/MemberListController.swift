@@ -55,10 +55,23 @@ class MemberListController: BaseTableController {
     
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
-        let viewWidth = min(Config.contentWidthMax, self.view.width())
-        self.tableView.anchorTopCenter(withTopPadding: 0, width: viewWidth, height: self.view.height())
+        let viewWidth = min(Config.contentWidthMax, UIScreen.main.bounds.size.width)
+        
+        if self.orientationIsLandscape {
+            self.view.anchorTopCenter(withTopPadding: 0, width: viewWidth, height: UIScreen.main.bounds.size.height)
+            self.landscapeContentSizeInPopup = CGSize(width: viewWidth, height: self.view.height() * 0.70)
+        }
+        else {
+            self.view.anchorTopCenter(withTopPadding: 0, width: viewWidth, height: UIScreen.main.bounds.size.height)
+            self.contentSizeInPopup = CGSize(width: viewWidth, height: self.view.height() * 0.70)
+        }
+        self.tableView.fillSuperview()
     }
 
+    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        self.view.setNeedsLayout()
+    }
+    
     /*--------------------------------------------------------------------------------------------
      * Events
      *--------------------------------------------------------------------------------------------*/

@@ -144,8 +144,8 @@
 "phone_number" = "Phone number";
 "photo_action_camera" = "Take a new photo";
 "photo_action_library" = "Select a library photo";
-"photo_action_search" = "Search for photos";
-"photo_search_bar_placeholder" = "Search for photos";
+"photo_action_search" = "Search web for photos";
+"photo_search_bar_placeholder" = "Search web for photos";
 "photo_share_message" = "Photo by %@ on Patchr";
 "photo_use" = "Use photo";
 "play_sound_effects" = "Play sound effects";

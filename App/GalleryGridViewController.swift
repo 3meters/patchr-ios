@@ -22,30 +22,6 @@ class GalleryGridViewController: UICollectionViewController {
     var inputTitle: String?
 	var morePhotos = false
 	
-    var largePhotoIndexPath : IndexPath? {
-		
-        didSet {
-            var indexPaths = [NSIndexPath]()
-            if largePhotoIndexPath != nil {
-                indexPaths.append(largePhotoIndexPath! as NSIndexPath)
-            }
-            if oldValue != nil {
-                indexPaths.append(oldValue! as NSIndexPath)
-            }
-            
-            collectionView?.performBatchUpdates({
-                self.collectionView?.reloadItems(at: indexPaths as [IndexPath])
-                return }) { completed in
-                if self.largePhotoIndexPath != nil {
-                    self.collectionView?.scrollToItem(
-                        at: self.largePhotoIndexPath!,
-                        at: .centeredVertically,
-                        animated: true)
-                }
-            }
-        }
-    }
-    
     fileprivate var sectionInsets: UIEdgeInsets?
     fileprivate var thumbnailWidth: CGFloat?
     fileprivate var availableWidth: CGFloat?
@@ -195,10 +171,6 @@ extension GalleryGridViewController : UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView
         , layout collectionViewLayout: UICollectionViewLayout
         , sizeForItemAt indexPath: IndexPath) -> CGSize {
-        
-        if indexPath == self.largePhotoIndexPath {
-            return CGSize(width: self.availableWidth! - 100, height: self.availableWidth! - 100)
-        }
         return CGSize(width: self.thumbnailWidth!, height: self.thumbnailWidth!)
     }
     

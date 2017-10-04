@@ -89,7 +89,7 @@ class EmailViewController: BaseEditViewController {
         self.contentHolder.addSubview(self.emailField)
         
         /* Navigation bar buttons */
-        self.nextButton = UIBarButtonItem(title: nil, style: UIBarButtonItemStyle.plain, target: self, action: #selector(doneAction(sender:)))
+        self.nextButton = UIBarButtonItem(title: "next".localized(), style: UIBarButtonItemStyle.plain, target: self, action: #selector(doneAction(sender:)))
         self.navigationItem.rightBarButtonItems = [nextButton]
         
         bindLanguage()

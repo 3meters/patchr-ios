@@ -40,6 +40,7 @@ class InviteViewController: BaseEditViewController {
     
 	override func viewWillLayoutSubviews() {
 		
+        super.viewWillLayoutSubviews()
         let headingSize = self.heading.sizeThatFits(CGSize(width: Config.contentWidth, height:CGFloat.greatestFiniteMagnitude))
         let messageSize = self.message.sizeThatFits(CGSize(width: Config.contentWidth, height:CGFloat.greatestFiniteMagnitude))
         
@@ -52,8 +53,6 @@ class InviteViewController: BaseEditViewController {
 		self.inviteReadersButton.alignUnder(self.message, matchingCenterWithTopPadding: 24, width: Config.contentWidth, height: 48)
 		self.inviteEditorsButton.alignUnder(self.inviteReadersButton, matchingCenterWithTopPadding: 16, width: Config.contentWidth, height: 48)
         self.inviteComment.alignUnder(self.inviteEditorsButton, matchingCenterWithTopPadding: 16, width: self.inviteComment.width(), height: self.inviteComment.height())
-
-        super.viewWillLayoutSubviews()
 	}
 	
     /*--------------------------------------------------------------------------------------------

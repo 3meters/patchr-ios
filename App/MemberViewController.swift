@@ -128,6 +128,7 @@ class MemberViewController: BaseViewController, UIScrollViewDelegate, UITextFiel
         let contentHeight = max((self.scrollView.height() + self.scrollView.contentOffset.y), self.contentHolder.height())
         self.scrollView.contentSize = CGSize(width:self.contentHolder.frame.size.width, height:contentHeight)
         self.contentHolder.anchorTopCenterFillingWidth(withLeftAndRightPadding: 0, topPadding: 0, height: contentHeight)
+        updateHeaderView()
 	}
     
     deinit {
@@ -246,15 +247,6 @@ class MemberViewController: BaseViewController, UIScrollViewDelegate, UITextFiel
         bindLanguage()
 	}
 
-    func bindLanguage() {
-        self.phone.caption.text = "phone".localized()
-        self.phone.setNeedsLayout()
-        self.email.caption.text = "email".localized()
-        self.email.setNeedsLayout()
-        self.editButton.setTitle("edit_profile".localized().uppercased(), for: .normal)
-        self.callButton.setTitle("call".localized().uppercased(), for: .normal)
-    }
-
 	func bind() {
         
         /* Push data into form and header */
@@ -280,7 +272,9 @@ class MemberViewController: BaseViewController, UIScrollViewDelegate, UITextFiel
         }
         
         self.email.isHidden = true
+        self.settingsButton.isHidden = true
         if self.authenticatedUser {
+            self.settingsButton.isHidden = false
             if let email = Auth.auth().currentUser?.email! {
                 self.email.isHidden = false
                 self.email.label.text = email
@@ -289,6 +283,15 @@ class MemberViewController: BaseViewController, UIScrollViewDelegate, UITextFiel
         
         self.view?.setNeedsLayout() // Does NOT trigger layoutSubviews for header view
         updateHeaderView()
+    }
+    
+    func bindLanguage() {
+        self.phone.caption.text = "phone".localized()
+        self.phone.setNeedsLayout()
+        self.email.caption.text = "email".localized()
+        self.email.setNeedsLayout()
+        self.editButton.setTitle("edit_profile".localized().uppercased(), for: .normal)
+        self.callButton.setTitle("call".localized().uppercased(), for: .normal)
     }
     
     func updateHeaderView() {

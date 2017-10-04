@@ -10,28 +10,29 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
-        <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" id="J5g-5G-CRN" customClass="ThumbnailCollectionViewCell" customModule="Patchr" customModuleProvider="target">
-            <rect key="frame" x="0.0" y="0.0" width="100" height="100"/>
+        <collectionViewCell clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" id="J5g-5G-CRN" customClass="ThumbnailCollectionViewCell" customModule="Teeny" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="153" height="145"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
             <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
-                <rect key="frame" x="0.0" y="0.0" width="100" height="100"/>
+                <rect key="frame" x="0.0" y="0.0" width="153" height="145"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="owZ-FX-YTf" userLabel="thumbnail_photo" customClass="AirImageView" customModule="Patchr" customModuleProvider="target">
-                        <rect key="frame" x="0.0" y="0.0" width="100" height="100"/>
+                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="owZ-FX-YTf" userLabel="thumbnail_photo" customClass="AirImageView" customModule="Teeny" customModuleProvider="target">
+                        <rect key="frame" x="0.0" y="0.0" width="153" height="145"/>
                     </imageView>
                 </subviews>
             </view>
             <constraints>
                 <constraint firstItem="owZ-FX-YTf" firstAttribute="leading" secondItem="J5g-5G-CRN" secondAttribute="leading" id="CjH-d7-wce"/>
-                <constraint firstAttribute="bottom" secondItem="owZ-FX-YTf" secondAttribute="bottom" id="Jpd-HR-fef"/>
+                <constraint firstItem="owZ-FX-YTf" firstAttribute="bottom" secondItem="J5g-5G-CRN" secondAttribute="bottom" id="Jpd-HR-fef"/>
                 <constraint firstItem="owZ-FX-YTf" firstAttribute="top" secondItem="J5g-5G-CRN" secondAttribute="top" id="NZB-FF-U62"/>
-                <constraint firstAttribute="trailing" secondItem="owZ-FX-YTf" secondAttribute="trailing" id="Y5M-dA-e1r"/>
+                <constraint firstItem="owZ-FX-YTf" firstAttribute="trailing" secondItem="J5g-5G-CRN" secondAttribute="trailing" id="Y5M-dA-e1r"/>
             </constraints>
+            <size key="customSize" width="153" height="145"/>
             <connections>
                 <outlet property="thumbnail" destination="owZ-FX-YTf" id="hFJ-Id-kr7"/>
             </connections>
-            <point key="canvasLocation" x="-804" y="-19"/>
+            <point key="canvasLocation" x="-777.5" y="3.5"/>
         </collectionViewCell>
     </objects>
 </document>

@@ -32,37 +32,15 @@ class PhotoSearchController: UICollectionViewController, UITableViewDelegate, UI
 	
 	var queue = OperationQueue()
 	
-    var largePhotoIndexPath : IndexPath? {
-        didSet {
-            var indexPaths = [IndexPath]()
-            if largePhotoIndexPath != nil {
-                indexPaths.append(largePhotoIndexPath!)
-            }
-            if oldValue != nil {
-                indexPaths.append(oldValue!)
-            }
-            
-            collectionView?.performBatchUpdates({
-                self.collectionView?.reloadItems(at: indexPaths)
-                return }) {
-                completed in
-                if self.largePhotoIndexPath != nil {
-                    self.collectionView?.scrollToItem(
-                        at: self.largePhotoIndexPath!,
-                        at: .centeredVertically,
-                        animated: true)
-                }
-            }
-        }
-    }
-    
-    fileprivate let reuseIdentifier = "ThumbnailCell"
     fileprivate var sectionInsets: UIEdgeInsets?
-    fileprivate var thumbnailWidth: CGFloat?
+    fileprivate var cellWidth: CGFloat?
+    fileprivate var cellHeight: CGFloat?
     fileprivate var availableWidth: CGFloat?
+    
     fileprivate let pageSize = 150      // Maximum allowed by Bing. We pull max to keep request count down.
     fileprivate var maxSize = 100
-	fileprivate var virtualSize = 30
+	fileprivate var virtualSize = 60
+    fileprivate var virtualChunk = 60
     fileprivate let maxImageSize = 500000
     fileprivate let maxDimen = Int(Config.imageDimensionMax)
     
@@ -72,70 +50,17 @@ class PhotoSearchController: UICollectionViewController, UITableViewDelegate, UI
 
 	override func viewDidLoad() {
 		super.viewDidLoad()
-		
-        self.collectionView!.register(UINib(nibName: "ThumbnailCollectionViewCell", bundle: nil), forCellWithReuseIdentifier: reuseIdentifier)
-		self.collectionView?.backgroundColor = Theme.colorBackgroundForm
-		if let layout = self.collectionViewLayout as? UICollectionViewFlowLayout {
-			layout.minimumLineSpacing = 4
-			layout.minimumInteritemSpacing = 4
-		}
-		self.queue.name = "Image loading queue"
-		
-		/* Simple activity indicator */
-		self.activity = addActivityIndicatorTo(view: self.view)
-		
-		/* Auto complete table view */
-		self.autocompleteList.delegate = self
-		self.autocompleteList.dataSource = self
-		self.autocompleteList.isScrollEnabled = true
-		self.autocompleteList.isHidden = true
-		self.autocompleteList.rowHeight = 40
-		self.autocompleteList.separatorInset = UIEdgeInsets.zero
-
-		self.view.addSubview(self.autocompleteList)
-		
-		/* Past searches */
-		loadSearches()
-		
-		/* Navigation bar buttons */
-		let cancelButton = UIBarButtonItem(barButtonSystemItem: .stop, target: self, action: #selector(PhotoSearchController.cancelAction(sender:)))
-		self.navigationItem.leftBarButtonItems = [cancelButton]
+		initialize()
 	}
 
 	override func viewWillAppear(_ animated: Bool) {
 		super.viewWillAppear(animated)
-		
-        if self.searchBar == nil {
-			let navHeight = self.navigationController?.navigationBar.height() ?? 0
-			let statusHeight = UIApplication.shared.statusBarFrame.size.height
-
-            self.searchBarBoundsY = navHeight + statusHeight
-            self.searchBar = UISearchBar(frame: CGRect(x:0, y:0, width: Config.screenWidth, height:44))
-            self.searchBar!.autocapitalizationType = .none
-            self.searchBar!.delegate = self
-            self.searchBar!.placeholder = "photo_search_bar_placeholder".localized()
-            self.searchBar.setValue("cancel".localized(), forKey: "_cancelButtonText")
-            self.searchBar!.searchBarStyle = .prominent
-        }
-        
-		/* Scroll inset */
-		self.sectionInsets = UIEdgeInsets(top: self.searchBar!.frame.size.height + 4, left: 4, bottom: 4, right: 4)
-		
-        if !self.searchBar!.isDescendant(of: self.view) {
-            self.view.addSubview(self.searchBar!)
-        }
-		
-		/* Calculate thumbnail width */
-		availableWidth = Config.screenWidth - (sectionInsets!.left + sectionInsets!.right)
-		let requestedColumnWidth: CGFloat = 100
-		let numColumns: CGFloat = floor(CGFloat(availableWidth!) / CGFloat(requestedColumnWidth))
-		let spaceLeftOver = availableWidth! - (numColumns * requestedColumnWidth) - ((numColumns - 1) * 4)
-		self.thumbnailWidth = requestedColumnWidth + (spaceLeftOver / numColumns)
-
 	}
 
 	override func viewDidLayoutSubviews() {
 		super.viewDidLayoutSubviews()
+        self.searchBar.anchorTopCenter(withTopPadding: 0, width: self.view.width(), height: 44)
+        self.collectionView?.alignUnder(self.searchBar, matchingLeftAndRightFillingHeightWithTopPadding: 0, bottomPadding: 0)
 	}
 
 	override func viewDidAppear(_ animated: Bool) {
@@ -155,6 +80,62 @@ class PhotoSearchController: UICollectionViewController, UITableViewDelegate, UI
 	/*--------------------------------------------------------------------------------------------
 	* Methods
 	*--------------------------------------------------------------------------------------------*/
+    
+    func initialize() {
+
+        self.navigationItem.title = "search".localized()
+        self.queue.name = "Image loading queue"
+        self.automaticallyAdjustsScrollViewInsets = false
+
+        self.searchBar = UISearchBar(frame: CGRect(x:0, y:0, width: UIScreen.main.bounds.size.width, height:44))
+        self.searchBar!.autocapitalizationType = .none
+        self.searchBar!.delegate = self
+        self.searchBar!.placeholder = "photo_search_bar_placeholder".localized()
+        self.searchBar.setValue("cancel".localized(), forKey: "_cancelButtonText")
+        self.searchBar!.searchBarStyle = .prominent
+
+        /* Scroll inset */
+        self.sectionInsets = UIEdgeInsets(top: 4, left: 4, bottom: 4, right: 4)
+        
+        /* Calculate thumbnail width */
+        availableWidth = UIScreen.main.bounds.size.width - (sectionInsets!.left + sectionInsets!.right)
+        let requestedColumnWidth: CGFloat = (UIDevice.current.userInterfaceIdiom == .phone) ? 100 : 150
+        let numColumns: CGFloat = floor(CGFloat(availableWidth!) / CGFloat(requestedColumnWidth))
+        let spaceLeftOver = availableWidth! - (numColumns * requestedColumnWidth) - ((numColumns - 1) * 4)
+        self.cellWidth = requestedColumnWidth + (spaceLeftOver / numColumns)
+        self.cellHeight = self.cellWidth
+        
+        let layout = UICollectionViewFlowLayout()
+        layout.itemSize = CGSize(width: self.cellWidth!, height: self.cellHeight!)
+        layout.sectionInset = self.sectionInsets!
+        layout.minimumInteritemSpacing = 4
+        layout.minimumLineSpacing = 4
+
+        self.collectionView?.backgroundColor = Theme.colorBackgroundForm
+        self.collectionView!.collectionViewLayout = layout
+        self.collectionView!.register(UINib(nibName: "ThumbnailCollectionViewCell", bundle: nil), forCellWithReuseIdentifier: "cell")
+        
+        /* Auto complete table view */
+        self.autocompleteList.delegate = self
+        self.autocompleteList.dataSource = self
+        self.autocompleteList.isScrollEnabled = true
+        self.autocompleteList.isHidden = true
+        self.autocompleteList.rowHeight = 40
+        self.autocompleteList.separatorInset = UIEdgeInsets.zero
+        
+        /* Simple activity indicator */
+        self.activity = addActivityIndicatorTo(view: self.view)
+        
+        self.view.addSubview(self.searchBar!)
+        self.view.addSubview(self.autocompleteList)
+        
+        /* Past searches */
+        loadSearches()
+        
+        /* Navigation bar buttons */
+        let cancelButton = UIBarButtonItem(barButtonSystemItem: .stop, target: self, action: #selector(PhotoSearchController.cancelAction(sender:)))
+        self.navigationItem.leftBarButtonItems = [cancelButton]
+    }
 
     fileprivate func loadData(paging: Bool = false) {
 		
@@ -229,7 +210,7 @@ class PhotoSearchController: UICollectionViewController, UITableViewDelegate, UI
                             }
                             else {
                                 self.threshold = self.imageResults.count - 20
-                                self.virtualSize = self.imageResults.count + 30
+                                self.virtualSize = self.imageResults.count + self.virtualChunk
                             }
 
                             userInfo["count"] = self.imageResults.count
@@ -317,10 +298,8 @@ extension PhotoSearchController: UISearchBarDelegate {
     }
 }
 
-extension PhotoSearchController {
-	/*
-	* UITableViewDelegate
-	*/
+extension PhotoSearchController { // UITableViewDelegate
+    
 	@objc(tableView:cellForRowAtIndexPath:) func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 		
 		var cell = tableView.dequeueReusableCell(withIdentifier: "cell")
@@ -354,10 +333,8 @@ extension PhotoSearchController {
 	}
 }
 
-extension PhotoSearchController {
-    /*
-     * UICollectionViewDelegate
-     */
+extension PhotoSearchController { // UICollectionViewDelegate
+    
 	override func scrollViewWillBeginDecelerating(_ scrollView: UIScrollView) {
 		
 		if !self.processing {
@@ -425,17 +402,15 @@ extension PhotoSearchController {
     }
 }
 
-extension PhotoSearchController {
-    /*
-     * UICollectionViewDataSource
-     */
+extension PhotoSearchController { // UICollectionViewDataSource
+    
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return self.virtualSize
     }
     
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
 		
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: self.reuseIdentifier, for: indexPath) 
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath)
         cell.backgroundColor = Theme.colorBackgroundImage
 		
 		if let imageResult = self.imageForIndexPath(indexPath: indexPath as NSIndexPath) {
@@ -447,7 +422,6 @@ extension PhotoSearchController {
 				}
 			}			
 		}
-		
         return cell
     }
 }
@@ -457,18 +431,12 @@ extension PhotoSearchController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView,
         layout collectionViewLayout: UICollectionViewLayout,
         sizeForItemAt indexPath: IndexPath) -> CGSize {
-            
-            if indexPath == self.largePhotoIndexPath {
-                return CGSize(width: self.availableWidth! - 100, height: self.availableWidth! - 100)
-            }
-            
-            return CGSize(width: self.thumbnailWidth!, height: self.thumbnailWidth!)
+        return CGSize(width: self.cellWidth!, height: self.cellHeight!)
     }
     
     func collectionView(_ collectionView: UICollectionView,
         layout collectionViewLayout: UICollectionViewLayout,
         insetForSectionAt section: Int) -> UIEdgeInsets {
-            
-            return sectionInsets!
+        return sectionInsets!
     }
 }
