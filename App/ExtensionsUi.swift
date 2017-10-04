@@ -276,7 +276,13 @@ extension UIViewController {
     }
     
     var chromeHeight: CGFloat {
-        let statusHeight = UIApplication.shared.statusBarFrame.size.height
+        var statusHeight = UIApplication.shared.statusBarFrame.size.height
+        if UIDevice.current.userInterfaceIdiom == .phone {
+            if UIApplication.shared.statusBarOrientation == .landscapeLeft
+                || UIApplication.shared.statusBarOrientation == .landscapeRight {
+                statusHeight = 0
+            }
+        }
         let navigationHeight = self.navigationController?.navigationBar.height() ?? 44
         return (statusHeight + navigationHeight)
     }

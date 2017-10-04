@@ -73,6 +73,8 @@ class MainController: NSObject, iRateDelegate {
         UISwitch.appearance().onTintColor = Theme.colorTint
         
         UIApplication.shared.statusBarStyle = .default
+        UIApplication.shared.isStatusBarHidden = true
+        UIApplication.shared.isStatusBarHidden = false
         if UserDefaults.standard.bool(forKey: Prefs.statusBarHidden) {
             UIApplication.shared.isStatusBarHidden = true
         }

@@ -36,7 +36,13 @@ class ChannelPickerController: BaseTableController {
         initialize()
         bind()
     }
-    
+
+    override func viewWillLayoutSubviews() {
+        super.viewWillLayoutSubviews()
+        let viewWidth = min(Config.contentWidthMax, self.view.width())
+        self.tableView.anchorTopCenter(withTopPadding: 0, width: viewWidth, height: self.view.height())
+    }
+
     /*--------------------------------------------------------------------------------------------
      * Methods
      *--------------------------------------------------------------------------------------------*/
@@ -44,6 +50,7 @@ class ChannelPickerController: BaseTableController {
     override func initialize() {
         super.initialize()
         
+        self.automaticallyAdjustsScrollViewInsets = false
         self.baseView.titleLabel.text = "channel_picker_title".localized()
         
         self.baseView.searchBar.delegate = self

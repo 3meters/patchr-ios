@@ -20,9 +20,8 @@ class BaseTableController: UIViewController {
 	* Lifecycle
 	*--------------------------------------------------------------------------------------------*/
     
-    override func viewWillLayoutSubviews() {
-        let viewWidth = min(Config.contentWidthMax, self.view.width())
-        self.view.anchorTopCenter(withTopPadding: 0, width: viewWidth, height: self.view.height())
+    override func viewDidLoad() {
+        super.viewDidLoad()
     }
 	
 	/*--------------------------------------------------------------------------------------------

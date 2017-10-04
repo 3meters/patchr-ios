@@ -58,6 +58,12 @@ class ChannelGridController: UICollectionViewController {
         self.view.fillSuperview()
         self.collectionView?.fillSuperview()
 	}
+    
+    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        super.viewWillTransition(to: size, with: coordinator)
+        self.view.setNeedsLayout()
+        self.collectionView?.collectionViewLayout.invalidateLayout()
+    }
 
     deinit {
         Log.v("ChannelGridController released")
@@ -300,16 +306,7 @@ class ChannelGridController: UICollectionViewController {
         let indexPath = IndexPath(row: 0, section: 0)
         self.collectionView?.scrollToItem(at: indexPath, at: .top, animated: true)
     }
-    
-    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
-        if UIDevice.current.orientation.isLandscape {
-            Log.v("Changing to landscape orientation")
-        }
-        else {
-            Log.v("Changing to portrait orientation")
-        }
-        self.collectionView?.collectionViewLayout.invalidateLayout()
-    }}
+}
 
 extension ChannelGridController: FUICollectionDelegate {
     

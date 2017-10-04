@@ -74,7 +74,8 @@ class ContactPickerController: BaseTableController, CLTokenInputViewDelegate {
         self.view.superview?.fillSuperview() // Needed to get content offset correctly below chrome
         self.view.fillSuperview()
         super.viewWillLayoutSubviews()
-        self.tokenView.anchorTopCenterFillingWidth(withLeftAndRightPadding: 0, topPadding: self.chromeHeight, height: tokenView.height())
+        let viewWidth = min(Config.contentWidthMax, self.view.width())
+        self.tokenView.anchorTopCenter(withTopPadding: 64, width: viewWidth, height: tokenView.height())
         self.tableView.alignUnder(self.tokenView, matchingLeftAndRightFillingHeightWithTopPadding: 0, bottomPadding: 0)
     }
     

@@ -120,6 +120,7 @@ class ChannelViewController: UICollectionViewController { // Sets itself as data
 		self.chromeBackground.anchorTopCenterFillingWidth(withLeftAndRightPadding: 0, topPadding: 0, height: 64)
 		let viewWidth = min(Config.contentWidthMax, self.view.width())
 		self.collectionView?.anchorTopCenter(withTopPadding: 0, width: viewWidth, height: self.view.height())
+        updateHeaderView()
 	}
 
 	deinit {

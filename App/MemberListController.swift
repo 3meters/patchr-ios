@@ -55,9 +55,10 @@ class MemberListController: BaseTableController {
     
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
-        self.tableView.fillSuperview()
+        let viewWidth = min(Config.contentWidthMax, self.view.width())
+        self.tableView.anchorTopCenter(withTopPadding: 0, width: viewWidth, height: self.view.height())
     }
-    
+
     /*--------------------------------------------------------------------------------------------
      * Events
      *--------------------------------------------------------------------------------------------*/
@@ -112,6 +113,8 @@ class MemberListController: BaseTableController {
     
     override func initialize() {
         super.initialize()
+        
+        self.automaticallyAdjustsScrollViewInsets = false
         
         self.tableView.register(UINib(nibName: "UserListCell", bundle: nil), forCellReuseIdentifier: "cell")
         self.tableView.backgroundColor = Theme.colorBackgroundTable
