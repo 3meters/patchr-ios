@@ -7,13 +7,14 @@
 //
 
 import UIKit
+import Pastel
 import pop
 import AlertOnboarding
 
 class LobbyViewController: UIViewController {
 	
 	var appName	= AirLabelBanner()
-	var imageBackground = AirImageView(frame: CGRect.zero)
+	var imageBackground = PastelView(frame: CGRect.zero)
 	var imageLogo = AirImageView(frame: CGRect.zero)
 	var buttonLogin = AirButton()
 	var buttonSignup = AirButton()
@@ -36,7 +37,7 @@ class LobbyViewController: UIViewController {
 		self.view.endEditing(true)
         self.navigationController?.setNavigationBarHidden(true, animated: false)
 		if self.firstLaunch {
-			self.imageLogo.anchorInCenter(withWidth: 72, height: 72)
+   			self.imageLogo.anchorInCenter(withWidth: 72, height: 72)
 		}
 	}
 	
@@ -114,8 +115,11 @@ class LobbyViewController: UIViewController {
 	
 	func initialize() {
         
-		self.imageBackground.image = UIImage(named: "imgLobbyBackground")
-		self.imageBackground.contentMode = UIViewContentMode.scaleToFill
+        self.imageBackground.startPastelPoint = .topLeft
+        self.imageBackground.endPastelPoint = .bottomRight
+        self.imageBackground.animationDuration = 5.0
+        self.imageBackground.setColors([Colors.accentColor, Colors.accentColor, Colors.brandColor])
+        self.imageBackground.startAnimation()
 		
 		self.imageLogo.image = UIImage(named: "imgPatchrWhite")
 		self.imageLogo.contentMode = UIViewContentMode.scaleAspectFill

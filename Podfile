@@ -40,6 +40,7 @@ def shared_pods
     pod 'Localize-Swift',           '1.7.0'
     pod 'MBProgressHUD',            '0.9.2'
     pod 'NHBalancedFlowLayout',     '0.2'
+    pod 'Pastel',                   '0.3.0'
     pod 'PBWebViewController',      '0.5.0'		# Used to show show web content for terms/policy/licensing
     pod 'PhoneNumberKit',           '1.0.1'
     pod 'pop',                      '1.0.9'		# Animation library

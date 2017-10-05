@@ -7,12 +7,13 @@
 //
 
 import UIKit
+import Pastel
 import pop
 
 class EmptyViewController: UIViewController {
     
     var appName			= AirLabelBanner()
-    var imageBackground = UIImageView(frame: CGRect.zero)
+    var imageBackground = PastelView(frame: CGRect.zero)
     var imageLogo		= UIImageView(frame: CGRect.zero)
     var scenePlayed		= false
 		
@@ -29,6 +30,7 @@ class EmptyViewController: UIViewController {
         super.viewWillAppear(animated)
         self.view.endEditing(true)  // Ensure keyboard is closed
         self.imageLogo.anchorInCenter(withWidth: 72, height: 72)
+        self.imageLogo.frame.origin.y -= 32
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -55,8 +57,11 @@ class EmptyViewController: UIViewController {
         
         self.automaticallyAdjustsScrollViewInsets = false
 
-        self.imageBackground.image = UIImage(named: "imgLobbyBackground")
-        self.imageBackground.contentMode = UIViewContentMode.scaleToFill
+        self.imageBackground.startPastelPoint = .topLeft
+        self.imageBackground.endPastelPoint = .bottomRight
+        self.imageBackground.animationDuration = 1000.0
+        self.imageBackground.setColors([Colors.accentColor, Colors.accentColor, Colors.brandColor])
+        self.imageBackground.startAnimation()
         
         self.imageLogo.image = UIImage(named: "imgPatchrWhite")
         self.imageLogo.contentMode = UIViewContentMode.scaleAspectFill

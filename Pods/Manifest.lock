@@ -129,6 +129,7 @@ PODS:
   - nanopb/decode (0.3.8)
   - nanopb/encode (0.3.8)
   - NHBalancedFlowLayout (0.2)
+  - Pastel (0.3.0)
   - PBWebViewController (0.5.0)
   - PhoneNumberKit (1.0.1):
     - PhoneNumberKit/PhoneNumberKitCore (= 1.0.1)
@@ -178,6 +179,7 @@ DEPENDENCIES:
   - Localize-Swift (= 1.7.0)
   - MBProgressHUD (= 0.9.2)
   - NHBalancedFlowLayout (= 0.2)
+  - Pastel (= 0.3.0)
   - PBWebViewController (= 0.5.0)
   - PhoneNumberKit (= 1.0.1)
   - pop (= 1.0.9)
@@ -240,6 +242,7 @@ SPEC CHECKSUMS:
   MBProgressHUD: 1569cf7ace17a8bac47aabfbb8580a49690386d1
   nanopb: 5601e6bca2dbf1ed831b519092ec110f66982ca3
   NHBalancedFlowLayout: fd253023c6754e605acdb180d50123e582cc62bb
+  Pastel: 738740c84f2b15bbcd96ebe99c4e6c2f5dd42262
   PBWebViewController: 6537990155ca850fb8d0563efbc12becebc953ef
   PhoneNumberKit: 0b5ea9a5454d201656db766343e9d768f8542496
   pop: f667631a5108a2e60d9e8797c9b32ddaf2080bce
@@ -253,6 +256,6 @@ SPEC CHECKSUMS:
   UIDevice-Hardware: ecb52d9a7b223b31f81982358e2b0769ac1a7918
   VTAcknowledgementsViewController: e1de80f2c0ce31cc7e1c6f1c8aaeec2770371f09
 
-PODFILE CHECKSUM: a0daa6600f45871303d0a508721f62971e08c68a
+PODFILE CHECKSUM: 94d27110a2f755cd3d5f5e3630ea4ef7d3b09770
 
 COCOAPODS: 1.2.1
