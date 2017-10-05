@@ -24,6 +24,7 @@ PODS:
     - AFNetworking/NSURLConnection
     - AFNetworking/NSURLSession
   - AlertOnboarding (1.9)
+  - AMScrollingNavbar (3.4.1)
   - BEMCheckBox (1.4.0)
   - Branch (0.14.12):
     - Branch/Core (= 0.14.12)
@@ -155,6 +156,7 @@ DEPENDENCIES:
   - AFNetworkActivityLogger (= 2.0.4)
   - AFNetworking (= 2.6.3)
   - AlertOnboarding (= 1.9)
+  - AMScrollingNavbar (= 3.4.1)
   - BEMCheckBox (= 1.4.0)
   - Branch (= 0.14.12)
   - ChameleonFramework/Swift (from `https://github.com/ViccAlexander/Chameleon.git`)
@@ -207,6 +209,7 @@ SPEC CHECKSUMS:
   AFNetworkActivityLogger: 121486778117d53b3ab1c61d264b88081d0c3eee
   AFNetworking: cb8d14a848e831097108418f5d49217339d4eb60
   AlertOnboarding: 0c97f5c4feac0a4e914bae5d530f66b4dbc6b771
+  AMScrollingNavbar: ce8d3cdd733ffb7f2c56dfc16e350d571f6f80a2
   BEMCheckBox: e18e4a148905b290bd03d98b767651c104f4eda3
   Branch: f63d9cf82ac09747349a73184a0b739d28781c4d
   ChameleonFramework: d21a3cc247abfe5e37609a283a8238b03575cf64
@@ -250,6 +253,6 @@ SPEC CHECKSUMS:
   UIDevice-Hardware: ecb52d9a7b223b31f81982358e2b0769ac1a7918
   VTAcknowledgementsViewController: e1de80f2c0ce31cc7e1c6f1c8aaeec2770371f09
 
-PODFILE CHECKSUM: ae4ce57e98fbd78d961f65b0efab4f14c43fd438
+PODFILE CHECKSUM: a0daa6600f45871303d0a508721f62971e08c68a
 
 COCOAPODS: 1.2.1

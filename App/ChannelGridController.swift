@@ -5,6 +5,7 @@
 //
 
 import UIKit
+import AMScrollingNavbar
 import AVFoundation
 import Firebase
 import FirebaseDatabaseUI
@@ -48,10 +49,16 @@ class ChannelGridController: UICollectionViewController {
         if self.collectionView?.numberOfItems(inSection: 0) == 0 {
             bind()
         }
+        if let navigationController = navigationController as? ScrollingNavigationController {
+            navigationController.followScrollView(self.collectionView!, delay: 50.0)
+        }
 	}
     
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        if let navigationController = navigationController as? ScrollingNavigationController {
+            navigationController.showNavbar(animated: true)
+        }
     }
 
 	override func viewWillLayoutSubviews() {
@@ -123,9 +130,7 @@ class ChannelGridController: UICollectionViewController {
         }
         
         self.view.backgroundColor = Theme.colorBackgroundForm
-        
         self.automaticallyAdjustsScrollViewInsets = false
-        
         self.searchController.dimsBackgroundDuringPresentation = false
         self.definesPresentationContext = true
         
@@ -300,6 +305,13 @@ class ChannelGridController: UICollectionViewController {
         }
     
         present(sheet, animated: true, completion: nil)
+    }
+
+    override func scrollViewShouldScrollToTop(_ scrollView: UIScrollView) -> Bool {
+        if let navigationController = navigationController as? ScrollingNavigationController {
+            navigationController.showNavbar(animated: true)
+        }
+        return true
     }
     
     func scrollToFirstRow(animated: Bool = true) {

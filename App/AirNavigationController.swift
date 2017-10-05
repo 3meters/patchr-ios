@@ -7,8 +7,9 @@
 //
 
 import UIKit
+import AMScrollingNavbar
 
-class AirNavigationController: UINavigationController {
+class AirNavigationController: ScrollingNavigationController {
     
     var statusBarView: UIView!
     var tag: String!

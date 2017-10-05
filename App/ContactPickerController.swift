@@ -3,6 +3,7 @@
 //
 
 import UIKit
+import AMScrollingNavbar
 import AVFoundation
 import Firebase
 import FirebaseDatabaseUI
@@ -68,19 +69,27 @@ class ContactPickerController: BaseTableController, CLTokenInputViewDelegate {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.view.setNeedsLayout()
+        if let navigationController = navigationController as? ScrollingNavigationController {
+            navigationController.followScrollView(self.tableView, delay: 50.0, followers: [self.tokenView])
+        }
     }
     
     override func viewWillLayoutSubviews() {
-        self.view.superview?.fillSuperview() // Needed to get content offset correctly below chrome
-        self.view.fillSuperview()
         super.viewWillLayoutSubviews()
         let viewWidth = min(Config.contentWidthMax, self.view.width())
-        self.tokenView.anchorTopCenter(withTopPadding: 64, width: viewWidth, height: tokenView.height())
+        self.tokenView.anchorTopCenter(withTopPadding: 0, width: viewWidth, height: tokenView.height())
         self.tableView.alignUnder(self.tokenView, matchingLeftAndRightFillingHeightWithTopPadding: 0, bottomPadding: 0)
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         self.navigationController?.setToolbarHidden(true, animated: true)
+    }
+
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        if let navigationController = navigationController as? ScrollingNavigationController {
+            navigationController.showNavbar(animated: true)
+        }
     }
 
     /*--------------------------------------------------------------------------------------------
@@ -176,7 +185,6 @@ class ContactPickerController: BaseTableController, CLTokenInputViewDelegate {
         tap.delegate = self
         self.tokenView.addGestureRecognizer(tap)
         
-        self.tableView.register(UINib(nibName: "UserListCell", bundle: nil), forCellReuseIdentifier: "cell")
         self.tableView.backgroundColor = Colors.white
         self.tableView.delegate = self
         self.tableView.dataSource = self
@@ -184,6 +192,7 @@ class ContactPickerController: BaseTableController, CLTokenInputViewDelegate {
         self.tableView.separatorInset = UIEdgeInsets.zero
         self.tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 44, right: 0)
         self.tableView.tableFooterView = UIView()
+        self.tableView.register(UINib(nibName: "UserListCell", bundle: nil), forCellReuseIdentifier: "cell")
         
         self.view.addSubview(self.tokenView)
         self.view.addSubview(self.tableView)
@@ -368,6 +377,13 @@ class ContactPickerController: BaseTableController, CLTokenInputViewDelegate {
         else {
             self.navigationController?.close()
         }
+    }
+    
+    func scrollViewShouldScrollToTop(_ scrollView: UIScrollView) -> Bool {
+        if let navigationController = navigationController as? ScrollingNavigationController {
+            navigationController.showNavbar(animated: true)
+        }
+        return true
     }
 }
 

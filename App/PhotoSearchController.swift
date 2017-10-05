@@ -4,6 +4,7 @@
 //
 
 import UIKit
+import AMScrollingNavbar
 import IDMPhotoBrowser
 
 public enum ImageType {
@@ -55,19 +56,29 @@ class PhotoSearchController: UICollectionViewController, UITableViewDelegate, UI
 
 	override func viewWillAppear(_ animated: Bool) {
 		super.viewWillAppear(animated)
+        if let navigationController = navigationController as? ScrollingNavigationController {
+            navigationController.followScrollView(self.collectionView!, delay: 50.0)
+        }        
 	}
 
-	override func viewDidLayoutSubviews() {
-		super.viewDidLayoutSubviews()
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        self.searchBar?.becomeFirstResponder()
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        if let navigationController = navigationController as? ScrollingNavigationController {
+            navigationController.showNavbar(animated: true)
+        }
+    }
+
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
         self.searchBar.anchorTopCenter(withTopPadding: 0, width: self.view.width(), height: 44)
         self.collectionView?.alignUnder(self.searchBar, matchingLeftAndRightFillingHeightWithTopPadding: 0, bottomPadding: 0)
-	}
-
-	override func viewDidAppear(_ animated: Bool) {
-		super.viewDidAppear(animated)
-        self.searchBar?.becomeFirstResponder()
-	}
-
+    }
+    
 	/*--------------------------------------------------------------------------------------------
 	 * Events
 	 *--------------------------------------------------------------------------------------------*/
@@ -268,6 +279,13 @@ class PhotoSearchController: UICollectionViewController, UITableViewDelegate, UI
 		self.autocompleteList.alignUnder(self.searchBar, centeredFillingWidthWithLeftAndRightPadding: 0, topPadding: 0, height: CGFloat(self.autocompleteData.count * 40))
 		self.autocompleteList.reloadData()
 	}
+    
+    override func scrollViewShouldScrollToTop(_ scrollView: UIScrollView) -> Bool {
+        if let navigationController = navigationController as? ScrollingNavigationController {
+            navigationController.showNavbar(animated: true)
+        }
+        return true
+    }
 }
 
 extension PhotoSearchController: UISearchBarDelegate {

@@ -19,6 +19,7 @@ def shared_pods
     pod 'AFNetworkActivityLogger',  '2.0.4'
     pod 'AFNetworking',             '2.6.3'
     pod 'AlertOnboarding',          '1.9'
+    pod 'AMScrollingNavbar',        '3.4.1'
     pod 'BEMCheckBox',              '1.4.0'
     pod 'Branch',                   '0.14.12'     # Url routing and deep linking
     pod 'ChameleonFramework/Swift', :git => 'https://github.com/ViccAlexander/Chameleon.git'

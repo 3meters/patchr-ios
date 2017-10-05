@@ -3,6 +3,7 @@
 //
 
 import UIKit
+import AMScrollingNavbar
 import MessageUI
 import iRate
 import IDMPhotoBrowser
@@ -45,7 +46,7 @@ class ChannelViewController: UICollectionViewController { // Sets itself as data
 	var isChromeTranslucent = false
 	var postingEnabled = false
 	var selectedRow: Int?
-	var headerHeight = CGFloat(0)
+    var headerHeight = CGFloat(0)
 
 	/* Only used for row sizing */
 	var itemHeights: NSMutableDictionary = [:]
@@ -110,6 +111,13 @@ class ChannelViewController: UICollectionViewController { // Sets itself as data
 			StateController.instance.clearChannel() // Only clears last channel default
 		}
 	}
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        if let navigationController = navigationController as? ScrollingNavigationController {
+            navigationController.showNavbar(animated: true)
+        }
+    }
 
 	override func viewWillLayoutSubviews() {
 
@@ -278,6 +286,10 @@ class ChannelViewController: UICollectionViewController { // Sets itself as data
 		if self.container != nil {
 			configureActionButton()
 		}
+        
+        if let navigationController = navigationController as? ScrollingNavigationController {
+            navigationController.scrollingNavbarDelegate = self
+        }
 
 		self.chromeBackground.backgroundColor = Colors.accentColor
         self.view.addSubview(self.chromeBackground)
@@ -833,6 +845,20 @@ class ChannelViewController: UICollectionViewController { // Sets itself as data
  * MARK: - Methods
  *--------------------------------------------------------------------------------------------*/
 
+extension ChannelViewController: ScrollingNavigationControllerDelegate {
+    
+    func scrollingNavigationController(_ controller: ScrollingNavigationController, didChangeState state: NavigationBarState) {
+        switch state {
+        case .collapsed:
+            Log.v("Navbar collapsed")
+        case .expanded:
+            Log.v("Navbar expanded")
+        case .scrolling:
+            Log.v("Navbar is moving")
+        }
+    }
+}
+
 extension ChannelViewController { // UIScrollViewDelegate
 
 	override func scrollViewDidScroll(_ scrollView: UIScrollView) {
@@ -853,19 +879,21 @@ extension ChannelViewController { // UIScrollViewDelegate
 		if scrollView.contentOffset.y >= -(self.chromeHeight) {
 			if self.isChromeTranslucent {
 				UIView.animate(withDuration: 0.3
-						, delay: 0
-						, options: [.curveEaseInOut, .transitionCrossDissolve]
-						, animations: { [weak self] in
-					guard let this = self else { return }
-					UIApplication.shared.statusBarStyle = .default
-					if let backButton = this.backButton?.customView as? ChannelBackView {
-						backButton.label.textColor = Colors.black
-						backButton.backImage.tintColor = Colors.black
-					}
-					if let wrapper = this.navigationController {
-						UIShared.styleChrome(navigationBar: wrapper.navigationBar, translucent: false)
-						this.isChromeTranslucent = false
-					}
+                    , delay: 0
+					, options: [.curveEaseInOut, .transitionCrossDissolve]
+					, animations: { [weak self] in
+                        guard let this = self else { return }
+                        UIApplication.shared.statusBarStyle = .default
+                        if let backButton = this.backButton?.customView as? ChannelBackView {
+                            backButton.label.textColor = Colors.black
+                            backButton.backImage.tintColor = Colors.black
+                        }
+                        if let wrapper = this.navigationController as? ScrollingNavigationController {
+                            UIShared.styleChrome(navigationBar: wrapper.navigationBar, translucent: false)
+                            this.isChromeTranslucent = false
+                            wrapper.followScrollView(this.collectionView!, delay: -(Double(this.headerHeight)))
+                        }
+                        
 				}, completion: nil)
 			}
 		}
@@ -881,8 +909,9 @@ extension ChannelViewController { // UIScrollViewDelegate
 						backButton.label.textColor = Colors.white
 						backButton.backImage.tintColor = Colors.white
 					}
-					if let wrapper = this.navigationController {
+					if let wrapper = this.navigationController as? ScrollingNavigationController {
 						UIShared.styleChrome(navigationBar: wrapper.navigationBar, translucent: true)
+                        wrapper.stopFollowingScrollView()
 						this.isChromeTranslucent = true
 					}
 				}, completion: nil)
@@ -891,6 +920,13 @@ extension ChannelViewController { // UIScrollViewDelegate
 		self.lastContentOffset = scrollView.contentOffset.y
 		updateHeaderView()
 	}
+    
+    override func scrollViewShouldScrollToTop(_ scrollView: UIScrollView) -> Bool {
+        if let navigationController = navigationController as? ScrollingNavigationController {
+            navigationController.showNavbar(animated: true)
+        }
+        return true
+    }
 }
 
 extension ChannelViewController: UICollectionViewDelegateFlowLayout { // UICollectionViewDelegate, UICollectionViewDataSource

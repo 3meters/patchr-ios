@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import AMScrollingNavbar
 import IDMPhotoBrowser
 import NHBalancedFlowLayout
 import SDWebImage
@@ -52,9 +53,20 @@ class GalleryGridViewController: UICollectionViewController {
 		let numColumns: CGFloat = floor(CGFloat(availableWidth!) / CGFloat(requestedColumnWidth))
 		let spaceLeftOver = availableWidth! - (numColumns * requestedColumnWidth) - ((numColumns - 1) * 4)
 		self.thumbnailWidth = requestedColumnWidth + (spaceLeftOver / numColumns)
+        
+        if let navigationController = navigationController as? ScrollingNavigationController {
+            navigationController.followScrollView(self.collectionView!, delay: 50.0)
+        }
 	}
     
-	/*--------------------------------------------------------------------------------------------
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        if let navigationController = navigationController as? ScrollingNavigationController {
+            navigationController.showNavbar(animated: true)
+        }
+    }
+    
+    /*--------------------------------------------------------------------------------------------
 	 * Events
 	 *--------------------------------------------------------------------------------------------*/
     
@@ -104,6 +116,13 @@ class GalleryGridViewController: UICollectionViewController {
 			return nil
 		}
         return self.displayPhotosSorted![indexPath.row]
+    }
+    
+    override func scrollViewShouldScrollToTop(_ scrollView: UIScrollView) -> Bool {
+        if let navigationController = navigationController as? ScrollingNavigationController {
+            navigationController.showNavbar(animated: true)
+        }
+        return true
     }
 }
 

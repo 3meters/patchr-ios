@@ -5,6 +5,7 @@
 //
 
 import UIKit
+import AMScrollingNavbar
 import AVFoundation
 import Firebase
 import FirebaseDatabaseUI
@@ -51,6 +52,16 @@ class MemberListController: BaseTableController {
             self.tableView.deselectRow(at: indexPath, animated: animated)
         }
         self.tableView.reloadData()
+        if let navigationController = navigationController as? ScrollingNavigationController {
+            navigationController.followScrollView(self.tableView, delay: 50.0)
+        }
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        if let navigationController = navigationController as? ScrollingNavigationController {
+            navigationController.showNavbar(animated: true)
+        }
     }
     
     override func viewWillLayoutSubviews() {
@@ -214,6 +225,13 @@ class MemberListController: BaseTableController {
             })
             return cell
         }
+    }
+    
+    func scrollViewShouldScrollToTop(_ scrollView: UIScrollView) -> Bool {
+        if let navigationController = navigationController as? ScrollingNavigationController {
+            navigationController.showNavbar(animated: true)
+        }
+        return true
     }
     
     func isOwner() -> Bool {
