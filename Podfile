@@ -18,6 +18,7 @@ use_frameworks!
 def shared_pods
     pod 'AFNetworkActivityLogger',  '2.0.4'
     pod 'AFNetworking',             '2.6.3'
+    pod 'AIFlatSwitch',             '1.0.2'
     pod 'AlertOnboarding',          '1.9'
     pod 'AMScrollingNavbar',        '3.4.1'
     pod 'BEMCheckBox',              '1.4.0'

@@ -10,6 +10,7 @@ import Foundation
 import UIKit
 import SDWebImage
 import AVFoundation
+import Photos
 
 class ImageUtils {
 
@@ -56,6 +57,29 @@ class ImageUtils {
 		UIGraphicsEndImageContext()
 		return outputImage!
 	}
+    
+    static func takenDateFromAsset(asset: Any?) -> Int64? {
+        if let asset = asset as? PHAsset {
+            if let takenDate = asset.creationDate {
+                return takenDate.milliseconds
+            }
+        }
+        else if let asset = asset as? [String: Any] {
+            if let takenDate = asset["taken_at"] as? Int {
+                return Int64(takenDate)
+            }
+        }
+        return nil
+    }
+    
+    static func latLngFromAsset(asset: Any?) -> CLLocationCoordinate2D? {
+        if let asset = asset as? PHAsset {
+            if let coordinate = asset.location?.coordinate {
+                return coordinate
+            }
+        }
+        return nil
+    }
 
 	static func prepareImage(image inImage: UIImage) -> UIImage {
 		var image = inImage;

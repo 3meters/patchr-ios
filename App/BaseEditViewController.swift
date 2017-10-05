@@ -92,21 +92,14 @@ class BaseEditViewController: BaseViewController, UITextFieldDelegate, UITextVie
             "width": Int(preparedImage.size.width), // width/height are in points...should be pixels?
             "uploading": true ] as [String: Any]
         
-        if let asset = asset as? PHAsset {
-            if let takenDate = asset.creationDate {
-                photoMap["taken_at"] = takenDate.milliseconds
-                Log.d("Photo taken: \(takenDate)")
-            }
-            if let coordinate = asset.location?.coordinate {
-                photoMap["location"] = ["lat": coordinate.latitude, "lng": coordinate.longitude]
-                Log.d("Photo lat/lng: \(coordinate)")
-            }
+        if let takenDate = ImageUtils.takenDateFromAsset(asset: asset) {
+            photoMap["taken_at"] = takenDate
+            Log.d("Photo taken: \(takenDate)")
         }
-        else if let asset = asset as? [String: Any] {
-            if let takenDate = asset["taken_at"] as? Int {
-                photoMap["taken_at"] = takenDate
-                Log.d("Photo taken: \(takenDate)")
-            }
+        
+        if let coordinate = ImageUtils.latLngFromAsset(asset: asset) {
+            photoMap["location"] = ["lat": coordinate.latitude, "lng": coordinate.longitude]
+            Log.d("Photo lat/lng: \(coordinate)")
         }
         
         let imageData = UIImageJPEGRepresentation(preparedImage, /*compressionQuality*/ 0.70)!

@@ -23,6 +23,7 @@ PODS:
   - AFNetworking/UIKit (2.6.3):
     - AFNetworking/NSURLConnection
     - AFNetworking/NSURLSession
+  - AIFlatSwitch (1.0.2)
   - AlertOnboarding (1.9)
   - AMScrollingNavbar (3.4.1)
   - BEMCheckBox (1.4.0)
@@ -156,6 +157,7 @@ PODS:
 DEPENDENCIES:
   - AFNetworkActivityLogger (= 2.0.4)
   - AFNetworking (= 2.6.3)
+  - AIFlatSwitch (= 1.0.2)
   - AlertOnboarding (= 1.9)
   - AMScrollingNavbar (= 3.4.1)
   - BEMCheckBox (= 1.4.0)
@@ -210,6 +212,7 @@ CHECKOUT OPTIONS:
 SPEC CHECKSUMS:
   AFNetworkActivityLogger: 121486778117d53b3ab1c61d264b88081d0c3eee
   AFNetworking: cb8d14a848e831097108418f5d49217339d4eb60
+  AIFlatSwitch: 5ab22806eeff3e09d585c2f13d22bfa6e3427191
   AlertOnboarding: 0c97f5c4feac0a4e914bae5d530f66b4dbc6b771
   AMScrollingNavbar: ce8d3cdd733ffb7f2c56dfc16e350d571f6f80a2
   BEMCheckBox: e18e4a148905b290bd03d98b767651c104f4eda3
@@ -256,6 +259,6 @@ SPEC CHECKSUMS:
   UIDevice-Hardware: ecb52d9a7b223b31f81982358e2b0769ac1a7918
   VTAcknowledgementsViewController: e1de80f2c0ce31cc7e1c6f1c8aaeec2770371f09
 
-PODFILE CHECKSUM: 94d27110a2f755cd3d5f5e3630ea4ef7d3b09770
+PODFILE CHECKSUM: fb71e90eb721451af87117b55b1d8e293ead5d36
 
 COCOAPODS: 1.2.1

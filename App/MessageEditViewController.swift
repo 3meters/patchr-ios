@@ -6,12 +6,14 @@
 //  Copyright © 2017 3meters. All rights reserved.
 //
 
+import AIFlatSwitch
+import BEMCheckBox
 import Facade
 import Firebase
 import MBProgressHUD
 import UIKit
 
-class MessageEditViewController: BaseEditViewController {
+class MessageEditViewController: BaseEditViewController, BEMCheckBoxDelegate {
 
     var message: FireMessage!
     var messageQuery: MessageQuery!
@@ -25,6 +27,10 @@ class MessageEditViewController: BaseEditViewController {
 	var messageField = AirTextView()
 	var photoEditView = PhotoEditView()
     var photoButton = UIButton()
+    var dateGroup = UIView()
+    var useTakenDateCheckBox = AIFlatSwitch(frame: .zero)
+    var useTakenDateLabel = AirLabelDisplay(frame: .zero)
+    var useTakenDateValue = AirLabelDisplay(frame: .zero)
 
     var doneButton: UIBarButtonItem!
 
@@ -75,6 +81,19 @@ class MessageEditViewController: BaseEditViewController {
         self.messageField.alignUnder(self.userGroup, matchingCenterWithTopPadding: 0, width: viewWidth - 32, height: max(messageSize.height, 96))
 		self.photoEditView.alignUnder(self.messageField, matchingLeftAndRightWithTopPadding: 8, height: viewWidth * 0.75)
         self.photoButton.alignUnder(self.messageField, matchingLeftAndRightWithTopPadding: 8, height: 48)
+        
+        self.useTakenDateLabel.sizeToFit()
+        self.useTakenDateValue.sizeToFit()
+        self.useTakenDateCheckBox.anchorTopLeft(withLeftPadding: 0, topPadding: 0, width: 40, height: 40)
+        self.useTakenDateLabel.align(toTheRightOf: self.useTakenDateCheckBox, matchingTopWithLeftPadding: 8
+            , width: self.useTakenDateLabel.width()
+            , height: self.useTakenDateLabel.height())
+        self.useTakenDateValue.alignUnder(self.useTakenDateLabel, matchingLeftWithTopPadding: 0
+            , width: self.useTakenDateValue.width()
+            , height: self.useTakenDateLabel.height())
+        self.dateGroup.resizeToFitSubviews()
+        self.useTakenDateCheckBox.anchorCenterLeft(withLeftPadding: 0, width: 40, height: 40)
+        self.dateGroup.alignUnder(self.photoEditView, matchingCenterWithTopPadding: 24, width: self.dateGroup.width(), height: self.dateGroup.height())
 	}
 
 	/*--------------------------------------------------------------------------------------------
@@ -109,6 +128,12 @@ class MessageEditViewController: BaseEditViewController {
             self.post()
         }
 	}
+    
+    func useTakenDateAction(sender: AnyObject) {
+        if let flatSwitch = sender as? AIFlatSwitch {
+            Log.v("Switch selected: \(flatSwitch.isSelected)")
+        }
+    }
 
 	func deleteAction(sender: AnyObject) {
 
@@ -162,6 +187,13 @@ class MessageEditViewController: BaseEditViewController {
         self.photoButton.fadeOut()
         self.photoEditView.fadeIn()
         self.doneButton.isEnabled = isDirty()
+        let asset = self.photoEditView.imageView.asset
+        if let takenAt = ImageUtils.takenDateFromAsset(asset: asset) {
+            self.useTakenDateValue.text = DateUtils.dateMediumString(timestamp: takenAt)
+            Log.d("Photo taken: \(self.useTakenDateValue.text)")
+            self.view.setNeedsLayout()
+            self.dateGroup.fadeIn()
+        }
     }
     
     override func didClearPhoto() {
@@ -169,6 +201,8 @@ class MessageEditViewController: BaseEditViewController {
         self.photoButton.fadeIn()
         self.photoEditView.fadeOut()
         self.doneButton.isEnabled = isDirty()
+        self.dateGroup.fadeOut()
+        self.useTakenDateCheckBox.setSelected(false, animated: false)
     }
 
     /*--------------------------------------------------------------------------------------------
@@ -207,13 +241,25 @@ class MessageEditViewController: BaseEditViewController {
         self.photoButton.alpha = 1
         
         self.photoButton.addTarget(self, action: #selector(setPhotoAction(sender:)), for: .touchUpInside)
+        
+        self.dateGroup.alpha = 0
+        self.useTakenDateLabel.text = "Post using date photo was taken"
+        self.useTakenDateValue.textColor = Theme.colorTextSecondary
+        self.useTakenDateCheckBox.lineWidth = 1.0
+        self.useTakenDateCheckBox.strokeColor = MaterialColor.green.base
+        self.useTakenDateCheckBox.trailStrokeColor = MaterialColor.green.base
+        self.useTakenDateCheckBox.addTarget(self, action: #selector(useTakenDateAction(sender:)), for: .touchUpInside)
 
 		self.userGroup.addSubview(self.userPhotoControl)
 		self.userGroup.addSubview(self.userName)
+        self.dateGroup.addSubview(self.useTakenDateCheckBox)
+        self.dateGroup.addSubview(self.useTakenDateLabel)
+        self.dateGroup.addSubview(self.useTakenDateValue)
 		self.contentHolder.addSubview(self.messageField)
 		self.contentHolder.addSubview(self.photoEditView)
         self.contentHolder.addSubview(self.photoButton)
 		self.contentHolder.addSubview(self.userGroup)
+        self.contentHolder.addSubview(self.dateGroup)
 
 		if self.mode == .insert {
 			/* Navigation bar buttons */
@@ -302,8 +348,30 @@ class MessageEditViewController: BaseEditViewController {
         
         if self.mode == .update {
             
-            let timestamp = FireController.instance.getServerTimestamp()
-            var updateMap: [String: Any] = ["modified_at": timestamp]
+            let timestampModified = FireController.instance.getServerTimestamp()
+            var timestamp = timestampModified
+            var timestampReversed = -1 * timestamp
+            var mutateCreatedDate = false
+            var updateMap: [String: Any] = [:]
+            
+            if self.useTakenDateCheckBox.isSelected {
+                let asset = self.photoEditView.imageView.asset
+                if let takenAt = ImageUtils.takenDateFromAsset(asset: asset) {
+                    timestamp = takenAt
+                    timestampReversed = -1 * timestamp
+                    mutateCreatedDate = true
+                }
+            }
+            
+            if mutateCreatedDate {
+                updateMap["created_at"] = timestamp
+                updateMap["created_at_desc"] = timestampReversed
+                updateMap["modified_at"] = timestampModified
+            }
+            else {
+                updateMap["modified_at"] = timestampModified
+            }
+            
             let path = self.message.path
             
             if self.photoEditView.photoDirty {
@@ -355,8 +423,16 @@ class MessageEditViewController: BaseEditViewController {
                 message["attachments"] = [attachmentId: ["photo": photoMap!]]
             }
             
-            let timestamp = FireController.instance.getServerTimestamp()
-            let timestampReversed = -1 * timestamp
+            var timestamp = FireController.instance.getServerTimestamp()
+            var timestampReversed = -1 * timestamp
+            
+            if self.useTakenDateCheckBox.isSelected {
+                let asset = self.photoEditView.imageView.asset
+                if let takenAt = ImageUtils.takenDateFromAsset(asset: asset) {
+                    timestamp = takenAt
+                    timestampReversed = -1 * timestamp
+                }
+            }
             
             message["channel_id"] = channelId
             message["created_at"] = timestamp
