@@ -49,20 +49,20 @@ class DevelopmentViewController: BaseViewController {
 		self.clearImageCacheButton.alignUnder(self.statusBarHiddenLabel, centeredFillingWidthWithLeftAndRightPadding: 16, topPadding: 24, height: 48)
 	}
     
-    func enableDevModeAction(sender: AnyObject) {
+    @objc func enableDevModeAction(sender: AnyObject) {
         UserDefaults.standard.set(enableDevModeSwitch.isOn, forKey: Prefs.developerMode)
         if self.enableDevModeSwitch.isOn {
             AudioController.instance.play(sound: Sound.pop.rawValue)
         }
     }
 
-	func statusBarHiddenAction(sender: AnyObject) {
+	@objc func statusBarHiddenAction(sender: AnyObject) {
 		UserDefaults.standard.set(statusBarHiddenSwitch.isOn, forKey: Prefs.statusBarHidden)
         self.setNeedsStatusBarAppearanceUpdate()
 		self.view.setNeedsLayout()
 	}
 	
-    func clearImageCacheAction(sender: AnyObject) {
+    @objc func clearImageCacheAction(sender: AnyObject) {
         SDImageCache.shared().clearDisk()
         SDImageCache.shared().clearMemory()
         UIShared.toast(message: "Image cache cleared")

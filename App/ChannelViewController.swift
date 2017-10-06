@@ -140,7 +140,7 @@ class ChannelViewController: UICollectionViewController { // Sets itself as data
 	 * MARK: - Events
 	 *--------------------------------------------------------------------------------------------*/
 
-	func actionButtonTapped(gesture: UIGestureRecognizer?) {
+	@objc func actionButtonTapped(gesture: UIGestureRecognizer?) {
 		let controller = MessageEditViewController()
 		let wrapper = AirNavigationController(rootViewController: controller)
 		controller.inputChannelId = StateController.instance.channelId!
@@ -148,23 +148,23 @@ class ChannelViewController: UICollectionViewController { // Sets itself as data
 		self.present(wrapper, animated: true, completion: nil)
 	}
 
-	func backgroundTapped(sender: AnyObject?) {
+	@objc func backgroundTapped(sender: AnyObject?) {
 		if let controller = self.sheetController {
 			controller.dismiss()
 		}
 	}
 
-	func backAction(sender: AnyObject?) {
+	@objc func backAction(sender: AnyObject?) {
 		let _ = self.navigationController?.popViewController(animated: true)
 	}
 
-	func browseCommentsAction(sender: AnyObject?) {
+	@objc func browseCommentsAction(sender: AnyObject?) {
 		if let control = sender as? CommentsButton {
 			showComments(message: control.message)
 		}
 	}
 
-	func browseMemberAction(sender: AnyObject?) {
+	@objc func browseMemberAction(sender: AnyObject?) {
 		if let photoControl = sender as? PhotoControl {
 			if let user = photoControl.target as? FireUser {
 				let controller = MemberViewController(userId: user.id)
@@ -175,7 +175,7 @@ class ChannelViewController: UICollectionViewController { // Sets itself as data
 		}
 	}
 
-	func browsePhotoAction(sender: AnyObject?) {
+	@objc func browsePhotoAction(sender: AnyObject?) {
 		if let recognizer = sender as? UITapGestureRecognizer,
 		   let control = recognizer.view as? AirImageView,
 		   let url = control.fromUrl {
@@ -184,7 +184,7 @@ class ChannelViewController: UICollectionViewController { // Sets itself as data
 		}
 	}
 
-	func editChannelAction(sender: AnyObject?) {
+	@objc func editChannelAction(sender: AnyObject?) {
 		Reporting.track("view_channel_edit")
 		let controller = ChannelEditViewController()
 		let wrapper = AirNavigationController(rootViewController: controller)
@@ -218,7 +218,7 @@ class ChannelViewController: UICollectionViewController { // Sets itself as data
 		}
 	}
 
-	func longPressAction(sender: UILongPressGestureRecognizer) {
+	@objc func longPressAction(sender: UILongPressGestureRecognizer) {
 		if sender.state == UIGestureRecognizerState.began {
 			let point = sender.location(in: self.collectionView)
 			if let indexPath = self.collectionView?.indexPathForItem(at: point) {
@@ -232,7 +232,7 @@ class ChannelViewController: UICollectionViewController { // Sets itself as data
 		}
 	}
 
-	func openGalleryAction(sender: AnyObject?) {
+	@objc func openGalleryAction(sender: AnyObject?) {
 		Reporting.track("view_photo_gallery")
 		showPhotos(mode: .gallery)
 	}
@@ -241,17 +241,17 @@ class ChannelViewController: UICollectionViewController { // Sets itself as data
 	* MARK: - Notifications
 	*--------------------------------------------------------------------------------------------*/
 
-	func messageDidChange(notification: NSNotification) {
+	@objc func messageDidChange(notification: NSNotification) {
 		if let userInfo = notification.userInfo, let messageId = userInfo["message_id"] as? String {
 			self.itemHeights.removeObject(forKey: messageId)
 		}
 	}
 
-	func userDidUpdate(notification: NSNotification) {
+	@objc func userDidUpdate(notification: NSNotification) {
 		self.collectionView?.reloadData()
 	}
 
-	func unreadChange(notification: NSNotification?) {
+	@objc func unreadChange(notification: NSNotification?) {
 		/* Triggered when counter observer in user controller get a callback with changed count. */
 		var badgeTotal = UserController.instance.unreads!
 		if self.unreadsChannelTotal > 0 {
@@ -527,7 +527,7 @@ class ChannelViewController: UICollectionViewController { // Sets itself as data
 		Log.v("Observe query triggered for channel messages")
 	}
 
-	func bindLanguage() {
+	@objc func bindLanguage() {
 		let button = self.backButton.customView as! ChannelBackView
 		button.label.text = "channels".localized()
 	}
@@ -626,7 +626,7 @@ class ChannelViewController: UICollectionViewController { // Sets itself as data
 		present(sheet, animated: true, completion: nil)
 	}
 
-	func showChannelActions(sender: AnyObject?) {
+	@objc func showChannelActions(sender: AnyObject?) {
 
 		Reporting.track("view_channel_actions")
 

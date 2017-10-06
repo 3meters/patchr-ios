@@ -59,21 +59,21 @@ class InviteViewController: BaseEditViewController {
     * Events
     *--------------------------------------------------------------------------------------------*/
     
-	func inviteReadersAction(sender: AnyObject?) {
+	@objc func inviteReadersAction(sender: AnyObject?) {
         self.validateFor = "readers"
         invite(role: "reader")
 	}
 	
-	func inviteEditorsAction(sender: AnyObject?) {
+	@objc func inviteEditorsAction(sender: AnyObject?) {
         self.validateFor = "editors"
         invite(role: "editor")
 	}
     
-    func closeAction(sender: AnyObject?) {
+    @objc func closeAction(sender: AnyObject?) {
         close()
     }
     
-    func doneAction(sender: AnyObject?) {
+    @objc func doneAction(sender: AnyObject?) {
         /* Only called if part of channel create flow */
         let channelId = self.inputChannelId!
         StateController.instance.setChannelId(channelId: channelId) // We know it's good

@@ -61,7 +61,7 @@ class UserController: NSObject {
             
             /* Verify user account */
             user.reload(completion: { error in
-                if let error = error as? NSError {
+                if let error = error as NSError? {
                     Log.w(error.localizedDescription)
                     Log.w("error code: \(error.code)")
                     if let networkError = error.userInfo["NSUnderlyingError"] as? NSError {

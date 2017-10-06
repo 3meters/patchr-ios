@@ -96,7 +96,7 @@ class ContactPickerController: BaseTableController, CLTokenInputViewDelegate {
     * MARK: - Events
     *--------------------------------------------------------------------------------------------*/
     
-    func doneAction(sender: AnyObject?) {
+    @objc func doneAction(sender: AnyObject?) {
         if self.tokenView.text != nil && !self.tokenView.text!.isEmpty {
             let token = self.tokenView.tokenizeTextfieldText()
             if token == nil {
@@ -120,13 +120,13 @@ class ContactPickerController: BaseTableController, CLTokenInputViewDelegate {
         }
     }
     
-    func beginEditingAction(sender: AnyObject?) {
+    @objc func beginEditingAction(sender: AnyObject?) {
         if !self.tokenView.isEditing {
             self.tokenView.beginEditing()
         }
     }
     
-    func closeAction(sender: AnyObject?) {
+    @objc func closeAction(sender: AnyObject?) {
         self.close()
     }
     
@@ -134,7 +134,7 @@ class ContactPickerController: BaseTableController, CLTokenInputViewDelegate {
     * MARK: - Notifications
     *--------------------------------------------------------------------------------------------*/
 
-    func keyboardWillShow(notification: Notification) {
+    @objc func keyboardWillShow(notification: Notification) {
         let info: NSDictionary = notification.userInfo! as NSDictionary
         let value = info.value(forKey: UIKeyboardFrameBeginUserInfoKey) as! NSValue
         let keyboardSize = value.cgRectValue.size
@@ -144,12 +144,12 @@ class ContactPickerController: BaseTableController, CLTokenInputViewDelegate {
         self.tableView.scrollIndicatorInsets = contentInsets
     }
     
-    func keyboardWillHide(notification: Notification) {
+    @objc func keyboardWillHide(notification: Notification) {
         self.tableView.contentInset = UIEdgeInsetsMake(self.tableView.contentInset.top, 0, 0, 0)
         self.tableView.scrollIndicatorInsets = self.tableView.contentInset
     }
     
-    func dismissKeyboard(sender: NSNotification) {
+    @objc func dismissKeyboard(sender: NSNotification) {
         self.view.endEditing(true)
     }
     
@@ -247,7 +247,7 @@ class ContactPickerController: BaseTableController, CLTokenInputViewDelegate {
             fetchRequest.unifyResults = true
             try CNContactStore().enumerateContacts(with: fetchRequest) { contact, stop in
                 if !contact.emailAddresses.isEmpty
-                    , let email = contact.emailAddresses.first?.value as? String
+                    , let email = contact.emailAddresses.first?.value as String?
                     , email != "[No email address found]" {
                     self.contactsSource.append(contact)
                 }
@@ -272,12 +272,12 @@ class ContactPickerController: BaseTableController, CLTokenInputViewDelegate {
             
             if self.showContactsBySection {
                 for contact in self.contactsSource {
-                    let email = contact.emailAddresses.first?.value as? String
+                    let email = contact.emailAddresses.first?.value as String?
                     
                     if emails[email!] == nil {
                         let fullName = CNContactFormatter.string(from: contact, style: .fullName)
                         let title = fullName ?? email
-                        let sectionTitle = String(title!.characters.prefix(1)).uppercased()
+                        let sectionTitle = String(title!.prefix(1)).uppercased()
                         
                         if self.contactsBySection[sectionTitle] == nil {
                             self.contactsBySection[sectionTitle] = [contact]
@@ -294,7 +294,7 @@ class ContactPickerController: BaseTableController, CLTokenInputViewDelegate {
         else {
             
             for contact in self.contactsSource {
-                let email = contact.emailAddresses.first?.value as? String
+                let email = contact.emailAddresses.first?.value as String?
                 if emails[email!] == nil {
                     let fullName = CNContactFormatter.string(from: contact, style: .fullName)
                     let title = fullName ?? email

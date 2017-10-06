@@ -128,7 +128,7 @@ class ChannelDetailView: UIView {
         let attrString = NSMutableAttributedString(string: nameString)
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.lineHeightMultiple = 0.8
-        attrString.addAttribute(NSParagraphStyleAttributeName, value: paragraphStyle, range: NSMakeRange(0, attrString.length))
+        attrString.addAttribute(NSAttributedStringKey.paragraphStyle, value: paragraphStyle, range: NSMakeRange(0, attrString.length))
         
         self.titleLabel.attributedText = attrString
         

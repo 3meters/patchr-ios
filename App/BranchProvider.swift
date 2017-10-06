@@ -95,7 +95,7 @@ class InviteItem: NSObject, UIActivityItemSource {
         return nil
     }
     
-    func activityViewController(_ activityViewController: UIActivityViewController, itemForActivityType activityType: UIActivityType) -> Any? {
+    func activityViewController(_ activityViewController: UIActivityViewController, itemForActivityType activityType: UIActivityType?) -> Any? {
         let userTitle = (UserController.instance.user?.title)!
         let channelTitle = (self.channel?.title!)!
         let text = "share_description".localizedFormat(userTitle, channelTitle)

@@ -75,7 +75,7 @@ class AirImageView: FLAnimatedImageView {
                 }
                 else {
                     if super.image != nil {
-                        Log.d("ImageView cleared existing image to nil: \(self.fromUrl?.path)")
+                        Log.d("ImageView cleared existing image to nil: \(String(describing: self.fromUrl?.path))")
                     }
                 }
             }

@@ -90,14 +90,14 @@ class PhotoEditView: UIView {
 		}
 	}
 
-	func imageNotFoundAction(sender: AnyObject) {
+	@objc func imageNotFoundAction(sender: AnyObject) {
         self.imageView.image = nil
         self.usingPhotoDefault = true
         configureTo(photoMode: .placeholder)
 		self.photoActive = false
 	}
 
-	func editPhotoAction(sender: AnyObject) {
+	@objc func editPhotoAction(sender: AnyObject) {
         Reporting.track("view_photo_editor")
 		if self.controller != nil, let image = self.imageView.image {
 			let controller = AdobeUXImageEditorViewController(image: image)
@@ -106,7 +106,7 @@ class PhotoEditView: UIView {
 		}
 	}
 
-	func clearPhotoAction(sender: AnyObject) {
+	@objc func clearPhotoAction(sender: AnyObject) {
         Reporting.track("clear_photo")
         self.imageView.image = nil
         self.usingPhotoDefault = true
@@ -116,7 +116,7 @@ class PhotoEditView: UIView {
         self.photoDelegate?.didClearPhoto?()
 	}
 
-	func setPhotoAction(sender: AnyObject) {
+	@objc func setPhotoAction(sender: AnyObject) {
         Reporting.track("open_photo_options")
 		self.photoChooser?.choosePhoto(sender: sender) { [weak self] image, imageResult, asset, cancelled in
             guard let this = self else { return }

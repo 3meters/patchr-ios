@@ -24,7 +24,7 @@ class AirToggleButton: AirButtonBase {
         initialize()
     }
 	
-	func onClick(sender: AnyObject) { }
+	@objc func onClick(sender: AnyObject) { }
 		
     func initialize() {
         toggle(on: false, animate: false)

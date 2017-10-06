@@ -71,12 +71,12 @@ class BaseSlackController: SLKTextViewController {
      * MARK: - Notifications
      *--------------------------------------------------------------------------------------------*/
 
-    func viewDidBecomeActive(sender: NSNotification) {
+    @objc func viewDidBecomeActive(sender: NSNotification) {
         /* User either switched to app, launched app, or turned their screen back on with app in foreground. */
         self.controllerIsActive = true
     }
     
-    func viewWillResignActive(sender: NSNotification) {
+    @objc func viewWillResignActive(sender: NSNotification) {
         /* User either switched away from app or turned their screen off. */
         self.controllerIsActive = false
     }
@@ -203,11 +203,5 @@ extension BaseSlackController {
     override func didPasteMediaContent(_ userInfo: [AnyHashable: Any]) {
         // Notifies the view controller when the user has pasted a media (image, video, etc) inside of the text view.
         super.didPasteMediaContent(userInfo)
-        
-        let mediaType = (userInfo[SLKTextViewPastedItemMediaType] as? NSNumber)?.intValue
-        let contentType = userInfo[SLKTextViewPastedItemContentType]
-        let data = userInfo[SLKTextViewPastedItemData]
-        
-        print("didPasteMediaContent : \(contentType) (type = \(mediaType) | data : \(data))")
     }
 }

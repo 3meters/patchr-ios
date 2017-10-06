@@ -34,7 +34,7 @@ class MainController: NSObject, iRateDelegate {
     * MARK: - Notifications
     *--------------------------------------------------------------------------------------------*/
 
-    func stateInitialized(notification: NSNotification) {
+    @objc func stateInitialized(notification: NSNotification) {
         NotificationCenter.default.removeObserver(self, name: NSNotification.Name(rawValue: Events.StateInitialized), object: nil)
         Log.d("State initialized - app state: \(Config.appState())")
         checkCompatibility() { compatible in
@@ -67,7 +67,7 @@ class MainController: NSObject, iRateDelegate {
             , clientSecret: PatchrKeys().creativeSdkClientSecret, enableSignUp: false)
 
         /* Global UI tweaks */
-        UIBarButtonItem.appearance().setTitleTextAttributes([NSFontAttributeName: Theme.fontBarText], for: UIControlState.normal)
+        UIBarButtonItem.appearance().setTitleTextAttributes([NSAttributedStringKey.font: Theme.fontBarText], for: UIControlState.normal)
         self.window?.backgroundColor = Theme.colorBackgroundWindow
         self.window?.tintColor = Theme.colorTint
         UISwitch.appearance().onTintColor = Theme.colorTint
@@ -149,7 +149,7 @@ class MainController: NSObject, iRateDelegate {
         NotificationCenter.default.addObserver(self, selector: #selector(stateInitialized(notification:)), name: NSNotification.Name(rawValue: Events.StateInitialized), object: nil)
     }
     
-    func bindLanguage() {
+    @objc func bindLanguage() {
         /* Update language in user profile */
         let userId = UserController.instance.userId!
         let language = Localize.currentLanguage()

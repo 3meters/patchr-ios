@@ -117,7 +117,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, MessagingDelegate {
 
         /* First see if Branch claims it as a deep link. Calls handler registered in onLaunch. */
         if Branch.getInstance().handleDeepLink(url as URL!) {
-            Log.d("Branch detected a deep link in openUrl: \(url.absoluteString)", breadcrumb: true)
+            Log.d("Branch detected a deep link in openUrl: \(String(describing: url.absoluteString))", breadcrumb: true)
             return true
         }
 
@@ -212,7 +212,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, MessagingDelegate {
         }
     }
     
-    func stateInitialized(notification: AnyObject?) {
+    @objc func stateInitialized(notification: AnyObject?) {
         NotificationCenter.default.removeObserver(self, name: NSNotification.Name(rawValue: Events.StateInitialized), object: nil)
         if self.pendingNotification != nil {
             showChannel(notification: self.pendingNotification)

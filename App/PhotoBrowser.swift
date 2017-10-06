@@ -41,7 +41,7 @@ class PhotoBrowser: IDMPhotoBrowser {
      * Events
      *--------------------------------------------------------------------------------------------*/
     
-    func selectAction() {
+    @objc func selectAction() {
         self.browseDelegate?.photoBrowseController!(didFinishPickingPhoto: self.image, imageResult: self.imageResult, asset: self.asset)
     }
 	

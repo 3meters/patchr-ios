@@ -46,7 +46,7 @@ class AccountEditViewController: BaseEditViewController {
      * Events
      *--------------------------------------------------------------------------------------------*/
     
-    func doneAction(sender: AnyObject) {
+    @objc func doneAction(sender: AnyObject) {
         if isValid() {
             if isDirty() {
                 let _ = self.emailField.resignFirstResponder()
@@ -82,14 +82,14 @@ class AccountEditViewController: BaseEditViewController {
         close()
     }
     
-    func changePasswordAction(sender: AnyObject) {
+    @objc func changePasswordAction(sender: AnyObject) {
         Reporting.track("view_password_edit")
         let controller = PasswordEditViewController()
         self.navigationItem.backBarButtonItem = UIBarButtonItem(title: "back".localized(), style: .plain, target: nil, action: nil)
         self.navigationController?.pushViewController(controller, animated: true)
     }
     
-    func textFieldDidChange(_ textField: UITextField) {
+    @objc func textFieldDidChange(_ textField: UITextField) {
         self.doneButton.isEnabled = isDirty()
     }
     
@@ -145,7 +145,7 @@ class AccountEditViewController: BaseEditViewController {
         bindLanguage()
     }
     
-    func bindLanguage() {
+    @objc func bindLanguage() {
         self.message.text = "account".localized()
         self.emailField.placeholder = "email".localized()
         self.userNameField.placeholder = "username".localized()

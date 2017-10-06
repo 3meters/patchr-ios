@@ -45,12 +45,12 @@ class BaseViewController: UIViewController {
 	* Notifications
 	*--------------------------------------------------------------------------------------------*/
 
-    func viewDidBecomeActive(sender: NSNotification) {
+    @objc func viewDidBecomeActive(sender: NSNotification) {
         /* User either switched to app, launched app, or turned their screen back on with app in foreground. */
         self.controllerIsActive = true
     }
     
-    func viewWillResignActive(sender: NSNotification) {
+    @objc func viewWillResignActive(sender: NSNotification) {
         /* User either switched away from app or turned their screen off. */
         self.controllerIsActive = false
     }
@@ -73,7 +73,7 @@ class BaseViewController: UIViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(viewDidBecomeActive(sender:)), name: NSNotification.Name.UIApplicationDidBecomeActive, object: nil)
 	}
 	
-	func dismissKeyboard(sender: NSNotification) {
+	@objc func dismissKeyboard(sender: NSNotification) {
 		self.view.endEditing(true)
 	}
     

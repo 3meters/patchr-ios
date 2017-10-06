@@ -29,7 +29,7 @@ class MemberListController: BaseTableController {
     override func viewDidLoad() {
         super.viewDidLoad()
         initialize()
-        
+
         if self.scope == .channel {
             let channelId = StateController.instance.channelId!
             let userId = UserController.instance.userId!
@@ -73,7 +73,8 @@ class MemberListController: BaseTableController {
             self.landscapeContentSizeInPopup = CGSize(width: viewWidth, height: self.view.height() * 0.70)
         }
         else {
-            self.view.anchorTopCenter(withTopPadding: 0, width: viewWidth, height: UIScreen.main.bounds.size.height)
+            self.view.fillSuperview()
+            self.view.frame.size.width = viewWidth
             self.contentSizeInPopup = CGSize(width: viewWidth, height: self.view.height() * 0.70)
         }
         self.tableView.fillSuperview()
@@ -87,7 +88,7 @@ class MemberListController: BaseTableController {
      * Events
      *--------------------------------------------------------------------------------------------*/
     
-    func channelInviteAction(sender: AnyObject?) {        
+    @objc func channelInviteAction(sender: AnyObject?) {
         let controller = InviteViewController()
         controller.flow = .none
         controller.inputCode = self.channel.code!
@@ -96,11 +97,11 @@ class MemberListController: BaseTableController {
         self.navigationController?.pushViewController(controller, animated: true)
     }
     
-    func closeAction(sender: AnyObject?) {
+    @objc func closeAction(sender: AnyObject?) {
         close()
     }
     
-    func manageUserAction(sender: AnyObject?) {
+    @objc func manageUserAction(sender: AnyObject?) {
         if let button = sender as? AirButton {
             let controller = MemberSettingsController()
             let wrapper = AirNavigationController(rootViewController: controller)
@@ -116,7 +117,7 @@ class MemberListController: BaseTableController {
         }
     }
     
-    func profileTapped(sender: AnyObject?) {
+    @objc func profileTapped(sender: AnyObject?) {
         if let recognizer = sender as? UITapGestureRecognizer {
             Reporting.track("view_member_profile")
             let point = recognizer.location(in: self.tableView)
@@ -137,9 +138,13 @@ class MemberListController: BaseTableController {
     
     override func initialize() {
         super.initialize()
-        
-        self.automaticallyAdjustsScrollViewInsets = false
-        
+        if #available(iOS 11.0, *) {
+            self.tableView.contentInsetAdjustmentBehavior = .automatic
+        }
+//        else {
+//            self.automaticallyAdjustsScrollViewInsets = false
+//        }
+
         self.tableView.register(UINib(nibName: "UserListCell", bundle: nil), forCellReuseIdentifier: "cell")
         self.tableView.backgroundColor = Theme.colorBackgroundTable
         self.tableView.separatorInset = UIEdgeInsets.zero

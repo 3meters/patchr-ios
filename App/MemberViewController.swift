@@ -139,7 +139,7 @@ class MemberViewController: BaseViewController, UIScrollViewDelegate, UITextFiel
      * MARK: - Events
      *--------------------------------------------------------------------------------------------*/
     
-    func editAction(sender: AnyObject?) {
+    @objc func editAction(sender: AnyObject?) {
         Reporting.track("view_profile_edit")
         let controller = ProfileEditViewController()
         let wrapper = AirNavigationController()
@@ -147,14 +147,14 @@ class MemberViewController: BaseViewController, UIScrollViewDelegate, UITextFiel
         UIViewController.topController?.present(wrapper, animated: true, completion: nil)
     }
     
-    func settingsAction(sender: AnyObject?) {
+    @objc func settingsAction(sender: AnyObject?) {
         Reporting.track("view_settings")
         let controller = SettingsTableViewController()
         let wrapper = AirNavigationController(rootViewController: controller)
         UIViewController.topController?.present(wrapper, animated: true, completion: nil)
     }
     
-    func phoneAction(sender: AnyObject?) {
+    @objc func phoneAction(sender: AnyObject?) {
         do {
             Reporting.track("call_member")
             let phoneNumberKit = PhoneNumberKit()
@@ -162,11 +162,11 @@ class MemberViewController: BaseViewController, UIScrollViewDelegate, UITextFiel
             UIApplication.shared.openURL(URL(string: "tel://\(phoneNumber.adjustedNationalNumber())")!)
         }
         catch {
-            Log.w("Invalid phone number: \(self.user?.profile?.phone!)")
+            Log.w("Invalid phone number: \(String(describing: self.user?.profile?.phone!))")
         }
     }
     
-    func closeAction(sender: AnyObject?) {
+    @objc func closeAction(sender: AnyObject?) {
         close(animated: true)
     }
     
@@ -285,7 +285,7 @@ class MemberViewController: BaseViewController, UIScrollViewDelegate, UITextFiel
         updateHeaderView()
     }
     
-    func bindLanguage() {
+    @objc func bindLanguage() {
         self.phone.caption.text = "phone".localized()
         self.phone.setNeedsLayout()
         self.email.caption.text = "email".localized()

@@ -67,7 +67,7 @@ class ChannelBackView: UIView {
         
         self.badge.textColor = Colors.white
         self.badge.layer.backgroundColor = Theme.colorBackgroundBadge.cgColor
-        self.badge.text = (UserController.instance.unreads! > 0) ? "\(UserController.instance.unreads)" : nil
+        self.badge.text = (UserController.instance.unreads! > 0) ? "\(String(describing: UserController.instance.unreads))" : nil
         self.badge.font = UIFont(name: "HelveticaNeue", size: 14)
         self.badge.clipsToBounds = true
         self.badge.textAlignment = .center

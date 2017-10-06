@@ -81,7 +81,7 @@ class ProfileEditViewController: BaseEditViewController {
      * MARK: - Events
      *--------------------------------------------------------------------------------------------*/
     
-    func accountAction(sender: AnyObject) {
+    @objc func accountAction(sender: AnyObject) {
         /* Requires re-authentication */
         Reporting.track("view_password_entry")
         let controller = PasswordViewController()
@@ -90,7 +90,7 @@ class ProfileEditViewController: BaseEditViewController {
         self.navigationController?.pushViewController(controller, animated: true)
     }
     
-    func closeAction(sender: AnyObject?) {
+    @objc func closeAction(sender: AnyObject?) {
         if !isDirty() {
             self.close(animated: true)
             return
@@ -105,13 +105,13 @@ class ProfileEditViewController: BaseEditViewController {
         }
     }
     
-    func doneAction(sender: AnyObject?) {
+    @objc func doneAction(sender: AnyObject?) {
         guard !self.processing else { return }
         self.activeTextField?.resignFirstResponder()
         update()
     }
     
-    func textFieldDidChange(_ textField: UITextField) {
+    @objc func textFieldDidChange(_ textField: UITextField) {
         self.doneButton.isEnabled = isDirty()
     }
     
@@ -218,7 +218,7 @@ class ProfileEditViewController: BaseEditViewController {
         }
     }
     
-    func bindLanguage() {
+    @objc func bindLanguage() {
         self.message.text = "profile".localized()
         self.firstNameField.placeholder = "first_name".localized()
         self.lastNameField.placeholder = "last_name".localized()

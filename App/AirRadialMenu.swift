@@ -59,7 +59,7 @@ class AirRadialMenu: CKRadialMenu  {
 			, bottomPadding: self.imageInsets.bottom)
 	}
 	
-	func backgroundTapped(gester: UIGestureRecognizer) {
+	@objc func backgroundTapped(gester: UIGestureRecognizer) {
 		toggleOff()
 		self.retract()
 	}
@@ -157,6 +157,6 @@ class AirRadialMenu: CKRadialMenu  {
 	}
 		
 	private func degreesToRadians(degrees: CGFloat) -> CGFloat {
-		return degrees / 180.0 * CGFloat(M_PI)
+		return degrees / 180.0 * CGFloat(CGFloat.pi)
 	}
 }

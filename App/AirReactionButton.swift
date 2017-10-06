@@ -48,7 +48,7 @@ class AirReactionButton: UIControl {
      * MARK: - Events
      *--------------------------------------------------------------------------------------------*/
 
-    func onClick(sender: AnyObject) {
+    @objc func onClick(sender: AnyObject) {
         if let message = self.message {
             self.isEnabled = false
             if self.toggledOn {
@@ -66,13 +66,13 @@ class AirReactionButton: UIControl {
         }
     }
     
-    func backgroundTapped(sender: AnyObject?) {
+    @objc func backgroundTapped(sender: AnyObject?) {
         if let controller = self.sheetController {
             controller.dismiss()
         }
     }
     
-    func longPressAction(sender: UILongPressGestureRecognizer) {
+    @objc func longPressAction(sender: UILongPressGestureRecognizer) {
         if sender.state == UIGestureRecognizerState.began {
             if let message = self.message {
                 let messageId = message.id!

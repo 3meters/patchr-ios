@@ -76,7 +76,7 @@ class LobbyViewController: UIViewController {
     * Events
     *--------------------------------------------------------------------------------------------*/
     
-	func loginAction(sender: AnyObject?) {
+	@objc func loginAction(sender: AnyObject?) {
 		if MainController.instance.upgradeRequired {
 			UIShared.compatibilityUpgrade()
 		}
@@ -88,7 +88,7 @@ class LobbyViewController: UIViewController {
 		}
 	}
 	
-	func signupAction(sender: AnyObject?) {
+	@objc func signupAction(sender: AnyObject?) {
 		if MainController.instance.upgradeRequired {
 			UIShared.compatibilityUpgrade()
 		}
@@ -100,7 +100,7 @@ class LobbyViewController: UIViewController {
 		}
 	}
 	
-    func onboardingAction(sender: AnyObject?) {
+    @objc func onboardingAction(sender: AnyObject?) {
         Reporting.track("view_onboarding")
         showOnboarding()
     }

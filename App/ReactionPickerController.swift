@@ -66,7 +66,7 @@ class ReactionPickerController: UICollectionViewController {
 	 * Events
 	 *--------------------------------------------------------------------------------------------*/
     
-    func closeAction(sender: AnyObject) {
+    @objc func closeAction(sender: AnyObject) {
         self.close(animated: true)
     }
     

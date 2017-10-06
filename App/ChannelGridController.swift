@@ -81,7 +81,7 @@ class ChannelGridController: UICollectionViewController {
 	* MARK: - Events
 	*--------------------------------------------------------------------------------------------*/
 
-	func addAction(sender: AnyObject?) {
+	@objc func addAction(sender: AnyObject?) {
 
 		FireController.instance.isConnected() { connected in
 			if connected == nil || !connected! {
@@ -98,7 +98,7 @@ class ChannelGridController: UICollectionViewController {
 		}
 	}
 
-	func searchAction(sender: AnyObject?) {
+	@objc func searchAction(sender: AnyObject?) {
         self.navigationItem.setLeftBarButton(self.searchBarButton, animated: true)
         self.navigationItem.setRightBarButtonItems(nil, animated: true)
         self.searchBarHolder.frame = CGRect(x: 0, y: 0, width: (self.navigationController?.navigationBar.width())! - 24, height: 44)
@@ -111,7 +111,7 @@ class ChannelGridController: UICollectionViewController {
 	* MARK: - Notifications
 	*--------------------------------------------------------------------------------------------*/
 
-	func userDidSwitch(notification: NSNotification?) {
+	@objc func userDidSwitch(notification: NSNotification?) {
 		bind()
 	}
 
@@ -130,7 +130,12 @@ class ChannelGridController: UICollectionViewController {
         }
         
         self.view.backgroundColor = Theme.colorBackgroundForm
-        self.automaticallyAdjustsScrollViewInsets = false
+        if #available(iOS 11.0, *) {
+            self.collectionView!.contentInsetAdjustmentBehavior = .never
+        }
+        else {
+            self.automaticallyAdjustsScrollViewInsets = false
+        }
         self.searchController.dimsBackgroundDuringPresentation = false
         self.definesPresentationContext = true
         
@@ -269,7 +274,7 @@ class ChannelGridController: UICollectionViewController {
 		}
 	}
     
-    func bindLanguage() {
+    @objc func bindLanguage() {
         self.searchBar.placeholder = "channel_grid_search_bar_placeholder".localized()
         self.searchBar.setValue("cancel".localized(), forKey: "_cancelButtonText")
         self.navigationItem.title = "channel_grid_title".localized()
@@ -282,7 +287,7 @@ class ChannelGridController: UICollectionViewController {
         self.totalUnreadsQuery?.remove()
     }
     
-    func showActions(sender: AnyObject?) {
+    @objc func showActions(sender: AnyObject?) {
         
         Reporting.track("view_channel_grid_actions")
         let sheet = UIAlertController(title: nil, message: nil, preferredStyle: UIAlertControllerStyle.actionSheet)

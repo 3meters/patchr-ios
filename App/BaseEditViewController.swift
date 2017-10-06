@@ -127,7 +127,7 @@ class BaseEditViewController: BaseViewController, UITextFieldDelegate, UITextVie
         return photoMap
     }
     
-	func keyboardWillBeShown(sender: NSNotification) {
+	@objc func keyboardWillBeShown(sender: NSNotification) {
 		/*
 		* Called when the UIKeyboardDidShowNotification is sent.
 		*/
@@ -154,7 +154,7 @@ class BaseEditViewController: BaseViewController, UITextFieldDelegate, UITextVie
 		}
 	}
  
-	func keyboardWillBeHidden(sender: NSNotification) {
+	@objc func keyboardWillBeHidden(sender: NSNotification) {
 		/*
 		* Called when the UIKeyboardWillHideNotification is sent.
 		*/

@@ -79,7 +79,7 @@ class CommentListController: BaseSlackController {
         }
     }
     
-	func browseMemberAction(sender: AnyObject?) {
+	@objc func browseMemberAction(sender: AnyObject?) {
 		if let photoControl = sender as? PhotoControl {
 			if let user = photoControl.target as? FireUser {
                 let controller = MemberViewController(userId: user.id)
@@ -90,7 +90,7 @@ class CommentListController: BaseSlackController {
 		}
 	}
 
-    func closeAction(sender: AnyObject) {
+    @objc func closeAction(sender: AnyObject) {
         self.close(animated: true)
     }
     
@@ -102,7 +102,7 @@ class CommentListController: BaseSlackController {
 	* MARK: - Notifications
 	*--------------------------------------------------------------------------------------------*/
 
-	func userDidUpdate(notification: NSNotification) {
+	@objc func userDidUpdate(notification: NSNotification) {
 		self.tableView.reloadData()
 	}
 

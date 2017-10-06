@@ -616,7 +616,9 @@
 - (NSArray *)hideEmptyLayers:(CALayer *)layer
 {
     NSMutableArray *layers = [NSMutableArray array];
-    if (CGRectIsEmpty(layer.bounds))
+    
+    // See https://github.com/nicklockwood/FXBlurView/issues/126
+    if (CGRectIsEmpty(layer.bounds) && !layer.hidden)
     {
         layer.hidden = YES;
         [layers addObject:layer];
@@ -678,7 +680,7 @@
     self.layer.contentsScale = image.scale;
 }
 
-- (void)updateAsynchronously:(BOOL)async completion:(void (^)())completion
+- (void)updateAsynchronously:(BOOL)async completion:(void (^)(void))completion
 {
     if ([self shouldUpdate])
     {

@@ -43,7 +43,7 @@ class PasswordEditViewController: BaseEditViewController {
 	* Events
 	*--------------------------------------------------------------------------------------------*/
 	
-	func doneAction(sender: AnyObject) {
+	@objc func doneAction(sender: AnyObject) {
 		if isValid() {
             let _ = self.passwordField.resignFirstResponder()
             
@@ -60,7 +60,7 @@ class PasswordEditViewController: BaseEditViewController {
 		}
 	}
 	
-	func hideShowPasswordAction(sender: AnyObject?) {
+	@objc func hideShowPasswordAction(sender: AnyObject?) {
 		if let button = sender as? AirHideShowButton {
             Reporting.track(button.toggledOn ? "hide_password" : "show_password")
 			button.toggle(on: !button.toggledOn)

@@ -45,7 +45,7 @@ class EmailViewController: BaseEditViewController {
     * Events
     *--------------------------------------------------------------------------------------------*/
 
-    func doneAction(sender: AnyObject) {
+    @objc func doneAction(sender: AnyObject) {
         if isValid() {
             let _ = self.emailField.resignFirstResponder()
 

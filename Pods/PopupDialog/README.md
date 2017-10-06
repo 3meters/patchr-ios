@@ -16,9 +16,10 @@
 
 Popup Dialog is a simple, customizable popup dialog written in Swift.
 
-<img src="https://github.com/Orderella/PopupDialog/blob/master/Assets/PopupDialog01.gif?raw=true" width="250">
-<img src="https://github.com/Orderella/PopupDialog/blob/master/Assets/PopupDialog02.gif?raw=true" width="250">
-<img src="https://github.com/Orderella/PopupDialog/blob/master/Assets/PopupDialog03.gif?raw=true" width="250">
+<img align="left" src="https://github.com/Orderella/PopupDialog/blob/master/Assets/PopupDialog01.gif?raw=true" width="300">
+<img src="https://github.com/Orderella/PopupDialog/blob/master/Assets/PopupDialog02.gif?raw=true" width="300">
+<img align="left" src="https://github.com/Orderella/PopupDialog/blob/master/Assets/PopupDialog03.gif?raw=true" width="300">
+<img src="https://github.com/Orderella/PopupDialog/blob/master/Assets/PopupDialogDark01.png?raw=true" width="300">
 
 ## Features
 
@@ -29,25 +30,24 @@ Popup Dialog is a simple, customizable popup dialog written in Swift.
 - [x] Fully themeable via appearance, including fonts, colors, corner radius, shadow, overlay color and blur, etc.
 - [x] Can be dismissed via swipe and background tap
 - [x] Objective-C compatible
-- [x] Works on all screens and devices supporting iOS 8.0+
+- [x] Works on all screens and devices supporting iOS 9.0+
 
 <p>&nbsp;</p>
 
 # Installation
 
+This version is Swift 4 compatible. For the Swift 3 version, please use [V0.5.4](https://github.com/Orderella/PopupDialog/releases/tag/0.5.4).
+
 ## Cocoapods
 
-PopupDialog is available through [CocoaPods](http://cocoapods.org). For best results with Swift 3, I recommend
-installing CocoaPods version `1.1.0` (which might be a prerelease as of this release). Simply add the following to your Podfile:
+PopupDialog is available through [CocoaPods](http://cocoapods.org). Simply add the following to your Podfile:
 
 ```ruby
 use_frameworks!
 
 target '<Your Target Name>'
-pod 'PopupDialog', '~> 0.5'
+pod 'PopupDialog', '~> 0.6'
 ```
-
-**Please note that this version is compatiable with iOS8**
 
 ## Carthage
 
@@ -56,7 +56,7 @@ pod 'PopupDialog', '~> 0.5'
 To install, simply add the following lines to your Cartfile:
 
 ```ruby
-github "Orderella/PopupDialog" ~> 0.5
+github "Orderella/PopupDialog" ~> 0.6
 ```
 
 ## Manually
@@ -186,7 +186,7 @@ If you are using the default dialog, you can change selected properties at runti
 let popup = PopupDialog(title: title, message: message, image: image)
 
 // Present dialog
-self.presentViewController(popup, animated: true, completion: nil)
+self.present(popup, animated: true, completion: nil)
 
 // Get the default view controller and cast it
 // Unfortunately, casting is necessary to support Objective-C
@@ -295,12 +295,25 @@ The following is an example of a *Dark Mode* theme. You can find this in the Exa
 ```swift
 // Customize dialog appearance
 let pv = PopupDialogDefaultView.appearance()
-pv.backgroundColor      = UIColor(red:0.23, green:0.23, blue:0.27, alpha:1.00)
-pv.titleFont            = UIFont(name: "HelveticaNeue-Light", size: 16)!
-pv.titleColor           = UIColor.white
-pv.messageFont          = UIFont(name: "HelveticaNeue", size: 14)!
-pv.messageColor         = UIColor(white: 0.8, alpha: 1)
-pv.cornerRadius         = 2
+pv.titleFont    = UIFont(name: "HelveticaNeue-Light", size: 16)!
+pv.titleColor   = UIColor.white
+pv.messageFont  = UIFont(name: "HelveticaNeue", size: 14)!
+pv.messageColor = UIColor(white: 0.8, alpha: 1)
+
+// Customize the container view appearance
+let pcv = PopupDialogContainerView.appearance()
+pcv.backgroundColor = UIColor(red:0.23, green:0.23, blue:0.27, alpha:1.00)
+pcv.cornerRadius    = 2
+pcv.shadowEnabled   = true
+pcv.shadowColor     = UIColor.black
+
+// Customize overlay appearance
+let ov = PopupDialogOverlayView.appearance()
+ov.blurEnabled = true
+ov.blurRadius  = 30
+ov.liveBlur    = true
+ov.opacity     = 0.7
+ov.color       = UIColor.black
 
 // Customize default button appearance
 let db = DefaultButton.appearance()
@@ -380,13 +393,15 @@ DefaultButton *ok = [[DefaultButton alloc] initWithTitle:@"OK" dismissOnTap:YES 
 
 # Requirements
 
-Minimum requirement is iOS 8.0. This dialog was written with Swift 3, for 2.2 compatible versions please specify the X release.
+Minimum requirement is iOS 9.0. This dialog was written with Swift 4, for support of older versions please head over to releases.
 
 <p>&nbsp;</p>
 
 # Changelog
 
-* **0.5.3** Fixed memory leak with custom view controllers
+* **0.6.0** Swift 4 support<br>Dropped iOS8 compatibility
+* **0.5.4** Fixed bug where blur view would reveal hidden layer<br>Improved view controller lifecycle handling<br>Scroll views can now be used with gesture dismissal
+* **0.5.3** Fixed memory leak with custom view controllers<br>Added UI automation & snapshot tests
 * **0.5.2** Fixed image scaling for default view
 * **0.5.1** Introduced custom button height parameter<br>Reintroduced iOS8 compatibility
 * **0.5.0** Swift 3 compatibility / removed iOS8

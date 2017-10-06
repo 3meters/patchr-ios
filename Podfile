@@ -19,8 +19,8 @@ def shared_pods
     pod 'AFNetworkActivityLogger',  '2.0.4'
     pod 'AFNetworking',             '2.6.3'
     pod 'AIFlatSwitch',             '1.0.2'
-    pod 'AlertOnboarding',          '1.9'
-    pod 'AMScrollingNavbar',        '3.4.1'
+    pod 'AlertOnboarding',          '2.0'
+    pod 'AMScrollingNavbar',        '4.0.1'
     pod 'BEMCheckBox',              '1.4.0'
     pod 'Branch',                   '0.14.12'     # Url routing and deep linking
     pod 'ChameleonFramework/Swift', :git => 'https://github.com/ViccAlexander/Chameleon.git'
@@ -43,11 +43,11 @@ def shared_pods
     pod 'NHBalancedFlowLayout',     '0.2'
     pod 'Pastel',                   '0.3.0'
     pod 'PBWebViewController',      '0.5.0'		# Used to show show web content for terms/policy/licensing
-    pod 'PhoneNumberKit',           '1.0.1'
+    pod 'PhoneNumberKit',           '2.0.0'
     pod 'pop',                      '1.0.9'		# Animation library
-    pod 'PopupDialog',              '0.5.3'
+    pod 'PopupDialog',              '0.6.0'
     pod 'SDWebImage/GIF',           '4.0.0'
-    pod 'SkyFloatingLabelTextField','2.0.0'
+    pod 'SkyFloatingLabelTextField', git: 'https://github.com/Skyscanner/SkyFloatingLabelTextField/'
     pod 'SlackTextViewController',  :path => '~/code/SlackTextViewController'
     pod 'STPopup',                  '1.8.2'
     pod 'TTTAttributedLabel',       '2.0.0'
@@ -70,7 +70,7 @@ post_install do |installer|
     FileUtils.cp_r('Pods/Target Support Files/Pods-Teeny/Pods-Teeny-acknowledgements.plist', 'App/Pods-acknowledgements.plist', :remove_destination => true)
     installer.pods_project.targets.each do |target|
         target.build_configurations.each do |config|
-            config.build_settings['SWIFT_VERSION'] = '3.0'
+            config.build_settings['SWIFT_VERSION'] = '4.0'
         end
     end
 end

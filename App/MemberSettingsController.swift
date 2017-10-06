@@ -51,15 +51,15 @@ class MemberSettingsController: UITableViewController {
     * Events
     *--------------------------------------------------------------------------------------------*/
 
-    func doneAction(sender: AnyObject?) {
+    @objc func doneAction(sender: AnyObject?) {
         update()
     }
 
-    func closeAction(sender: AnyObject?) {
+    @objc func closeAction(sender: AnyObject?) {
         close(animated: true)
     }
 
-    func removeAction(sender: AnyObject?) {
+    @objc func removeAction(sender: AnyObject?) {
         remove()
     }
 

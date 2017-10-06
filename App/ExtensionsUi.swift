@@ -450,7 +450,7 @@ extension UIViewController {
 		self.present(alert, animated: true, completion: nil)
     }
 	
-	func alertTextFieldDidChange(sender: AnyObject) {
+	@objc func alertTextFieldDidChange(sender: AnyObject) {
 		if let alertController: UIAlertController = self.presentedViewController as? UIAlertController {
 			let confirm = alertController.textFields![0]
 			let okAction = alertController.actions[0]
@@ -513,9 +513,9 @@ extension UIColor {
 		
 		if hexString.hasPrefix("#") {
 			let start = hexString.index(hexString.startIndex, offsetBy: 1)
-            let hexColor = hexString.substring(from: start)
+            let hexColor = String(hexString[start...])
 			
-			if hexColor.characters.count == 8 {
+			if hexColor.count == 8 {
 				let scanner = Scanner(string: hexColor)
 				var hexNumber: UInt64 = 0
 				
@@ -616,11 +616,11 @@ extension String {
     }
     
     var length: Int {
-        return characters.count
+        return self.count
     }
     
     subscript (i: Int) -> Character {
-        return self[self.characters.index(self.startIndex, offsetBy: i)]
+        return self[self.index(self.startIndex, offsetBy: i)]
     }
     
     subscript (i: Int) -> String {
@@ -628,15 +628,15 @@ extension String {
     }
     
     subscript (r: Range<Int>) -> String {
-        let start = characters.index(startIndex, offsetBy: r.lowerBound)
-        let end = characters.index(start, offsetBy: r.upperBound - r.lowerBound)
-        return self[(start ..< end)]
+        let start = self.index(startIndex, offsetBy: r.lowerBound)
+        let end = self.index(start, offsetBy: r.upperBound - r.lowerBound)
+        return String(self[(start ..< end)])
     }
     
     subscript (r: CountableClosedRange<Int>) -> String {
-        let start = characters.index(startIndex, offsetBy: r.lowerBound)
-        let end = characters.index(start, offsetBy: r.upperBound - r.lowerBound)
-        return self[(start ... end)]
+        let start = self.index(startIndex, offsetBy: r.lowerBound)
+        let end = self.index(start, offsetBy: r.upperBound - r.lowerBound)
+        return String(self[(start ... end)])
     }
 }
 

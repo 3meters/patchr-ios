@@ -67,14 +67,14 @@ class SettingsTableViewController: UITableViewController {
         self.clearHistoryButton.fillSuperview()
     }
     
-    func logoutAction(sender: AnyObject) {
+    @objc func logoutAction(sender: AnyObject) {
         self.dismiss(animated: true) {
             Reporting.track("logout")
             UserController.instance.logout()
         }
     }
 
-    func clearHistoryAction(sender: AnyObject) {
+    @objc func clearHistoryAction(sender: AnyObject) {
 
         self.progress = AirProgress.showAdded(to: MainController.instance.window!, animated: true)
         self.progress!.mode = MBProgressHUDMode.indeterminate
@@ -90,7 +90,7 @@ class SettingsTableViewController: UITableViewController {
         self.progress!.hide(true)
     }
     
-    func closeAction(sender: AnyObject?) {
+    @objc func closeAction(sender: AnyObject?) {
         close(animated: true)
     }
 
@@ -127,7 +127,7 @@ class SettingsTableViewController: UITableViewController {
         bindLanguage()
     }
     
-    func bindLanguage() {
+    @objc func bindLanguage() {
         self.navigationItem.title = "settings".localized()
         self.soundEffectsCell.textLabel!.text = "play_sound_effects".localized()
         self.languageCell.textLabel?.text = "settings_language_label".localized()
@@ -149,7 +149,7 @@ class SettingsTableViewController: UITableViewController {
         return switchView
     }
 
-    func toggleAction(sender: AnyObject?) {
+    @objc func toggleAction(sender: AnyObject?) {
         if let switcher = sender as? UISwitch {
             if switcher.tag == Setting.playSoundEffects.rawValue {
                 Reporting.track(switcher.isOn ? "enable_sound_effects" : "disable_sound_effects")

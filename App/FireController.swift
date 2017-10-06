@@ -25,7 +25,10 @@ class FireController: NSObject {
     func prepare() {
         FireController.db.child(".info/serverTimeOffset").observe(.value, with: { snap in
             if !(snap.value is NSNull) {
-                self.serverOffset = snap.value as! Int!
+                if let number = snap.value as? NSNumber {
+                    let offset = number as! Double
+                    self.serverOffset = Int(offset)
+                }
             }
         })
     }
@@ -328,7 +331,7 @@ class FireController: NSObject {
     }
     
     func getServerTimestamp() -> Int64 {
-        return (DateUtils.now() + (FireController.instance.serverOffset ?? 0))
+        return (DateUtils.now() + Int64((FireController.instance.serverOffset ?? 0)))
     }
 }
 

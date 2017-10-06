@@ -83,7 +83,7 @@ class PhotoSearchController: UICollectionViewController, UITableViewDelegate, UI
 	 * Events
 	 *--------------------------------------------------------------------------------------------*/
     
-    func cancelAction(sender: AnyObject){
+    @objc func cancelAction(sender: AnyObject){
         self.pickerDelegate!.photoBrowseControllerDidCancel!()
         self.dismiss(animated: true, completion: nil)
     }
@@ -318,7 +318,7 @@ extension PhotoSearchController: UISearchBarDelegate {
 
 extension PhotoSearchController { // UITableViewDelegate
     
-	@objc(tableView:cellForRowAtIndexPath:) func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+	func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 		
 		var cell = tableView.dequeueReusableCell(withIdentifier: "cell")
 		

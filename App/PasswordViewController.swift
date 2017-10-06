@@ -63,7 +63,7 @@ class PasswordViewController: BaseEditViewController {
     * MARK: - Events
     *--------------------------------------------------------------------------------------------*/
 
-    func doneAction(sender: AnyObject) {
+    @objc func doneAction(sender: AnyObject) {
         if isValid() {
             let _ = self.passwordField.resignFirstResponder()
             Reporting.track("submit_password")
@@ -86,7 +86,7 @@ class PasswordViewController: BaseEditViewController {
         }
     }
 
-    func hideShowPasswordAction(sender: AnyObject?) {
+    @objc func hideShowPasswordAction(sender: AnyObject?) {
         if let button = sender as? AirHideShowButton {
             Reporting.track(button.toggledOn ? "hide_password" : "show_password")
             button.toggle(on: !button.toggledOn)
@@ -94,7 +94,7 @@ class PasswordViewController: BaseEditViewController {
         }
     }
 
-    func passwordResetAction(sender: AnyObject) {
+    @objc func passwordResetAction(sender: AnyObject) {
         Auth.auth().sendPasswordReset(withEmail: self.inputEmail) { error in
             if error == nil {
                 Reporting.track("request_password_reset")

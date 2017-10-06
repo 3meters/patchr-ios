@@ -31,7 +31,7 @@ public class GoogleStorage: NSObject {
             uploadTask.observe(.progress, handler: then!)
             uploadTask.observe(.success, handler: then!)
             uploadTask.observe(.failure) { snapshot in
-                if let error = snapshot.error as? NSError {
+                if let error = snapshot.error as NSError? {
                     Log.w("*** Google storage image upload failed with error: \(error.localizedDescription)")
                     then!(snapshot)
                 }

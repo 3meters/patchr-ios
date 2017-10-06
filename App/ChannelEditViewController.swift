@@ -73,7 +73,7 @@ class ChannelEditViewController: BaseEditViewController {
      * MARK: - Events
      *--------------------------------------------------------------------------------------------*/
 
-    func closeAction(sender: AnyObject){
+    @objc func closeAction(sender: AnyObject){
         
         if !isDirty() {
             self.close(animated: true)
@@ -90,7 +90,7 @@ class ChannelEditViewController: BaseEditViewController {
         }
     }
     
-    func doneAction(sender: AnyObject){
+    @objc func doneAction(sender: AnyObject){
         
         guard !self.processing else { return }
         
@@ -133,7 +133,7 @@ class ChannelEditViewController: BaseEditViewController {
         }
     }
     
-    func deleteAction(sender: AnyObject) {
+    @objc func deleteAction(sender: AnyObject) {
         
         guard !self.processing else { return }
         
@@ -161,7 +161,7 @@ class ChannelEditViewController: BaseEditViewController {
         }
     }
     
-    func textFieldDidChange(_ textField: UITextField) {
+    @objc func textFieldDidChange(_ textField: UITextField) {
         self.doneButton.isEnabled = isDirty()
     }
     

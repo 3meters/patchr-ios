@@ -43,16 +43,16 @@ class ContainerController: UIViewController {
      * MARK: - Notifications
      *--------------------------------------------------------------------------------------------*/
     
-    func viewDidBecomeActive(sender: Notification) {
+    @objc func viewDidBecomeActive(sender: Notification) {
         reachabilityChanged(notification: sender)
         Log.d("Container controller is active")
     }
     
-    func viewWillResignActive(sender: Notification) {
+    @objc func viewWillResignActive(sender: Notification) {
         Log.d("Container controller will resign active")
     }
     
-    func unreadChange(notification: Notification?) {
+    @objc func unreadChange(notification: Notification?) {
         /* Sent two ways:
          - when counter observer in user controller get a callback with changed count.
          - app delegate receives new message notification and app is active. */
@@ -121,7 +121,7 @@ class ContainerController: UIViewController {
         }
     }
     
-    func reachabilityChanged(notification: Notification) {
+    @objc func reachabilityChanged(notification: Notification) {
         if ReachabilityManager.instance.isReachable() {
             Reporting.track("network_available")
             hideMessageBar()

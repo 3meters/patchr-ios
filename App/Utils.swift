@@ -51,7 +51,7 @@ struct Utils {
 		var initials = ""
 		for word in words {
 			if !word.isEmpty {
-                let initial = String(word.characters.prefix(1)).uppercased()
+                let initial = String(word.prefix(1)).uppercased()
 				initials.append(initial)
                 if initials.length >= count! {
                     break

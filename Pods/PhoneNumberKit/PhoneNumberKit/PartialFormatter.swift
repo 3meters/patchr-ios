@@ -9,22 +9,20 @@
 import Foundation
 
 /// Partial formatter
-public class PartialFormatter {
+public final class PartialFormatter {
     
+    private let phoneNumberKit: PhoneNumberKit
+
     weak var metadataManager: MetadataManager?
     weak var parser: PhoneNumberParser?
     weak var regexManager: RegexManager?
-    
-    public convenience init() {
-        let phoneNumberKit = PhoneNumberKit()
-        self.init(phoneNumberKit: phoneNumberKit, defaultRegion: PhoneNumberKit.defaultRegionCode())
-    }
 
-    public convenience init(phoneNumberKit: PhoneNumberKit, defaultRegion: String, withPrefix: Bool = true) {
-        self.init(regexManager: phoneNumberKit.regexManager, metadataManager: phoneNumberKit.metadataManager, parser: phoneNumberKit.parseManager.parser, defaultRegion: defaultRegion, withPrefix: withPrefix)
+    public convenience init(phoneNumberKit: PhoneNumberKit = PhoneNumberKit(), defaultRegion: String = PhoneNumberKit.defaultRegionCode(), withPrefix: Bool = true) {
+        self.init(phoneNumberKit: phoneNumberKit, regexManager: phoneNumberKit.regexManager, metadataManager: phoneNumberKit.metadataManager, parser: phoneNumberKit.parseManager.parser, defaultRegion: defaultRegion, withPrefix: withPrefix)
     }
     
-    init(regexManager: RegexManager, metadataManager: MetadataManager, parser: PhoneNumberParser, defaultRegion: String, withPrefix: Bool = true) {
+    init(phoneNumberKit: PhoneNumberKit, regexManager: RegexManager, metadataManager: MetadataManager, parser: PhoneNumberParser, defaultRegion: String, withPrefix: Bool = true) {
+        self.phoneNumberKit = phoneNumberKit
         self.regexManager = regexManager
         self.metadataManager = metadataManager
         self.parser = parser
@@ -54,7 +52,7 @@ public class PartialFormatter {
     var currentMetadata: MetadataTerritory?
     var prefixBeforeNationalNumber =  String()
     var shouldAddSpaceAfterNationalPrefix = false
-    
+    var maxDigits: Int?
     var withPrefix = true
     
     //MARK: Status
@@ -91,6 +89,14 @@ public class PartialFormatter {
         }
         nationalNumber = extractNationalPrefix(nationalNumber)
         
+        if let maxDigits = maxDigits {
+            let extra = nationalNumber.characters.count - maxDigits
+            
+            if extra > 0 {
+                nationalNumber = String(nationalNumber.characters.dropLast(extra))
+            }
+        }
+        
         if let formats = availableFormats(nationalNumber) {
             if let formattedNumber = applyFormat(nationalNumber, formats: formats) {
                 nationalNumber = formattedNumber
@@ -115,7 +121,7 @@ public class PartialFormatter {
             finalNumber.append(nationalNumber)
         }
         if finalNumber.characters.last == PhoneNumberConstants.separatorBeforeNationalNumber.characters.first {
-            finalNumber = finalNumber.substring(to: finalNumber.index(before: finalNumber.endIndex))
+            finalNumber = String(finalNumber[..<finalNumber.index(before: finalNumber.endIndex)])
         }
         
         return finalNumber
@@ -181,8 +187,8 @@ public class PartialFormatter {
                 if let m = matches?.first {
                     let startCallingCode = m.characters.count
                     let index = rawNumber.characters.index(rawNumber.startIndex, offsetBy: startCallingCode)
-                    processedNumber = rawNumber.substring(from: index)
-                    prefixBeforeNationalNumber = rawNumber.substring(to: index)
+                    processedNumber = String(rawNumber[index...])
+                    prefixBeforeNationalNumber = String(rawNumber[..<index])
                 }
             }
         }
@@ -213,8 +219,8 @@ public class PartialFormatter {
             }
         }
         let index = rawNumber.characters.index(rawNumber.startIndex, offsetBy: startOfNationalNumber)
-        processedNumber = rawNumber.substring(from: index)
-        prefixBeforeNationalNumber.append(rawNumber.substring(to: index))
+        processedNumber = String(rawNumber[index...])
+        prefixBeforeNationalNumber.append(String(rawNumber[..<index]))
         return processedNumber
     }
     
@@ -368,7 +374,7 @@ public class PartialFormatter {
         }
         if rebuiltIndex < rawNumber.characters.count {
             let nationalCharacterIndex = rawNumber.characters.index(rawNumber.startIndex, offsetBy: rebuiltIndex)
-            let remainingNationalNumber: String = rawNumber.substring(from: nationalCharacterIndex)
+            let remainingNationalNumber: String = String(rawNumber[nationalCharacterIndex...])
             rebuiltString.append(remainingNationalNumber)
         }
         rebuiltString = rebuiltString.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)

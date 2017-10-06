@@ -100,7 +100,7 @@ class MessageEditViewController: BaseEditViewController, BEMCheckBoxDelegate {
 	 * MARK: - Events
 	 *--------------------------------------------------------------------------------------------*/
 
-    func closeAction(sender: AnyObject) {
+    @objc func closeAction(sender: AnyObject) {
         
         if !isDirty() {
             self.close(animated: true)
@@ -117,7 +117,7 @@ class MessageEditViewController: BaseEditViewController, BEMCheckBoxDelegate {
         }
     }
     
-	func doneAction(sender: AnyObject) {
+	@objc func doneAction(sender: AnyObject) {
 
 		guard isValid() else { return }
 		guard !self.processing else { return }
@@ -129,13 +129,13 @@ class MessageEditViewController: BaseEditViewController, BEMCheckBoxDelegate {
         }
 	}
     
-    func useTakenDateAction(sender: AnyObject) {
+    @objc func useTakenDateAction(sender: AnyObject) {
         if let flatSwitch = sender as? AIFlatSwitch {
             Log.v("Switch selected: \(flatSwitch.isSelected)")
         }
     }
 
-	func deleteAction(sender: AnyObject) {
+	@objc func deleteAction(sender: AnyObject) {
 
 		guard !self.processing else { return }
 
@@ -171,7 +171,7 @@ class MessageEditViewController: BaseEditViewController, BEMCheckBoxDelegate {
         self.doneButton.isEnabled = isDirty()
     }
     
-    func setPhotoAction(sender: AnyObject) {
+    @objc func setPhotoAction(sender: AnyObject) {
         self.view.endEditing(true)
         self.photoEditView.setPhotoAction(sender: sender)
     }
@@ -190,7 +190,7 @@ class MessageEditViewController: BaseEditViewController, BEMCheckBoxDelegate {
         let asset = self.photoEditView.imageView.asset
         if let takenAt = ImageUtils.takenDateFromAsset(asset: asset) {
             self.useTakenDateValue.text = DateUtils.dateMediumString(timestamp: takenAt)
-            Log.d("Photo taken: \(self.useTakenDateValue.text)")
+            Log.d("Photo taken: \(String(describing: self.useTakenDateValue.text))")
             self.view.setNeedsLayout()
             self.dateGroup.fadeIn()
         }

@@ -33,11 +33,11 @@ class AirAddReactionButton: UIControl {
      * MARK: - Events
      *--------------------------------------------------------------------------------------------*/
 
-    func onClick(sender: AnyObject?) {
+    @objc func onClick(sender: AnyObject?) {
         showReactionPicker()
     }
     
-    func backgroundTapped(sender: AnyObject?) {
+    @objc func backgroundTapped(sender: AnyObject?) {
         if let controller = self.sheetController {
             controller.dismiss()
         }

@@ -89,7 +89,7 @@ class AirTextView: UITextView {
 		self.rule.anchorBottomCenterFillingWidth(withLeftAndRightPadding: 0, bottomPadding: 0, height: Theme.dimenRuleThickness)
 	}
     
-	func editingBegin(notification: NSNotification) {
+	@objc func editingBegin(notification: NSNotification) {
         if self.ruleEnabled {
             if let textView = notification.object as? UITextView {
                 if textView == self {

@@ -35,7 +35,7 @@ class LanguageSettingsController: UITableViewController {
     * Events
     *--------------------------------------------------------------------------------------------*/
     
-    func closeAction(sender: AnyObject?) {
+    @objc func closeAction(sender: AnyObject?) {
         close(animated: true)
     }
 
@@ -79,7 +79,7 @@ class LanguageSettingsController: UITableViewController {
         bindLanguage()
     }
     
-    func bindLanguage() {
+    @objc func bindLanguage() {
         self.navigationItem.title = "language_settings_title".localized()
         self.tableView.reloadData()
     }
