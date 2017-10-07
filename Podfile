@@ -47,9 +47,9 @@ def shared_pods
     pod 'pop',                      '1.0.9'		# Animation library
     pod 'PopupDialog',              '0.6.0'
     pod 'SDWebImage/GIF',           '4.0.0'
-    pod 'SkyFloatingLabelTextField', git: 'https://github.com/Skyscanner/SkyFloatingLabelTextField/'
-    pod 'SlackTextViewController',  :path => '~/code/SlackTextViewController'
-    pod 'STPopup',                  '1.8.2'
+    pod 'SkyFloatingLabelTextField',:git => 'https://github.com/Skyscanner/SkyFloatingLabelTextField/'
+    pod 'SlackTextViewController',  :git => 'https://github.com/slackhq/SlackTextViewController.git'
+    pod 'STPopup',                  '1.8.3'
     pod 'TTTAttributedLabel',       '2.0.0'
     pod 'UIDevice-Hardware',        '0.1.8'		# Convenience for determining system version and model identifier
     pod 'VTAcknowledgementsViewController','1.2.1'

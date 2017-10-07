@@ -82,6 +82,7 @@ class MessageEditViewController: BaseEditViewController, BEMCheckBoxDelegate {
 		self.photoEditView.alignUnder(self.messageField, matchingLeftAndRightWithTopPadding: 8, height: viewWidth * 0.75)
         self.photoButton.alignUnder(self.messageField, matchingLeftAndRightWithTopPadding: 8, height: 48)
         
+        self.useTakenDateLabel.frame.size.width = viewWidth - (32 + 40 + 8)
         self.useTakenDateLabel.sizeToFit()
         self.useTakenDateValue.sizeToFit()
         self.useTakenDateCheckBox.anchorTopLeft(withLeftPadding: 0, topPadding: 0, width: 40, height: 40)
@@ -90,7 +91,7 @@ class MessageEditViewController: BaseEditViewController, BEMCheckBoxDelegate {
             , height: self.useTakenDateLabel.height())
         self.useTakenDateValue.alignUnder(self.useTakenDateLabel, matchingLeftWithTopPadding: 0
             , width: self.useTakenDateValue.width()
-            , height: self.useTakenDateLabel.height())
+            , height: self.useTakenDateValue.height())
         self.dateGroup.resizeToFitSubviews()
         self.useTakenDateCheckBox.anchorCenterLeft(withLeftPadding: 0, width: 40, height: 40)
         self.dateGroup.alignUnder(self.photoEditView, matchingCenterWithTopPadding: 24, width: self.dateGroup.width(), height: self.dateGroup.height())
@@ -243,7 +244,8 @@ class MessageEditViewController: BaseEditViewController, BEMCheckBoxDelegate {
         self.photoButton.addTarget(self, action: #selector(setPhotoAction(sender:)), for: .touchUpInside)
         
         self.dateGroup.alpha = 0
-        self.useTakenDateLabel.text = "Post using date photo was taken"
+        self.useTakenDateLabel.text = "Post using the date photo was taken:"
+        self.useTakenDateLabel.numberOfLines = 2
         self.useTakenDateValue.textColor = Theme.colorTextSecondary
         self.useTakenDateCheckBox.lineWidth = 1.0
         self.useTakenDateCheckBox.strokeColor = MaterialColor.green.base

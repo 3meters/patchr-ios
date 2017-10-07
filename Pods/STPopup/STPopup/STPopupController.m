@@ -333,6 +333,26 @@ static NSMutableSet *_retainedPopupControllers;
     topViewController.popupController = nil;
 }
 
+
+- (void)popToRootViewControllerAnimated:(BOOL)animated
+{
+    if (_viewControllers.count <= 1) {
+        return;
+    }
+    
+    UIViewController *firstViewController = _viewControllers.firstObject;
+    UIViewController *lastViewController = _viewControllers.lastObject;
+    for (int i = 1; i < _viewControllers.count; i++) {
+        [self destroyObserversOfViewController:_viewControllers[i]];
+    }
+    _viewControllers = [NSMutableArray arrayWithObject:firstViewController];
+    
+    if (self.presented) {
+        [self transitFromViewController:lastViewController toViewController:firstViewController animated:animated];
+    }
+}
+
+
 - (void)transitFromViewController:(UIViewController *)fromViewController toViewController:(UIViewController *)toViewController animated:(BOOL)animated
 {
     [fromViewController beginAppearanceTransition:NO animated:animated];
@@ -409,6 +429,7 @@ static NSMutableSet *_retainedPopupControllers;
         UIView *fromTitleView, *toTitleView;
         if (lastTitleView == _defaultTitleLabel)    {
             UILabel *tempLabel = [[UILabel alloc] initWithFrame:_defaultTitleLabel.frame];
+            tempLabel.center = _navigationBar.center;
             tempLabel.textColor = _defaultTitleLabel.textColor;
             tempLabel.font = _defaultTitleLabel.font;
             tempLabel.attributedText = [[NSAttributedString alloc] initWithString:_defaultTitleLabel.text ? : @""

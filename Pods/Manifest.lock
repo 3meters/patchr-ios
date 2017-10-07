@@ -149,7 +149,7 @@ PODS:
     - SDWebImage/Core
   - SkyFloatingLabelTextField (3.2.0)
   - SlackTextViewController (1.9.5)
-  - STPopup (1.8.2)
+  - STPopup (1.8.3)
   - TTTAttributedLabel (2.0.0)
   - UIDevice-Hardware (0.1.8)
   - VTAcknowledgementsViewController (1.2.1)
@@ -188,8 +188,8 @@ DEPENDENCIES:
   - PopupDialog (= 0.6.0)
   - SDWebImage/GIF (= 4.0.0)
   - SkyFloatingLabelTextField (from `https://github.com/Skyscanner/SkyFloatingLabelTextField/`)
-  - SlackTextViewController (from `~/code/SlackTextViewController`)
-  - STPopup (= 1.8.2)
+  - SlackTextViewController (from `https://github.com/slackhq/SlackTextViewController.git`)
+  - STPopup (= 1.8.3)
   - TTTAttributedLabel (= 2.0.0)
   - UIDevice-Hardware (= 0.1.8)
   - VTAcknowledgementsViewController (= 1.2.1)
@@ -204,7 +204,7 @@ EXTERNAL SOURCES:
   SkyFloatingLabelTextField:
     :git: https://github.com/Skyscanner/SkyFloatingLabelTextField/
   SlackTextViewController:
-    :path: ~/code/SlackTextViewController
+    :git: https://github.com/slackhq/SlackTextViewController.git
 
 CHECKOUT OPTIONS:
   ChameleonFramework:
@@ -213,6 +213,9 @@ CHECKOUT OPTIONS:
   SkyFloatingLabelTextField:
     :commit: a8d39e46e804b9bbf8398934e03a709e633b3f3e
     :git: https://github.com/Skyscanner/SkyFloatingLabelTextField/
+  SlackTextViewController:
+    :commit: 4c74cbab29408dda9af33633f86dcc983a3b5363
+    :git: https://github.com/slackhq/SlackTextViewController.git
 
 SPEC CHECKSUMS:
   AFNetworkActivityLogger: 121486778117d53b3ab1c61d264b88081d0c3eee
@@ -259,11 +262,11 @@ SPEC CHECKSUMS:
   SDWebImage: 76a6348bdc74eb5a55dd08a091ef298e56b55e41
   SkyFloatingLabelTextField: 33ac1c1be76a3100d24c1084df34e7cf78c0ad7b
   SlackTextViewController: fbcdadbb8090673f604484ff5b6eb8d77baed42a
-  STPopup: b69b3e7484ef7d2baec5f9ab2939f8a7bcdfe218
+  STPopup: da1167250a01584af7bcccb898653185f223ec46
   TTTAttributedLabel: 8cffe8e127e4e82ff3af1e5386d4cd0ad000b656
   UIDevice-Hardware: ecb52d9a7b223b31f81982358e2b0769ac1a7918
   VTAcknowledgementsViewController: e1de80f2c0ce31cc7e1c6f1c8aaeec2770371f09
 
-PODFILE CHECKSUM: 5b5f10572c6281188c81fe5ca536a32516cade13
+PODFILE CHECKSUM: 4ad80c41d55ba707eb5b63b75d69414a7e35555a
 
 COCOAPODS: 1.3.1

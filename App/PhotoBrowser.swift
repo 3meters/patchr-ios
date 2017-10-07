@@ -24,7 +24,6 @@ class PhotoBrowser: IDMPhotoBrowser {
     var imageResult: ImageResult?
     var image: UIImage? // Used to pass through if selected in preview mode
     var asset: Any?
-    var target: AnyObject?
 	
     /*--------------------------------------------------------------------------------------------
     * Lifecycle
@@ -32,16 +31,21 @@ class PhotoBrowser: IDMPhotoBrowser {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         self.displayDoneButton = false	// Prevent display of non-navbar done button
         initialize()
+    }
+    
+    override func viewWillLayoutSubviews() {
+        super.viewWillLayoutSubviews()
+        self.view.fillSuperview(withLeftPadding: 0, rightPadding: 0, topPadding: UIApplication.shared.statusBarFrame.size.height, bottomPadding: 0)
+        super.toolbar.anchorBottomCenterFillingWidth(withLeftAndRightPadding: 0, bottomPadding: 0, height: 48)
     }
     
     /*--------------------------------------------------------------------------------------------
      * Events
      *--------------------------------------------------------------------------------------------*/
     
-    @objc func selectAction() {
+    @objc func selectAction(sender: AnyObject?) {
         self.browseDelegate?.photoBrowseController!(didFinishPickingPhoto: self.image, imageResult: self.imageResult, asset: self.asset)
     }
 	
@@ -56,23 +60,17 @@ class PhotoBrowser: IDMPhotoBrowser {
         
         if self.mode == .preview {
             /* Configure toolbar */
-            
-            let toolbar: UIToolbar = super.toolbar
-            
-            self.selectButton = UIBarButtonItem(title: nil, style: UIBarButtonItemStyle.plain, target: self.target, action: #selector(selectAction))
-            let flexSpacer = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: self, action: nil)
-            let fixedSpacer = UIBarButtonItem(barButtonSystemItem: .fixedSpace, target: self, action: nil)
-            
-            selectButton!.tintColor = Theme.colorTint
-            
-            fixedSpacer.width = 16
-            
-            var items = [UIBarButtonItem]()
-            items.append(flexSpacer)
-            items.append(selectButton!)
-            items.append(flexSpacer)
-            
-            toolbar.items = items
+            if let toolbar = super.toolbar {
+                
+                self.selectButton = UIBarButtonItem(title: nil, style: UIBarButtonItemStyle.plain, target: self, action: #selector(selectAction(sender:)))
+                self.selectButton!.tintColor = Theme.colorTint
+                
+                var items = [UIBarButtonItem]()
+                items.append(UI.spacerFlex)
+                items.append(selectButton!)
+                items.append(UI.spacerFlex)
+                toolbar.items = items
+            }
         }
         else {
             if self.message?.createdBy != nil {
@@ -82,30 +80,24 @@ class PhotoBrowser: IDMPhotoBrowser {
             
             /* Configure bottom toolbar */
             
-            let toolbar: UIToolbar = super.toolbar
-            
-            let flexSpacer = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: self, action: nil)
-            let fixedSpacer = UIBarButtonItem(barButtonSystemItem: .fixedSpace, target: self, action: nil)
-            let shareButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.action, target: self, action: #selector(IDMPhotoBrowser.actionButtonPressed(_:)))    // Handled by IDMPhotoBrowser
-            
-            self.reactionToolbar = AirReactionToolbar()
-            self.reactionToolbar.bounds.size = CGSize(width: Config.screenWidth - 96, height: 32)
-            self.reactionToolbar.isHidden = (self.message == nil)
-            
-            fixedSpacer.width = 16
-            
-            let barReactionButton = UIBarButtonItem(customView: self.reactionToolbar)
-            
-            var items = [UIBarButtonItem]()
-            items.append(barReactionButton)
-            items.append(flexSpacer)	// Doubled up hack to prevent jitters because of animation
-            items.append(flexSpacer)
-            items.append(shareButton)
-            
-            toolbar.items = items
-            
-            if self.mode == .gallery {
-                self.reactionToolbar.isHidden = false
+            if let toolbar = super.toolbar {
+                let shareButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.action, target: self, action: #selector(IDMPhotoBrowser.actionButtonPressed(_:)))    // Handled by IDMPhotoBrowser
+                self.reactionToolbar = AirReactionToolbar()
+                self.reactionToolbar.bounds.size = CGSize(width: Config.screenWidth - 96, height: 32)
+                self.reactionToolbar.isHidden = (self.message == nil)
+                
+                let barReactionButton = UIBarButtonItem(customView: self.reactionToolbar)
+                
+                var items = [UIBarButtonItem]()
+                items.append(barReactionButton)
+                items.append(UI.spacerFlex)    // Doubled up hack to prevent jitters because of animation
+                items.append(UI.spacerFlex)
+                items.append(shareButton)
+                toolbar.items = items
+                
+                if self.mode == .gallery {
+                    self.reactionToolbar.isHidden = false
+                }
             }
         }
         bindLanguage()

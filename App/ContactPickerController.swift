@@ -165,8 +165,13 @@ class ContactPickerController: BaseTableController, CLTokenInputViewDelegate {
         tap.delegate = self
         self.view.addGestureRecognizer(tap)
         
-        self.automaticallyAdjustsScrollViewInsets = false
-        
+        if #available(iOS 11.0, *) {
+            self.tableView.contentInsetAdjustmentBehavior = .never
+        }
+        else {
+            self.automaticallyAdjustsScrollViewInsets = false
+        }
+
         self.navigationItem.title = (self.inputRole == "reader")
             ? "contact_picker_title_readers".localized()
             : "contact_picker_title_contributors".localized()

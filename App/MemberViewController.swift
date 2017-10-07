@@ -193,7 +193,12 @@ class MemberViewController: BaseViewController, UIScrollViewDelegate, UITextFiel
         }
         
         self.view.backgroundColor = Theme.colorBackgroundWindow
-        self.automaticallyAdjustsScrollViewInsets = false
+        if #available(iOS 11.0, *) {
+            self.scrollView.contentInsetAdjustmentBehavior = .never
+        }
+        else {
+            self.automaticallyAdjustsScrollViewInsets = false
+        }
         let viewWidth = min(Config.contentWidthMax, self.view.bounds.size.width)
 
         self.headerHeight = viewWidth * 0.625
@@ -229,8 +234,8 @@ class MemberViewController: BaseViewController, UIScrollViewDelegate, UITextFiel
         self.scrollView.addSubview(self.headerView)
         self.contentHolder.addSubview(self.buttonGroup)
         self.contentHolder.addSubview(self.profileGroup)
-        self.view.addSubview(self.chromeBackground)
-        self.view.sendSubview(toBack: self.chromeBackground)
+        //self.view.addSubview(self.chromeBackground)
+        //self.view.sendSubview(toBack: self.chromeBackground)
         
         self.scrollView.delegate = self
         self.authenticatedUser = (self.inputUserId == UserController.instance.userId)

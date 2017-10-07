@@ -96,7 +96,12 @@ class PhotoSearchController: UICollectionViewController, UITableViewDelegate, UI
 
         self.navigationItem.title = "search".localized()
         self.queue.name = "Image loading queue"
-        self.automaticallyAdjustsScrollViewInsets = false
+        if #available(iOS 11.0, *) {
+            self.collectionView!.contentInsetAdjustmentBehavior = .never
+        }
+        else {
+            self.automaticallyAdjustsScrollViewInsets = false
+        }
 
         self.searchBar = UISearchBar(frame: CGRect(x:0, y:0, width: UIScreen.main.bounds.size.width, height:44))
         self.searchBar!.autocapitalizationType = .none

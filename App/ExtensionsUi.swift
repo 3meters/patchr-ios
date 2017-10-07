@@ -450,6 +450,18 @@ extension UIViewController {
 		self.present(alert, animated: true, completion: nil)
     }
 	
+    func PrePermissionAlert(title: String? = nil, message: String? = nil,
+                                 actionTitle: String, cancelTitle: String,
+                                 delegate: Any? = nil, onDismiss: @escaping (Bool) -> Void) {
+        
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        let okAction = UIAlertAction(title: actionTitle, style: .default, handler: { _ in onDismiss(true) })
+        let cancelAction = UIAlertAction(title: cancelTitle, style: .cancel, handler: { _ in onDismiss(false) })
+        alert.addAction(okAction)
+        alert.addAction(cancelAction)
+        self.present(alert, animated: true, completion: nil)
+    }
+    
 	@objc func alertTextFieldDidChange(sender: AnyObject) {
 		if let alertController: UIAlertController = self.presentedViewController as? UIAlertController {
 			let confirm = alertController.textFields![0]

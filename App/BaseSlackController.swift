@@ -187,17 +187,7 @@ extension BaseSlackController {
     }
     
     override func forceTextInputbarAdjustment(for responder: UIResponder!) -> Bool {
-        
-        if #available(iOS 8.0, *) {
-            guard let _ = responder as? UIAlertController else {
-                // On iOS 9, returning YES helps keeping the input view visible when the keyboard if presented from another app when using multi-tasking on iPad.
-                return UIDevice.current.userInterfaceIdiom == .pad
-            }
-            return true
-        }
-        else {
-            return UIDevice.current.userInterfaceIdiom == .pad
-        }
+        return UIDevice.current.userInterfaceIdiom == .pad
     }
     
     override func didPasteMediaContent(_ userInfo: [AnyHashable: Any]) {

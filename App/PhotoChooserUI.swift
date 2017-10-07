@@ -93,27 +93,64 @@ class PhotoChooserUI: NSObject, UINavigationControllerDelegate {
 	}
 
 	private func choosePhotoFromLibrary() {
-        Reporting.track("choose_photo_from_library")
-        chosenPhotoFunction = .ChooseLibraryPhoto
-		let pickerController = UIImagePickerController()
-        pickerController.sourceType = .photoLibrary
-		pickerController.delegate = self
-		pickerController.mediaTypes = [kUTTypeImage as String]
-        
-        if let hostController = self.hostViewController {
-            if UIDevice.current.userInterfaceIdiom == .phone {
-                hostController.present(pickerController, animated: true, completion: nil)
-            }
-            else {
-                pickerController.modalPresentationStyle = .popover
-                hostController.present(pickerController, animated: true, completion: nil)
-                if let presentationController = pickerController.popoverPresentationController,
-                    let hostView = self.hostView {
-                    presentationController.sourceView = hostView
-                    presentationController.sourceRect = hostView.bounds
-                    presentationController.permittedArrowDirections = UIPopoverArrowDirection.any
+
+        let accessPhotos = { () in
+            Reporting.track("choose_photo_from_library")
+            self.chosenPhotoFunction = .ChooseLibraryPhoto
+            let pickerController = UIImagePickerController()
+            pickerController.sourceType = .photoLibrary
+            pickerController.delegate = self
+            pickerController.mediaTypes = [kUTTypeImage as String]
+            
+            if let hostController = self.hostViewController {
+                if UIDevice.current.userInterfaceIdiom == .phone {
+                    hostController.present(pickerController, animated: true, completion: nil)
+                }
+                else {
+                    pickerController.modalPresentationStyle = .popover
+                    hostController.present(pickerController, animated: true, completion: nil)
+                    if let presentationController = pickerController.popoverPresentationController,
+                        let hostView = self.hostView {
+                        presentationController.sourceView = hostView
+                        presentationController.sourceRect = hostView.bounds
+                        presentationController.permittedArrowDirections = UIPopoverArrowDirection.any
+                    }
                 }
             }
+        }
+
+        let status = PHPhotoLibrary.authorizationStatus()
+        if status == .notDetermined {
+            self.hostViewController?.PrePermissionAlert(
+                title: "Let Patchr Access Photos?",
+                message: "Patchr needs permission to access your photo library.",
+                actionTitle: "Give Access",
+                cancelTitle: "Not Now") {
+                    doIt in
+                    if doIt {
+                        PHPhotoLibrary.requestAuthorization() { status in
+                            switch status {
+                            case .authorized:
+                                accessPhotos()
+                            case .denied, .restricted:
+                                return
+                            case .notDetermined:
+                                return
+                            }
+                        }
+                    }
+                    else {
+                        if UserController.instance.authenticated {
+                            Log.w("Declined media permission")
+                            Reporting.track("decline_media_permission")
+                            UserController.instance.logout()
+                        }
+                    }
+            }
+
+        }
+        else if status == .authorized {
+            accessPhotos()
         }
 	}
 

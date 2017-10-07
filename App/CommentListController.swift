@@ -50,12 +50,12 @@ class CommentListController: BaseSlackController {
         let viewWidth = min(Config.contentWidthMax, UIScreen.main.bounds.size.width)
         
         if self.orientationIsLandscape {
-            self.view.anchorTopCenter(withTopPadding: 0, width: viewWidth, height: UIScreen.main.bounds.size.height)
-            self.landscapeContentSizeInPopup = CGSize(width: viewWidth, height: self.view.height() * 0.70)
+            self.view.anchorTopCenter(withTopPadding: self.chromeHeight, width: viewWidth, height: UIScreen.main.bounds.size.height)
+            self.landscapeContentSizeInPopup = CGSize(width: viewWidth - 48, height: self.view.height() * 0.70)
         }
         else {
-            self.view.anchorTopCenter(withTopPadding: 0, width: viewWidth, height: UIScreen.main.bounds.size.height)
-            self.contentSizeInPopup = CGSize(width: viewWidth, height: self.view.height() * 0.70)
+            self.view.anchorTopCenter(withTopPadding: self.chromeHeight, width: viewWidth, height: UIScreen.main.bounds.size.height)
+            self.contentSizeInPopup = CGSize(width: viewWidth - 48, height: self.view.height() * 0.70)
         }
 		self.tableView.fillSuperview()
 	}
@@ -119,8 +119,14 @@ class CommentListController: BaseSlackController {
 				this.unbind()
 			}
 		}
-        
         self.shouldScrollToBottomAfterKeyboardShows = true
+        
+        if #available(iOS 11.0, *) {
+            self.tableView.contentInsetAdjustmentBehavior = .never
+        }
+        else {
+            self.automaticallyAdjustsScrollViewInsets = false
+        }
 
 		self.tableView.estimatedRowHeight = 100                        // Zero turns off estimates
 		self.tableView.rowHeight = UITableViewAutomaticDimension    // Actual height is handled in heightForRowAtIndexPath
@@ -226,14 +232,14 @@ class CommentListController: BaseSlackController {
     
 	func scrollToFirstRow(animated: Bool = true) {
 		let indexPath = IndexPath(row: 0, section: 0)
-		self.tableView.scrollToRow(at: indexPath, at: .top, animated: true)
+		self.tableView.scrollToRow(at: indexPath, at: .top, animated: animated)
 	}
 
 	func scrollToLastRow(animated: Bool = true) {
 		let itemCount = self.queryController.items.count
 		if itemCount > 0 {
 			let indexPath = IndexPath(row: itemCount - 1, section: 0)
-			self.tableView.scrollToRow(at: indexPath, at: .bottom, animated: true)
+			self.tableView.scrollToRow(at: indexPath, at: .bottom, animated: animated)
 		}
 	}
 }
@@ -303,9 +309,14 @@ extension CommentListController: FUICollectionDelegate {
 			}
 		}
 	}
+
+	func arrayDidEndUpdates(_ collection: FUICollection) {
+		scrollToLastRow(animated: false)
+	}
 }
 
 extension CommentListController: TTTAttributedLabelDelegate {
+
 	func attributedLabel(_ label: TTTAttributedLabel!, didSelectLinkWith url: URL!) {
 		UIApplication.shared.openURL(url)
 	}

@@ -37,6 +37,19 @@ struct DateUtils {
         let locale = Locale(identifier: localeString)
         dateFormatter.locale = locale
         dateFormatter.dateStyle = .medium
+        dateFormatter.timeStyle = .medium
+        return dateFormatter.string(from: date as Date)
+    }
+    
+    static func dateLongString(timestamp: Int64) -> String {
+        let dateFormatter = DateFormatter()
+        let date = from(timestamp: timestamp)
+        let language = Localize.currentLanguage()
+        let localeString = Language.locale[language]!
+        let locale = Locale(identifier: localeString)
+        dateFormatter.locale = locale
+        dateFormatter.dateStyle = .long
+        dateFormatter.timeStyle = .long
         return dateFormatter.string(from: date as Date)
     }
     

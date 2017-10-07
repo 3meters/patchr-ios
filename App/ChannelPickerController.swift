@@ -50,7 +50,12 @@ class ChannelPickerController: BaseTableController {
     override func initialize() {
         super.initialize()
         
-        self.automaticallyAdjustsScrollViewInsets = false
+        if #available(iOS 11.0, *) {
+            self.baseView.tableView.contentInsetAdjustmentBehavior = .never
+        }
+        else {
+            self.automaticallyAdjustsScrollViewInsets = false
+        }
         self.baseView.titleLabel.text = "channel_picker_title".localized()
         
         self.baseView.searchBar.delegate = self

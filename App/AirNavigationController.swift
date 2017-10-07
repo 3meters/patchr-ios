@@ -24,7 +24,6 @@ class AirNavigationController: ScrollingNavigationController {
         statusBarView.backgroundColor = Colors.accentColor
         self.view.addSubview(statusBarView)
         self.hidesBarsOnSwipe = false
-        self.automaticallyAdjustsScrollViewInsets = false
     }
     
     deinit {

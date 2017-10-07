@@ -69,12 +69,11 @@ class MemberListController: BaseTableController {
         let viewWidth = min(Config.contentWidthMax, UIScreen.main.bounds.size.width)
         
         if self.orientationIsLandscape {
-            self.view.anchorTopCenter(withTopPadding: 0, width: viewWidth, height: UIScreen.main.bounds.size.height)
+            self.view.anchorTopCenter(withTopPadding: self.chromeHeight, width: viewWidth, height: UIScreen.main.bounds.size.height)
             self.landscapeContentSizeInPopup = CGSize(width: viewWidth, height: self.view.height() * 0.70)
         }
         else {
-            self.view.fillSuperview()
-            self.view.frame.size.width = viewWidth
+            self.view.anchorTopCenter(withTopPadding: self.chromeHeight, width: viewWidth, height: UIScreen.main.bounds.size.height)
             self.contentSizeInPopup = CGSize(width: viewWidth, height: self.view.height() * 0.70)
         }
         self.tableView.fillSuperview()
@@ -138,13 +137,13 @@ class MemberListController: BaseTableController {
     
     override func initialize() {
         super.initialize()
+        
         if #available(iOS 11.0, *) {
-            self.tableView.contentInsetAdjustmentBehavior = .automatic
+            self.tableView.contentInsetAdjustmentBehavior = .never
         }
-//        else {
-//            self.automaticallyAdjustsScrollViewInsets = false
-//        }
-
+        else {
+            self.automaticallyAdjustsScrollViewInsets = false
+        }
         self.tableView.register(UINib(nibName: "UserListCell", bundle: nil), forCellReuseIdentifier: "cell")
         self.tableView.backgroundColor = Theme.colorBackgroundTable
         self.tableView.separatorInset = UIEdgeInsets.zero

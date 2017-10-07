@@ -125,7 +125,7 @@ class ChannelViewController: UICollectionViewController { // Sets itself as data
 		   view -> chromeBackground */
 
 		self.view.fillSuperview()
-		self.chromeBackground.anchorTopCenterFillingWidth(withLeftAndRightPadding: 0, topPadding: 0, height: 64)
+        self.chromeBackground.anchorTopCenterFillingWidth(withLeftAndRightPadding: 0, topPadding: 0, height: 64)
 		let viewWidth = min(Config.contentWidthMax, self.view.width())
 		self.collectionView?.anchorTopCenter(withTopPadding: 0, width: viewWidth, height: self.view.height())
         updateHeaderView()
@@ -275,7 +275,12 @@ class ChannelViewController: UICollectionViewController { // Sets itself as data
 
 		let viewWidth = min(Config.contentWidthMax, self.view.width())
 
-		self.automaticallyAdjustsScrollViewInsets = false
+        if #available(iOS 11.0, *) {
+            self.collectionView!.contentInsetAdjustmentBehavior = .never
+        }
+        else {
+            self.automaticallyAdjustsScrollViewInsets = false
+        }
 		self.view.backgroundColor = Theme.colorBackgroundWindow
 		self.headerHeight = viewWidth * 0.625
         self.sectionInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
@@ -291,7 +296,7 @@ class ChannelViewController: UICollectionViewController { // Sets itself as data
             navigationController.scrollingNavbarDelegate = self
         }
 
-		self.chromeBackground.backgroundColor = Colors.accentColor
+        self.chromeBackground.backgroundColor = Colors.accentColor
         self.view.addSubview(self.chromeBackground)
         self.view.sendSubview(toBack: self.chromeBackground)
 
@@ -715,13 +720,12 @@ class ChannelViewController: UICollectionViewController { // Sets itself as data
 		let controller = CommentListController()
 		controller.inputMessageId = message.id!
 		controller.inputChannelId = message.channelId!
-		controller.contentSizeInPopup = CGSize(width: Config.screenWidth, height: Config.screenHeight * 0.40)
 
 		let backgroundView = UIView()
 		backgroundView.backgroundColor = Colors.opacity25pcntBlack
 
 		let popController = STPopupController(rootViewController: controller)
-		popController.style = .bottomSheet
+		popController.style = .formSheet
 		popController.backgroundView = backgroundView
 		popController.hidesCloseButton = true
 
@@ -891,7 +895,7 @@ extension ChannelViewController { // UIScrollViewDelegate
                         if let wrapper = this.navigationController as? ScrollingNavigationController {
                             UIShared.styleChrome(navigationBar: wrapper.navigationBar, translucent: false)
                             this.isChromeTranslucent = false
-                            wrapper.followScrollView(this.collectionView!, delay: -(Double(this.headerHeight)))
+                            wrapper.followScrollView(this.collectionView!, delay: -(Double(this.headerHeight)), followers: [this.chromeBackground])
                         }
                         
 				}, completion: nil)

@@ -16,7 +16,7 @@ import Firebase
 import FirebaseInstanceID
 import FirebaseMessaging
 import Localize_Swift
-
+    
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate, MessagingDelegate {
 

@@ -55,8 +55,6 @@ class EmptyViewController: UIViewController {
     
     func initialize() {
         
-        self.automaticallyAdjustsScrollViewInsets = false
-
         self.imageBackground.startPastelPoint = .topLeft
         self.imageBackground.endPastelPoint = .bottomRight
         self.imageBackground.animationDuration = 1000.0
