@@ -80,7 +80,7 @@ class ChannelEditViewController: BaseEditViewController {
             return
         }
         
-        DeleteConfirmationAlert(
+        deleteConfirmationAlert(
             title: "discard_changes".localized(),
             actionTitle: "discard".localized(), cancelTitle: "cancel".localized(), delegate: self) {
                 doIt in
@@ -145,7 +145,7 @@ class ChannelEditViewController: BaseEditViewController {
                     , cancelButtonTitle: "ok".localized())
             }
             else {
-                self.DeleteConfirmationAlert(
+                self.deleteConfirmationAlert(
                     title: "channel_delete_title".localized(),
                     message: "channel_delete_message".localized(),
                     actionTitle: "delete".localized(),

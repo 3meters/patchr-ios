@@ -195,7 +195,7 @@ class ChannelViewController: UICollectionViewController { // Sets itself as data
 
 	func leaveChannelAction(sender: AnyObject?) {
 
-		DeleteConfirmationAlert(
+        deleteConfirmationAlert(
 				title: "confirm".localized(),
 				message: "channel_leave_message".localized(),
 				actionTitle: "leave".localized(), cancelTitle: "cancel".localized(), delegate: self) { doIt in
@@ -814,8 +814,8 @@ class ChannelViewController: UICollectionViewController { // Sets itself as data
 		}
 	}
 
-	func deleteMessage(message: FireMessage) {
-		DeleteConfirmationAlert(
+    func deleteMessage(message: FireMessage) {
+        deleteConfirmationAlert(
 				title: "channel_delete_title".localized(),
 				message: "channel_delete_message".localized(),
 				actionTitle: "delete".localized(), cancelTitle: "cancel".localized(), delegate: self) {

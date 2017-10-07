@@ -108,7 +108,7 @@ class MessageEditViewController: BaseEditViewController, BEMCheckBoxDelegate {
             return
         }
         
-        DeleteConfirmationAlert(
+        deleteConfirmationAlert(
             title: "discard_changes".localized(),
             actionTitle: "discard".localized(), cancelTitle: "cancel".localized(), delegate: self) {
                 doIt in
@@ -140,7 +140,7 @@ class MessageEditViewController: BaseEditViewController, BEMCheckBoxDelegate {
 
 		guard !self.processing else { return }
 
-		DeleteConfirmationAlert(
+		deleteConfirmationAlert(
             title: "message_delete_title".localized(),
 				message: "message_delete_message".localized(),
 				actionTitle: "delete".localized(), cancelTitle: "cancel".localized(), delegate: self) {

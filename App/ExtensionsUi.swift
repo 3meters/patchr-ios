@@ -408,7 +408,7 @@ extension UIViewController {
 		self.present(alert, animated: true) {}
 	}
 	
-	func LocationSettingsAlert(title: String? = nil, message: String? = nil,
+	func locationSettingsAlert(title: String? = nil, message: String? = nil,
 		actionTitle: String, cancelTitle: String,
 		delegate: AnyObject? = nil, onDismiss: @escaping (Bool) -> Void) {
 			
@@ -420,7 +420,7 @@ extension UIViewController {
 			self.present(alert, animated: true, completion: nil)
 	}
 	
-	func UpdateConfirmationAlert(title: String? = nil, message: String? = nil,
+	func updateConfirmationAlert(title: String? = nil, message: String? = nil,
 		actionTitle: String, cancelTitle: String,
 		delegate: Any? = nil, onDismiss: @escaping (Bool) -> Void) {
 			
@@ -432,7 +432,7 @@ extension UIViewController {
 			self.present(alert, animated: true, completion: nil)
 	}
 	
-    func DeleteConfirmationAlert(title: String? = nil, message: String? = nil,
+    func deleteConfirmationAlert(title: String? = nil, message: String? = nil,
 								 actionTitle: String, cancelTitle: String, destructConfirmation: Bool = false,
 								 delegate: Any? = nil, onDismiss: @escaping (Bool) -> Void) {
             
@@ -450,9 +450,9 @@ extension UIViewController {
 		self.present(alert, animated: true, completion: nil)
     }
 	
-    func PrePermissionAlert(title: String? = nil, message: String? = nil,
+    func prePermissionAlert(title: String? = nil, message: String? = nil,
                                  actionTitle: String, cancelTitle: String,
-                                 delegate: Any? = nil, onDismiss: @escaping (Bool) -> Void) {
+                                 onDismiss: @escaping (Bool) -> Void) {
         
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
         let okAction = UIAlertAction(title: actionTitle, style: .default, handler: { _ in onDismiss(true) })

@@ -5,7 +5,6 @@
 //
 
 import UIKit
-import PopupDialog
 
 class InviteMessageController: BaseViewController, UITextViewDelegate {
     

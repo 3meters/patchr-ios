@@ -38,19 +38,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate, MessagingDelegate {
         Database.database().isPersistenceEnabled = true
         Database.setLoggingEnabled(false)
         
-        /* Remote notifications */
-        if #available(iOS 10.0, *) {
-            let authOptions: UNAuthorizationOptions = [.alert, .badge, .sound]
-            UNUserNotificationCenter.current().requestAuthorization(options: authOptions, completionHandler: {_, _ in })
-            UNUserNotificationCenter.current().delegate = self // For iOS 10 display notification (sent via APNS)
-            Messaging.messaging().delegate = self // For iOS 10 data message (sent via FCM)
-        }
-        else {
-            /* Triggers permission UI if needed */
-            application.registerUserNotificationSettings(UIUserNotificationSettings(types: [.alert, .badge, .sound], categories: nil))
-        }
-        
-        application.registerForRemoteNotifications() // Initiate the registration process with Apple Push Notification service.
+        /* Initiate the registration process with Apple Push Notification service. We will
+           get silent notifications unless user authorizes more later */
+        application.registerForRemoteNotifications()
         
         #if DEBUG
         AFNetworkActivityLogger.shared().startLogging()

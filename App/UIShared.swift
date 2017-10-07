@@ -15,7 +15,7 @@ struct UIShared {
 		OperationQueue.main.addOperation {
 			
 			if let controller = UIViewController.topController {
-				controller.UpdateConfirmationAlert(
+                controller.updateConfirmationAlert(
 					title: "update_title".localized(),
 					message: "update_message".localized(),
 					actionTitle: "update".localized(),

@@ -95,7 +95,7 @@ class ProfileEditViewController: BaseEditViewController {
             self.close(animated: true)
             return
         }
-        DeleteConfirmationAlert(
+        deleteConfirmationAlert(
             title: "discard_changes".localized(),
             actionTitle: "discard".localized(), cancelTitle: "cancel".localized(), delegate: self) {
                 doIt in

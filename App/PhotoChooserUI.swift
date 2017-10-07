@@ -12,6 +12,7 @@ import UIKit
 import MobileCoreServices
 import Photos
 import IDMPhotoBrowser
+import PopupDialog
 
 // PhotoChooserUI
 //
@@ -94,65 +95,67 @@ class PhotoChooserUI: NSObject, UINavigationControllerDelegate {
 
 	private func choosePhotoFromLibrary() {
 
-        let accessPhotos = { () in
-            Reporting.track("choose_photo_from_library")
-            self.chosenPhotoFunction = .ChooseLibraryPhoto
-            let pickerController = UIImagePickerController()
-            pickerController.sourceType = .photoLibrary
-            pickerController.delegate = self
-            pickerController.mediaTypes = [kUTTypeImage as String]
+        if PHPhotoLibrary.authorizationStatus() == .notDetermined {
             
-            if let hostController = self.hostViewController {
-                if UIDevice.current.userInterfaceIdiom == .phone {
-                    hostController.present(pickerController, animated: true, completion: nil)
-                }
-                else {
-                    pickerController.modalPresentationStyle = .popover
-                    hostController.present(pickerController, animated: true, completion: nil)
-                    if let presentationController = pickerController.popoverPresentationController,
-                        let hostView = self.hostView {
-                        presentationController.sourceView = hostView
-                        presentationController.sourceRect = hostView.bounds
-                        presentationController.permittedArrowDirections = UIPopoverArrowDirection.any
-                    }
-                }
-            }
-        }
-
-        let status = PHPhotoLibrary.authorizationStatus()
-        if status == .notDetermined {
-            self.hostViewController?.PrePermissionAlert(
-                title: "Let Patchr Access Photos?",
-                message: "Patchr needs permission to access your photo library.",
-                actionTitle: "Give Access",
-                cancelTitle: "Not Now") {
-                    doIt in
-                    if doIt {
-                        PHPhotoLibrary.requestAuthorization() { status in
-                            switch status {
-                            case .authorized:
-                                accessPhotos()
-                            case .denied, .restricted:
-                                return
-                            case .notDetermined:
-                                return
-                            }
+            let popup = PopupDialog(title: "permission_photos_title".localized(),
+                                    message: "permission_photos_message".localized())
+            let allowButton = DefaultButton(title: "allow".localized().uppercased(), height: 48) {
+                PHPhotoLibrary.requestAuthorization() { status in
+                    if status == .authorized {
+                        DispatchQueue.global().async {
+                            self.accessPhotos()
                         }
                     }
-                    else {
-                        if UserController.instance.authenticated {
-                            Log.w("Declined media permission")
-                            Reporting.track("decline_media_permission")
-                            UserController.instance.logout()
-                        }
+                    else if status == .denied {
+                        Log.w("Denied photos permission")
+                        Reporting.track("denied_photos_permission")
                     }
+                }
+                Log.d("Granted photos permission")
+                Reporting.track("granted_photos_permission")
             }
-
+            let laterButton = DefaultButton(title: "later".localized().uppercased(), height: 48) {
+                Log.d("Postponed photos permission")
+                Reporting.track("postponed_photos_permission")
+            }
+            popup.buttonAlignment = .horizontal
+            popup.addButtons([laterButton, allowButton])
+            self.hostViewController?.present(popup, animated: true)
         }
-        else if status == .authorized {
-            accessPhotos()
+        else if PHPhotoLibrary.authorizationStatus() == .authorized {
+            DispatchQueue.global().async {
+                self.accessPhotos()
+            }
+        }
+        else {
+            self.hostViewController!.alert(title: "permission_photos_denied".localized())
         }
 	}
+    
+    private func accessPhotos() {
+        Reporting.track("choose_photo_from_library")
+        self.chosenPhotoFunction = .ChooseLibraryPhoto
+        let pickerController = UIImagePickerController()
+        pickerController.sourceType = .photoLibrary
+        pickerController.delegate = self
+        pickerController.mediaTypes = [kUTTypeImage as String]
+        
+        if let hostController = self.hostViewController {
+            if UIDevice.current.userInterfaceIdiom == .phone {
+                hostController.present(pickerController, animated: true, completion: nil)
+            }
+            else {
+                pickerController.modalPresentationStyle = .popover
+                hostController.present(pickerController, animated: true, completion: nil)
+                if let presentationController = pickerController.popoverPresentationController,
+                    let hostView = self.hostView {
+                    presentationController.sourceView = hostView
+                    presentationController.sourceRect = hostView.bounds
+                    presentationController.permittedArrowDirections = UIPopoverArrowDirection.any
+                }
+            }
+        }
+    }
 
 	private func takePhotoWithCamera() {
         chosenPhotoFunction = .TakePhoto

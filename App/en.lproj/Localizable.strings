@@ -7,6 +7,7 @@
 "account" = "Account";
 "account_settings" = "Account settings";
 "acknowledgements" = "Acknowledgements";
+"allow" = "Allow";
 "back" = "Back";
 "call" = "Call";
 "cancel" = "Cancel";
@@ -45,7 +46,6 @@
 "connection_offline" = "Connection is offline";
 "contact_picker_title_contributors" = "Invite Contributors";
 "contact_picker_title_readers" = "Invite Readers";
-"contacts_permission_denied" = "Access to contacts has been denied. Check your privacy settings to allow access.";
 "contributor" = "Contributor";
 "create" = "Create";
 "creating" = "Creating";
@@ -139,6 +139,15 @@
 "password_too_short" = "Enter a password with six characters or more.";
 "password_view_title" = "Almost to the good stuff.";
 "people" = "People";
+"permission_contacts_denied" = "Access to contacts has been denied. Check your privacy settings to allow access.";
+"permission_contacts_message" = "Select from your contacts to invite people to your channel as readers or contributors.";
+"permission_contacts_title" = "Let Patchr Access Contacts";
+"permission_notifications_denied" = "Remove notifications have been denied. Check your privacy settings to allow notifications.";
+"permission_notifications_message" = "Get notified when members post messages to your channels or comment on your messages.";
+"permission_notifications_title" = "Let Patchr Send Notifications";
+"permission_photos_denied" = "Access to photos has been denied. Check your privacy settings to allow access.";
+"permission_photos_message" = "Patchr makes it easy to post messages that include photos from your photo library.";
+"permission_photos_title" = "Let Patchr Access Photos";
 "person" = "Person";
 "phone" = "Phone";
 "phone_number" = "Phone number";

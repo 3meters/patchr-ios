@@ -12,6 +12,7 @@ import pop
 import CLTokenInputView
 import Contacts
 import PopupDialog
+import UserNotifications
 
 /* Routes
  * - Channel create flow: channelswitcher->channeledit->channelinvite->contactpicker (.internalCreate)
@@ -109,6 +110,7 @@ class ContactPickerController: BaseTableController, CLTokenInputViewDelegate {
             let cancelButton = DefaultButton(title: "back".localized().uppercased(), height: 48, action: nil)
             let inviteButton = DefaultButton(title: "invite".localized().uppercased(), height: 48) {
                 let message = controller.textView.text
+                self.view.endEditing(true)
                 self.invite(message: message)
             }
             popup.buttonAlignment = .horizontal
@@ -219,14 +221,34 @@ class ContactPickerController: BaseTableController, CLTokenInputViewDelegate {
     }
     
     func bind() {
+        
         if CNContactStore.authorizationStatus(for: .contacts) == .notDetermined {
-            CNContactStore().requestAccess(for: .contacts) { authorized, error in
-                if authorized {
-                    DispatchQueue.global().async {
-                        self.loadContacts()
+            let popup = PopupDialog(title: "permission_contacts_title".localized(),
+                                    message: "permission_contacts_message".localized())
+            let allowButton = DefaultButton(title: "allow".localized().uppercased(), height: 48) {
+                CNContactStore().requestAccess(for: .contacts) { authorized, error in
+                    if authorized {
+                        DispatchQueue.global().async {
+                            self.loadContacts()
+                        }
+                    }
+                    else {
+                        Log.w("Denied contacts permission")
+                        Reporting.track("denied_contacts_permission")
+                        self.close()
                     }
                 }
+                Log.d("Granted contacts permission")
+                Reporting.track("granted_contacts_permission")
             }
+            let laterButton = DefaultButton(title: "later".localized().uppercased(), height: 48) {
+                Log.d("Postponed contacts permission")
+                Reporting.track("postponed_contacts_permission")
+                self.close()
+            }
+            popup.buttonAlignment = .horizontal
+            popup.addButtons([laterButton, allowButton])
+            self.present(popup, animated: true)
         }
         else if CNContactStore.authorizationStatus(for: .contacts) == .authorized {
             DispatchQueue.global().async {
@@ -234,7 +256,8 @@ class ContactPickerController: BaseTableController, CLTokenInputViewDelegate {
             }
         }
         else {
-            self.alert(title: "contacts_permission_denied".localized())
+            self.alert(title: "permission_contacts_denied".localized())
+            self.close()
         }
     }
     
@@ -375,12 +398,48 @@ class ContactPickerController: BaseTableController, CLTokenInputViewDelegate {
         if let controller = self.navigationController?.presentingViewController {
             UIShared.toast(message: "invites_sent".localized(), duration: 3.0, controller: controller, addToWindow: false)
         }
-
-        if self.flow == .internalCreate {
-            self.navigateToChannel()
-        }
-        else {
-            self.navigationController?.close()
+        
+        if UIApplication.shared.currentUserNotificationSettings!.types == [] {
+            if #available(iOS 10.0, *) {
+                
+                let popup = PopupDialog(title: "permission_notifications_title".localized(),
+                                        message: "permission_notifications_message".localized())
+                let allowButton = DefaultButton(title: "allow".localized().uppercased(), height: 48) {
+                    let authOptions: UNAuthorizationOptions = [.alert, .badge, .sound]
+                    UNUserNotificationCenter.current().requestAuthorization(options: authOptions) { granted, error in
+                        if granted {
+                            DispatchQueue.main.async {
+                                let appDelegate = UIApplication.shared.delegate as! AppDelegate
+                                UNUserNotificationCenter.current().delegate = appDelegate // For iOS 10 display notification (sent via APNS)
+                                Messaging.messaging().delegate = appDelegate // For iOS 10 data message (sent via FCM with only data)
+                                Log.d("Granted notifications permission")
+                                Reporting.track("granted_notifications_permission")
+                            }
+                        }
+                        else {
+                            Log.w("Denied notifications permission")
+                            Reporting.track("denied_notifications_permission")
+                        }
+                        if self.flow == .internalCreate {
+                            self.navigateToChannel()
+                        }
+                        else {
+                            self.navigationController?.close()
+                        }
+                    }
+                }
+                let laterButton = DefaultButton(title: "later".localized().uppercased(), height: 48) {
+                    Log.d("Postponed notifications permission")
+                    Reporting.track("postponed_notifications_permission")
+                }
+                popup.buttonAlignment = .horizontal
+                popup.addButtons([laterButton, allowButton])
+                self.present(popup, animated: true)
+            }
+            else {
+                /* Triggers permission UI if needed */
+                UIApplication.shared.registerUserNotificationSettings(UIUserNotificationSettings(types: [.alert, .badge, .sound], categories: nil))
+            }
         }
     }
     

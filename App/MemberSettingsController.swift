@@ -135,7 +135,7 @@ class MemberSettingsController: UITableViewController {
     func remove() {
         let userTitle = self.inputUserId != nil ? "deleted".localized() : self.inputUser!.profile?.fullName ?? self.inputUser!.username!
         
-        DeleteConfirmationAlert(
+        deleteConfirmationAlert(
             title: "confirm".localized(),
             message: "member_remove_message".localizedFormat(userTitle),
             actionTitle: "remove".localized(), cancelTitle: "cancel".localized(), delegate: self) { doIt in
