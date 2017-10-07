@@ -113,9 +113,9 @@
 "message_move_to" = "Move to";
 "message_moved" = "Message moved to: %@";
 "message_placeholder" = "What\'s happening?";
+"message_use_taken_date" = "Post using the date photo was taken:";
 "mute" = "Mute";
-"new_message" = "New";
-"new_comment" = "New";
+"new" = "New";
 "next" = "Next";
 "ok" = "OK";
 "onboard_create_title" = "Create a Channel";

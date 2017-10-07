@@ -376,6 +376,8 @@ class ChannelEditViewController: BaseEditViewController {
                     return
                 }
                 
+                Utils.incrementUserActions()
+                
                 let controller = InviteViewController()
                 controller.flow = .internalCreate
                 controller.inputAsOwner = true

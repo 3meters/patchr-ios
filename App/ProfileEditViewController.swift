@@ -288,6 +288,7 @@ class ProfileEditViewController: BaseEditViewController {
             FireController.db.child("users/\(userId)/profile").updateChildValues(updates)
             NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.UserDidUpdate), object: self, userInfo: ["user_id": userId])
         }
+        Utils.incrementUserActions()
         self.close(animated: true)
     }
     

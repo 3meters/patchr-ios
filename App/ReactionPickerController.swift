@@ -103,6 +103,7 @@ extension ReactionPickerController { /* UICollectionViewDelegate, UICollectionVi
         if !reacted {
             Reporting.track("add_reaction", properties: ["code": emojiCode])
             inputMessage.addReaction(emoji: emojiCode)
+            Utils.incrementUserActions()
             NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.MessageDidUpdate)
                 , object: self, userInfo: ["message_id": messageId]) // Clears cached row height for the message
         }

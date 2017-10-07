@@ -15,6 +15,7 @@ import TTTAttributedLabel
 import STPopup
 import BEMCheckBox
 import PopupDialog
+import StoreKit
 
 class ChannelViewController: UICollectionViewController { // Sets itself as data source and delegate
 
@@ -90,8 +91,16 @@ class ChannelViewController: UICollectionViewController { // Sets itself as data
 			self.container?.setActionButton(button: self.actionButton)
 			self.container?.showActionButton()
 		}
-
-		iRate.sharedInstance().promptIfAllCriteriaMet()
+        if #available(iOS 10.3, *) {
+            if Utils.getUserActionsCount() >= Config.reviewRequestTriggerCount {
+                Log.d("Patchr review requested")
+                SKStoreReviewController.requestReview()
+                Utils.resetUserActionsCount()
+            }
+        }
+        else {
+            iRate.sharedInstance().promptIfAllCriteriaMet()
+        }
 		if let link = MainController.instance.link {
 			MainController.instance.link = nil
 			MainController.instance.routeDeepLink(link: link, error: nil)

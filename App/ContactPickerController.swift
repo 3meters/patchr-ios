@@ -395,9 +395,7 @@ class ContactPickerController: BaseTableController, CLTokenInputViewDelegate {
             }
         }
         
-        if let controller = self.navigationController?.presentingViewController {
-            UIShared.toast(message: "invites_sent".localized(), duration: 3.0, controller: controller, addToWindow: false)
-        }
+        Utils.incrementUserActions()
         
         if UIApplication.shared.currentUserNotificationSettings!.types == [] {
             if #available(iOS 10.0, *) {
@@ -420,17 +418,13 @@ class ContactPickerController: BaseTableController, CLTokenInputViewDelegate {
                             Log.w("Denied notifications permission")
                             Reporting.track("denied_notifications_permission")
                         }
-                        if self.flow == .internalCreate {
-                            self.navigateToChannel()
-                        }
-                        else {
-                            self.navigationController?.close()
-                        }
+                        self.inviteContinue()
                     }
                 }
                 let laterButton = DefaultButton(title: "later".localized().uppercased(), height: 48) {
                     Log.d("Postponed notifications permission")
                     Reporting.track("postponed_notifications_permission")
+                    self.inviteContinue()
                 }
                 popup.buttonAlignment = .horizontal
                 popup.addButtons([laterButton, allowButton])
@@ -439,7 +433,23 @@ class ContactPickerController: BaseTableController, CLTokenInputViewDelegate {
             else {
                 /* Triggers permission UI if needed */
                 UIApplication.shared.registerUserNotificationSettings(UIUserNotificationSettings(types: [.alert, .badge, .sound], categories: nil))
+                inviteContinue()
             }
+        }
+        else {
+            inviteContinue()
+        }
+    }
+    
+    func inviteContinue() {
+        if let controller = self.navigationController?.presentingViewController {
+            UIShared.toast(message: "invites_sent".localized(), duration: 3.0, controller: controller, addToWindow: false)
+        }
+        if self.flow == .internalCreate {
+            self.navigateToChannel()
+        }
+        else {
+            self.navigationController?.close()
         }
     }
     

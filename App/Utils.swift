@@ -85,6 +85,20 @@ struct Utils {
 		}
 	}
     
+    static func incrementUserActions() {
+        let count = UserDefaults.standard.integer(forKey: PerUserKey(key: Prefs.countUserActions))
+        UserDefaults.standard.set(count + 1, forKey: PerUserKey(key: Prefs.countUserActions))
+        UserDefaults.standard.synchronize()
+    }
+    
+    static func getUserActionsCount() -> Int {
+        return UserDefaults.standard.integer(forKey: PerUserKey(key: Prefs.countUserActions))
+    }
+    
+    static func resetUserActionsCount() {
+        UserDefaults.standard.set(nil, forKey: PerUserKey(key: Prefs.countUserActions))
+    }
+    
 	static func clearSearchHistory() {
 		UserDefaults.standard.set(nil, forKey: PerUserKey(key: Prefs.searchHistory))
 	}

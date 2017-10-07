@@ -4,7 +4,6 @@
 
 import UIKit
 import MessageUI
-import iRate
 import IDMPhotoBrowser
 import NHBalancedFlowLayout
 import Firebase
@@ -96,6 +95,7 @@ class CommentListController: BaseSlackController {
     
     override func didPressRightButton(_ sender: Any!) {
         super.didPressRightButton(sender)
+        Utils.incrementUserActions()
     }
     
 	/*--------------------------------------------------------------------------------------------

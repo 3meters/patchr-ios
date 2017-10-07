@@ -118,8 +118,7 @@
 "message_moved" = "Сообщение перенесено в: %@";
 "message_placeholder" = "Что происходит?";
 "mute" = "Отключить звук";
-"new_message" = "Новое";
-"new_comment" = "Новый";
+"new" = "Новое";
 "next" = "Следующий";
 
 /*changed the word based on the context*/

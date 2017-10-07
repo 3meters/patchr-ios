@@ -244,7 +244,7 @@ class MessageEditViewController: BaseEditViewController, BEMCheckBoxDelegate {
         self.photoButton.addTarget(self, action: #selector(setPhotoAction(sender:)), for: .touchUpInside)
         
         self.dateGroup.alpha = 0
-        self.useTakenDateLabel.text = "Post using the date photo was taken:"
+        self.useTakenDateLabel.text = "message_use_taken_date".localized()
         self.useTakenDateLabel.numberOfLines = 2
         self.useTakenDateValue.textColor = Theme.colorTextSecondary
         self.useTakenDateCheckBox.lineWidth = 1.0
@@ -453,7 +453,7 @@ class MessageEditViewController: BaseEditViewController, BEMCheckBoxDelegate {
             if UserDefaults.standard.bool(forKey: PerUserKey(key: Prefs.soundEffects)) {
                 AudioController.instance.playSystemSound(soundId: 1004) // sms bloop
             }
-            
+            Utils.incrementUserActions()
             self.close(animated: true)
         }
 	}

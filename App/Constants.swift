@@ -55,6 +55,9 @@ struct Config {
     static let contentWidth = CGFloat(288)
     
     static let typingInterval = CGFloat(12.0)
+    
+    /* Positive actions: post message, comment, invite, reaction, create channel, edit profile */
+    static let reviewRequestTriggerCount = 20
 
     /* This is private because the use of 'appConfiguration' is preferred. */
     private static let isTestFlight = Bundle.main.appStoreReceiptURL?.lastPathComponent == "sandboxReceipt"
@@ -109,6 +112,7 @@ public struct Prefs {
     /* Per device */
     static let firstLaunch = "first_launch"
     static let lastUserEmail = "last_user_email"
+    static let countUserActions = "count_user_actions"
     
     /* Per user */
     static let soundEffects = "sound_effects"
