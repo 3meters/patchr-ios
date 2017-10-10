@@ -75,13 +75,6 @@ class ContactPickerController: BaseTableController, CLTokenInputViewDelegate {
         }
     }
     
-    override func viewWillLayoutSubviews() {
-        super.viewWillLayoutSubviews()
-        let viewWidth = min(Config.contentWidthMax, self.view.width())
-        self.tokenView.anchorTopCenter(withTopPadding: 0, width: viewWidth, height: tokenView.height())
-        self.tableView.alignUnder(self.tokenView, matchingLeftAndRightFillingHeightWithTopPadding: 0, bottomPadding: 0)
-    }
-    
     override func viewWillDisappear(_ animated: Bool) {
         self.navigationController?.setToolbarHidden(true, animated: true)
     }
@@ -91,6 +84,13 @@ class ContactPickerController: BaseTableController, CLTokenInputViewDelegate {
         if let navigationController = navigationController as? ScrollingNavigationController {
             navigationController.showNavbar(animated: true)
         }
+    }
+
+    override func viewWillLayoutSubviews() {
+        super.viewWillLayoutSubviews()
+        let viewWidth = min(Config.contentWidthMax, self.view.width())
+        self.tokenView.anchorTopCenter(withTopPadding: 0, width: viewWidth, height: tokenView.height())
+        self.tableView.alignUnder(self.tokenView, matchingLeftAndRightFillingHeightWithTopPadding: 0, bottomPadding: 0)
     }
 
     /*--------------------------------------------------------------------------------------------

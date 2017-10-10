@@ -157,6 +157,10 @@
 		E29A921E1DB19A2600B27093 /* FireProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29A921D1DB19A2600B27093 /* FireProfile.swift */; };
 		E29A92201DB19A3C00B27093 /* FirePhoto.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29A921F1DB19A3C00B27093 /* FirePhoto.swift */; };
 		E2A28E6F1B4A602200B3A2FE /* AirToggleButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2A28E6E1B4A602200B3A2FE /* AirToggleButton.swift */; };
+		E2A42ED71F8A8B160091536A /* UIImage+RoundedCorner.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2737DC91B8F7EA100C176B1 /* UIImage+RoundedCorner.swift */; };
+		E2A42ED81F8A8B170091536A /* UIImage+RoundedCorner.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2737DC91B8F7EA100C176B1 /* UIImage+RoundedCorner.swift */; };
+		E2A42EDD1F8A90380091536A /* UIImage+Alpha.m in Sources */ = {isa = PBXBuildFile; fileRef = E2A42EDB1F8A90370091536A /* UIImage+Alpha.m */; };
+		E2A42EDE1F8A90520091536A /* UIImage+Alpha.m in Sources */ = {isa = PBXBuildFile; fileRef = E2A42EDB1F8A90370091536A /* UIImage+Alpha.m */; };
 		E2A5A8851B703B9B006D6E81 /* PhotoEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2A5A8841B703B9B006D6E81 /* PhotoEditView.swift */; };
 		E2A603241CD97B7A00FBD55B /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = E2A603221CD97B7A00FBD55B /* InfoPlist.strings */; };
 		E2AA50C11F3E7152007A9D6E /* InviteMessageController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2AA50C01F3E7152007A9D6E /* InviteMessageController.swift */; };
@@ -511,7 +515,6 @@
 		E26BBF971DB5734F00038754 /* PHPhotoLibrary+PhotoAsset.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "PHPhotoLibrary+PhotoAsset.swift"; sourceTree = "<group>"; };
 		E26C80911C3AE246001514B3 /* Animation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = Animation.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		E2737DC61B8F7E3B00C176B1 /* UIImage+Resize.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIImage+Resize.swift"; sourceTree = "<group>"; };
-		E2737DC81B8F7EA100C176B1 /* UIImage+Alpha.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIImage+Alpha.swift"; sourceTree = "<group>"; };
 		E2737DC91B8F7EA100C176B1 /* UIImage+RoundedCorner.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIImage+RoundedCorner.swift"; sourceTree = "<group>"; };
 		E27C12081E6CD403003F052B /* Pods-acknowledgements.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Pods-acknowledgements.plist"; sourceTree = "<group>"; };
 		E27F8A7D1DFB3A180020E852 /* FloatTextField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FloatTextField.swift; sourceTree = "<group>"; };
@@ -615,6 +618,8 @@
 		E29A921D1DB19A2600B27093 /* FireProfile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FireProfile.swift; sourceTree = "<group>"; };
 		E29A921F1DB19A3C00B27093 /* FirePhoto.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FirePhoto.swift; sourceTree = "<group>"; };
 		E2A28E6E1B4A602200B3A2FE /* AirToggleButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirToggleButton.swift; sourceTree = "<group>"; };
+		E2A42EDB1F8A90370091536A /* UIImage+Alpha.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+Alpha.m"; sourceTree = "<group>"; };
+		E2A42EDC1F8A90380091536A /* UIImage+Alpha.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+Alpha.h"; sourceTree = "<group>"; };
 		E2A5A8841B703B9B006D6E81 /* PhotoEditView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = PhotoEditView.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		E2A603231CD97B7A00FBD55B /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		E2AA50C01F3E7152007A9D6E /* InviteMessageController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InviteMessageController.swift; sourceTree = "<group>"; };
@@ -1077,7 +1082,8 @@
 				E26BBF971DB5734F00038754 /* PHPhotoLibrary+PhotoAsset.swift */,
 				E25173C51E09CB9D0030259A /* UIBarButtonItem+Badge.h */,
 				E25173C61E09CB9D0030259A /* UIBarButtonItem+Badge.m */,
-				E2737DC81B8F7EA100C176B1 /* UIImage+Alpha.swift */,
+				E2A42EDC1F8A90380091536A /* UIImage+Alpha.h */,
+				E2A42EDB1F8A90370091536A /* UIImage+Alpha.m */,
 				E2F85C721C31F0D700FC2364 /* UIImage+ImageEffects.h */,
 				E2F85C731C31F0D700FC2364 /* UIImage+ImageEffects.m */,
 				E2737DC91B8F7EA100C176B1 /* UIImage+RoundedCorner.swift */,
@@ -1911,9 +1917,11 @@
 				E2D654FB1E0C9EBB00714BA9 /* UnreadQuery.swift in Sources */,
 				E23682851E1BFE3700F9FDFB /* AirButtonBase.swift in Sources */,
 				E203BBCB1E69CDDA00589071 /* InviteViewController.swift in Sources */,
+				E2A42ED71F8A8B160091536A /* UIImage+RoundedCorner.swift in Sources */,
 				E25B4ABB1E00BA6B00D17613 /* FireArray.swift in Sources */,
 				E24D74541BBAED5F0061F339 /* TaskQueue.swift in Sources */,
 				E2E9AAA71CEF86470057698F /* AirNavigationController.swift in Sources */,
+				E2A42EDD1F8A90380091536A /* UIImage+Alpha.m in Sources */,
 				E2816C1E1F0468740049E84B /* GoogleStorage.swift in Sources */,
 				E2D12A751C08F85E00DE507E /* AirButton.swift in Sources */,
 				E2D12A771C08F9CE00DE507E /* AirFeaturedButton.swift in Sources */,
@@ -2019,6 +2027,7 @@
 				E2DB42B01EB4F2C400B1F78B /* ColorArray.swift in Sources */,
 				E2DB42B11EB4F2C400B1F78B /* AirCheckBox.swift in Sources */,
 				E2DB42B21EB4F2C400B1F78B /* AudioController.swift in Sources */,
+				E2A42EDE1F8A90520091536A /* UIImage+Alpha.m in Sources */,
 				E2DB42B31EB4F2C400B1F78B /* AirTextFieldCell.swift in Sources */,
 				E2DB42B51EB4F2C400B1F78B /* AirReactionButton.swift in Sources */,
 				E2DB42B61EB4F2C400B1F78B /* PHAsset+identifier.swift in Sources */,
@@ -2094,6 +2103,7 @@
 				E2DB43021EB4F2C400B1F78B /* BaseView.swift in Sources */,
 				E2DB43061EB4F2C400B1F78B /* ReachabilityManager.swift in Sources */,
 				E2DB43071EB4F2C400B1F78B /* CKRadialMenu.m in Sources */,
+				E2A42ED81F8A8B170091536A /* UIImage+RoundedCorner.swift in Sources */,
 				E2DB43081EB4F2C400B1F78B /* PhotoSearchController.swift in Sources */,
 				E2DB43091EB4F2C400B1F78B /* UserController.swift in Sources */,
 				E2DB430B1EB4F2C400B1F78B /* GalleryViewCell.swift in Sources */,

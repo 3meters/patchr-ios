@@ -23,9 +23,6 @@ class GalleryGridViewController: UICollectionViewController {
     var inputTitle: String?
 	var morePhotos = false
 	
-    fileprivate var sectionInsets: UIEdgeInsets?
-    fileprivate var thumbnailWidth: CGFloat?
-    fileprivate var availableWidth: CGFloat?
     fileprivate let pageSize = 49
 	fileprivate var virtualSize	= 49
 	fileprivate var maxSize = 500
@@ -43,17 +40,6 @@ class GalleryGridViewController: UICollectionViewController {
 
 	override func viewWillAppear(_ animated: Bool) {
 		super.viewWillAppear(animated)
-		
-		/* Scroll inset */
-		self.sectionInsets = UIEdgeInsets(top: 4, left: 4, bottom: 4, right: 4)
-		
-		/* Calculate thumbnail width */
-		self.availableWidth = Config.screenWidth - (self.sectionInsets!.left + self.sectionInsets!.right)
-		let requestedColumnWidth: CGFloat = 200
-		let numColumns: CGFloat = floor(CGFloat(availableWidth!) / CGFloat(requestedColumnWidth))
-		let spaceLeftOver = availableWidth! - (numColumns * requestedColumnWidth) - ((numColumns - 1) * 4)
-		self.thumbnailWidth = requestedColumnWidth + (spaceLeftOver / numColumns)
-        
         if let navigationController = navigationController as? ScrollingNavigationController {
             navigationController.followScrollView(self.collectionView!, delay: 50.0)
         }
@@ -81,7 +67,7 @@ class GalleryGridViewController: UICollectionViewController {
 	func initialize() {
 		
 		self.collectionView!.backgroundColor = Theme.colorBackgroundForm
-		self.collectionView!.register(GalleryViewCell.self, forCellWithReuseIdentifier: "ThumbnailCell")
+		self.collectionView!.register(GalleryViewCell.self, forCellWithReuseIdentifier: "cell")
         
 		if let layout = self.collectionViewLayout as? UICollectionViewFlowLayout {
 			layout.minimumLineSpacing = 4
@@ -124,6 +110,10 @@ class GalleryGridViewController: UICollectionViewController {
         }
         return true
     }
+    
+    override var prefersStatusBarHidden: Bool {
+        return false
+    }
 }
 
 extension GalleryGridViewController { /* UICollectionViewDelegate, UICollectionViewDataSource */
@@ -154,15 +144,11 @@ extension GalleryGridViewController { /* UICollectionViewDelegate, UICollectionV
     }
     
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        
-        var cell = collectionView.dequeueReusableCell(withReuseIdentifier: "ThumbnailCell", for: indexPath) as? GalleryViewCell
-        
+        var cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as? GalleryViewCell
         if cell == nil {
             cell = GalleryViewCell()
         }
-        
         cell!.backgroundColor = Theme.colorBackgroundImage
-        
         if let displayPhoto = self.imageForIndexPath(indexPath: indexPath as NSIndexPath) {
             if !cell!.displayImageView.associated(withUrl: displayPhoto.photoURL!) {
                 cell!.displayImageView.image = nil
@@ -170,7 +156,6 @@ extension GalleryGridViewController { /* UICollectionViewDelegate, UICollectionV
                 cell!.displayImageView.setImageWithUrl(url: displayPhoto.photoURL!, animate: true)
             }
         }
-        
         return cell!
     }
 }
@@ -179,7 +164,6 @@ extension GalleryGridViewController : NHBalancedFlowLayoutDelegate {
     func collectionView(_ collectionView: UICollectionView!
         , layout collectionViewLayout: NHBalancedFlowLayout!
         , preferredSizeForItemAt indexPath: IndexPath!) -> CGSize {
-        
         let displayPhoto = self.displayPhotosSorted[indexPath.item]
         return displayPhoto.size ?? CGSize(width:300, height:300)
     }
@@ -190,13 +174,19 @@ extension GalleryGridViewController : UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView
         , layout collectionViewLayout: UICollectionViewLayout
         , sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: self.thumbnailWidth!, height: self.thumbnailWidth!)
+        let flowLayout = collectionViewLayout as! NHBalancedFlowLayout
+        let availableWidth = collectionView.width() - (flowLayout.sectionInset.left + flowLayout.sectionInset.right)
+        let preferredColumnWidth: CGFloat = 200
+        let numColumns: CGFloat = floor(CGFloat(availableWidth) / CGFloat(preferredColumnWidth))
+        let spaceLeftOver = availableWidth - (numColumns * preferredColumnWidth) - ((numColumns - 1) * flowLayout.minimumInteritemSpacing)
+        let cellSize = preferredColumnWidth + (spaceLeftOver / numColumns)
+        return CGSize(width: cellSize, height: cellSize)
     }
     
     func collectionView(_ collectionView: UICollectionView
         , layout collectionViewLayout: UICollectionViewLayout
         , insetForSectionAt section: Int) -> UIEdgeInsets {
-        return self.sectionInsets!
+        return UIEdgeInsetsMake(4, 4, 4, 4)
     }
 }
 
@@ -223,4 +213,3 @@ extension GalleryGridViewController: IDMPhotoBrowserDelegate {
 		}
 	}
 }
-

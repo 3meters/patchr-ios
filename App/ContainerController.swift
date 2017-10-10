@@ -100,6 +100,14 @@ class ContainerController: UIViewController {
             , completion: nil)
 
     }
+    
+    override var childViewControllerForStatusBarHidden: UIViewController? {
+        return self.controller
+    }
+    
+    override var childViewControllerForStatusBarStyle: UIViewController? {
+        return self.controller
+    }
 
     fileprivate func setupController(controller: UIViewController?) {
         if let controller = controller {

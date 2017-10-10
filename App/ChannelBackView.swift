@@ -1,6 +1,6 @@
 import UIKit
 
-class ChannelBackView: UIView {
+class ChannelBackView: UIControl {
     
     var backImage = UIImageView()
     var badge = UILabel()

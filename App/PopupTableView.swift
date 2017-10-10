@@ -45,7 +45,7 @@ class PopupTableView: UIView {
         self.addSubview(self.tableView)
         
         /* Setup constraints */
-        heightAnchor.constraint(equalToConstant: 400).isActive = true
+        self.heightAnchor.constraint(equalToConstant: 400).isActive = true
         
         var constraints = [NSLayoutConstraint]()
         let views: [String: UIView] = ["titleLabel": self.titleLabel, "rule": self.rule, "searchBar": self.searchBar, "tableView": self.tableView]

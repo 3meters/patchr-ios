@@ -13,6 +13,7 @@
 #import "NGAParallaxMotion.h"
 #import "UIView+BorderLayer.h"
 #import "UIBarButtonItem+Badge.h"
+#import "UIImage+Alpha.h"
 #import "CKRadialMenu.h"
 #import "ObjC.h"
 

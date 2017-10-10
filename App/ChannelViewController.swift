@@ -72,16 +72,13 @@ class ChannelViewController: UICollectionViewController { // Sets itself as data
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		initialize()
+        UIApplication.shared.statusBarStyle = .lightContent
 		UIShared.styleChrome(navigationBar: (self.navigationController?.navigationBar)!, translucent: true)
-		if let navigationController = self.navigationController as? AirNavigationController {
-			navigationController.statusBarView.backgroundColor = Colors.clear
-		}
 		bind(channelId: self.inputChannelId!)
 	}
 
 	override func viewWillAppear(_ animated: Bool) {
 		super.viewWillAppear(animated)
-		UIApplication.shared.statusBarStyle = .lightContent
 	}
 
 	override func viewDidAppear(_ animated: Bool) {
@@ -109,14 +106,13 @@ class ChannelViewController: UICollectionViewController { // Sets itself as data
 
 	override func viewWillDisappear(_ animated: Bool) {
 		super.viewWillDisappear(animated)
-		UIApplication.shared.statusBarStyle = .default
 
 		if self.postingEnabled {
 			self.container?.setActionButton(button: nil)
 			self.container?.hideActionButton()
 		}
 		if self.isMovingFromParentViewController {
-			UIShared.styleChrome(navigationBar: self.navigationController!.navigationBar, translucent: false)
+            UIShared.styleChrome(navigationBar: self.navigationController!.navigationBar, translucent: false)
 			StateController.instance.clearChannel() // Only clears last channel default
 		}
 	}
@@ -329,7 +325,7 @@ class ChannelViewController: UICollectionViewController { // Sets itself as data
 
 		self.backButtonView = ChannelBackView()
 		self.backButtonView.frame = CGRect(x: 0, y: 0, width: 120, height: 36)
-		self.backButtonView.buttonScrim.addTarget(self, action: #selector(backAction(sender:)), for: .touchUpInside)
+        self.backButtonView.buttonScrim.addTarget(self, action: #selector(backAction(sender:)), for: .touchUpInside)
 		self.backButton = UIBarButtonItem(customView: self.backButtonView)
 
 		if UserController.instance.unreads! > 0 {
@@ -347,6 +343,7 @@ class ChannelViewController: UICollectionViewController { // Sets itself as data
 		button.addTarget(self, action: #selector(editChannelAction(sender:)), for: .touchUpInside)
 		button.showsTouchWhenHighlighted = true
 		button.setImage(#imageLiteral(resourceName:"imgEdit2Light"), for: .normal)
+        button.imageView?.contentMode = .scaleAspectFit
 		button.imageEdgeInsets = UIEdgeInsetsMake(8, 0, 8, 16)
 		self.editButton = UIBarButtonItem(customView: button)
 
@@ -356,7 +353,8 @@ class ChannelViewController: UICollectionViewController { // Sets itself as data
 		button.addTarget(self, action: #selector(openGalleryAction(sender:)), for: .touchUpInside)
 		button.showsTouchWhenHighlighted = true
 		button.setImage(#imageLiteral(resourceName:"imgGallery2Light"), for: .normal)
-		button.imageEdgeInsets = UIEdgeInsetsMake(6, 6, 6, 6)
+        button.imageView?.contentMode = .scaleAspectFit
+        button.imageEdgeInsets = UIEdgeInsetsMake(6, 6, 6, 6)
 		self.galleryButton = UIBarButtonItem(customView: button)
 
 		/* Menu button */
@@ -365,6 +363,7 @@ class ChannelViewController: UICollectionViewController { // Sets itself as data
 		button.addTarget(self, action: #selector(showChannelActions(sender:)), for: .touchUpInside)
 		button.showsTouchWhenHighlighted = true
 		button.setImage(UIImage(named: "imgOverflowVerticalLight"), for: .normal)
+        button.imageView?.contentMode = .scaleAspectFit
 		button.imageEdgeInsets = UIEdgeInsetsMake(8, 16, 8, 0)
 		self.menuButton = UIBarButtonItem(customView: button)
 
@@ -806,17 +805,17 @@ class ChannelViewController: UICollectionViewController { // Sets itself as data
 								index += 1
 							}
 						}
-						let browser = PhotoBrowser(photos: this.displayPhotosSorted, animatedFrom: fromView)
-						browser?.mode = .gallery
-						browser?.setInitialPageIndex(UInt(initialIndex))
-						browser?.useWhiteBackgroundColor = true
-						browser?.usePopAnimation = true
-						browser?.scaleImage = (fromView as! UIImageView).image  // Used because final image might have different aspect ratio than initially
-						browser?.disableVerticalSwipe = false
-						browser?.autoHideInterface = false
-						browser?.delegate = self
-
-						this.navigationController!.present(browser!, animated: true, completion: nil)
+                        if let browser = PhotoBrowser(photos: this.displayPhotosSorted, animatedFrom: fromView) {
+                            browser.mode = .gallery
+                            browser.setInitialPageIndex(UInt(initialIndex))
+                            browser.useWhiteBackgroundColor = true
+                            browser.usePopAnimation = true
+                            browser.scaleImage = (fromView as! UIImageView).image  // Used because final image might have different aspect ratio than initially
+                            browser.disableVerticalSwipe = false
+                            browser.autoHideInterface = false
+                            browser.delegate = self
+                            this.navigationController!.present(browser, animated: true, completion: nil)
+                        }
 					}
 				}
 			})
@@ -852,10 +851,22 @@ class ChannelViewController: UICollectionViewController { // Sets itself as data
 
 		self.actionButton.centerView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(actionButtonTapped(gesture:))))
 	}
+    
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return (self.navigationController?.navigationBar.isTranslucent)! ? .lightContent : .default
+    }
+    
+    override var prefersStatusBarHidden: Bool {
+        return false
+    }
+    
+    override var preferredStatusBarUpdateAnimation: UIStatusBarAnimation {
+        return .fade
+    }
 }
 
 /*--------------------------------------------------------------------------------------------
- * MARK: - Methods
+ * MARK: - Delegates
  *--------------------------------------------------------------------------------------------*/
 
 extension ChannelViewController: ScrollingNavigationControllerDelegate {

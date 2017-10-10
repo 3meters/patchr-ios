@@ -13,72 +13,66 @@ public extension UIImage {
     // Creates a copy of this image with rounded corners
     // If borderSize is non-zero, a transparent border of the given size will also be added
     // Original author: Björn Sållarp. Used with permission. See: http://blog.sallarp.com/iphone-uiimage-round-corners/
-    public func roundedCornerImage(cornerSize cornerSize:Int, borderSize:Int) -> UIImage
-    {
+    public func roundedCornerImage(cornerRadius: Int, borderSize: Int) -> UIImage {
         // If the image does not have an alpha layer, add one
-        let image = self.imageWithAlpha()
+        let image = self.withAlpha()!
         
         // Build a context that's the same dimensions as the new size
-        let colorSpace: CGColorSpace = CGImageGetColorSpace(image.CGImage)!
-        let bitmapInfo = CGBitmapInfo(arrayLiteral: CGImageGetBitmapInfo(image.CGImage))
-        let context = CGBitmapContextCreate(
-            nil,
-            Int(image.size.width),
-            Int(image.size.height),
-            CGImageGetBitsPerComponent(image.CGImage),
-            0,
-            colorSpace,
-            bitmapInfo.rawValue
+        let colorSpace: CGColorSpace = cgImage!.colorSpace!
+        let bitmapInfo = CGBitmapInfo(arrayLiteral: cgImage!.bitmapInfo)
+        let context = CGContext.init(
+            data: nil,
+            width: Int(image.size.width),
+            height: Int(image.size.height),
+            bitsPerComponent: cgImage!.bitsPerComponent,
+            bytesPerRow: 0,
+            space: colorSpace,
+            bitmapInfo: bitmapInfo.rawValue
         )!
         
         // Create a clipping path with rounded corners
-        CGContextBeginPath(context)
+        context.beginPath()
         self.addRoundedRectToPath(
-            CGRect(x:
-                CGFloat(borderSize),
-                CGFloat(borderSize),
-                image.size.width - CGFloat(borderSize) * 2,
-                image.size.height - CGFloat(borderSize) * 2),
-            context:context,
-            ovalWidth:CGFloat(cornerSize),
-            ovalHeight:CGFloat(cornerSize)
+            rect: CGRect(x: CGFloat(borderSize)
+                , y: CGFloat(borderSize)
+                , width: image.size.width - CGFloat(borderSize) * 2
+                , height: image.size.height - CGFloat(borderSize) * 2),
+            context: context,
+            ovalWidth: CGFloat(cornerRadius),
+            ovalHeight: CGFloat(cornerRadius)
         )
-        CGContextClosePath(context)
-        CGContextClip(context)
+        context.closePath()
+        context.clip()
         
         // Draw the image to the context; the clipping path will make anything outside the rounded rect transparent
-        CGContextDrawImage(context,
-            CGRect(x:0, 0, image.size.width, image.size.height),
-            image.CGImage)
+        context.draw(cgImage!, in: CGRect(x:0, y:0, width: image.size.width, height: image.size.height))
         
         // Create a CGImage from the context
-        let clippedImage: CGImageRef = CGBitmapContextCreateImage(context)!
+        let clippedImage = context.makeImage()!
         
         // Create a UIImage from the CGImage
-        return UIImage(CGImage: clippedImage)
+        return UIImage(cgImage: clippedImage)
     }
     
     // Adds a rectangular path to the given context and rounds its corners by the given extents
     // Original author: Björn Sållarp. Used with permission. See: http://blog.sallarp.com/iphone-uiimage-round-corners/
-    private func addRoundedRectToPath(rect: CGRect, context: CGContextRef, ovalWidth: CGFloat, ovalHeight: CGFloat)
-    {
+    private func addRoundedRectToPath(rect: CGRect, context: CGContext, ovalWidth: CGFloat, ovalHeight: CGFloat) {
         if (ovalWidth == 0 || ovalHeight == 0) {
-            CGContextAddRect(context, rect)
+            context.addRect(rect)
             return
         }
         
-        CGContextSaveGState(context)
-        CGContextTranslateCTM(context, CGRectGetMinX(rect), CGRectGetMinY(rect))
-        CGContextScaleCTM(context, ovalWidth, ovalHeight)
-        let fw = CGRectGetWidth(rect) / ovalWidth
-        let fh = CGRectGetHeight(rect) / ovalHeight
-        CGContextMoveToPoint(context, fw, fh/2)
-        CGContextAddArcToPoint(context, fw, fh, fw/2, fh, 1)
-        CGContextAddArcToPoint(context, 0, fh, 0, fh/2, 1)
-        CGContextAddArcToPoint(context, 0, 0, fw/2, 0, 1)
-        CGContextAddArcToPoint(context, fw, 0, fw, fh/2, 1)
-        CGContextClosePath(context);
-        CGContextRestoreGState(context)
+        context.saveGState()
+        context.translateBy(x: rect.minX, y: rect.minY)
+        context.scaleBy(x: ovalWidth, y: ovalHeight)
+        let fw = rect.width / ovalWidth
+        let fh = rect.height / ovalHeight
+        context.move(to: CGPoint(x: fw, y: fh/2))
+        context.addArc(tangent1End: CGPoint(x: fw, y: fh), tangent2End: CGPoint(x: fw/2, y: fh), radius: 1)
+        context.addArc(tangent1End: CGPoint(x: 0, y: fh), tangent2End: CGPoint(x: 0, y: fh/2), radius: 1)
+        context.addArc(tangent1End: CGPoint(x: 0, y: 0), tangent2End: CGPoint(x: fw/2, y: 0), radius: 1)
+        context.addArc(tangent1End: CGPoint(x: fw, y: 0), tangent2End: CGPoint(x: fw, y: fh/2), radius: 1)
+        context.closePath();
+        context.restoreGState()
     }
 }
-

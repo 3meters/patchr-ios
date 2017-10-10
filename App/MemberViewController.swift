@@ -54,13 +54,9 @@ class MemberViewController: BaseViewController, UIScrollViewDelegate, UITextFiel
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        initialize()
         
+        initialize()
         UIShared.styleChrome(navigationBar: (self.navigationController?.navigationBar)!, translucent: true)
-        if let navigationController = self.navigationController as? AirNavigationController {
-            navigationController.statusBarView.backgroundColor = Colors.clear
-        }
-
         let userId = self.inputUserId!
         self.queryUser = UserQuery(userId: userId)
         self.queryUser?.observe(with: { [weak self] error, user in
@@ -223,6 +219,8 @@ class MemberViewController: BaseViewController, UIScrollViewDelegate, UITextFiel
         self.callButton.addTarget(self, action: #selector(phoneAction(sender:)), for: .touchUpInside)
         
         self.chromeBackground.backgroundColor = Colors.accentColor
+        self.view.addSubview(self.chromeBackground)
+        self.view.sendSubview(toBack: self.chromeBackground)
 
         self.buttonGroup.addSubview(self.editButton)
         self.buttonGroup.addSubview(self.callButton)
@@ -234,8 +232,6 @@ class MemberViewController: BaseViewController, UIScrollViewDelegate, UITextFiel
         self.scrollView.addSubview(self.headerView)
         self.contentHolder.addSubview(self.buttonGroup)
         self.contentHolder.addSubview(self.profileGroup)
-        //self.view.addSubview(self.chromeBackground)
-        //self.view.sendSubview(toBack: self.chromeBackground)
         
         self.scrollView.delegate = self
         self.authenticatedUser = (self.inputUserId == UserController.instance.userId)
@@ -306,6 +302,14 @@ class MemberViewController: BaseViewController, UIScrollViewDelegate, UITextFiel
             headerRect.size.height = -(self.scrollView.contentOffset.y)
         }
         self.headerView.frame = headerRect
+    }
+    
+    override var prefersStatusBarHidden: Bool {
+        return false
+    }
+    
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return .lightContent
     }
 }
 

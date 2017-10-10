@@ -22,9 +22,9 @@ class ChannelGridController: UICollectionViewController {
     var titles: [String: String] = [:]
 
 	var searchBar: UISearchBar!
-	var searchBarHolder = UIView()
+    var searchBarActive = false
+    var searchBarHeight = 44
     
-	var searchBarButton: UIBarButtonItem!
 	var searchButton: UIBarButtonItem!
     var addButton: UIBarButtonItem!
     var menuButton: UIBarButtonItem!
@@ -61,14 +61,8 @@ class ChannelGridController: UICollectionViewController {
         }
     }
 
-	override func viewWillLayoutSubviews() {
-        self.view.fillSuperview()
-        self.collectionView?.fillSuperview()
-	}
-    
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
-        self.view.setNeedsLayout()
         self.collectionView?.collectionViewLayout.invalidateLayout()
     }
 
@@ -99,14 +93,31 @@ class ChannelGridController: UICollectionViewController {
 	}
 
 	@objc func searchAction(sender: AnyObject?) {
-        self.navigationItem.setLeftBarButton(self.searchBarButton, animated: true)
-        self.navigationItem.setRightBarButtonItems(nil, animated: true)
-        self.searchBarHolder.frame = CGRect(x: 0, y: 0, width: (self.navigationController?.navigationBar.width())! - 24, height: 44)
-        self.searchBar.fillSuperview()
+        self.searchBarActive = true
+        self.collectionView?.collectionViewLayout.invalidateLayout()
+        self.searchBar.fadeIn()
         self.searchBar.becomeFirstResponder()
-        self.searchBar?.setShowsCancelButton(true, animated: true)
 	}
 
+    @objc func showActions(sender: AnyObject?) {
+        Reporting.track("view_channel_grid_actions")
+        let sheet = UIAlertController(title: nil, message: nil, preferredStyle: UIAlertControllerStyle.actionSheet)
+        let profileAction = UIAlertAction(title: "profile_and_settings".localized(), style: .default) { action in
+            let wrapper = AirNavigationController(rootViewController: MemberViewController(userId: UserController.instance.userId!))
+            UIViewController.topController?.present(wrapper, animated: true, completion: nil)
+        }
+        let cancel = UIAlertAction(title: "cancel".localized(), style: .cancel) { action in
+            sheet.dismiss(animated: true, completion: nil)
+        }
+        sheet.addAction(profileAction)
+        sheet.addAction(cancel)
+        if let presenter = sheet.popoverPresentationController {
+            presenter.sourceView = self.menuButton.customView
+            presenter.sourceRect = (self.menuButton.customView?.bounds)!
+        }
+        present(sheet, animated: true, completion: nil)
+    }
+    
 	/*--------------------------------------------------------------------------------------------
 	* MARK: - Notifications
 	*--------------------------------------------------------------------------------------------*/
@@ -130,58 +141,31 @@ class ChannelGridController: UICollectionViewController {
         }
         
         self.view.backgroundColor = Theme.colorBackgroundForm
-        if #available(iOS 11.0, *) {
-            self.collectionView!.contentInsetAdjustmentBehavior = .never
-        }
-        else {
-            self.automaticallyAdjustsScrollViewInsets = false
-        }
-        self.searchController.dimsBackgroundDuringPresentation = false
         self.definesPresentationContext = true
         
         /* Search bar when toggled on */
-		self.searchBar = UISearchBar(frame: CGRect.zero)
+        var fieldBackgroundImage = ImageUtils.imageFromColor(color: Colors.gray97pcntColor, width: 32, height: 32)
+        fieldBackgroundImage = fieldBackgroundImage.roundedCornerImage(cornerRadius: 6, borderSize: 0)
+        self.searchBar = UISearchBar(frame: CGRect.zero)
 		self.searchBar.autocapitalizationType = .none
-		self.searchBar.backgroundColor = Colors.clear
+        self.searchBar.backgroundColor = Colors.gray90pcntColor
+        self.searchBar.searchTextPositionAdjustment = UIOffsetMake(8, 0)
+        self.searchBar.setSearchFieldBackgroundImage(fieldBackgroundImage, for: .normal)
 		self.searchBar.delegate = self
-		self.searchBar.searchBarStyle = .prominent
-        if !self.searchBar!.isDescendant(of: self.view) {
-            self.view.addSubview(self.searchBar!)
-        }
+		self.searchBar.searchBarStyle = .minimal
+        self.searchBar.barStyle = .default
+        self.searchBar.showsCancelButton = true
+        self.searchBar.alpha = 0
 
-		for subview in self.searchBar.subviews[0].subviews {
-			if subview is UITextField {
-				subview.tintColor = Colors.accentColor
-			}
-			if subview.isKind(of: NSClassFromString("UISearchBarBackground")!) {
-				subview.alpha = 0.0
-			}
-		}
-
-		self.searchBarHolder.addSubview(self.searchBar)
-        self.searchBarButton = UIBarButtonItem(customView: self.searchBarHolder) // Used when search is visible
-        
-        /* Scroll inset */
-        self.sectionInsets = UIEdgeInsets(top: self.searchBar!.frame.size.height + 12, left: 8, bottom: 16, right: 8)
-        
-        /* Calculate desired cell size */
-        self.availableWidth = Config.screenWidth - (self.sectionInsets!.left + self.sectionInsets!.right)
-        let requestedColumnWidth: CGFloat = (UIDevice.current.userInterfaceIdiom == .phone) ? 100 : 150
-        let numColumns: CGFloat = floor(CGFloat(self.availableWidth!) / CGFloat(requestedColumnWidth))
-        let spaceLeftOver = self.availableWidth! - (numColumns * requestedColumnWidth) - ((numColumns - 1) * 8)
-        self.cellWidth = requestedColumnWidth + (spaceLeftOver / numColumns)
-        self.cellHeight = (self.cellWidth! * 0.65) + 32
+        self.view.addSubview(self.searchBar!)
         
         let layout = UICollectionViewFlowLayout()
-        layout.itemSize = CGSize(width: self.cellWidth!, height: self.cellHeight!)
-        layout.sectionInset = self.sectionInsets!
+        layout.sectionInset = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
         layout.minimumInteritemSpacing = 8
         layout.minimumLineSpacing = 8
         
         self.collectionView!.collectionViewLayout = layout
         self.collectionView!.backgroundColor = Theme.colorBackgroundForm
-        self.collectionView!.contentInset = UIEdgeInsets(top: self.chromeHeight, left: 0, bottom: 44, right: 0)
-        self.collectionView!.contentOffset = CGPoint(x: 0, y: -self.chromeHeight)
         self.collectionView?.delaysContentTouches = false
         self.collectionView!.register(ChannelGridCell.self, forCellWithReuseIdentifier: "cell")
         
@@ -195,6 +179,7 @@ class ChannelGridController: UICollectionViewController {
         button.addTarget(self, action: #selector(addAction(sender:)), for: .touchUpInside)
         button.showsTouchWhenHighlighted = true
         button.setImage(#imageLiteral(resourceName: "imgChannelAdd"), for: .normal)
+        button.imageView?.contentMode = .scaleAspectFit
         button.imageEdgeInsets = UIEdgeInsetsMake(6, 6, 6, 6)
         self.addButton = UIBarButtonItem(customView: button)
         
@@ -204,6 +189,7 @@ class ChannelGridController: UICollectionViewController {
         button.addTarget(self, action: #selector(showActions(sender:)), for: .touchUpInside)
         button.showsTouchWhenHighlighted = true
         button.setImage(UIImage(named: "imgOverflowVerticalLight"), for: .normal)
+        button.imageView?.contentMode = .scaleAspectFit
         button.imageEdgeInsets = UIEdgeInsetsMake(8, 16, 8, 0)
         self.menuButton = UIBarButtonItem(customView: button)
         
@@ -211,9 +197,15 @@ class ChannelGridController: UICollectionViewController {
 
 		self.navigationItem.leftBarButtonItem = self.searchButton
         self.navigationItem.setRightBarButtonItems([self.menuButton, UI.spacerFixed, self.addButton], animated: true)
-
+        
 		NotificationCenter.default.addObserver(self, selector: #selector(userDidSwitch(notification:)), name: NSNotification.Name(rawValue: Events.UserDidSwitch), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(bindLanguage), name: NSNotification.Name(LCLLanguageChangeNotification), object: nil)
+        
+        self.searchBar.translatesAutoresizingMaskIntoConstraints = false
+        self.searchBar.heightAnchor.constraint(equalToConstant: 44).isActive = true
+        self.searchBar.widthAnchor.constraint(equalTo: self.view.widthAnchor).isActive = true
+        self.searchBar.topAnchor.constraint(equalTo: self.view.topAnchor).isActive = true
+        self.searchBar.leadingAnchor.constraint(equalTo: self.view.leadingAnchor).isActive = true
 	}
     
 	func bind() {
@@ -287,31 +279,6 @@ class ChannelGridController: UICollectionViewController {
         self.totalUnreadsQuery?.remove()
     }
     
-    @objc func showActions(sender: AnyObject?) {
-        
-        Reporting.track("view_channel_grid_actions")
-        let sheet = UIAlertController(title: nil, message: nil, preferredStyle: UIAlertControllerStyle.actionSheet)
-        
-        let profileAction = UIAlertAction(title: "profile_and_settings".localized(), style: .default) { action in
-            let wrapper = AirNavigationController(rootViewController: MemberViewController(userId: UserController.instance.userId!))
-            UIViewController.topController?.present(wrapper, animated: true, completion: nil)
-        }
-        
-        let cancel = UIAlertAction(title: "cancel".localized(), style: .cancel) { action in
-            sheet.dismiss(animated: true, completion: nil)
-        }
-        
-        sheet.addAction(profileAction)
-        sheet.addAction(cancel)
-        
-        if let presenter = sheet.popoverPresentationController {
-            presenter.sourceView = self.menuButton.customView
-            presenter.sourceRect = (self.menuButton.customView?.bounds)!
-        }
-    
-        present(sheet, animated: true, completion: nil)
-    }
-
     override func scrollViewShouldScrollToTop(_ scrollView: UIScrollView) -> Bool {
         if let navigationController = navigationController as? ScrollingNavigationController {
             navigationController.showNavbar(animated: true)
@@ -381,13 +348,22 @@ extension ChannelGridController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView
         , layout collectionViewLayout: UICollectionViewLayout
         , sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: self.cellWidth!, height: self.cellHeight!)
+        
+        let flowLayout = collectionViewLayout as! UICollectionViewFlowLayout
+        let availableWidth = collectionView.width() - (flowLayout.sectionInset.left + flowLayout.sectionInset.right)
+        let preferredColumnWidth: CGFloat = (UIDevice.current.userInterfaceIdiom == .phone) ? 100 : 150
+        let numColumns: CGFloat = floor(CGFloat(availableWidth) / CGFloat(preferredColumnWidth))
+        let spaceLeftOver = availableWidth - (numColumns * preferredColumnWidth) - ((numColumns - 1) * flowLayout.minimumInteritemSpacing)
+        let cellWidth = preferredColumnWidth + (spaceLeftOver / numColumns)
+        let cellHeight = (cellWidth * 0.65) + 32
+        return CGSize(width: cellWidth, height: cellHeight)
     }
     
     func collectionView(_ collectionView: UICollectionView
         , layout collectionViewLayout: UICollectionViewLayout
         , insetForSectionAt section: Int) -> UIEdgeInsets {
-        return self.sectionInsets!
+        let top = CGFloat(self.searchBarActive ? self.searchBarHeight + 8 : 8)
+        return UIEdgeInsetsMake(top, 8, 8, 8)
     }
 }
 
@@ -402,12 +378,12 @@ extension ChannelGridController: UISearchBarDelegate {
         if !(searchBar.text?.isEmpty)! {
             self.queryController.filter(searchText: nil)
         }
-        searchBar.endEditing(true)
-        searchBar.text = nil
+        self.searchBar.endEditing(true)
+        self.searchBar.text = nil
         self.searchBar.resignFirstResponder()
         self.queryController.filterActive = false
-        searchBar.setShowsCancelButton(false, animated: true)
-        self.navigationItem.setLeftBarButton(self.searchButton, animated: true)
-        self.navigationItem.setRightBarButtonItems([self.menuButton, UI.spacerFixed, self.addButton], animated: true)
+        self.searchBar.fadeOut()
+        self.searchBarActive = false
+        self.collectionView?.collectionViewLayout.invalidateLayout()
 	}
 }

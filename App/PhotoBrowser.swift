@@ -37,8 +37,6 @@ class PhotoBrowser: IDMPhotoBrowser {
     
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
-        self.view.fillSuperview(withLeftPadding: 0, rightPadding: 0, topPadding: UIApplication.shared.statusBarFrame.size.height, bottomPadding: 0)
-        super.toolbar.anchorBottomCenterFillingWidth(withLeftAndRightPadding: 0, bottomPadding: 0, height: 48)
     }
     
     /*--------------------------------------------------------------------------------------------

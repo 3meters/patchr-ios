@@ -39,8 +39,8 @@ class ImageUtils {
 		return SDImageCache.shared().imageFromCache(forKey: key)
 	}
 
-	static func imageFromColor(color: UIColor) -> UIImage {
-		let rect = CGRect(x: 0, y: 0, width: 1, height: 1)
+    static func imageFromColor(color: UIColor, width: CGFloat = 1, height: CGFloat = 1) -> UIImage {
+		let rect = CGRect(x: 0, y: 0, width: width, height: height)
 		UIGraphicsBeginImageContext(rect.size)
 		let context = UIGraphicsGetCurrentContext()
 		context!.setFillColor(color.cgColor)

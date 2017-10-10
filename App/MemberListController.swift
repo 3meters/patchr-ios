@@ -245,6 +245,10 @@ class MemberListController: BaseTableController {
         return false
     }
     
+    override var prefersStatusBarHidden: Bool {
+        return false
+    }
+    
     enum ListScope: Int {
         case channel
         case reaction

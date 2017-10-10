@@ -11,12 +11,12 @@
 public extension UIImage {
     
     public func hasAlpha() -> Bool {
-        let alpha: CGImageAlphaInfo = CGImageGetAlphaInfo(self.CGImage)
+        let alpha: CGImageAlphaInfo = self.cgImage!.alphaInfo
         return
-            alpha == CGImageAlphaInfo.First ||
-            alpha == CGImageAlphaInfo.Last ||
-            alpha == CGImageAlphaInfo.PremultipliedFirst ||
-            alpha == CGImageAlphaInfo.PremultipliedLast
+            alpha == CGImageAlphaInfo.first ||
+            alpha == CGImageAlphaInfo.last ||
+            alpha == CGImageAlphaInfo.premultipliedFirst ||
+            alpha == CGImageAlphaInfo.premultipliedLast
     }
     
     public func imageWithAlpha() -> UIImage {
@@ -24,23 +24,24 @@ public extension UIImage {
             return self
         }
         
-        let imageRef:CGImageRef = self.CGImage!
-        let width  = CGImageGetWidth(imageRef)
-        let height = CGImageGetHeight(imageRef)
+        let imageRef: CGImage = self.cgImage!
+        let width  = cgImage!.width
+        let height = cgImage!.height
 
         // The bitsPerComponent and bitmapInfo values are hard-coded to prevent an "unsupported parameter combination" error
-        let offscreenContext: CGContextRef = CGBitmapContextCreate(
+        let offscreenContext: CGContext = CGBitmapContextCreate(
             nil,
             width,
             height,
             8,
             0,
-            CGImageGetColorSpace(imageRef),
+            cgImage!.colorSpace!,
             CGBitmapInfo.ByteOrderDefault | CGBitmapInfo(rawValue: CGImageAlphaInfo.PremultipliedFirst.rawValue)
         )
         
         // Draw the image into the context and retrieve the new image, which will now have an alpha layer
-        CGContextDrawImage(offscreenContext, CGRect(x:0, 0, CGFloat(width), CGFloat(height)), imageRef)
+        self.draw(in: CGRect.init(x: 0, y: 0, width: width, height: height))
+        CGContextDrawImage(offscreenContext, CGRect.init(x: 0, y: 0, width: width, height: height), imageRef)
         let imageRefWithAlpha:CGImageRef = CGBitmapContextCreateImage(offscreenContext)
         
         return UIImage(CGImage: imageRefWithAlpha)

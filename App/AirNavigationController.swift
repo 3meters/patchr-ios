@@ -20,9 +20,9 @@ class AirNavigationController: ScrollingNavigationController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.statusBarView = UIView(frame: UIApplication.shared.statusBarFrame)
-        statusBarView.backgroundColor = Colors.accentColor
-        self.view.addSubview(statusBarView)
+//        self.statusBarView = UIView(frame: UIApplication.shared.statusBarFrame)
+//        statusBarView.backgroundColor = Colors.accentColor
+//        self.view.addSubview(statusBarView)
         self.hidesBarsOnSwipe = false
     }
     
@@ -32,5 +32,12 @@ class AirNavigationController: ScrollingNavigationController {
     
     func removeStatusBarView() {
         self.statusBarView.removeFromSuperview()
+    }
+    
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        if let top = self.topViewController {
+            return top.preferredStatusBarStyle
+        }
+        return super.preferredStatusBarStyle
     }
 }
