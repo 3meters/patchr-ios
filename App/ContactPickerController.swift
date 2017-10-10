@@ -442,14 +442,16 @@ class ContactPickerController: BaseTableController, CLTokenInputViewDelegate {
     }
     
     func inviteContinue() {
-        if let controller = self.navigationController?.presentingViewController {
-            UIShared.toast(message: "invites_sent".localized(), duration: 3.0, controller: controller, addToWindow: false)
-        }
-        if self.flow == .internalCreate {
-            self.navigateToChannel()
-        }
-        else {
-            self.navigationController?.close()
+        DispatchQueue.main.async {
+            if let controller = self.navigationController?.presentingViewController {
+                UIShared.toast(message: "invites_sent".localized(), duration: 3.0, controller: controller, addToWindow: false)
+            }
+            if self.flow == .internalCreate {
+                self.navigateToChannel()
+            }
+            else {
+                self.navigationController?.close()
+            }
         }
     }
     

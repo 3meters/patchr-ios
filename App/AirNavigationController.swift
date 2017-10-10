@@ -11,7 +11,6 @@ import AMScrollingNavbar
 
 class AirNavigationController: ScrollingNavigationController {
     
-    var statusBarView: UIView!
     var tag: String!
     
     /*--------------------------------------------------------------------------------------------
@@ -20,18 +19,11 @@ class AirNavigationController: ScrollingNavigationController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-//        self.statusBarView = UIView(frame: UIApplication.shared.statusBarFrame)
-//        statusBarView.backgroundColor = Colors.accentColor
-//        self.view.addSubview(statusBarView)
         self.hidesBarsOnSwipe = false
     }
     
     deinit {
         Log.v("\(self.className) released")
-    }
-    
-    func removeStatusBarView() {
-        self.statusBarView.removeFromSuperview()
     }
     
     override var preferredStatusBarStyle: UIStatusBarStyle {

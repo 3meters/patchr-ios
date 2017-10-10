@@ -217,7 +217,6 @@ class MainController: NSObject, iRateDelegate {
         let controller = controller ?? LobbyViewController()
         let wrapper = AirNavigationController(rootViewController: controller)
         wrapper.tag = "lobby"
-        wrapper.removeStatusBarView()
         
         /* If empty controller is the root then animate scene before the switch */
         if let emptyController = self.containerController.controller as? EmptyViewController {
