@@ -37,6 +37,7 @@ class Snow {
 	let colorTextNotification       = Colors.white
 	let colorTextToast              = Colors.black
 	let colorTextActivity           = Colors.black
+    let colorTextNavbarTitle        = Colors.black
 	let colorNumberFeatured         = Colors.accentColorDark
     let colorTextValidationError    = Colors.validationErrorColor
 

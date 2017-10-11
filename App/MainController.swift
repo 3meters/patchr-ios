@@ -82,6 +82,7 @@ class MainController: NSObject, iRateDelegate {
         UINavigationBar.appearance().isTranslucent = false
         UINavigationBar.appearance().tintColor = Theme.colorNavBarTint
         UINavigationBar.appearance().barTintColor = Theme.colorNavBarBackground
+        UINavigationBar.appearance().titleTextAttributes = [NSAttributedStringKey.foregroundColor: Theme.colorTextNavbarTitle]
         
         let dialogAppearance = PopupDialogDefaultView.appearance()
         
