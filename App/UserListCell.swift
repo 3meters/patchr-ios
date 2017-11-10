@@ -40,22 +40,6 @@ class UserListCell: UITableViewCell {
         self.photoControl?.backgroundColor = color
     }
     
-    func reset() {
-        self.title?.text = nil
-        self.photoControl?.reset()
-        self.subtitle?.text = nil
-        self.subtitle?.isHidden = false
-        self.roleLabel?.text = nil
-        self.roleLabel?.isHidden = false
-        self.presenceView?.showOffline()
-        self.agoLabel.isHidden = true
-        self.settingsButton?.isHidden = true
-        self.widgetWidth.constant = 0
-        self.allowSelection = true
-        self.userQuery?.remove()
-        self.userQuery = nil
-    }
-    
     func bind(contact: CNContact) {
         
         self.roleLabel?.isHidden = true
@@ -141,5 +125,21 @@ class UserListCell: UITableViewCell {
             self.subtitle?.text = "deleted".localized()
             self.photoControl!.bind(url: nil, name: "deleted".localized(), colorSeed: nil, color: Theme.colorBackgroundImage)
         }
+    }
+    
+    func reset() {
+        self.title?.text = nil
+        self.photoControl?.reset()
+        self.subtitle?.text = nil
+        self.subtitle?.isHidden = false
+        self.roleLabel?.text = nil
+        self.roleLabel?.isHidden = false
+        self.presenceView?.showOffline()
+        self.agoLabel.isHidden = true
+        self.settingsButton?.isHidden = true
+        self.widgetWidth.constant = 0
+        self.allowSelection = true
+        self.userQuery?.remove()
+        self.userQuery = nil
     }
 }

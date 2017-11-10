@@ -314,6 +314,15 @@ class FireController: NSObject {
         })
     }
     
+    func messageCount(channelId: String, then: @escaping ((Error?, Int) -> Void)) {
+        FireController.db.child("channel-messages/\(channelId)")
+            .observeSingleEvent(of: .value, with: { snap in
+                then(nil, Int(snap.childrenCount))
+            }, withCancel: { error in
+                then(error, 0)
+            })
+    }
+    
     /*--------------------------------------------------------------------------------------------
      * MARK: - Utility
      *--------------------------------------------------------------------------------------------*/

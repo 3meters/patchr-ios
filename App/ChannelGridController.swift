@@ -140,7 +140,6 @@ class ChannelGridController: UICollectionViewController {
             }
         }
         
-        self.view.backgroundColor = Theme.colorBackgroundForm
         self.definesPresentationContext = true
         
         /* Search bar when toggled on */
@@ -164,10 +163,10 @@ class ChannelGridController: UICollectionViewController {
         layout.minimumInteritemSpacing = 8
         layout.minimumLineSpacing = 8
         
+        self.collectionView!.register(UINib(nibName: "ChannelCell", bundle: nil), forCellWithReuseIdentifier: "cell")
         self.collectionView!.collectionViewLayout = layout
         self.collectionView!.backgroundColor = Theme.colorBackgroundForm
         self.collectionView?.delaysContentTouches = false
-        self.collectionView!.register(ChannelGridCell.self, forCellWithReuseIdentifier: "cell")
         
         /* Buttons (*/
 		self.searchButton = UIBarButtonItem(barButtonSystemItem: .search, target: self, action: #selector(searchAction(sender:)))
@@ -250,7 +249,7 @@ class ChannelGridController: UICollectionViewController {
                         cell.unreadQuery!.observe(with: { [weak cell] error, total in
                             guard let cell = cell else { return }
                             if total != nil && total! > 0 {
-                                cell.badge.text = "\(total!)"
+                                cell.badgeLabel.text = "\(total!)"
                                 cell.badgeIsHidden = false
                             }
                             else {
@@ -355,7 +354,7 @@ extension ChannelGridController: UICollectionViewDelegateFlowLayout {
         let numColumns: CGFloat = floor(CGFloat(availableWidth) / CGFloat(preferredColumnWidth))
         let spaceLeftOver = availableWidth - (numColumns * preferredColumnWidth) - ((numColumns - 1) * flowLayout.minimumInteritemSpacing)
         let cellWidth = preferredColumnWidth + (spaceLeftOver / numColumns)
-        let cellHeight = (cellWidth * 0.65) + 32
+        let cellHeight = (cellWidth * 0.65) + 33 + 4
         return CGSize(width: cellWidth, height: cellHeight)
     }
     
