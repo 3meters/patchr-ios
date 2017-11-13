@@ -9,18 +9,19 @@ import UIKit
 class PhotoControl: UIControl {
 
     var nameLabel = AirLabelDisplay()
-	var photoView = AirImageView(frame: CGRect.zero)
+	var imageView = AirImageView(frame: CGRect.zero)
     var target: AnyObject?
     
     @IBInspectable var initialsCount: Int = 2
-    @IBInspectable var rounded: Bool = true {
+    @IBInspectable var dummyImage: UIImage? {
         didSet {
-            self.layer.cornerRadius = self.rounded ? self.width() * 0.5 : self.radius
+            self.imageView.image = dummyImage
         }
     }
-    @IBInspectable var radius: CGFloat = 0 {
+    
+    override var cornerRadius: CGFloat {
         didSet {
-            self.layer.cornerRadius = self.radius
+            self.imageView.cornerRadius = cornerRadius
         }
     }
 	
@@ -37,69 +38,63 @@ class PhotoControl: UIControl {
 	}
 	
 	func initialize() {
-		
-		self.clipsToBounds = true
-        self.backgroundColor = Theme.colorBackgroundImage
-		
+        
 		/* User photo */
-		self.photoView.contentMode = .scaleAspectFill
+		self.imageView.contentMode = .scaleAspectFill
 		
 		/* User name */
 		self.nameLabel.font = Theme.fontHeading
 		self.nameLabel.textColor = Colors.white
 		self.nameLabel.textAlignment = .center
         
-        self.addSubview(self.photoView)
+        self.addSubview(self.imageView)
         self.addSubview(self.nameLabel)
 	}
     
     func reset() {
-        self.photoView.reset()
+        self.imageView.reset()
     }
     
     override func prepareForInterfaceBuilder() {
         super.prepareForInterfaceBuilder()
         self.backgroundColor = Colors.accentColorLight
         self.nameLabel.isHidden = true
-        let bundle = Bundle(for: PhotoControl.self)
-        self.photoView.image = UIImage(named: "imgDummyUser", in: bundle, compatibleWith: self.traitCollection)
     }
     
 	override func layoutSubviews() {
 		super.layoutSubviews()
-        self.layer.cornerRadius = self.rounded ? self.width() * 0.5 : self.radius
-		self.photoView.fillSuperview()
-        self.photoView.progressView.anchorInCenter(withWidth: 150, height: 20)
+		self.imageView.fillSuperview()
+        self.imageView.progressView.anchorInCenter(withWidth: 150, height: 20)
 		self.nameLabel.fillSuperview()
 	}
     
     func setImage(image: UIImage?) {
-        self.photoView.image = image
-        self.photoView.isHidden = (image == nil)
+        self.imageView.image = image
+        self.imageView.isHidden = (image == nil)
         self.nameLabel.isHidden = (image != nil)
     }
 	
     func bind(url: URL?, name: String?, colorSeed: String?, color: UIColor? = nil, uploading: Bool = false) {
         
-        if url != nil && self.photoView.associated(withUrl: url!) {
+        if url != nil && self.imageView.associated(withUrl: url!) {
             return
         }
 		
         self.nameLabel.text = nil
-		self.photoView.isHidden = true
+		self.imageView.isHidden = true
 		self.nameLabel.isHidden = false
 		
 		if url != nil {
-            self.photoView.setImageWithUrl(url: url!) { [weak self] success in
+            self.imageView.setImageWithUrl(url: url!) { [weak self] success in
                 guard let this = self else { return }
                 if success {
                     this.nameLabel.isHidden = true
-                    this.photoView.isHidden = false
+                    this.imageView.isHidden = false
                 }
             }
 		}
 		else {
-            self.photoView.fromUrl = nil
+            self.imageView.fromUrl = nil
             if name != nil {
                 self.nameLabel.text = Utils.initialsFromName(fullname: name!, count: self.initialsCount).uppercased()
             }

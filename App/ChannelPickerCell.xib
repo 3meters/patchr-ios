@@ -27,18 +27,25 @@
                     <stackView opaque="NO" contentMode="scaleToFill" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="EAc-A4-tDU">
                         <rect key="frame" x="0.0" y="0.0" width="255" height="47.5"/>
                         <subviews>
-                            <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="DTt-en-Xuo" userLabel="PhotoView" customClass="AirImageView" customModule="Teeny" customModuleProvider="target">
+                            <view clipsSubviews="YES" contentMode="scaleAspectFill" translatesAutoresizingMaskIntoConstraints="NO" id="DTt-en-Xuo" userLabel="ImageView" customClass="AirImageView" customModule="Teeny" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="0.0" width="84.5" height="47.5"/>
                                 <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                                 <constraints>
                                     <constraint firstAttribute="width" secondItem="DTt-en-Xuo" secondAttribute="height" multiplier="16:9" id="nZ5-OC-FmT"/>
                                 </constraints>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="boolean" keyPath="showGradient" value="NO"/>
+                                    <userDefinedRuntimeAttribute type="image" keyPath="dummyImage" value="imgDummyCover"/>
+                                </userDefinedRuntimeAttributes>
                             </view>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Jay Massena" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="meX-Hb-lPU">
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="meX-Hb-lPU" customClass="AirLabel" customModule="Teeny" customModuleProvider="target">
                                 <rect key="frame" x="92.5" y="0.0" width="162.5" height="47.5"/>
                                 <fontDescription key="fontDescription" name="HelveticaNeue-Light" family="Helvetica Neue" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="string" keyPath="dummyText" value="Massena Residence Scrapbook"/>
+                                </userDefinedRuntimeAttributes>
                             </label>
                         </subviews>
                     </stackView>
@@ -51,10 +58,13 @@
                 </constraints>
             </tableViewCellContentView>
             <connections>
-                <outlet property="photoView" destination="DTt-en-Xuo" id="eWP-I8-kBN"/>
+                <outlet property="coverImageView" destination="DTt-en-Xuo" id="Xac-Pu-CUg"/>
                 <outlet property="titleLabel" destination="meX-Hb-lPU" id="TeQ-6t-qse"/>
             </connections>
             <point key="canvasLocation" x="-255.5" y="-196"/>
         </tableViewCell>
     </objects>
+    <resources>
+        <image name="imgDummyCover" width="3264" height="2448"/>
+    </resources>
 </document>

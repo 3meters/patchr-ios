@@ -206,7 +206,7 @@ class MemberListController: BaseTableController {
                 }
                 cell.bind(user: user, target: target)
                 let tap = UITapGestureRecognizer(target: this, action: #selector(this.profileTapped(sender:)))
-                cell.profileView.addGestureRecognizer(tap)
+                cell.stackView.addGestureRecognizer(tap)
 
                 if this.manage {
                     if this.scope == .channel {

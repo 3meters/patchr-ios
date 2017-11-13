@@ -163,7 +163,7 @@ class ChannelGridController: UICollectionViewController {
         layout.minimumInteritemSpacing = 8
         layout.minimumLineSpacing = 8
         
-        self.collectionView!.register(UINib(nibName: "ChannelCell", bundle: nil), forCellWithReuseIdentifier: "cell")
+        self.collectionView!.register(UINib(nibName: "ChannelGridCell", bundle: nil), forCellWithReuseIdentifier: "cell")
         self.collectionView!.collectionViewLayout = layout
         self.collectionView!.backgroundColor = Theme.colorBackgroundForm
         self.collectionView?.delaysContentTouches = false

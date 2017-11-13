@@ -8,10 +8,11 @@ import Foundation
 import UIKit
 import ChameleonFramework
 
+@IBDesignable
 class ChannelGridCell: UICollectionViewCell {
     
     @IBOutlet weak var stackView: UIStackView!
-    @IBOutlet weak var photoView: AirImageView!
+    @IBOutlet weak var imageView: AirImageView!
     @IBOutlet weak var titleLabel: UILabel!
     @IBOutlet weak var badgeLabel: UILabel!
     @IBOutlet weak var countLabel: UILabel!
@@ -37,21 +38,6 @@ class ChannelGridCell: UICollectionViewCell {
     
     override func layoutSubviews() {
         super.layoutSubviews()
-
-        self.countLabel?.layer.backgroundColor = Colors.accentColorDark.cgColor
-        self.countLabel?.layer.cornerRadius = (self.countLabel?.frame.size.height)! / 2
-        self.countLabel?.showShadow(offset: CGSize(width: 2, height: 4)
-            , radius: 4.0
-            , rounded: true
-            , cornerRadius: (self.countLabel?.layer.cornerRadius)!)
-
-        self.badgeLabel?.layer.backgroundColor = Theme.colorBackgroundBadge.cgColor
-        self.badgeLabel?.layer.cornerRadius = (self.badgeLabel?.frame.size.height)! / 2
-        self.badgeLabel?.showShadow(offset: CGSize(width: 2, height: 4)
-            , radius: 4.0
-            , rounded: true
-            , cornerRadius: (self.badgeLabel?.layer.cornerRadius)!)
-
         self.selectedBackgroundView?.fillSuperview()
     }
     
@@ -70,14 +56,14 @@ class ChannelGridCell: UICollectionViewCell {
             }
         })
         
-        if let photoView = self.photoView {
+        if let photoView = self.imageView {
             if let photo = channel.photo {
                 self.photo = photo
                 let url = ImageProxy.url(photo: photo, category: SizeCategory.profile)
                 if !photoView.associated(withUrl: url) {
                     photoView.setImageWithUrl(url: url, uploading: (photo.uploading != nil), animate: true) { success in
                         if success {
-                            if let image = self.photoView.image {
+                            if let image = photoView.image {
                                 let colorImageAverage = AverageColorFromImage(image).lighten(byPercentage: 0.5)
                                 let colorText = ContrastColorOf(colorImageAverage!, returnFlat: true)
                                 self.contentView.backgroundColor = colorImageAverage
@@ -100,7 +86,7 @@ class ChannelGridCell: UICollectionViewCell {
                             if !photoView!.associated(withUrl: url) {
                                 photoView!.setImageWithUrl(url: url, uploading: false, animate: true) { success in
                                     if success {
-                                        if let image = self.photoView.image {
+                                        if let image = photoView!.image {
                                             let colorImageAverage = AverageColorFromImage(image).lighten(byPercentage: 0.5)
                                             let colorText = ContrastColorOf(colorImageAverage!, returnFlat: true)
                                             self.contentView.backgroundColor = colorImageAverage
@@ -118,10 +104,10 @@ class ChannelGridCell: UICollectionViewCell {
     }
     
     func reset() {
-        self.photoView?.reset()
+        self.imageView?.reset()
         self.titleLabel?.text = nil
         self.countLabel?.text = nil
-        self.badgeLabel?.text = "3"
+        self.badgeLabel?.text = nil
         self.badgeLabel?.alpha = 0
         self.badgeIsHidden = true
         self.channel = nil

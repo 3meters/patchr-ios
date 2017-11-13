@@ -8,11 +8,11 @@
 
 import UIKit
 
-class ThumbnailCollectionViewCell: UICollectionViewCell {
+class ThumbnailCell: UICollectionViewCell {
     
     var imageResult: ImageResult?
     
-    @IBOutlet weak var thumbnail: AirImageView!
+    @IBOutlet weak var imageView: AirImageView!
     
     override var layoutMargins: UIEdgeInsets {
         get { return UIEdgeInsets.zero }
@@ -20,11 +20,11 @@ class ThumbnailCollectionViewCell: UICollectionViewCell {
     }
     
     override func prepareForReuse() {
-        self.thumbnail.reset()
-        self.thumbnail.image = nil
+        self.imageView.reset()
+        self.imageView.image = nil
     }
     
     override func layoutSubviews() {
-        self.thumbnail.progressView.anchorInCenter(withWidth: 150, height: 20)
+        self.imageView.progressView.anchorInCenter(withWidth: 150, height: 20)
     }
 }

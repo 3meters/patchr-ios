@@ -4,13 +4,14 @@
 //
 
 import UIKit
+import Foundation
 import SDWebImage
 import Photos
 import DACircularProgress
-import FLAnimatedImage
 
-class AirImageView: FLAnimatedImageView {
-
+@IBDesignable
+class AirImageView: UIImageView {
+    
     var progressView: DALabeledCircularProgressView!
     
     var gradientColorTop = UIColor(red: CGFloat(0), green: CGFloat(0), blue: CGFloat(0), alpha: CGFloat(0.66))
@@ -36,7 +37,8 @@ class AirImageView: FLAnimatedImageView {
     var enableProgress = true
     var enableLogging = false
     
-    var showGradient: Bool = false {
+    @IBInspectable var dummyImage: UIImage?
+    @IBInspectable var showGradient: Bool = false {
         didSet {
             if showGradient {
                 if self.gradientLayer == nil {
@@ -62,7 +64,7 @@ class AirImageView: FLAnimatedImageView {
         }
     }
     
-    override var image: UIImage? {
+    @IBInspectable override var image: UIImage? {
         didSet {
             if self.enableLogging {
                 if image != nil {
@@ -111,13 +113,20 @@ class AirImageView: FLAnimatedImageView {
             }
         }
     }
-    
+
+    override func prepareForInterfaceBuilder() {
+        super.prepareForInterfaceBuilder()
+        self.image = self.dummyImage
+        self.contentMode = .scaleAspectFill
+    }
+
     /*--------------------------------------------------------------------------------------------
      * MARK: - Methods
      *--------------------------------------------------------------------------------------------*/
 
     func initialize(){
         self.layer.delegate = self
+        self.layer.masksToBounds = true
         self.backgroundColor = Theme.colorBackgroundTable
         self.progressView = DALabeledCircularProgressView(frame: CGRect.zero)
         self.progressView.trackTintColor = Colors.white
@@ -223,7 +232,6 @@ class AirImageView: FLAnimatedImageView {
             }
             
             if finished && image != nil && imageData != nil {
-                let animatedImage = FLAnimatedImage(animatedGIFData: imageData)
                 DispatchQueue.main.async() {
                     this.hideProgress()
                     if animate {
@@ -232,12 +240,10 @@ class AirImageView: FLAnimatedImageView {
                             , options: .transitionCrossDissolve
                             , animations: {
                                 this.image = image
-                                this.animatedImage = animatedImage
                         })
                     }
                     else {
                         this.image = image
-                        this.animatedImage = animatedImage
                     }
                     then?(true)
                 }

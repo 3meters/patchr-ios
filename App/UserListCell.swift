@@ -20,7 +20,7 @@ class UserListCell: UITableViewCell {
     @IBOutlet weak var settingsButton: AirButton?
     @IBOutlet weak var agoLabel: UILabel!
     @IBOutlet weak var widgetWidth: NSLayoutConstraint!
-    @IBOutlet weak var profileView: UIView!
+    @IBOutlet weak var stackView: UIStackView!
     
     var allowSelection = true
     

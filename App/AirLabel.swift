@@ -6,9 +6,8 @@
 import UIKit
 
 class AirLabel: AirLabelBase {
-	
-	override func initialize() {
-		self.font = Theme.fontText
-		self.textColor = Theme.colorText
-	}
+    override func prepareForInterfaceBuilder() {
+        super.prepareForInterfaceBuilder()
+        self.text = dummyText
+    }
 }

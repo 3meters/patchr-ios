@@ -164,7 +164,7 @@ public extension UIView {
 		self.layer.shadowColor = Colors.black.cgColor
         self.layer.shadowOffset = offset
 		self.layer.shadowOpacity = opacity
-		self.layer.shadowRadius = radius
+		self.layer.shadowRadius = radius // blur radius
 		
 		if rounded {
 			self.layer.shadowPath = UIBezierPath(roundedRect: self.bounds, cornerRadius: cornerRadius).cgPath
@@ -173,6 +173,15 @@ public extension UIView {
 			self.layer.shadowPath = UIBezierPath(rect: self.bounds).cgPath
 		}
 	}
+    
+    func removeShadow() {
+        self.layer.shadowColor = Colors.black.cgColor
+        self.layer.shadowOpacity = 0
+        self.layer.shadowOffset = CGSize(width: 0, height: -3)
+        self.layer.shadowRadius = 3
+        self.layer.shadowPath = nil
+        self.layer.masksToBounds = true
+    }
 
 	func snapshot() -> UIImage {
 		UIGraphicsBeginImageContextWithOptions(bounds.size, false, UIScreen.main.scale)

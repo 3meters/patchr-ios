@@ -227,9 +227,9 @@ class CommentListCell: UITableViewCell {
             if let profilePhoto = creator.profile?.photo {
                 if !self.template {
                     let url = ImageProxy.url(photo: profilePhoto, category: SizeCategory.profile)
-                    if !self.userPhotoControl.photoView.associated(withUrl: url) {
+                    if !self.userPhotoControl.imageView.associated(withUrl: url) {
                         let fullName = creator.title
-                        self.userPhotoControl.photoView.image = nil
+                        self.userPhotoControl.imageView.image = nil
                         self.userPhotoControl.bind(url: url, name: fullName, colorSeed: creator.id)
                     }
                 }

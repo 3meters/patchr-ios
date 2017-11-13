@@ -46,7 +46,7 @@ def shared_pods
     pod 'PhoneNumberKit',           '2.0.0'
     pod 'pop',                      '1.0.9'		# Animation library
     pod 'PopupDialog',              '0.6.0'
-    pod 'SDWebImage/GIF',           '4.0.0'
+    pod 'SDWebImage',               '4.0.0'
     pod 'SkyFloatingLabelTextField',:git => 'https://github.com/Skyscanner/SkyFloatingLabelTextField/'
     pod 'SlackTextViewController',  :git => 'https://github.com/slackhq/SlackTextViewController.git'
     pod 'STPopup',                  '1.8.3'

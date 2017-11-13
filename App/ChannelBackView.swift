@@ -84,5 +84,4 @@ class ChannelBackView: UIControl {
         self.addSubview(self.label)
         self.insertSubview(self.buttonScrim, at: 3)
     }
-    
 }

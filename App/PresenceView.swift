@@ -52,9 +52,9 @@ class PresenceView: UIView {
         self.addSubview(self.label)
 	}
     
-    override func prepareForInterfaceBuilder() {
-        super.prepareForInterfaceBuilder()
-    }
+//    override func prepareForInterfaceBuilder() {
+//        super.prepareForInterfaceBuilder()
+//    }
     
 	override func layoutSubviews() {
 		super.layoutSubviews()

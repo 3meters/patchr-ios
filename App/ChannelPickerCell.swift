@@ -6,26 +6,43 @@
 import Foundation
 import UIKit
 
-@IBDesignable
-class ChannelPickerCell: UITableViewCell {
+@IBDesignable class ChannelPickerCell: UITableViewCell {
     
-    @IBOutlet weak var photoView: AirImageView?
-    @IBOutlet weak var titleLabel: UILabel?
+    @IBOutlet weak var coverImageView: AirImageView!
+    @IBOutlet weak var titleLabel: UILabel!
     
     var photo: FirePhoto!
     var needsPhoto = false
     
     var channel: FireChannel!
     var channelQuery: ChannelQuery? // Passed in by table data source
-    
+
+    override var layoutMargins: UIEdgeInsets {
+        get { return .zero }
+        set (newVal) {}
+    }
+
+    /*--------------------------------------------------------------------------------------------
+     * MARK: - Events
+     *--------------------------------------------------------------------------------------------*/
+
+    override func prepareForInterfaceBuilder() {
+        super.prepareForInterfaceBuilder()
+        self.titleLabel?.text = "Bilbo Massena"
+    }
+
+    /*--------------------------------------------------------------------------------------------
+		 * MARK: - Methods
+		 *--------------------------------------------------------------------------------------------*/
+
     func reset() {
-        self.photoView?.reset()
+        self.coverImageView?.reset()
         self.titleLabel?.text = nil
         self.channel = nil
         self.channelQuery?.remove()
         self.channelQuery = nil
     }
-    
+
     func bind(channel: FireChannel) {
         self.channel = channel
         self.titleLabel?.text = channel.title!
@@ -33,8 +50,8 @@ class ChannelPickerCell: UITableViewCell {
             self.photo = photo
             self.needsPhoto = true
             let url = ImageProxy.url(photo: photo, category: SizeCategory.profile)
-            if !(self.photoView?.associated(withUrl: url))! {
-                self.photoView?.setImageWithUrl(url: url, uploading: (photo.uploading != nil), animate: true) { success in
+            if !(self.coverImageView?.associated(withUrl: url))! {
+                self.coverImageView?.setImageWithUrl(url: url, uploading: (photo.uploading != nil), animate: true) { success in
                     if success {
                         self.needsPhoto = false
                     }
@@ -42,19 +59,14 @@ class ChannelPickerCell: UITableViewCell {
             }
         }
         else {
-            self.photoView?.image = nil
+            self.coverImageView?.image = nil
             let seed = Utils.numberFromName(fullname: channel.title!.lowercased())
-            self.photoView?.backgroundColor = ColorArray.randomColor(seed: seed)
+            self.coverImageView?.backgroundColor = ColorArray.randomColor(seed: seed)
         }
         
         self.setNeedsLayout()    // Needed because binding can change element layout
         self.layoutIfNeeded()
         self.sizeToFit()
-    }
-    
-    override var layoutMargins: UIEdgeInsets {
-        get { return .zero }
-        set (newVal) {}
     }
     
     override func sizeThatFits(_ size: CGSize) -> CGSize {

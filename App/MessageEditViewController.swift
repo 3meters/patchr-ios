@@ -303,9 +303,9 @@ class MessageEditViewController: BaseEditViewController, BEMCheckBoxDelegate {
             
             if let profilePhoto = user.profile?.photo {
                 let url = ImageProxy.url(photo: profilePhoto, category: SizeCategory.profile)
-                if !self.userPhotoControl.photoView.associated(withUrl: url) {
+                if !self.userPhotoControl.imageView.associated(withUrl: url) {
                     let fullName = user.title
-                    self.userPhotoControl.photoView.image = nil
+                    self.userPhotoControl.imageView.image = nil
                     self.userPhotoControl.bind(url: url, name: fullName, colorSeed: user.id)
                 }
             }

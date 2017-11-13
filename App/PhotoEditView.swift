@@ -26,11 +26,8 @@ class PhotoEditView: UIView {
     weak var controller: UIViewController?
     
 	override var layoutMargins: UIEdgeInsets {
-		get {
-			return UIEdgeInsets.zero
-		}
-		set(newVal) {
-		}
+		get { return UIEdgeInsets.zero }
+		set (newVal) {}
 	}
     
     var photoDelegate: PhotoEditDelegate?

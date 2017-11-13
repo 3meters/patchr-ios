@@ -388,16 +388,16 @@ extension PhotoSearchController { // UICollectionViewDelegate
     
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         
-        if let cell = collectionView.cellForItem(at: indexPath) as? ThumbnailCollectionViewCell {
+        if let cell = collectionView.cellForItem(at: indexPath) as? ThumbnailCell {
             if self.inputImageType == .photo {
                 
-                if cell.thumbnail.image != nil { // Ignore touches on placeholder images
-                    let photo = DisplayPhoto(image: cell.thumbnail.image!)!
-                    let browser = PhotoBrowser(photos: [photo] as [Any], animatedFrom: cell.thumbnail)!
+                if cell.imageView.image != nil { // Ignore touches on placeholder images
+                    let photo = DisplayPhoto(image: cell.imageView.image!)!
+                    let browser = PhotoBrowser(photos: [photo] as [Any], animatedFrom: cell.imageView)!
                     
                     browser.mode = .preview
                     browser.usePopAnimation = true
-                    browser.scaleImage = cell.thumbnail.image  // Used because final image might have different aspect ratio than initially
+                    browser.scaleImage = cell.imageView.image  // Used because final image might have different aspect ratio than initially
                     browser.useWhiteBackgroundColor = true
                     browser.disableVerticalSwipe = false
                     browser.browseDelegate = self.pickerDelegate  // Pass delegate through
@@ -437,8 +437,8 @@ extension PhotoSearchController { // UICollectionViewDataSource
         cell.backgroundColor = Theme.colorBackgroundImage
 		
 		if let imageResult = self.imageForIndexPath(indexPath: indexPath as NSIndexPath) {
-			if let thumbCell = cell as? ThumbnailCollectionViewCell {
-				if let imageView = thumbCell.thumbnail {
+			if let thumbCell = cell as? ThumbnailCell {
+				if let imageView = thumbCell.imageView {
 					thumbCell.imageResult = imageResult
                     imageView.enableProgress = false
 					imageView.setImageWithUrl(url: URL(string: imageResult.thumbnailUrl!)!, animate: false)

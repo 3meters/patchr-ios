@@ -19,39 +19,46 @@
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
         <collectionViewCell opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" id="LTM-Mi-qV7" customClass="ChannelGridCell" customModule="Teeny" customModuleProvider="target">
-            <rect key="frame" x="0.0" y="0.0" width="133" height="124"/>
+            <rect key="frame" x="0.0" y="0.0" width="158" height="175"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
             <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
-                <rect key="frame" x="0.0" y="0.0" width="133" height="124"/>
+                <rect key="frame" x="0.0" y="0.0" width="158" height="175"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <stackView opaque="NO" clipsSubviews="YES" contentMode="left" axis="vertical" distribution="equalSpacing" spacingType="standard" baselineRelativeArrangement="YES" translatesAutoresizingMaskIntoConstraints="NO" id="c8G-wR-eha">
-                        <rect key="frame" x="0.0" y="0.0" width="133" height="116.66666666666667"/>
+                    <stackView clipsSubviews="YES" contentMode="left" axis="vertical" distribution="equalSpacing" spacingType="standard" baselineRelativeArrangement="YES" translatesAutoresizingMaskIntoConstraints="NO" id="c8G-wR-eha">
+                        <rect key="frame" x="0.0" y="0.0" width="158" height="130"/>
                         <subviews>
-                            <view clipsSubviews="YES" contentMode="scaleAspectFill" translatesAutoresizingMaskIntoConstraints="NO" id="F9S-ez-8WB" userLabel="PhotoView" customClass="AirImageView" customModule="Teeny" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="0.0" width="133" height="74.666666666666671"/>
+                            <view clipsSubviews="YES" contentMode="scaleAspectFill" translatesAutoresizingMaskIntoConstraints="NO" id="F9S-ez-8WB" userLabel="ImageView" customClass="AirImageView" customModule="Teeny" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="0.0" width="158" height="89"/>
                                 <color key="backgroundColor" red="0.92156862745098034" green="0.92156862745098034" blue="0.94509803921568625" alpha="1" colorSpace="calibratedRGB"/>
                                 <constraints>
                                     <constraint firstAttribute="width" secondItem="F9S-ez-8WB" secondAttribute="height" multiplier="16:9" id="ipn-Lu-lEg"/>
                                 </constraints>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="image" keyPath="dummyImage" value="imgDummyUser"/>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
+                                        <real key="value" value="0.0"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="borderWidth">
+                                        <real key="value" value="0.0"/>
+                                    </userDefinedRuntimeAttribute>
+                                </userDefinedRuntimeAttributes>
                             </view>
-                            <view contentMode="scaleToFill" placeholderIntrinsicWidth="infinite" placeholderIntrinsicHeight="34" translatesAutoresizingMaskIntoConstraints="NO" id="9AC-dd-Oqb" userLabel="TitleHolder">
-                                <rect key="frame" x="0.0" y="82.666666666666671" width="133" height="34"/>
-                                <subviews>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" placeholderIntrinsicWidth="127" placeholderIntrinsicHeight="34" text="Spendid Shades of Larissa" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gaB-Un-1Af" userLabel="Title">
-                                        <rect key="frame" x="8" y="0.0" width="117" height="34"/>
-                                        <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="14"/>
-                                        <nil key="textColor"/>
-                                        <nil key="highlightedColor"/>
-                                    </label>
-                                </subviews>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                <constraints>
-                                    <constraint firstItem="gaB-Un-1Af" firstAttribute="trailing" secondItem="9AC-dd-Oqb" secondAttribute="trailing" constant="-8" id="Ua5-aP-8da"/>
-                                    <constraint firstItem="gaB-Un-1Af" firstAttribute="top" secondItem="9AC-dd-Oqb" secondAttribute="top" id="ppj-uC-Z0i"/>
-                                    <constraint firstItem="gaB-Un-1Af" firstAttribute="leading" secondItem="9AC-dd-Oqb" secondAttribute="leading" constant="8" id="vlK-D9-YAS"/>
-                                </constraints>
-                            </view>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" placeholderIntrinsicWidth="127" placeholderIntrinsicHeight="34" text="" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gaB-Un-1Af" userLabel="Title" customClass="AirLabel" customModule="Teeny" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="96" width="158" height="34"/>
+                                <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="14"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="string" keyPath="dummyText" value="Massena Residence Scrapbook"/>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="leftInset">
+                                        <real key="value" value="8"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="rightInset">
+                                        <real key="value" value="8"/>
+                                    </userDefinedRuntimeAttribute>
+                                </userDefinedRuntimeAttributes>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" name="quaternaryLabelColor" catalog="System" colorSpace="catalog"/>
                         <userDefinedRuntimeAttributes>
@@ -66,16 +73,14 @@
                             </userDefinedRuntimeAttribute>
                         </userDefinedRuntimeAttributes>
                     </stackView>
-                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="2" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hZy-pX-BBK" userLabel="Count">
-                        <rect key="frame" x="8" y="8" width="22" height="22"/>
+                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hZy-pX-BBK" userLabel="Count" customClass="AirLabel" customModule="Teeny" customModuleProvider="target">
+                        <rect key="frame" x="8" y="8" width="35" height="22"/>
                         <constraints>
                             <constraint firstAttribute="height" constant="22" id="Zl1-ZM-RDu"/>
                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="22" id="gqv-iC-zrq"/>
                         </constraints>
-                        <fontDescription key="fontDescription" style="UICTFontTextStyleSubhead"/>
+                        <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="16"/>
                         <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                        <nil key="highlightedColor"/>
-                        <size key="shadowOffset" width="0.0" height="0.0"/>
                         <userDefinedRuntimeAttributes>
                             <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
                                 <real key="value" value="11"/>
@@ -83,24 +88,44 @@
                             <userDefinedRuntimeAttribute type="number" keyPath="borderWidth">
                                 <real key="value" value="0.0"/>
                             </userDefinedRuntimeAttribute>
+                            <userDefinedRuntimeAttribute type="color" keyPath="layerBackgroundColor">
+                                <color key="value" red="0.41176470590000003" green="0.82745098039999998" blue="0.90588235289999997" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            </userDefinedRuntimeAttribute>
+                            <userDefinedRuntimeAttribute type="string" keyPath="dummyText" value="999"/>
+                            <userDefinedRuntimeAttribute type="boolean" keyPath="showShadow" value="YES"/>
+                            <userDefinedRuntimeAttribute type="number" keyPath="leftInset">
+                                <real key="value" value="4"/>
+                            </userDefinedRuntimeAttribute>
+                            <userDefinedRuntimeAttribute type="number" keyPath="rightInset">
+                                <real key="value" value="4"/>
+                            </userDefinedRuntimeAttribute>
                         </userDefinedRuntimeAttributes>
                     </label>
-                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="2" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="h5i-BT-PQD" userLabel="Badge">
-                        <rect key="frame" x="103" y="8" width="22" height="22"/>
+                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="h5i-BT-PQD" userLabel="Badge" customClass="AirLabel" customModule="Teeny" customModuleProvider="target">
+                        <rect key="frame" x="128" y="8" width="22" height="22"/>
                         <constraints>
                             <constraint firstAttribute="height" constant="22" id="2UZ-ZK-HE8"/>
                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="22" id="twK-8X-jD4"/>
                         </constraints>
-                        <fontDescription key="fontDescription" style="UICTFontTextStyleSubhead"/>
+                        <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="16"/>
                         <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                        <nil key="highlightedColor"/>
-                        <size key="shadowOffset" width="0.0" height="0.0"/>
                         <userDefinedRuntimeAttributes>
                             <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
                                 <real key="value" value="11"/>
                             </userDefinedRuntimeAttribute>
                             <userDefinedRuntimeAttribute type="number" keyPath="borderWidth">
                                 <real key="value" value="0.0"/>
+                            </userDefinedRuntimeAttribute>
+                            <userDefinedRuntimeAttribute type="color" keyPath="layerBackgroundColor">
+                                <color key="value" name="systemRedColor" catalog="System" colorSpace="catalog"/>
+                            </userDefinedRuntimeAttribute>
+                            <userDefinedRuntimeAttribute type="boolean" keyPath="showShadow" value="YES"/>
+                            <userDefinedRuntimeAttribute type="string" keyPath="dummyText" value="2"/>
+                            <userDefinedRuntimeAttribute type="number" keyPath="leftInset">
+                                <real key="value" value="4"/>
+                            </userDefinedRuntimeAttribute>
+                            <userDefinedRuntimeAttribute type="number" keyPath="rightInset">
+                                <real key="value" value="4"/>
                             </userDefinedRuntimeAttribute>
                         </userDefinedRuntimeAttributes>
                     </label>
@@ -116,13 +141,13 @@
                 <constraint firstItem="hZy-pX-BBK" firstAttribute="leading" secondItem="LTM-Mi-qV7" secondAttribute="leading" constant="8" id="q0e-xJ-gBg"/>
                 <constraint firstItem="h5i-BT-PQD" firstAttribute="top" secondItem="LTM-Mi-qV7" secondAttribute="top" constant="8" id="zRj-f1-ZTd"/>
             </constraints>
-            <size key="customSize" width="113.66666666666667" height="144.33333333333334"/>
+            <size key="customSize" width="138.66666666666669" height="195.33333333333337"/>
             <userDefinedRuntimeAttributes>
                 <userDefinedRuntimeAttribute type="number" keyPath="borderWidth">
                     <real key="value" value="0.5"/>
                 </userDefinedRuntimeAttribute>
                 <userDefinedRuntimeAttribute type="color" keyPath="borderColor">
-                    <color key="value" red="0.80000001190000003" green="0.80000001190000003" blue="0.80000001190000003" alpha="1" colorSpace="calibratedRGB"/>
+                    <color key="value" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                 </userDefinedRuntimeAttribute>
                 <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
                     <real key="value" value="4"/>
@@ -131,11 +156,14 @@
             <connections>
                 <outlet property="badgeLabel" destination="h5i-BT-PQD" id="psC-Zt-zz4"/>
                 <outlet property="countLabel" destination="hZy-pX-BBK" id="dza-8D-epT"/>
-                <outlet property="photoView" destination="F9S-ez-8WB" id="Qqg-tS-9vI"/>
+                <outlet property="imageView" destination="F9S-ez-8WB" id="f9x-e6-4xK"/>
                 <outlet property="stackView" destination="c8G-wR-eha" id="Js4-YJ-nWa"/>
                 <outlet property="titleLabel" destination="gaB-Un-1Af" id="p6E-Q0-mPJ"/>
             </connections>
-            <point key="canvasLocation" x="-422.5" y="-172"/>
+            <point key="canvasLocation" x="-410" y="-146.5"/>
         </collectionViewCell>
     </objects>
+    <resources>
+        <image name="imgDummyUser" width="83" height="83"/>
+    </resources>
 </document>

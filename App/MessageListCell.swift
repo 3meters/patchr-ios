@@ -19,7 +19,7 @@ class MessageListCell: UICollectionViewCell {
     var message: FireMessage!
 
     var description_: UILabel!
-    var photoView: AirImageView!
+    var imageView: AirImageView!
     var userName = AirLabelDisplay()
     var userPhotoControl = PhotoControl()
     var createdDate = AirLabelDisplay()
@@ -74,6 +74,7 @@ class MessageListCell: UICollectionViewCell {
         let photoHeight = columnWidth * 0.5625 // 16:9 aspect ratio
 
         self.userPhotoControl.anchorTopLeft(withLeftPadding: 0, topPadding: 0, width: 48, height: 48)
+        self.userPhotoControl.cornerRadius = 24
 
         /* Header */
 
@@ -88,7 +89,7 @@ class MessageListCell: UICollectionViewCell {
 
         /* Body */
 
-        var bottomView: UIView? = self.photoView
+        var bottomView: UIView? = self.imageView
         if self.message.attachments == nil {
             bottomView = self.description_
             self.description_?.bounds.size.width = columnWidth
@@ -100,12 +101,12 @@ class MessageListCell: UICollectionViewCell {
             self.description_?.bounds.size.width = columnWidth
             self.description_?.sizeToFit()
             self.description_?.alignUnder(self.userName, matchingLeftWithTopPadding: 2, width: columnWidth, height: self.description_!.height())
-            self.photoView?.alignUnder(self.description_!, matchingLeftWithTopPadding: 10, width: columnWidth, height: photoHeight)
-            self.photoView.progressView.anchorInCenter(withWidth: 150, height: 20)
+            self.imageView?.alignUnder(self.description_!, matchingLeftWithTopPadding: 10, width: columnWidth, height: photoHeight)
+            self.imageView.progressView.anchorInCenter(withWidth: 150, height: 20)
         }
         else if (self.message.attachments?.first) != nil {
-            self.photoView?.alignUnder(self.userName, matchingLeftWithTopPadding: 10, width: columnWidth, height: photoHeight)
-            self.photoView.progressView.anchorInCenter(withWidth: 150, height: 20)
+            self.imageView?.alignUnder(self.userName, matchingLeftWithTopPadding: 10, width: columnWidth, height: photoHeight)
+            self.imageView.progressView.anchorInCenter(withWidth: 150, height: 20)
         }
         
         let isEdited = (self.message.createdAt != self.message.modifiedAt)
@@ -173,12 +174,12 @@ class MessageListCell: UICollectionViewCell {
         let columnWidth = min(Config.contentWidthMax, Config.screenWidth) - columnLeft
         let photoHeight = columnWidth * 0.5625 // 16:9 aspect ratio
 
-        self.photoView = AirImageView(frame: CGRect(x: 0, y: 0, width: columnWidth, height: photoHeight))
-        self.photoView!.clipsToBounds = true
-        self.photoView!.cornerRadius = 4
-        self.photoView!.contentMode = .scaleAspectFill
-        self.photoView!.backgroundColor = Theme.colorBackgroundImage
-        self.photoView!.isHidden = true
+        self.imageView = AirImageView(frame: CGRect(x: 0, y: 0, width: columnWidth, height: photoHeight))
+        self.imageView!.clipsToBounds = true
+        self.imageView!.cornerRadius = 4
+        self.imageView!.contentMode = .scaleAspectFill
+        self.imageView!.backgroundColor = Theme.colorBackgroundImage
+        self.imageView!.isHidden = true
 
         /* Header */
         self.userName.font = Theme.fontTextBold
@@ -206,7 +207,7 @@ class MessageListCell: UICollectionViewCell {
         self.payload.addSubview(self.reactionToolbar)
         self.payload.addSubview(self.commentsButton)
         self.payload.addSubview(self.description_!)
-        self.payload.addSubview(self.photoView!)
+        self.payload.addSubview(self.imageView!)
         self.payload.addSubview(self.userPhotoControl)
         self.payload.addSubview(self.userName)
         self.payload.addSubview(self.createdDate)
@@ -246,9 +247,9 @@ class MessageListCell: UICollectionViewCell {
             if let profilePhoto = creator.profile?.photo {
                 if !self.template {
                     let url = ImageProxy.url(photo: profilePhoto, category: SizeCategory.profile)
-                    if !self.userPhotoControl.photoView.associated(withUrl: url) {
+                    if !self.userPhotoControl.imageView.associated(withUrl: url) {
                         let fullName = creator.title
-                        self.userPhotoControl.photoView.image = nil
+                        self.userPhotoControl.imageView.image = nil
                         self.userPhotoControl.bind(url: url, name: fullName, colorSeed: creator.id)
                     }
                 }
@@ -270,19 +271,19 @@ class MessageListCell: UICollectionViewCell {
         /* Message photo */
         
         if let photo = message.attachments?.values.first?.photo {
-            self.photoView?.isHidden = false
+            self.imageView?.isHidden = false
             if !self.template { // Don't fetch if acting as template
                 let url = ImageProxy.url(photo: photo, category: SizeCategory.standard)
                 let uploading = (photo.uploading != nil)
-                if !self.photoView.associated(withUrl: url) {
-                    self.photoView?.image = nil
-                    self.photoView.setImageWithUrl(url: url, uploading: uploading, animate: true)
+                if !self.imageView.associated(withUrl: url) {
+                    self.imageView?.image = nil
+                    self.imageView.setImageWithUrl(url: url, uploading: uploading, animate: true)
                 }
             }
         }
         else {
-            self.photoView?.isHidden = true
-            self.photoView?.image = nil
+            self.imageView?.isHidden = true
+            self.imageView?.image = nil
         }
         
         /* Created date and edited flag */
@@ -324,7 +325,7 @@ class MessageListCell: UICollectionViewCell {
     }
     
     func reset() {
-        self.photoView.reset()
+        self.imageView.reset()
         self.userPhotoControl.reset()
         self.commentsButton.reset()
         self.description_?.textColor = Colors.black

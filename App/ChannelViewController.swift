@@ -450,8 +450,8 @@ class ChannelViewController: UICollectionViewController { // Sets itself as data
 						label.delegate = this
 					}
 
-					cell.photoView?.isUserInteractionEnabled = true
-					cell.photoView?.addGestureRecognizer(UITapGestureRecognizer(target: this, action: #selector(this.browsePhotoAction(sender:))))
+					cell.imageView?.isUserInteractionEnabled = true
+					cell.imageView?.addGestureRecognizer(UITapGestureRecognizer(target: this, action: #selector(this.browsePhotoAction(sender:))))
 					cell.decorated = true
 				}
 

@@ -1,7 +1,6 @@
 import Foundation
 import IDMPhotoBrowser
 import SDWebImage
-import FLAnimatedImage
 
 class DisplayPhoto: IDMPhoto {
 
