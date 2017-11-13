@@ -99,6 +99,8 @@
                             <userDefinedRuntimeAttribute type="number" keyPath="rightInset">
                                 <real key="value" value="4"/>
                             </userDefinedRuntimeAttribute>
+                            <userDefinedRuntimeAttribute type="boolean" keyPath="showShadowing" value="YES"/>
+                            <userDefinedRuntimeAttribute type="boolean" keyPath="shadow" value="YES"/>
                         </userDefinedRuntimeAttributes>
                     </label>
                     <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="h5i-BT-PQD" userLabel="Badge" customClass="AirLabel" customModule="Teeny" customModuleProvider="target">
@@ -127,6 +129,8 @@
                             <userDefinedRuntimeAttribute type="number" keyPath="rightInset">
                                 <real key="value" value="4"/>
                             </userDefinedRuntimeAttribute>
+                            <userDefinedRuntimeAttribute type="boolean" keyPath="showShadowing" value="YES"/>
+                            <userDefinedRuntimeAttribute type="boolean" keyPath="shadow" value="YES"/>
                         </userDefinedRuntimeAttributes>
                     </label>
                 </subviews>

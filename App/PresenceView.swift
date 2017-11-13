@@ -8,22 +8,18 @@ import UIKit
 @IBDesignable
 class PresenceView: UIView {
 
-    var label = AirLabelDisplay()
-	var indicator = UIView(frame: CGRect.zero)
-    var target: AnyObject?
+    var online = false
     
-    @IBInspectable var rounded: Bool = true {
+    @IBInspectable var color: UIColor = Colors.accentColor {
         didSet {
-            self.layer.cornerRadius = self.rounded ? self.width() * 0.5 : self.radius
+            if online {
+                showOnline()
+            } else {
+                showOffline()
+            }
         }
     }
-    
-    @IBInspectable var radius: CGFloat = 0 {
-        didSet {
-            self.layer.cornerRadius = self.radius
-        }
-    }
-	
+
 	override init(frame: CGRect) {
 		/* Called when instantiated from code */
 		super.init(frame: frame)
@@ -39,32 +35,20 @@ class PresenceView: UIView {
 	func initialize() {
 		
 		self.clipsToBounds = true
-
-		/* Time interval since went offline */
-		self.label.font = Theme.fontCommentExtraSmall
-		self.label.textColor = Colors.white
-		self.label.textAlignment = .center
-        self.label.isHidden = true
-        
+        self.cornerRadius = 6
         showOffline()
-
-		self.addSubview(self.indicator)
-        self.addSubview(self.label)
 	}
-    
-//    override func prepareForInterfaceBuilder() {
-//        super.prepareForInterfaceBuilder()
-//    }
     
 	override func layoutSubviews() {
 		super.layoutSubviews()
-        self.indicator.layer.cornerRadius = self.rounded ? self.width() * 0.5 : self.radius
-		self.indicator.fillSuperview()
-		self.label.fillSuperview()
 	}
     
+    override func prepareForInterfaceBuilder() {
+        super.prepareForInterfaceBuilder()
+        showOffline()
+    }
+
 	func bind(online: Any?) {
-        
         if (online as? Bool) != nil {
             /* Set to true */
             showOnline()
@@ -76,14 +60,14 @@ class PresenceView: UIView {
 	}
 
     func showOnline() {
-        self.indicator.layer.borderColor = Colors.clear.cgColor
-        self.indicator.layer.borderWidth = 0
-        self.indicator.layer.backgroundColor = Colors.accentColor.cgColor
+        self.layer.borderColor = Colors.clear.cgColor
+        self.layer.borderWidth = 0
+        self.layer.backgroundColor = self.color.cgColor
     }
     
     func showOffline() {
-        self.indicator.layer.borderColor = Colors.accentColor.cgColor
-        self.indicator.layer.borderWidth = 1
-        self.indicator.layer.backgroundColor = Colors.clear.cgColor
+        self.layer.borderColor = self.color.cgColor
+        self.layer.borderWidth = 1
+        self.layer.backgroundColor = Colors.clear.cgColor
     }
 }

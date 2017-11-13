@@ -9,10 +9,10 @@ import UIKit
 class AirLabelBase: UILabel {
 	
     @IBInspectable open var dummyText: String?
-    @IBInspectable open var showShadow: Bool {
+    @IBInspectable open var shadow: Bool {
         set {
             if newValue {
-                self.showShadow(offset: CGSize(width: 2, height: 3)
+                self.showShadow(offset: CGSize(width: 3, height: 3)
                     , radius: 3.0
                     , rounded: true
                     , cornerRadius: self.layer.cornerRadius)

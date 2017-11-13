@@ -49,7 +49,7 @@
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="-4" translatesAutoresizingMaskIntoConstraints="NO" id="MQp-Lt-rCD" userLabel="Stack Info">
                                 <rect key="frame" x="48" y="0.0" width="205.5" height="40"/>
                                 <subviews>
-                                    <stackView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="251" verticalCompressionResistancePriority="749" distribution="equalSpacing" alignment="center" spacingType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="hLd-ql-nkl" userLabel="Stack Title">
+                                    <stackView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="251" verticalCompressionResistancePriority="749" distribution="equalSpacing" alignment="lastBaseline" spacingType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="hLd-ql-nkl" userLabel="Stack Title">
                                         <rect key="frame" x="0.0" y="0.0" width="205.5" height="22"/>
                                         <subviews>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" placeholderIntrinsicWidth="101.5" placeholderIntrinsicHeight="21.5" text="" textAlignment="natural" lineBreakMode="middleTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="meX-Hb-lPU" customClass="AirLabel" customModule="Teeny" customModuleProvider="target">
@@ -61,15 +61,25 @@
                                                     <userDefinedRuntimeAttribute type="string" keyPath="dummyText" value="Jay Massena"/>
                                                 </userDefinedRuntimeAttributes>
                                             </label>
-                                            <view contentMode="scaleToFill" horizontalHuggingPriority="249" horizontalCompressionResistancePriority="751" placeholderIntrinsicWidth="12" placeholderIntrinsicHeight="12" translatesAutoresizingMaskIntoConstraints="NO" id="Bca-gN-N9j" customClass="PresenceView" customModule="Teeny" customModuleProvider="target">
-                                                <rect key="frame" x="109.5" y="5" width="12" height="12"/>
+                                            <view clipsSubviews="YES" contentMode="TopLeft" horizontalHuggingPriority="249" horizontalCompressionResistancePriority="751" translatesAutoresizingMaskIntoConstraints="NO" id="Bca-gN-N9j" customClass="PresenceView" customModule="Teeny" customModuleProvider="target">
+                                                <rect key="frame" x="109.5" y="6" width="12" height="12"/>
                                                 <color key="backgroundColor" red="0.41176470590000003" green="0.82745098039999998" blue="0.90588235289999997" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="width" constant="12" id="7Mn-YL-iBz"/>
+                                                    <constraint firstAttribute="height" constant="12" id="LIj-3N-An7"/>
+                                                </constraints>
                                                 <userDefinedRuntimeAttributes>
                                                     <userDefinedRuntimeAttribute type="boolean" keyPath="rounded" value="YES"/>
+                                                    <userDefinedRuntimeAttribute type="color" keyPath="color">
+                                                        <color key="value" red="0.41176470590000003" green="0.82745098039999998" blue="0.90588235289999997" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                    </userDefinedRuntimeAttribute>
+                                                    <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
+                                                        <real key="value" value="6"/>
+                                                    </userDefinedRuntimeAttribute>
                                                 </userDefinedRuntimeAttributes>
                                             </view>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="249" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" placeholderIntrinsicWidth="76" placeholderIntrinsicHeight="22" text="" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="S8e-20-N5N" userLabel="Ago" customClass="AirLabel" customModule="Teeny" customModuleProvider="target">
-                                                <rect key="frame" x="129.5" y="0.0" width="76" height="22"/>
+                                                <rect key="frame" x="129.5" y="0.0" width="76" height="21"/>
                                                 <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="14"/>
                                                 <color key="textColor" red="0.60000002379999995" green="0.60000002379999995" blue="0.60000002379999995" alpha="1" colorSpace="calibratedRGB"/>
                                                 <nil key="highlightedColor"/>
