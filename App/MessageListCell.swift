@@ -12,12 +12,6 @@ import TTTAttributedLabel
 
 class MessageListCell: UICollectionViewCell {
 
-    var inputUserQuery: UserQuery! // Passed in by table data source
-    var inputUnreadQuery: UnreadQuery? // Passed in by table data source
-
-    var unreadCommentsQuery: UnreadQuery?
-    var message: FireMessage!
-
     var description_: UILabel!
     var imageView: AirImageView!
     var userName = AirLabelDisplay()
@@ -30,6 +24,11 @@ class MessageListCell: UICollectionViewCell {
     var chrome: ChromeViewBase!
     var payload = UIView()
 
+    var inputUserQuery: UserQuery! // Passed in by table data source
+    var inputUnreadQuery: UnreadQuery? // Passed in by table data source
+    var unreadCommentsQuery: UnreadQuery?
+    var message: FireMessage!
+    
     var template = false
     var decorated = false
     var isUnread = false {

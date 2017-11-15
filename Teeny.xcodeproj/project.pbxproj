@@ -363,6 +363,10 @@
 		E2F5C5741E086AB900FCA59C /* ChannelGridController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2F5C5731E086AB900FCA59C /* ChannelGridController.swift */; };
 		E2F85C741C31F0D700FC2364 /* UIImage+ImageEffects.m in Sources */ = {isa = PBXBuildFile; fileRef = E2F85C731C31F0D700FC2364 /* UIImage+ImageEffects.m */; };
 		E2FB2C4A1DBFD33E00E97050 /* ChannelDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2FB2C491DBFD33E00E97050 /* ChannelDetailView.swift */; };
+		E2FBD3801FBA6341008C8890 /* MessageCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E2FBD37F1FBA6341008C8890 /* MessageCell.xib */; };
+		E2FBD3811FBA6341008C8890 /* MessageCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E2FBD37F1FBA6341008C8890 /* MessageCell.xib */; };
+		E2FBD3831FBA6414008C8890 /* MessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2FBD3821FBA6414008C8890 /* MessageCell.swift */; };
+		E2FBD3841FBA6414008C8890 /* MessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2FBD3821FBA6414008C8890 /* MessageCell.swift */; };
 		E2FFD38B1DF32D3200FD75C7 /* Debouncer.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2FFD38A1DF32D3200FD75C7 /* Debouncer.swift */; };
 		E2FFD38F1DF4817700FD75C7 /* AirCheckBox.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2FFD38E1DF4817700FD75C7 /* AirCheckBox.swift */; };
 /* End PBXBuildFile section */
@@ -674,6 +678,8 @@
 		E2F85C731C31F0D700FC2364 /* UIImage+ImageEffects.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+ImageEffects.m"; sourceTree = "<group>"; };
 		E2FB2C491DBFD33E00E97050 /* ChannelDetailView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = ChannelDetailView.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		E2FB81411B8640E8006B6690 /* AdobeCreativeSDKCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdobeCreativeSDKCore.framework; path = Frameworks/AdobeCreativeSDKCore.framework; sourceTree = "<group>"; };
+		E2FBD37F1FBA6341008C8890 /* MessageCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MessageCell.xib; sourceTree = "<group>"; };
+		E2FBD3821FBA6414008C8890 /* MessageCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageCell.swift; sourceTree = "<group>"; };
 		E2FFD38A1DF32D3200FD75C7 /* Debouncer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Debouncer.swift; sourceTree = "<group>"; };
 		E2FFD38C1DF3441C00FD75C7 /* Firebase.md */ = {isa = PBXFileReference; fileEncoding = 1; lastKnownFileType = net.daringfireball.markdown; path = Firebase.md; sourceTree = "<group>"; };
 		E2FFD38E1DF4817700FD75C7 /* AirCheckBox.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = AirCheckBox.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
@@ -1001,6 +1007,7 @@
 				E207B5011E2978140019C2A1 /* ChannelGridCell.xib */,
 				E258DF981F3A1CA1004687CC /* ChannelPickerCell.xib */,
 				E290749F1E9D2278001E0609 /* EmojiCell.xib */,
+				E2FBD37F1FBA6341008C8890 /* MessageCell.xib */,
 				E29074A31E9D5897001E0609 /* ReactionCell.xib */,
 				E26B0C911B46D01E00706F4A /* ThumbnailCell.xib */,
 				E25B0F491DCE803B00021D5B /* UserListCell.xib */,
@@ -1023,6 +1030,7 @@
 				E2EEE9111E9C82680085565E /* EmojiViewCell.swift */,
 				E227294C1CEA7D0600913041 /* GalleryViewCell.swift */,
 				E29A4CD91BD077520059D5B9 /* MessageListCell.swift */,
+				E2FBD3821FBA6414008C8890 /* MessageCell.swift */,
 				E24A87251B2DC0AB00E6F96B /* ThumbnailCell.swift */,
 				E25B0F471DCE7D7400021D5B /* UserListCell.swift */,
 			);
@@ -1481,6 +1489,7 @@
 				E28915931C5AD528005D7AA0 /* LaunchScreen.storyboard in Resources */,
 				E2064BF31BC0212B009C7B6A /* silence.caf in Resources */,
 				E2CCAAE21B67EE2C0071170C /* chirp.caf in Resources */,
+				E2FBD3801FBA6341008C8890 /* MessageCell.xib in Resources */,
 				E25327CE1B13DB3000990A81 /* notification_candi_discovered_soft.aac in Resources */,
 				E25327CF1B13DB3000990A81 /* notification_carme.aac in Resources */,
 				E25327D01B13DB3000990A81 /* notification_pop.aac in Resources */,
@@ -1520,6 +1529,7 @@
 				E2DB43381EB4F2C400B1F78B /* AdobeCreativeSDKCoreResources.bundle in Resources */,
 				E2DB43371EB4F2C400B1F78B /* .xctool-args in Resources */,
 				E258DF9A1F3A1CA1004687CC /* ChannelPickerCell.xib in Resources */,
+				E2FBD3811FBA6341008C8890 /* MessageCell.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1945,6 +1955,7 @@
 				E25617F41E02F8D000E31240 /* AirScrimButton.swift in Sources */,
 				E2D12A7D1C0A03F100DE507E /* AirLabelDisplay.swift in Sources */,
 				E297305C1C13644800B9433B /* AirTextView.swift in Sources */,
+				E2FBD3831FBA6414008C8890 /* MessageCell.swift in Sources */,
 				E25B0F461DCE778B00021D5B /* MemberListController.swift in Sources */,
 				E2C720C71B4EDAFE00714B53 /* AirLabel.swift in Sources */,
 				E238BB061B571AFF0094AF41 /* ImageUtils.swift in Sources */,
@@ -2120,6 +2131,7 @@
 				E2DB43151EB4F2C400B1F78B /* AccountEditViewController.swift in Sources */,
 				E2DB43161EB4F2C400B1F78B /* StateController.swift in Sources */,
 				E2499E5B1F3A1913002C0F16 /* ChannelPickerCell.swift in Sources */,
+				E2FBD3841FBA6414008C8890 /* MessageCell.swift in Sources */,
 				E2DB43171EB4F2C400B1F78B /* ContainerController.swift in Sources */,
 				E2DB43191EB4F2C400B1F78B /* SlideAnimationController.swift in Sources */,
 				E2DB431B1EB4F2C400B1F78B /* MessageQuery.swift in Sources */,
