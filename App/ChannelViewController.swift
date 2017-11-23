@@ -455,7 +455,7 @@ class ChannelViewController: UICollectionViewController { // Sets itself as data
 					cell.decorated = true
 				}
 
-				cell.bind(message: message) // Handles hide/show of actions button based on message.selected
+                cell.bind(message: message) // Handles hide/show of actions button based on message.selected
 
 				/* Unread handling */
 
@@ -723,7 +723,7 @@ class ChannelViewController: UICollectionViewController { // Sets itself as data
 		}
 	}
 
-	func showComments(message: FireMessage) {
+    func showComments(message: FireMessage) {
 		Reporting.track("view_comment_list")
 		let controller = CommentListController()
 		controller.inputMessageId = message.id!
@@ -979,6 +979,7 @@ extension ChannelViewController: UICollectionViewDelegateFlowLayout { // UIColle
 		}
 
 		self.itemTemplate.bounds.size.width = viewWidth
+        self.itemTemplate.reset()
 		self.itemTemplate.bind(message: message)
 		self.itemTemplate.layoutIfNeeded()
 

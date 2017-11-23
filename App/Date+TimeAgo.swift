@@ -152,27 +152,18 @@ public extension Date {
         let latest = (earliest == self) ? date : self // Should be triple equals, but not extended to Date at this time
         
         let components = calendar.dateComponents(unitFlags, from: earliest, to: latest)
-        let isYesterday = calendar.isDateInYesterday(date)
         
         if (components.year! >= 1) {
             return String.init(format: DateToolsLocalizedStrings("%dy"), components.year!)
             // jayma: return self.logicalLocalizedStringFromFormat(format: "%%d%@y", value: components.year!)
         }
-        else if (components.month! >= 1) {
-            return String.init(format: DateToolsLocalizedStrings("%dM"), components.month!)
-            // jayma: return self.logicalLocalizedStringFromFormat(format: "%%d%@M", value: components.month!)
-        }
         else if (components.weekOfYear! >= 1) {
             return String.init(format: DateToolsLocalizedStrings("%dw"), components.weekOfYear!)
             // jayma: return self.logicalLocalizedStringFromFormat(format: "%%d%@w", value: components.weekOfYear!)
         }
-        else if (components.day! >= 2) {
+        else if (components.day! >= 1) {
             return String.init(format: DateToolsLocalizedStrings("%dd"), components.day!)
             // jayma: return self.logicalLocalizedStringFromFormat(format: "%%d%@d", value: components.day!)
-        }
-        else if (isYesterday) {
-            return String.init(format: DateToolsLocalizedStrings("%dd"), 1)
-            // jayma: return self.logicalLocalizedStringFromFormat(format: "%%d%@d", value: 1)
         }
         else if (components.hour! >= 1) {
             return String.init(format: DateToolsLocalizedStrings("%dh"), components.hour!)

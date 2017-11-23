@@ -4,12 +4,6 @@ import TTTAttributedLabel
 
 class CommentListCell: UITableViewCell {
     
-    var inputUserQuery: UserQuery! // Passed in by table data source
-    var inputUnreadQuery: UnreadQuery? // Passed in by table data source
-    
-    var unreadCommentsQuery: UnreadQuery?
-    var message: FireMessage!
-    
     var description_: UILabel!
     var photoView: AirImageView!
     var userName = AirLabelDisplay()
@@ -19,6 +13,11 @@ class CommentListCell: UITableViewCell {
     var unreadIndicator = UIView()
     var reactionToolbar: AirReactionToolbar!
     var commentsButton = CommentsButton()
+    
+    var inputUserQuery: UserQuery! // Passed in by table data source
+    var inputUnreadQuery: UnreadQuery? // Passed in by table data source
+    var unreadCommentsQuery: UnreadQuery?
+    var message: FireMessage!
     
     var template = false
     var decorated = false
@@ -64,7 +63,8 @@ class CommentListCell: UITableViewCell {
         let photoHeight = columnWidth * 0.5625        // 16:9 aspect ratio
         
         self.userPhotoControl.anchorTopLeft(withLeftPadding: 0, topPadding: 0, width: 48, height: 48)
-        
+        self.userPhotoControl.cornerRadius = 24
+
         /* Header */
         
         self.createdDate.sizeToFit()
@@ -269,7 +269,7 @@ class CommentListCell: UITableViewCell {
         /* Created date and edited flag */
         
         let createdAtDate = DateUtils.from(timestamp: message.createdAt!)
-        self.createdDate.text = DateUtils.timeAgoShort(date: createdAtDate)
+        self.createdDate.text = createdAtDate.shortTimeAgo(since: Date())
         
         /* Unread indicator */
         self.unreadIndicator.isHidden = !self.isUnread
@@ -285,7 +285,7 @@ class CommentListCell: UITableViewCell {
         /* Comments button */
         
         if self.commentsButton.superview != nil {
-            self.commentsButton.bind(message: message) // Message has commentCount property
+            self.commentsButton.bind(message: message, cell: self) // Message has commentCount property
             let userId = UserController.instance.userId!
             let channelId = message.channelId!
             let messageId = message.id!

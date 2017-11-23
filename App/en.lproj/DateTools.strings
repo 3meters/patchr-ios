@@ -82,10 +82,10 @@
 /* Short format for */
 "%dy" = "%dy"; // year
 "%dM" = "%dmo"; // month
-"%dw" = "%dwk"; // week
+"%dw" = "%dw"; // week
 "%dd" = "%dd"; // day
 "%dh" = "%dh"; // hour
-"%dm" = "%dmin"; // minute
+"%dm" = "%dm"; // minute
 "%ds" = "%ds"; // second
 "now" = "now"; // now
 

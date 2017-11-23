@@ -10,7 +10,6 @@ import Localize_Swift
 import UIKit
 import TTTAttributedLabel
 
-@IBDesignable
 class MessageCell: UICollectionViewCell {
 
     @IBOutlet weak var userPhotoControl: PhotoControl!

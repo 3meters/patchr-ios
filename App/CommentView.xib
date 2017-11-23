@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="13529" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13527"/>
+        <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <customFonts key="customFonts">
+        <array key="HelveticaNeue.ttc">
+            <string>HelveticaNeue-Medium</string>
+        </array>
+        <array key="HelveticaNeueLights.ttc">
+            <string>HelveticaNeue-Light</string>
+        </array>
+    </customFonts>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="iN0-l3-epB" customClass="CommentView" customModule="Teeny" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="295" height="60"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="rTZ-gL-TUp" customClass="PhotoControl" customModule="Teeny" customModuleProvider="target">
+                    <rect key="frame" x="0.0" y="0.0" width="32" height="32"/>
+                    <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    <constraints>
+                        <constraint firstAttribute="width" secondItem="rTZ-gL-TUp" secondAttribute="height" multiplier="1:1" id="anQ-ba-PWZ"/>
+                        <constraint firstAttribute="height" constant="32" id="saj-cQ-edc"/>
+                    </constraints>
+                    <userDefinedRuntimeAttributes>
+                        <userDefinedRuntimeAttribute type="image" keyPath="dummyImage" value="imgDummyUser"/>
+                        <userDefinedRuntimeAttribute type="number" keyPath="initialsCount">
+                            <integer key="value" value="2"/>
+                        </userDefinedRuntimeAttribute>
+                        <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
+                            <real key="value" value="16"/>
+                        </userDefinedRuntimeAttribute>
+                    </userDefinedRuntimeAttributes>
+                </view>
+                <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="jFn-K3-oK6" userLabel="Bubble">
+                    <rect key="frame" x="40" y="0.0" width="257" height="60"/>
+                    <subviews>
+                        <stackView opaque="NO" contentMode="left" distribution="equalSpacing" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="hOK-lA-jqv">
+                            <rect key="frame" x="8" y="0.0" width="146" height="22"/>
+                            <subviews>
+                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" placeholderIntrinsicWidth="90" placeholderIntrinsicHeight="22" text="Label" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9LF-93-t2E" userLabel="Username" customClass="AirLabel" customModule="Teeny" customModuleProvider="target">
+                                    <rect key="frame" x="0.0" y="0.0" width="90" height="22"/>
+                                    <fontDescription key="fontDescription" name="HelveticaNeue-Medium" family="Helvetica Neue" pointSize="14"/>
+                                    <nil key="textColor"/>
+                                    <nil key="highlightedColor"/>
+                                    <userDefinedRuntimeAttributes>
+                                        <userDefinedRuntimeAttribute type="string" keyPath="dummyText" value="jaymassena"/>
+                                    </userDefinedRuntimeAttributes>
+                                </label>
+                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" placeholderIntrinsicWidth="48" placeholderIntrinsicHeight="22" text="" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" preferredMaxLayoutWidth="48" translatesAutoresizingMaskIntoConstraints="NO" id="hmz-z5-0we" userLabel="Created Date" customClass="AirLabel" customModule="Teeny" customModuleProvider="target">
+                                    <rect key="frame" x="98" y="0.0" width="48" height="22"/>
+                                    <fontDescription key="fontDescription" name="HelveticaNeue-Light" family="Helvetica Neue" pointSize="14"/>
+                                    <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
+                                    <nil key="highlightedColor"/>
+                                    <userDefinedRuntimeAttributes>
+                                        <userDefinedRuntimeAttribute type="string" keyPath="dummyText" value="2w"/>
+                                    </userDefinedRuntimeAttributes>
+                                </label>
+                            </subviews>
+                            <constraints>
+                                <constraint firstAttribute="height" constant="22" id="poA-sf-CBd"/>
+                            </constraints>
+                        </stackView>
+                        <label opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" preferredMaxLayoutWidth="233" translatesAutoresizingMaskIntoConstraints="NO" id="8jZ-7u-BP8" userLabel="Text" customClass="AirLabel" customModule="Teeny" customModuleProvider="target">
+                            <rect key="frame" x="8" y="19" width="241" height="33.5"/>
+                            <fontDescription key="fontDescription" name="HelveticaNeue-Light" family="Helvetica Neue" pointSize="14"/>
+                            <nil key="textColor"/>
+                            <nil key="highlightedColor"/>
+                            <userDefinedRuntimeAttributes>
+                                <userDefinedRuntimeAttribute type="string" keyPath="dummyText" value="Now is the time for all good comments to come to the aid of their country."/>
+                            </userDefinedRuntimeAttributes>
+                        </label>
+                    </subviews>
+                    <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
+                    <constraints>
+                        <constraint firstItem="8jZ-7u-BP8" firstAttribute="top" secondItem="hOK-lA-jqv" secondAttribute="bottom" constant="-3" id="4VO-WH-J2z"/>
+                        <constraint firstItem="hOK-lA-jqv" firstAttribute="leading" secondItem="jFn-K3-oK6" secondAttribute="leading" constant="8" id="Ik7-qg-9FQ"/>
+                        <constraint firstItem="8jZ-7u-BP8" firstAttribute="trailing" secondItem="jFn-K3-oK6" secondAttribute="trailing" constant="-8" id="h2H-9J-ZF2"/>
+                        <constraint firstItem="hOK-lA-jqv" firstAttribute="top" secondItem="jFn-K3-oK6" secondAttribute="top" id="n3h-eK-bjw"/>
+                        <constraint firstItem="8jZ-7u-BP8" firstAttribute="leading" secondItem="hOK-lA-jqv" secondAttribute="leading" id="rHx-Ho-ygW"/>
+                    </constraints>
+                    <userDefinedRuntimeAttributes>
+                        <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
+                            <real key="value" value="8"/>
+                        </userDefinedRuntimeAttribute>
+                    </userDefinedRuntimeAttributes>
+                </view>
+            </subviews>
+            <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <constraints>
+                <constraint firstItem="jFn-K3-oK6" firstAttribute="top" secondItem="vUN-kp-3ea" secondAttribute="top" id="89P-s8-dta"/>
+                <constraint firstItem="jFn-K3-oK6" firstAttribute="trailing" secondItem="vUN-kp-3ea" secondAttribute="trailing" constant="2" id="8sy-iE-xar"/>
+                <constraint firstItem="jFn-K3-oK6" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" constant="40" id="Ty1-Tj-H1s"/>
+                <constraint firstItem="rTZ-gL-TUp" firstAttribute="top" secondItem="vUN-kp-3ea" secondAttribute="top" id="Vax-WP-8XE"/>
+                <constraint firstItem="rTZ-gL-TUp" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" id="g6Y-3j-pKE"/>
+                <constraint firstItem="jFn-K3-oK6" firstAttribute="bottom" secondItem="vUN-kp-3ea" secondAttribute="bottom" id="sgu-EM-XuT"/>
+            </constraints>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
+            <connections>
+                <outlet property="createdDateLabel" destination="hmz-z5-0we" id="2KJ-pN-LC6"/>
+                <outlet property="photoControl" destination="rTZ-gL-TUp" id="UjD-z5-W60"/>
+                <outlet property="textLabel" destination="8jZ-7u-BP8" id="lsR-x2-BDo"/>
+                <outlet property="usernameLabel" destination="9LF-93-t2E" id="lVa-Rz-SRY"/>
+            </connections>
+            <point key="canvasLocation" x="-68.5" y="-231"/>
+        </view>
+    </objects>
+    <resources>
+        <image name="imgDummyUser" width="83" height="83"/>
+    </resources>
+</document>

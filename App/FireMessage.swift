@@ -29,6 +29,7 @@ class FireMessage: NSObject {
     var text: String?
     
     // Local
+    var comments = [String:FireMessage]()
     var creator: FireUser?
     var id: String?
     var dict: [String: Any]!
@@ -53,6 +54,12 @@ class FireMessage: NSObject {
         if let reactions = dict["reactions"] as? [String:[String: Bool]] {
             self.reactions = reactions
         }
+        if let comments = dict["comments"] as? [String: [String: Any]] {
+            for commentKey in comments.keys {
+                let comment = FireMessage(dict: comments[commentKey]!, id: commentKey)
+                self.comments[commentKey] = comment
+            }
+        }
         self.text = dict["text"] as? String
     }
     
@@ -67,7 +74,7 @@ class FireMessage: NSObject {
             }
         })
     }
-    
+
     func addReaction(emoji: String) {
         let userId = UserController.instance.userId!
         let path = "channel-messages/\(self.channelId!)/\(self.id!)/reactions/\(emoji)/\(userId)"

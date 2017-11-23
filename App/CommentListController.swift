@@ -164,11 +164,8 @@ class CommentListController: BaseSlackController {
 
 		/* Primary list */
         
-		let query = FireController.db.child("message-comments/\(channelId)/\(messageId)")
-            .queryOrdered(byChild: "created_at")
-
+		let query = FireController.db.child("channel-messages/\(channelId)/\(messageId)/comments").queryOrdered(byChild: "created_at")
 		self.queryController = DataSourceController(name: "message_view")
-
 		self.queryController.bind(to: self.tableView, query: query) { [weak self] scrollView, indexPath, data in
 
 			/* If cell.prepareToReuse is called, userQuery observer is removed */

@@ -1,11 +1,3 @@
-//
-//  MessageCell.swift
-//  Patchr
-//
-//  Created by Jay Massena on 10/15/15.
-//  Copyright © 2015 3meters. All rights reserved.
-//
-
 import Localize_Swift
 import UIKit
 import TTTAttributedLabel
@@ -21,6 +13,7 @@ class MessageListCell: UICollectionViewCell {
     var unreadIndicator = UIView()
     var reactionToolbar: AirReactionToolbar!
     var commentsButton = CommentsButton()
+    var commentsStack = UIStackView(frame: .zero)
     var chrome: ChromeViewBase!
     var payload = UIView()
 
@@ -80,7 +73,6 @@ class MessageListCell: UICollectionViewCell {
         self.createdDate.sizeToFit()
         self.edited.sizeToFit()
         self.userName.sizeToFit()
-
         self.userName.align(toTheRightOf: self.userPhotoControl, matchingTopWithLeftPadding: 8, width: self.userName.width(), height: 22)
         self.createdDate.align(toTheRightOf: self.userName, matchingBottomWithLeftPadding: 8, width: self.createdDate.width(), height: self.createdDate.height())
         self.unreadIndicator.cornerRadius = 6
@@ -133,6 +125,19 @@ class MessageListCell: UICollectionViewCell {
                 , height: self.reactionToolbar.height())
         }
         
+        if self.commentsStack.arrangedSubviews.count > 0 {
+            let size = self.commentsStack.systemLayoutSizeFitting(UILayoutFittingCompressedSize)
+            self.commentsStack.alignUnder(self.reactionToolbar
+                , matchingLeftWithTopPadding: 8
+                , width: columnWidth
+                , height: size.height)
+        } else {
+            self.commentsStack.alignUnder(self.reactionToolbar
+                , matchingLeftWithTopPadding: 0
+                , width: columnWidth
+                , height: 0)
+        }
+
         self.payload.resizeToFitSubviews()
         self.bounds.size.height = self.payload.height() + self.chrome.padding.top + self.chrome.padding.bottom
         self.contentView.fillSuperview()
@@ -202,6 +207,11 @@ class MessageListCell: UICollectionViewCell {
         
         self.reactionToolbar = AirReactionToolbar()
         self.reactionToolbar.alwaysShowAddButton = true
+        
+        self.commentsStack.axis = .vertical
+        self.commentsStack.distribution = .equalSpacing
+        self.commentsStack.alignment = .leading
+        self.commentsStack.spacing = 8
 
         self.payload.addSubview(self.reactionToolbar)
         self.payload.addSubview(self.commentsButton)
@@ -212,9 +222,14 @@ class MessageListCell: UICollectionViewCell {
         self.payload.addSubview(self.createdDate)
         self.payload.addSubview(self.edited)
         self.payload.addSubview(self.unreadIndicator)
+        self.payload.addSubview(self.commentsStack)
 
         self.contentView.addSubview(self.chrome)
         self.contentView.addSubview(self.payload)
+
+        self.commentsStack.translatesAutoresizingMaskIntoConstraints = false
+        self.commentsStack.leftAnchor.constraint(equalTo: self.reactionToolbar.leftAnchor).isActive = true
+        self.commentsStack.topAnchor.constraint(equalTo: self.reactionToolbar.bottomAnchor, constant: 8).isActive = true
     }
 
     func bind(message: FireMessage) {
@@ -313,13 +328,37 @@ class MessageListCell: UICollectionViewCell {
                 guard let button = commentsButton else { return }
                 if total != nil && total! > 0 {
                     button.setTitleColor(Theme.colorBackgroundBadge, for: .normal)
-                }
-                else {
+                } else {
                     button.setTitleColor(Theme.colorButtonBorder, for: .normal)
                 }
             })
         }
+
+        /* Comments */
         
+        if message.comments.count > 0 {
+            let columnLeft = CGFloat(48 + 8)
+            let columnWidth = min(Config.contentWidthMax, Config.screenWidth) - (columnLeft + self.chrome.padding.left + self.chrome.padding.right)
+            let sortedKeys = Array(message.comments.keys).sorted(by: <)
+            for key in sortedKeys {
+                let comment = message.comments[key]
+                let commentView = Bundle.loadView(fromNib: "CommentView", withType: CommentView.self)
+                commentView.maxWidth = columnWidth
+                commentView.bounds.size.width = columnWidth
+                if self.template {
+                    commentView.bind(comment: comment!)
+                    self.commentsStack.addArrangedSubview(commentView)
+                } else {
+                    commentView.inputUserQuery = UserQuery(userId: comment!.createdBy!)
+                    commentView.inputUserQuery.once(with: { error, user in
+                        comment!.creator = user
+                        commentView.bind(comment: comment!)
+                        self.commentsStack.addArrangedSubview(commentView)
+                    })
+                }
+            }
+        }
+
         self.setNeedsLayout()
     }
     
@@ -327,6 +366,7 @@ class MessageListCell: UICollectionViewCell {
         self.imageView.reset()
         self.userPhotoControl.reset()
         self.commentsButton.reset()
+        self.commentsStack.removeSubviews()
         self.description_?.textColor = Colors.black
         self.description_!.font = Theme.fontTextList
         self.unreadIndicator.isHidden = true

@@ -116,7 +116,7 @@ class BaseSlackController: SLKTextViewController {
         }
         
         var comment: [String: Any] = [:]
-        let ref = FireController.db.child("message-comments/\(channelId)/\(messageId)").childByAutoId()
+        let ref = FireController.db.child("channel-messages/\(channelId)/\(messageId)/comments").childByAutoId()
         
         let timestamp = FireController.instance.getServerTimestamp()
         let timestampReversed = -1 * timestamp

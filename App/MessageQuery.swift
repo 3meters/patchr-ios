@@ -10,13 +10,13 @@ class MessageQuery: NSObject {
 
     var authHandle: AuthStateDidChangeListenerHandle!
     var block: ((Error?, FireMessage?) -> Swift.Void)!
-    var messagePath: String!
-    var messageHandle: UInt!
+    var path: String!
+    var handle: UInt!
     var message: FireMessage!
     
     init(channelId: String, messageId: String) {
         super.init()
-        self.messagePath = "channel-messages/\(channelId)/\(messageId)"
+        self.path = "channel-messages/\(channelId)/\(messageId)"
     }
     
     func observe(with block: @escaping (Error?, FireMessage?) -> Swift.Void) {
@@ -30,7 +30,7 @@ class MessageQuery: NSObject {
             }
         }
         
-        self.messageHandle = FireController.db.child(self.messagePath).observe(.value, with: { [weak self] snap in
+        self.handle = FireController.db.child(self.path).observe(.value, with: { [weak self] snap in
             guard let this = self else { return }
             if let value = snap.value as? [String: Any] {
                 this.message = FireMessage(dict: value, id: snap.key)
@@ -38,7 +38,7 @@ class MessageQuery: NSObject {
             }
         }, withCancel: { [weak self] error in
             guard let this = self else { return }
-            Log.v("Permission denied trying to observe message: \(this.messagePath!)")
+            Log.v("Permission denied trying to observe message: \(this.path!)")
             this.block(error, nil)
         })
     }
@@ -47,7 +47,7 @@ class MessageQuery: NSObject {
         
         self.block = block
 
-        FireController.db.child(self.messagePath).observeSingleEvent(of: .value, with: { [weak self] snap in
+        FireController.db.child(self.path).observeSingleEvent(of: .value, with: { [weak self] snap in
             guard let this = self else { return }
             if let value = snap.value as? [String: Any] {
                 this.message = FireMessage(dict: value, id: snap.key)
@@ -55,7 +55,7 @@ class MessageQuery: NSObject {
             }
         }, withCancel: { [weak self] error in
             guard let this = self else { return }
-            Log.v("Permission denied trying to read message once: \(this.messagePath!)")
+            Log.v("Permission denied trying to read message once: \(this.path!)")
             this.block(error, nil)
         })
     }
@@ -64,8 +64,8 @@ class MessageQuery: NSObject {
         if self.authHandle != nil {
             Auth.auth().removeStateDidChangeListener(self.authHandle)
         }
-        if self.messageHandle != nil {
-            FireController.db.child(self.messagePath).removeObserver(withHandle: self.messageHandle)
+        if self.handle != nil {
+            FireController.db.child(self.path).removeObserver(withHandle: self.handle)
         }
     }
     
