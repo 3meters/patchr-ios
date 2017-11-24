@@ -285,7 +285,7 @@ class CommentListCell: UITableViewCell {
         /* Comments button */
         
         if self.commentsButton.superview != nil {
-            self.commentsButton.bind(message: message, cell: self) // Message has commentCount property
+            self.commentsButton.bind(message: message) // Message has commentCount property
             let userId = UserController.instance.userId!
             let channelId = message.channelId!
             let messageId = message.id!

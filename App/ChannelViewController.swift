@@ -1013,6 +1013,7 @@ extension ChannelViewController: FUICollectionDelegate {
 				self.itemHeights.removeObject(forKey: snap.key)
 				let message = FireMessage(dict: snap.value as! [String: Any], id: snap.key)
 				message.creator = cell.message?.creator
+				cell.reset()
 				cell.bind(message: message)
                 self.collectionView?.collectionViewLayout.invalidateLayout()
 			}
