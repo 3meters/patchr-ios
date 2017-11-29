@@ -14,8 +14,8 @@
 "change_password" = "Change password";
 "channel_delete_title" = "Confirm Delete";
 "channel_delete_message" = "Are you sure you want to delete this?";
-"channel_edit_header_insert" = "New Patchr Scrapbook";
-"channel_edit_header_update" = "Edit Patchr Scrapbook";
+"channel_edit_header_insert" = "New Scrapbook";
+"channel_edit_header_update" = "Edit Scrapbook";
 "channel_edit_purpose_placeholder" = "Scrapbook purpose (optional)";
 "channel_edit_title_placeholder" = "Scrapbook title";
 "channel_grid_search_bar_placeholder" = "Search";

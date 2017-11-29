@@ -213,7 +213,7 @@ class ChannelEditViewController: BaseEditViewController {
         
         self.purposeField.initialize()
         self.purposeField.minNumberOfLines = 2
-        self.purposeField.delegate = self
+        self.purposeField.textView.delegate = self
 
         self.contentHolder.addSubview(self.banner)
         self.contentHolder.addSubview(self.titleField)
