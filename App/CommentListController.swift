@@ -47,16 +47,7 @@ class CommentListController: BaseSlackController {
 	override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
         let viewWidth = min(Config.contentWidthMax, UIScreen.main.bounds.size.width)
-        
-        if self.orientationIsLandscape {
-            self.view.anchorTopCenter(withTopPadding: self.chromeHeight, width: viewWidth, height: UIScreen.main.bounds.size.height)
-            self.landscapeContentSizeInPopup = CGSize(width: viewWidth - 48, height: self.view.height() * 0.70)
-        }
-        else {
-            self.view.anchorTopCenter(withTopPadding: self.chromeHeight, width: viewWidth, height: UIScreen.main.bounds.size.height)
-            self.contentSizeInPopup = CGSize(width: viewWidth - 48, height: self.view.height() * 0.70)
-        }
-		self.tableView.fillSuperview()
+        self.view.bounds.size.width = viewWidth
 	}
 
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
@@ -121,20 +112,14 @@ class CommentListController: BaseSlackController {
 		}
         self.shouldScrollToBottomAfterKeyboardShows = true
         
-        if #available(iOS 11.0, *) {
-            self.tableView.contentInsetAdjustmentBehavior = .never
-        }
-        else {
-            self.automaticallyAdjustsScrollViewInsets = false
-        }
-
+        self.tableView.register(CommentListCell.self, forCellReuseIdentifier: "cell")
 		self.tableView.estimatedRowHeight = 100                        // Zero turns off estimates
 		self.tableView.rowHeight = UITableViewAutomaticDimension    // Actual height is handled in heightForRowAtIndexPath
 		self.tableView.backgroundColor = Theme.colorBackgroundTable
 		self.tableView.separatorInset = .zero
 		self.tableView.tableFooterView = UIView()
+        self.tableView.allowsSelection = false
 		self.tableView.delegate = self
-		self.tableView.register(CommentListCell.self, forCellReuseIdentifier: "cell")
 
 		self.itemTemplate.template = true
         self.itemTemplate.commentsButton.removeFromSuperview()
@@ -143,9 +128,11 @@ class CommentListController: BaseSlackController {
         self.textView.placeholder = "comment_placeholder".localized()
         
 		/* Navigation bar */
-        let closeButton = UIBarButtonItem(barButtonSystemItem: .stop, target: self, action: #selector(closeAction(sender:)))
-        self.navigationItem.leftBarButtonItems = [closeButton]
-        self.navigationItem.title = "comments".localized()
+        if self.presented {
+            let closeButton = UIBarButtonItem(barButtonSystemItem: .stop, target: self, action: #selector(closeAction(sender:)))
+            self.navigationItem.leftBarButtonItems = [closeButton]
+            self.navigationItem.title = "comments".localized()
+        }
         
         /* Trigger layout pass */
 		self.textInputbar.contentInset = UIEdgeInsetsMake(5, 8, 5, 8)
@@ -171,19 +158,19 @@ class CommentListController: BaseSlackController {
 			/* If cell.prepareToReuse is called, userQuery observer is removed */
             let tableView = scrollView as! UITableView
 			let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! CommentListCell
-			guard let this = self else { return cell }
+            cell.reset()
+			guard self != nil else { return cell }
 
 			let snap = data as! DataSnapshot
 			let message = FireMessage(dict: snap.value as! [String: Any], id: snap.key)
 
-			guard message.createdBy != nil else {
-				return cell
-			}
 			cell.inputUserQuery = UserQuery(userId: message.createdBy!)
-			cell.inputUserQuery.once(with: { [weak this, weak cell] error, user in
-
-				guard let this = this else { return }
-				guard let cell = cell else { return }
+			cell.inputUserQuery.once(with: { [weak self, weak cell] error, user in
+				guard let this = self, let cell = cell else { return }
+                if error != nil {
+                    Log.w("Permission denied")
+                    return
+                }
 
 				message.creator = user
 
@@ -217,7 +204,7 @@ class CommentListController: BaseSlackController {
 			})
 			return cell
 		}
-
+        self.view.setNeedsLayout()
 		self.queryController.delegate = self
 	}
 

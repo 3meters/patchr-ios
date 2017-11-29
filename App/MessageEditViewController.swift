@@ -12,28 +12,27 @@ import Facade
 import Firebase
 import MBProgressHUD
 import UIKit
+import NextGrowingTextView
 
 class MessageEditViewController: BaseEditViewController, BEMCheckBoxDelegate {
-
-    var message: FireMessage!
-    var messageQuery: MessageQuery!
-    
-	var inputMessageId: String!
-	var inputChannelId: String!
 
 	var userGroup = AirRuleView()
 	var userPhotoControl = PhotoControl()
 	var userName = AirLabelDisplay()
-	var messageField = AirTextView()
+    var messageField: AirTextView!
 	var photoEditView = PhotoEditView()
     var photoButton = UIButton()
     var dateGroup = UIView()
     var useTakenDateCheckBox = AIFlatSwitch(frame: .zero)
     var useTakenDateLabel = AirLabelDisplay(frame: .zero)
     var useTakenDateValue = AirLabelDisplay(frame: .zero)
-
     var doneButton: UIBarButtonItem!
 
+    var message: FireMessage!
+    var messageQuery: MessageQuery!
+    var inputMessageId: String!
+    var inputChannelId: String!
+    
 	/*--------------------------------------------------------------------------------------------
 	 * MARK: - Lifecycle
 	 *--------------------------------------------------------------------------------------------*/
@@ -62,7 +61,7 @@ class MessageEditViewController: BaseEditViewController, BEMCheckBoxDelegate {
 	override func viewDidAppear(_ animated: Bool) {
 		super.viewDidAppear(animated)
 		if self.mode == .insert && self.firstAppearance {
-			self.messageField.becomeFirstResponder()
+			let _ = self.messageField.becomeFirstResponder()
 		}
 	}
 
@@ -78,7 +77,7 @@ class MessageEditViewController: BaseEditViewController, BEMCheckBoxDelegate {
 		self.userPhotoControl.anchorCenterLeft(withLeftPadding: 16, width: 48, height: 48)
         self.userName.align(toTheRightOf: self.userPhotoControl, matchingCenterWithLeftPadding: 8, width: self.userName.width(), height: self.userName.height())
         
-        self.messageField.alignUnder(self.userGroup, matchingCenterWithTopPadding: 0, width: viewWidth - 32, height: max(messageSize.height, 96))
+        self.messageField.alignUnder(self.userGroup, matchingCenterWithTopPadding: 8, width: viewWidth - 32, height: max(messageSize.height, 96))
 		self.photoEditView.alignUnder(self.messageField, matchingLeftAndRightWithTopPadding: 8, height: viewWidth * 0.75)
         self.photoButton.alignUnder(self.messageField, matchingLeftAndRightWithTopPadding: 8, height: 48)
         
@@ -162,9 +161,6 @@ class MessageEditViewController: BaseEditViewController, BEMCheckBoxDelegate {
     func textViewDidChange(_ textView: UITextView) {
         self.view.setNeedsLayout()
         self.doneButton.isEnabled = isDirty()
-        if let placeHolderLabel = textView.viewWithTag(100) as? UILabel {
-            placeHolderLabel.isHidden = textView.hasText
-        }
     }
     
     override func textViewDidEndEditing(_ textView: UITextView) {
@@ -226,6 +222,8 @@ class MessageEditViewController: BaseEditViewController, BEMCheckBoxDelegate {
         
         self.messageField = AirTextView()
         self.messageField.initialize()
+        self.messageField.minNumberOfLines = 6
+        self.messageField.maxNumberOfLines = 6
         self.messageField.delegate = self
         
 		self.photoEditView.photoSchema = Schema.entityMessage
@@ -284,7 +282,12 @@ class MessageEditViewController: BaseEditViewController, BEMCheckBoxDelegate {
 	}
     
     func bindLanguage() {
-        self.messageField.placeholder = "message_placeholder".localized()
+        self.messageField.placeholderAttributedText = NSAttributedString(
+            string: "message_placeholder".localized(),
+            attributes: [
+                NSAttributedStringKey.font: Theme.fontText,
+                NSAttributedStringKey.foregroundColor: Theme.colorTextPlaceholder
+            ])
         if self.mode == .insert {
             self.doneButton.title = "post".localized()
         }
@@ -319,8 +322,8 @@ class MessageEditViewController: BaseEditViewController, BEMCheckBoxDelegate {
             
             /* Text */
             
-            self.messageField.text = message.text
-            textViewDidChange(self.messageField)
+            self.messageField.textView.text = message.text
+            textViewDidChange(self.messageField.textView)
             
             /* Photo */
             
@@ -395,7 +398,7 @@ class MessageEditViewController: BaseEditViewController, BEMCheckBoxDelegate {
                 }
             }
             
-            let text = self.messageField.text
+            let text = self.messageField.textView.text
             updateMap["text"] = (text == nil || text!.isEmpty) ? NSNull() : text
             
             Reporting.track("send_edited_message")
@@ -443,7 +446,7 @@ class MessageEditViewController: BaseEditViewController, BEMCheckBoxDelegate {
             message["modified_at"] = timestamp
             message["modified_by"] = userId
             
-            if let text = self.messageField.text, !text.isEmpty {
+            if let text = self.messageField.textView.text, !text.isEmpty {
                 message["text"] = text
             }
             
@@ -461,7 +464,7 @@ class MessageEditViewController: BaseEditViewController, BEMCheckBoxDelegate {
 	func isDirty() -> Bool {
 
 		if self.mode == .insert {
-			if !self.messageField.text!.isEmpty {
+			if !self.messageField.textView.text!.isEmpty {
 				return true
 			}
 			if self.photoEditView.photoDirty {
@@ -469,7 +472,7 @@ class MessageEditViewController: BaseEditViewController, BEMCheckBoxDelegate {
 			}
 		}
 		else if self.mode == .update {
-			if !stringsAreEqual(string1: self.messageField.text, string2: self.message.text) {
+			if !stringsAreEqual(string1: self.messageField.textView.text, string2: self.message.text) {
 				return true
 			}
 			if self.photoEditView.photoDirty {
@@ -480,7 +483,7 @@ class MessageEditViewController: BaseEditViewController, BEMCheckBoxDelegate {
 	}
 
 	func isValid() -> Bool {
-        if ((self.messageField.text == nil || self.messageField.text!.isEmpty)
+        if ((self.messageField.textView.text == nil || self.messageField.textView.text!.isEmpty)
                 && !self.photoEditView.photoActive) {
             UIShared.toast(message: "message_edit_empty".localized())
             return false

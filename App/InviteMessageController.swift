@@ -10,18 +10,15 @@ class InviteMessageController: BaseViewController, UITextViewDelegate {
     
     lazy var textView: AirTextView = {
         let textView = AirTextView(frame: .zero)
-        textView.placeholder = "invite_message_placeholder".localized()
+        textView.placeholderAttributedText = NSAttributedString(
+            string: "invite_message_placeholder".localized(),
+            attributes: [
+                NSAttributedStringKey.font: Theme.fontText,
+                NSAttributedStringKey.foregroundColor: Theme.colorTextPlaceholder
+            ])
         textView.initialize()
-        textView.autocapitalizationType = .sentences
-        textView.autocorrectionType = .yes
-        textView.isScrollEnabled = true
+        textView.minNumberOfLines = 6
         textView.translatesAutoresizingMaskIntoConstraints = false
-        textView.cornerRadius = 4.0
-        textView.borderColor = Colors.gray80pcntColor
-        textView.borderWidth = 0.5
-        textView.rule.backgroundColor = Colors.clear
-        textView.ruleEnabled = false
-        textView.textContainerInset = UIEdgeInsetsMake(12, 12, 12, 12)
         return textView
     }()
     
@@ -35,20 +32,17 @@ class InviteMessageController: BaseViewController, UITextViewDelegate {
     }
     
     func textViewDidChange(_ textView: UITextView) {
-        self.view.setNeedsLayout()
-        if let placeHolderLabel = textView.viewWithTag(100) as? UILabel {
-            placeHolderLabel.isHidden = textView.hasText
-        }
+        self.view.updateConstraints()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        self.textView.becomeFirstResponder()
+        let _ = self.textView.becomeFirstResponder()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        self.textView.resignFirstResponder()
+        let _ = self.textView.resignFirstResponder()
     }
     
     /*--------------------------------------------------------------------------------------------
@@ -60,7 +54,7 @@ class InviteMessageController: BaseViewController, UITextViewDelegate {
         self.view.addSubview(self.textView)
         
         /* Setup constraints */
-        self.view.heightAnchor.constraint(equalToConstant: 192).isActive = true
+        self.view.heightAnchor.constraint(equalToConstant: 180).isActive = true
         
         var constraints = [NSLayoutConstraint]()
         let views: [String: UIView] = ["textView": self.textView]

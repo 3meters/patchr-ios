@@ -168,9 +168,6 @@ class ChannelEditViewController: BaseEditViewController {
     func textViewDidChange(_ textView: UITextView) {
         self.view.setNeedsLayout()
         self.doneButton.isEnabled = isDirty()
-        if let placeHolderLabel = textView.viewWithTag(100) as? UILabel {
-            placeHolderLabel.isHidden = textView.hasText
-        }
     }
     
     override func textViewDidEndEditing(_ textView: UITextView) {
@@ -214,9 +211,8 @@ class ChannelEditViewController: BaseEditViewController {
         self.titleField.keyboardType = .default
         self.titleField.returnKeyType = .next
         
-        self.purposeField.autocapitalizationType = .sentences
-        self.purposeField.autocorrectionType = .yes
         self.purposeField.initialize()
+        self.purposeField.minNumberOfLines = 2
         self.purposeField.delegate = self
 
         self.contentHolder.addSubview(self.banner)
@@ -248,7 +244,7 @@ class ChannelEditViewController: BaseEditViewController {
     func bindLanguage() {
         self.titleField.placeholder = "channel_edit_title_placeholder".localized()
         self.titleField.title = "title".localized()
-        self.purposeField.placeholder = "channel_edit_purpose_placeholder".localized()
+        //self.purposeField.placeholder = "channel_edit_purpose_placeholder".localized()
         if self.mode == .insert {
             self.banner.text = "channel_edit_header_insert".localized()
             self.doneButton.title = "create".localized()
@@ -262,7 +258,7 @@ class ChannelEditViewController: BaseEditViewController {
     func bind() {
         
         self.titleField.text = self.channel.title
-        self.purposeField.text = self.channel.purpose
+        self.purposeField.textView.text = self.channel.purpose
         
         if let photo = self.channel.photo {
             self.photoEditView.configureTo(photoMode: .photo)
@@ -292,8 +288,8 @@ class ChannelEditViewController: BaseEditViewController {
             if self.titleField.text != self.channel!.title {
                 updates["title"] = self.titleField.text
             }
-            if emptyToNil(self.purposeField.text) != self.channel!.purpose {
-                updates["purpose"] = emptyToNull(self.purposeField.text)
+            if emptyToNil(self.purposeField.textView.text) != self.channel!.purpose {
+                updates["purpose"] = emptyToNull(self.purposeField.textView.text)
             }
             if self.photoEditView.photoDirty {
                 if self.photoEditView.photoActive {
@@ -363,8 +359,8 @@ class ChannelEditViewController: BaseEditViewController {
             if photoMap != nil {
                 channelMap["photo"] = photoMap!
             }
-            if !(self.purposeField.text?.isEmpty)! {
-                channelMap["purpose"] = self.purposeField.text
+            if !(self.purposeField.textView.text?.isEmpty)! {
+                channelMap["purpose"] = self.purposeField.textView.text
             }
             
             FireController.instance.addChannel(channelId: channelId, channelMap: channelMap) { [weak self] success in
@@ -400,7 +396,7 @@ class ChannelEditViewController: BaseEditViewController {
             if !stringsAreEqual(string1: self.titleField.text, string2: self.channel.title) {
                 return true
             }
-            if !stringsAreEqual(string1: self.purposeField.text, string2: self.channel.purpose) {
+            if !stringsAreEqual(string1: self.purposeField.textView.text, string2: self.channel.purpose) {
                 return true
             }
             if self.photoEditView.photoDirty {
@@ -411,7 +407,7 @@ class ChannelEditViewController: BaseEditViewController {
             if !self.titleField.text!.isEmpty {
                 return true
             }
-            if !self.purposeField.text!.isEmpty {
+            if !self.purposeField.textView.text!.isEmpty {
                 return true
             }
             if self.photoEditView.photoDirty {

@@ -7,7 +7,6 @@
 import UIKit
 import Keys
 import AFNetworking
-import iRate
 import Firebase
 import FirebaseDatabase
 import Localize_Swift
@@ -16,7 +15,7 @@ import PopupDialog
 import SDWebImage
 import MBProgressHUD
 
-class MainController: NSObject, iRateDelegate {
+class MainController: NSObject {
 
     static let instance = MainController()
     var progress: AirProgress?
@@ -50,15 +49,15 @@ class MainController: NSObject, iRateDelegate {
 
     func prepare(launchOptions: [UIApplicationLaunchOptionsKey : Any]? = nil) {
 
-        iRate.sharedInstance().verboseLogging = false
-        iRate.sharedInstance().daysUntilPrompt = 7
-        iRate.sharedInstance().usesUntilPrompt = 10
-        iRate.sharedInstance().remindPeriod = 1
-        iRate.sharedInstance().promptForNewVersionIfUserRated = true
-        iRate.sharedInstance().onlyPromptIfLatestVersion = true
-        iRate.sharedInstance().useUIAlertControllerIfAvailable = true
-        iRate.sharedInstance().promptAtLaunch = false
-        iRate.sharedInstance().delegate = self
+//        iRate.sharedInstance().verboseLogging = false
+//        iRate.sharedInstance().daysUntilPrompt = 7
+//        iRate.sharedInstance().usesUntilPrompt = 10
+//        iRate.sharedInstance().remindPeriod = 1
+//        iRate.sharedInstance().promptForNewVersionIfUserRated = true
+//        iRate.sharedInstance().onlyPromptIfLatestVersion = true
+//        iRate.sharedInstance().useUIAlertControllerIfAvailable = true
+//        iRate.sharedInstance().promptAtLaunch = false
+//        iRate.sharedInstance().delegate = self
 
         self.window = (UIApplication.shared.delegate?.window)!
 
@@ -160,12 +159,12 @@ class MainController: NSObject, iRateDelegate {
         FireController.db.child("users/\(userId)/profile").updateChildValues(updates)
         NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.UserDidUpdate), object: self, userInfo: ["user_id": userId])
 
-        iRate.sharedInstance().appStoreCountry = Localize.currentLanguage()
-        iRate.sharedInstance().message = "irate_app_message".localized()
-        iRate.sharedInstance().cancelButtonLabel = "irate_cancel_button".localized()
-        iRate.sharedInstance().messageTitle = "irate_message_title".localized()
-        iRate.sharedInstance().rateButtonLabel = "irate_rate_button".localized()
-        iRate.sharedInstance().remindButtonLabel = "irate_remind_button".localized()
+//        iRate.sharedInstance().appStoreCountry = Localize.currentLanguage()
+//        iRate.sharedInstance().message = "irate_app_message".localized()
+//        iRate.sharedInstance().cancelButtonLabel = "irate_cancel_button".localized()
+//        iRate.sharedInstance().messageTitle = "irate_message_title".localized()
+//        iRate.sharedInstance().rateButtonLabel = "irate_rate_button".localized()
+//        iRate.sharedInstance().remindButtonLabel = "irate_remind_button".localized()
     }
 
     func launchUI() {
@@ -369,24 +368,24 @@ class MainController: NSObject, iRateDelegate {
     }
 }
 
-extension MainController {
-    
-    func iRateDidPromptForRating() {
-        Reporting.track("rate_prompted")
-    }
-
-    func iRateUserDidAttemptToRateApp() {
-        Reporting.track("rate_attempted")
-    }
-
-    func iRateUserDidDeclineToRateApp() {
-        Reporting.track("rate_declined")
-    }
-
-    func iRateUserDidRequestReminderToRateApp() {
-        Reporting.track("rate_requested_reminder")
-    }
-}
+//extension MainController {
+//
+//    func iRateDidPromptForRating() {
+//        Reporting.track("rate_prompted")
+//    }
+//
+//    func iRateUserDidAttemptToRateApp() {
+//        Reporting.track("rate_attempted")
+//    }
+//
+//    func iRateUserDidDeclineToRateApp() {
+//        Reporting.track("rate_declined")
+//    }
+//
+//    func iRateUserDidRequestReminderToRateApp() {
+//        Reporting.track("rate_requested_reminder")
+//    }
+//}
 
 enum Flow: Int {
     case onboardLogin // Entering app via login

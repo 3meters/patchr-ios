@@ -114,10 +114,10 @@ class PhotoSearchController: UICollectionViewController, UITableViewDelegate, UI
         self.sectionInsets = UIEdgeInsets(top: 4, left: 4, bottom: 4, right: 4)
         
         /* Calculate thumbnail width */
-        availableWidth = UIScreen.main.bounds.size.width - (sectionInsets!.left + sectionInsets!.right)
+        self.availableWidth = UIScreen.main.bounds.size.width - (sectionInsets!.left + sectionInsets!.right)
         let requestedColumnWidth: CGFloat = (UIDevice.current.userInterfaceIdiom == .phone) ? 100 : 150
-        let numColumns: CGFloat = floor(CGFloat(availableWidth!) / CGFloat(requestedColumnWidth))
-        let spaceLeftOver = availableWidth! - (numColumns * requestedColumnWidth) - ((numColumns - 1) * 4)
+        let numColumns: CGFloat = floor(CGFloat(self.availableWidth!) / CGFloat(requestedColumnWidth))
+        let spaceLeftOver = self.availableWidth! - (numColumns * requestedColumnWidth) - ((numColumns - 1) * 4)
         self.cellWidth = requestedColumnWidth + (spaceLeftOver / numColumns)
         self.cellHeight = self.cellWidth
         
@@ -129,7 +129,7 @@ class PhotoSearchController: UICollectionViewController, UITableViewDelegate, UI
 
         self.collectionView?.backgroundColor = Theme.colorBackgroundForm
         self.collectionView!.collectionViewLayout = layout
-        self.collectionView!.register(UINib(nibName: "ThumbnailCollectionViewCell", bundle: nil), forCellWithReuseIdentifier: "cell")
+        self.collectionView!.register(UINib(nibName: "ThumbnailCell", bundle: nil), forCellWithReuseIdentifier: "cell")
         
         /* Auto complete table view */
         self.autocompleteList.delegate = self
@@ -159,7 +159,7 @@ class PhotoSearchController: UICollectionViewController, UITableViewDelegate, UI
 			return
 		}
 		
-		guard self.searchBar!.text != nil && !self.searchBar!.text!.isEmpty else {
+		guard let searchText = self.searchBar!.text, !searchText.isEmpty else {
 			return
 		}
         
@@ -175,7 +175,7 @@ class PhotoSearchController: UICollectionViewController, UITableViewDelegate, UI
 		
 		BingController.instance.backgroundOperationQueue.addOperation {
 			
-			BingController.instance.loadSearchImages(query: self.searchBar!.text!
+			BingController.instance.loadSearchImages(query: searchText
                 , type: self.inputImageType
                 , count: Int64(self.pageSize)
                 , offset: Int64(self.offset)) { response, error in
@@ -195,7 +195,7 @@ class PhotoSearchController: UICollectionViewController, UITableViewDelegate, UI
                         
                         if let data = json["value"].arrayObject {
                             
-                            Utils.updateSearchHistory(search: self.searchBar!.text!)
+                            Utils.updateSearchHistory(search: searchText)
                             self.loadSearches()
                             
                             let beginCount = self.imageResults.count

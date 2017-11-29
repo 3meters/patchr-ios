@@ -36,16 +36,16 @@ def shared_pods
     pod 'Firebase/Messaging',       '4.1.0'
     pod 'Firebase/Storage',         '4.1.0'
     pod 'FirebaseUI/Database',      '4.1.1'
-    pod 'iRate',                    '1.11.6'
     pod 'IDMPhotoBrowser',          :path => '~/code/IDMPhotoBrowser'
     pod 'Localize-Swift',           '1.7.0'
     pod 'MBProgressHUD',            '0.9.2'
+    pod 'NextGrowingTextView',      '1.2.2'
     pod 'NHBalancedFlowLayout',     '0.2'
     pod 'Pastel',                   '0.3.0'
     pod 'PBWebViewController',      '0.5.0'		# Used to show show web content for terms/policy/licensing
     pod 'PhoneNumberKit',           '2.0.0'
     pod 'pop',                      '1.0.9'		# Animation library
-    pod 'PopupDialog',              '0.6.0'
+    pod 'PopupDialog',              '0.6.2'
     pod 'SDWebImage',               '4.0.0'
     pod 'SkyFloatingLabelTextField',:git => 'https://github.com/Skyscanner/SkyFloatingLabelTextField/'
     pod 'SlackTextViewController',  :git => 'https://github.com/slackhq/SlackTextViewController.git'

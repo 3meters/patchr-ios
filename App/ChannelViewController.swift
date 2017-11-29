@@ -5,7 +5,6 @@
 import UIKit
 import AMScrollingNavbar
 import MessageUI
-import iRate
 import IDMPhotoBrowser
 import Localize_Swift
 import NHBalancedFlowLayout
@@ -33,7 +32,6 @@ class ChannelViewController: UICollectionViewController { // Sets itself as data
 	var chromeBackground = UIView(frame: .zero)
 	var headerView = ChannelDetailView()
 	var actionButton: AirRadialMenu!
-	weak var sheetController: STPopupController!
 
 	var backButtonView: ChannelBackView!
 	var backButton: UIBarButtonItem!
@@ -95,9 +93,6 @@ class ChannelViewController: UICollectionViewController { // Sets itself as data
                 Utils.resetUserActionsCount()
             }
         }
-        else {
-            iRate.sharedInstance().promptIfAllCriteriaMet()
-        }
 		if let link = MainController.instance.link {
 			MainController.instance.link = nil
 			MainController.instance.routeDeepLink(link: link, error: nil)
@@ -151,12 +146,6 @@ class ChannelViewController: UICollectionViewController { // Sets itself as data
 		controller.inputChannelId = StateController.instance.channelId!
 		controller.mode = .insert
 		self.present(wrapper, animated: true, completion: nil)
-	}
-
-	@objc func backgroundTapped(sender: AnyObject?) {
-		if let controller = self.sheetController {
-			controller.dismiss()
-		}
 	}
 
 	@objc func backAction(sender: AnyObject?) {
@@ -726,22 +715,26 @@ class ChannelViewController: UICollectionViewController { // Sets itself as data
     func showComments(message: FireMessage) {
 		Reporting.track("view_comment_list")
 		let controller = CommentListController()
+        let wrapper = AirNavigationController(rootViewController: controller)
 		controller.inputMessageId = message.id!
 		controller.inputChannelId = message.channelId!
-
-		let backgroundView = UIView()
-		backgroundView.backgroundColor = Colors.opacity25pcntBlack
-
-		let popController = STPopupController(rootViewController: controller)
-		popController.style = .formSheet
-		popController.backgroundView = backgroundView
-		popController.hidesCloseButton = true
-
-		self.sheetController = popController
-
-		let tap = UITapGestureRecognizer(target: self, action: #selector(self.backgroundTapped(sender:)))
-		self.sheetController.backgroundView?.addGestureRecognizer(tap)
-		self.sheetController.present(in: self)
+        self.present(wrapper, animated: true, completion: nil)
+        
+        //self.navigationController?.pushViewController(controller, animated: true)
+        
+//        let backgroundView = UIView()
+//        backgroundView.backgroundColor = Colors.opacity25pcntBlack
+//
+//        let popController = STPopupController(rootViewController: controller)
+//        popController.style = .formSheet
+//        popController.backgroundView = backgroundView
+//        popController.hidesCloseButton = true
+//
+//        self.sheetController = popController
+//
+//        let tap = UITapGestureRecognizer(target: self, action: #selector(self.backgroundTapped(sender:)))
+//        self.sheetController.backgroundView?.addGestureRecognizer(tap)
+//        self.sheetController.present(in: self)
 	}
 
 	func showPhotos(mode: PhotoBrowserMode, fromView: UIView? = nil, initialUrl: URL? = nil) {

@@ -23,7 +23,7 @@ class MemberListController: BaseTableController {
     var manage = false
     
     /*--------------------------------------------------------------------------------------------
-     * Lifecycle
+     * MARK: - Lifecycle
      *--------------------------------------------------------------------------------------------*/
     
     override func viewDidLoad() {
@@ -84,7 +84,7 @@ class MemberListController: BaseTableController {
     }
     
     /*--------------------------------------------------------------------------------------------
-     * Events
+     * MARK: - Events
      *--------------------------------------------------------------------------------------------*/
     
     @objc func channelInviteAction(sender: AnyObject?) {
@@ -128,11 +128,11 @@ class MemberListController: BaseTableController {
     }
     
     /*--------------------------------------------------------------------------------------------
-     * Notifications
+     * MARK: - Notifications
      *--------------------------------------------------------------------------------------------*/
     
     /*--------------------------------------------------------------------------------------------
-     * Methods
+     * MARK: - Methods
      *--------------------------------------------------------------------------------------------*/
     
     override func initialize() {
@@ -146,7 +146,7 @@ class MemberListController: BaseTableController {
         }
         self.tableView.register(UINib(nibName: "UserListCell", bundle: nil), forCellReuseIdentifier: "cell")
         self.tableView.backgroundColor = Theme.colorBackgroundTable
-        self.tableView.separatorInset = UIEdgeInsets.zero
+        self.tableView.separatorInset = .zero
         self.tableView.tableFooterView = UIView()
         self.tableView.allowsSelection = false
         self.tableView.delegate = self
@@ -161,27 +161,13 @@ class MemberListController: BaseTableController {
 
     func bind() {
         
-        if (self.scope == .channel && isOwner()) {
-            if self.scope != .reaction {
-                let addButton = UIBarButtonItem(title: "invite".localized(), style: .plain, target: self, action: #selector(channelInviteAction(sender:)))
-                self.navigationItem.rightBarButtonItems = [addButton]
-            }
-        }
-        
-        if self.scope == .reaction {
-            let noun = (self.inputEmojiCount == 1) ? "person".localized() : "people".localized()
-            self.navigationItem.title = "reaction_list_title".localizedFormat(self.inputEmoji!, String(self.inputEmojiCount!), noun, self.inputEmojiCode!)
-        }
-        else {
-            self.navigationItem.title = self.channel!.title!
-        }
-        
         let channelId = StateController.instance.channelId!
-        var query = FireController.db.child("channel-members/\(channelId)")
-        if self.scope == .reaction {
-            query = FireController.db.child(self.inputReactionPath)
-        }
         
+        /* Primary list */
+        
+        let query = (self.scope != .reaction)
+            ? FireController.db.child("channel-members/\(channelId)")
+            : FireController.db.child(self.inputReactionPath)
         self.queryController = DataSourceController(name: "member_list")
         self.queryController.bind(to: self.tableView, query: query) { [weak self] scrollView, indexPath, data in
             
@@ -228,6 +214,23 @@ class MemberListController: BaseTableController {
                 }
             })
             return cell
+        }
+        
+        /* Navigation bar */
+        
+        if (self.scope == .channel && isOwner()) {
+            if self.scope != .reaction {
+                let addButton = UIBarButtonItem(title: "invite".localized(), style: .plain, target: self, action: #selector(channelInviteAction(sender:)))
+                self.navigationItem.rightBarButtonItems = [addButton]
+            }
+        }
+        
+        if self.scope == .reaction {
+            let noun = (self.inputEmojiCount == 1) ? "person".localized() : "people".localized()
+            self.navigationItem.title = "reaction_list_title".localizedFormat(self.inputEmoji!, String(self.inputEmojiCount!), noun, self.inputEmojiCode!)
+        }
+        else {
+            self.navigationItem.title = self.channel!.title!
         }
     }
     

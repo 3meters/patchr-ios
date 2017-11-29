@@ -109,7 +109,7 @@ class ContactPickerController: BaseTableController, CLTokenInputViewDelegate {
             let popup = PopupDialog(viewController: controller, gestureDismissal: false)
             let cancelButton = DefaultButton(title: "back".localized().uppercased(), height: 48, action: nil)
             let inviteButton = DefaultButton(title: "invite".localized().uppercased(), height: 48) {
-                let message = controller.textView.text
+                let message = controller.textView.textView.text
                 self.view.endEditing(true)
                 self.invite(message: message)
             }
