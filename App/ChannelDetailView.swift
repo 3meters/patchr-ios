@@ -87,7 +87,7 @@ class ChannelDetailView: UIView {
         
         self.infoGroup.backgroundColor = Theme.colorBackgroundTile
         
-        self.photoView.parallaxIntensity = -40
+//        self.photoView.parallaxIntensity = -40
         self.photoView.clipsToBounds = true
         self.photoView.contentMode = .scaleAspectFill
         self.photoView.backgroundColor = Theme.colorBackgroundImage

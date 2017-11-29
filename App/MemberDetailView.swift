@@ -78,7 +78,7 @@ class MemberDetailView: UIView {
         self.clipsToBounds = false
         self.backgroundColor = Theme.colorBackgroundForm
         
-        self.photoView.parallaxIntensity = -40
+//        self.photoView.parallaxIntensity = -40
         self.photoView.clipsToBounds = true
         self.photoView.contentMode = .scaleAspectFill
         self.photoView.backgroundColor = Theme.colorBackgroundImage

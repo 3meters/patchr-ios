@@ -15,7 +15,7 @@ class LobbyViewController: UIViewController {
 	
 	var appName	= AirLabelBanner()
 	var imageBackground = PastelView(frame: CGRect.zero)
-	var imageLogo = AirImageView(frame: CGRect.zero)
+	var imageLogo = UIImageView(frame: CGRect.zero)
 	var buttonLogin = AirButton()
 	var buttonSignup = AirButton()
     var buttonOnboard = AirButton()
@@ -38,6 +38,7 @@ class LobbyViewController: UIViewController {
         self.navigationController?.setNavigationBarHidden(true, animated: false)
 		if self.firstLaunch {
    			self.imageLogo.anchorInCenter(withWidth: 72, height: 72)
+            self.imageLogo.frame.origin.y += 12
 		}
 	}
 	
@@ -124,6 +125,7 @@ class LobbyViewController: UIViewController {
 		self.imageLogo.image = UIImage(named: "imgPatchrWhite")
 		self.imageLogo.contentMode = UIViewContentMode.scaleAspectFill
         self.imageLogo.backgroundColor = Colors.clear
+        self.imageLogo.clipsToBounds = false
 		
 		self.appName.text = Strings.appName
 		self.appName.textAlignment = NSTextAlignment.center
