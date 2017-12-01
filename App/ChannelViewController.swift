@@ -127,7 +127,14 @@ class ChannelViewController: UICollectionViewController { // Sets itself as data
 		self.view.fillSuperview()
         self.chromeBackground.anchorTopCenterFillingWidth(withLeftAndRightPadding: 0, topPadding: 0, height: 64)
 		let viewWidth = min(Config.contentWidthMax, self.view.width())
-		self.collectionView?.anchorTopCenter(withTopPadding: 0, width: viewWidth, height: self.view.height())
+        
+        if #available(iOS 11, *) {
+            let safeInsets = view.safeAreaInsets
+            self.collectionView?.anchorTopCenter(withTopPadding: 0, width: viewWidth, height: self.view.height() - safeInsets.bottom)
+        }
+        else {
+            self.collectionView?.anchorTopCenter(withTopPadding: 0, width: viewWidth, height: self.view.height())
+        }
         updateHeaderView()
 	}
 
@@ -291,10 +298,6 @@ class ChannelViewController: UICollectionViewController { // Sets itself as data
         }
 
         self.chromeBackground.backgroundColor = Colors.accentColor
-        self.view.addSubview(self.chromeBackground)
-        self.view.sendSubview(toBack: self.chromeBackground)
-
-		self.collectionView?.addSubview(self.headerView)
         
         let layout = UICollectionViewFlowLayout()
 		layout.itemSize = CGSize(width: viewWidth, height: 100)
@@ -307,9 +310,13 @@ class ChannelViewController: UICollectionViewController { // Sets itself as data
 		self.collectionView?.contentInset = UIEdgeInsets(top: self.headerHeight, left: 0, bottom: 0, right: 0)
 		self.collectionView?.contentOffset = CGPoint(x: 0, y: -(self.headerHeight))
 		self.collectionView?.register(MessageListCell.self, forCellWithReuseIdentifier: "cell")
-
+        
 		self.itemTemplate.template = true
 
+        self.view.addSubview(self.chromeBackground)
+        self.view.sendSubview(toBack: self.chromeBackground)
+        self.collectionView?.addSubview(self.headerView)
+        
 		/* Back to channels button */
 
 		self.backButtonView = ChannelBackView()
@@ -357,7 +364,7 @@ class ChannelViewController: UICollectionViewController { // Sets itself as data
 		self.menuButton = UIBarButtonItem(customView: button)
 
 		self.headerView.setPhotoButton.addTarget(self, action: #selector(editChannelAction(sender:)), for: .touchUpInside)
-
+        
 		self.navigationItem.hidesBackButton = true
 		self.navigationItem.setLeftBarButton(self.backButton, animated: true)
 		self.navigationItem.setRightBarButtonItems([self.menuButton, UI.spacerFixed, self.galleryButton], animated: true)
