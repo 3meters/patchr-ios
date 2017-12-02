@@ -185,18 +185,6 @@ class CommentListController: BaseSlackController {
 
                 cell.bind(message: message) // Handles hide/show of actions button based on message.selected
 
-                /* Unread handling */
-                
-                let commentId = message.id!
-                cell.inputUnreadQuery = UnreadQuery(level: .comment, userId: userId, channelId: channelId, messageId: messageId, commentId: commentId)
-                cell.inputUnreadQuery!.observe(with: { [weak cell] error, total in
-                    guard let cell = cell else { return }
-                    if total != nil && total! > 0 {
-                        cell.isUnread = true
-                        FireController.instance.clearCommentUnread(commentId: commentId, messageId: messageId, channelId: channelId)
-                    }
-                })
-
 				if message.creator != nil {
 					cell.userPhotoControl.target = message.creator
 					cell.userPhotoControl.addTarget(this, action: #selector(this.browseMemberAction(sender:)), for: .touchUpInside)

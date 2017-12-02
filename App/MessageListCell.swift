@@ -213,6 +213,8 @@ class MessageListCell: UICollectionViewCell {
         self.commentsStack.alignment = .leading
         self.commentsStack.spacing = 8
 
+        self.commentsButton.setTitle("comment".localized(), for: .normal)
+
         self.payload.addSubview(self.reactionToolbar)
         self.payload.addSubview(self.commentsButton)
         self.payload.addSubview(self.description_!)
@@ -319,19 +321,7 @@ class MessageListCell: UICollectionViewCell {
         /* Comments button */
         
         if self.commentsButton.superview != nil {
-            self.commentsButton.bind(message: message) // Message has commentCount property
-            let userId = UserController.instance.userId!
-            let channelId = message.channelId!
-            let messageId = message.id!
-            self.unreadCommentsQuery = UnreadQuery(level: .comments, userId: userId, channelId: channelId, messageId: messageId)
-            self.unreadCommentsQuery!.observe(with: { [weak commentsButton] error, total in
-                guard let button = commentsButton else { return }
-                if total != nil && total! > 0 {
-                    button.setTitleColor(Theme.colorBackgroundBadge, for: .normal)
-                } else {
-                    button.setTitleColor(Theme.colorButtonBorder, for: .normal)
-                }
-            })
+            self.commentsButton.bind(message: message)
         }
 
         /* Comments */
@@ -343,6 +333,7 @@ class MessageListCell: UICollectionViewCell {
             for key in sortedKeys {
                 let comment = message.comments[key]
                 let commentView = Bundle.loadView(fromNib: "CommentView", withType: CommentView.self)
+                commentView.isUnread = false
                 commentView.maxWidth = columnWidth
                 commentView.bounds.size.width = columnWidth
                 if self.template {
@@ -354,6 +345,22 @@ class MessageListCell: UICollectionViewCell {
                         comment!.creator = user
                         commentView.bind(comment: comment!)
                         self.commentsStack.addArrangedSubview(commentView)
+                        
+                        if comment!.createdBy != UserController.instance.userId! {
+                            let commentId = comment!.id!
+                            let userId = UserController.instance.userId!
+                            let channelId = comment!.channelId!
+                            let messageId = comment!.messageId!
+                            
+                            commentView.inputUnreadQuery = UnreadQuery(level: .comment, userId: userId, channelId: channelId, messageId: messageId, commentId: commentId)
+                            commentView.inputUnreadQuery!.observe(with: { [weak commentView] error, total in
+                                guard let commentView = commentView else { return }
+                                if total != nil && total! > 0 {
+                                    commentView.isUnread = true
+                                    FireController.instance.clearCommentUnread(commentId: commentId, messageId: messageId, channelId: channelId)
+                                }
+                            })
+                        }
                     })
                 }
             }

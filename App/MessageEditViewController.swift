@@ -187,7 +187,7 @@ class MessageEditViewController: BaseEditViewController, BEMCheckBoxDelegate {
         let asset = self.photoEditView.imageView.asset
         if let takenAt = ImageUtils.takenDateFromAsset(asset: asset) {
             self.useTakenDateValue.text = DateUtils.dateMediumString(timestamp: takenAt)
-            Log.d("Photo taken: \(String(describing: self.useTakenDateValue.text))")
+            Log.d("Photo taken: \(String(describing: self.useTakenDateValue.text!))")
             self.view.setNeedsLayout()
             self.dateGroup.fadeIn()
         }

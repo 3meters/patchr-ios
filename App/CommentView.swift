@@ -15,9 +15,17 @@ class CommentView: UIView {
     @IBOutlet weak var usernameLabel: AirLabel!
     @IBOutlet weak var createdDateLabel: AirLabel!
     @IBOutlet weak var textLabel: AirLabel!
-    
+    @IBOutlet weak var unreadIndicator: UIView!
+
     var maxWidth = CGFloat(0)
     var inputUserQuery: UserQuery!
+    var inputUnreadQuery: UnreadQuery!
+    
+    var isUnread = false {
+        didSet {
+            self.unreadIndicator.isHidden = !isUnread
+        }
+    }
     
     required init(coder aDecoder: NSCoder) {
         /* Called when instantiated from XIB or Storyboard */
@@ -66,6 +74,7 @@ class CommentView: UIView {
         /* Created date */
         let createdAtDate = DateUtils.from(timestamp: comment.createdAt!)
         self.createdDateLabel.text = createdAtDate.shortTimeAgo(since: Date())
+        
         self.setNeedsUpdateConstraints()
     }
 	
@@ -76,20 +85,11 @@ class CommentView: UIView {
         self.usernameLabel.sizeToFit()
         self.createdDateLabel.sizeToFit()
 
-        let firstWidth = 32 + 16 + self.usernameLabel.width() + 8 + self.createdDateLabel.width() + 8
+        let firstWidth = 32 + 16 + self.usernameLabel.width() + 8 + self.createdDateLabel.width() + 8 + 10 + 8
         let secondWidth = 32 + 16 + self.textLabel.width()
         let preferredWidth = max(firstWidth, secondWidth)
         
         let size = CGSize(width: preferredWidth, height: 19 + self.textLabel.height() + 8)
         return size
     }
-
-//    override func sizeThatFits(_ size: CGSize) -> CGSize {
-//        self.bounds.size.width = size.width
-//        self.setNeedsLayout()
-//        self.layoutIfNeeded()
-//        var size = sizeThatFitsSubviews()
-//        size.height += 16
-//        return size
-//    }
 }

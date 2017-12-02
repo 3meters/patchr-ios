@@ -45,8 +45,8 @@
                 <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="jFn-K3-oK6" userLabel="Bubble">
                     <rect key="frame" x="40" y="0.0" width="257" height="60"/>
                     <subviews>
-                        <stackView opaque="NO" contentMode="left" distribution="equalSpacing" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="hOK-lA-jqv">
-                            <rect key="frame" x="8" y="0.0" width="146" height="22"/>
+                        <stackView opaque="NO" contentMode="left" distribution="equalSpacing" alignment="center" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="hOK-lA-jqv">
+                            <rect key="frame" x="8" y="4" width="164" height="22"/>
                             <subviews>
                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" placeholderIntrinsicWidth="90" placeholderIntrinsicHeight="22" text="Label" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9LF-93-t2E" userLabel="Username" customClass="AirLabel" customModule="Teeny" customModuleProvider="target">
                                     <rect key="frame" x="0.0" y="0.0" width="90" height="22"/>
@@ -66,13 +66,23 @@
                                         <userDefinedRuntimeAttribute type="string" keyPath="dummyText" value="2w"/>
                                     </userDefinedRuntimeAttributes>
                                 </label>
+                                <view clipsSubviews="YES" contentMode="scaleToFill" horizontalHuggingPriority="249" horizontalCompressionResistancePriority="751" translatesAutoresizingMaskIntoConstraints="NO" id="6hT-cu-gji" userLabel="Unread Indicator">
+                                    <rect key="frame" x="154" y="6" width="10" height="10"/>
+                                    <color key="backgroundColor" red="1" green="0.14913141730000001" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                    <constraints>
+                                        <constraint firstAttribute="height" constant="10" id="oSs-5G-gm3"/>
+                                        <constraint firstAttribute="width" constant="10" id="t3S-Gg-iku"/>
+                                    </constraints>
+                                    <userDefinedRuntimeAttributes>
+                                        <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
+                                            <real key="value" value="5"/>
+                                        </userDefinedRuntimeAttribute>
+                                    </userDefinedRuntimeAttributes>
+                                </view>
                             </subviews>
-                            <constraints>
-                                <constraint firstAttribute="height" constant="22" id="poA-sf-CBd"/>
-                            </constraints>
                         </stackView>
                         <label opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" preferredMaxLayoutWidth="233" translatesAutoresizingMaskIntoConstraints="NO" id="8jZ-7u-BP8" userLabel="Text" customClass="AirLabel" customModule="Teeny" customModuleProvider="target">
-                            <rect key="frame" x="8" y="19" width="241" height="33.5"/>
+                            <rect key="frame" x="8" y="26" width="241" height="0.0"/>
                             <fontDescription key="fontDescription" name="HelveticaNeue-Light" family="Helvetica Neue" pointSize="14"/>
                             <nil key="textColor"/>
                             <nil key="highlightedColor"/>
@@ -83,10 +93,10 @@
                     </subviews>
                     <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                     <constraints>
-                        <constraint firstItem="8jZ-7u-BP8" firstAttribute="top" secondItem="hOK-lA-jqv" secondAttribute="bottom" constant="-3" id="4VO-WH-J2z"/>
+                        <constraint firstItem="8jZ-7u-BP8" firstAttribute="top" secondItem="hOK-lA-jqv" secondAttribute="bottom" id="4VO-WH-J2z"/>
                         <constraint firstItem="hOK-lA-jqv" firstAttribute="leading" secondItem="jFn-K3-oK6" secondAttribute="leading" constant="8" id="Ik7-qg-9FQ"/>
                         <constraint firstItem="8jZ-7u-BP8" firstAttribute="trailing" secondItem="jFn-K3-oK6" secondAttribute="trailing" constant="-8" id="h2H-9J-ZF2"/>
-                        <constraint firstItem="hOK-lA-jqv" firstAttribute="top" secondItem="jFn-K3-oK6" secondAttribute="top" id="n3h-eK-bjw"/>
+                        <constraint firstItem="hOK-lA-jqv" firstAttribute="top" secondItem="jFn-K3-oK6" secondAttribute="top" constant="4" id="n3h-eK-bjw"/>
                         <constraint firstItem="8jZ-7u-BP8" firstAttribute="leading" secondItem="hOK-lA-jqv" secondAttribute="leading" id="rHx-Ho-ygW"/>
                     </constraints>
                     <userDefinedRuntimeAttributes>
@@ -111,6 +121,7 @@
                 <outlet property="createdDateLabel" destination="hmz-z5-0we" id="2KJ-pN-LC6"/>
                 <outlet property="photoControl" destination="rTZ-gL-TUp" id="UjD-z5-W60"/>
                 <outlet property="textLabel" destination="8jZ-7u-BP8" id="lsR-x2-BDo"/>
+                <outlet property="unreadIndicator" destination="6hT-cu-gji" id="reU-5g-uV4"/>
                 <outlet property="usernameLabel" destination="9LF-93-t2E" id="lVa-Rz-SRY"/>
             </connections>
             <point key="canvasLocation" x="-68.5" y="-231"/>
