@@ -163,6 +163,13 @@ class ChannelGridController: UICollectionViewController {
         layout.minimumInteritemSpacing = 8
         layout.minimumLineSpacing = 8
         
+        if #available(iOS 11.0, *) {
+            self.collectionView!.contentInsetAdjustmentBehavior = .never
+        }
+        else {
+            self.automaticallyAdjustsScrollViewInsets = false
+        }
+        
         self.collectionView!.register(UINib(nibName: "ChannelGridCell", bundle: nil), forCellWithReuseIdentifier: "cell")
         self.collectionView!.collectionViewLayout = layout
         self.collectionView!.backgroundColor = Theme.colorBackgroundForm
@@ -205,6 +212,14 @@ class ChannelGridController: UICollectionViewController {
         self.searchBar.widthAnchor.constraint(equalTo: self.view.widthAnchor).isActive = true
         self.searchBar.topAnchor.constraint(equalTo: self.view.topAnchor).isActive = true
         self.searchBar.leadingAnchor.constraint(equalTo: self.view.leadingAnchor).isActive = true
+            
+        if #available(iOS 11.0, *) {
+            self.collectionView?.translatesAutoresizingMaskIntoConstraints = false
+            self.collectionView?.leadingAnchor.constraint(equalTo: self.view.leadingAnchor).isActive = true
+            self.collectionView?.widthAnchor.constraint(equalTo: self.view.widthAnchor).isActive = true
+            self.collectionView?.topAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.topAnchor).isActive = true
+            self.collectionView?.bottomAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.bottomAnchor).isActive = true
+        }
 	}
     
 	func bind() {

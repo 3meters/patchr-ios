@@ -726,22 +726,6 @@ class ChannelViewController: UICollectionViewController { // Sets itself as data
 		controller.inputMessageId = message.id!
 		controller.inputChannelId = message.channelId!
         self.present(wrapper, animated: true, completion: nil)
-        
-        //self.navigationController?.pushViewController(controller, animated: true)
-        
-//        let backgroundView = UIView()
-//        backgroundView.backgroundColor = Colors.opacity25pcntBlack
-//
-//        let popController = STPopupController(rootViewController: controller)
-//        popController.style = .formSheet
-//        popController.backgroundView = backgroundView
-//        popController.hidesCloseButton = true
-//
-//        self.sheetController = popController
-//
-//        let tap = UITapGestureRecognizer(target: self, action: #selector(self.backgroundTapped(sender:)))
-//        self.sheetController.backgroundView?.addGestureRecognizer(tap)
-//        self.sheetController.present(in: self)
 	}
 
 	func showPhotos(mode: PhotoBrowserMode, fromView: UIView? = nil, initialUrl: URL? = nil) {

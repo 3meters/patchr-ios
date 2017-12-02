@@ -42,7 +42,7 @@ class ChannelGridCell: UICollectionViewCell {
     }
     
     /*--------------------------------------------------------------------------------------------
-     * Methods
+     * MARK: - Methods
      *--------------------------------------------------------------------------------------------*/
     
     func bind(channel: FireChannel!, searching: Bool = false) {
