@@ -154,12 +154,7 @@ class MessageEditViewController: BaseEditViewController, BEMCheckBoxDelegate {
 		}
 	}
     
-    func textFieldDidChange(_ textField: UITextField) {
-        self.doneButton.isEnabled = isDirty()
-    }
-    
     func textViewDidChange(_ textView: UITextView) {
-        self.view.setNeedsLayout()
         self.doneButton.isEnabled = isDirty()
     }
     
@@ -224,7 +219,7 @@ class MessageEditViewController: BaseEditViewController, BEMCheckBoxDelegate {
         self.messageField.initialize()
         self.messageField.minNumberOfLines = 6
         self.messageField.maxNumberOfLines = 6
-        self.messageField.delegate = self
+        self.messageField.textView.delegate = self
         
 		self.photoEditView.photoSchema = Schema.entityMessage
 		self.photoEditView.setHost(controller: self, view: self.photoEditView)
