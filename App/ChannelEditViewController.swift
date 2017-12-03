@@ -242,9 +242,16 @@ class ChannelEditViewController: BaseEditViewController {
     }
     
     func bindLanguage() {
+
         self.titleField.placeholder = "channel_edit_title_placeholder".localized()
         self.titleField.title = "title".localized()
-        //self.purposeField.placeholder = "channel_edit_purpose_placeholder".localized()
+
+        self.purposeField.placeholderAttributedText = NSAttributedString(
+                string: "channel_edit_purpose_placeholder".localized(),
+                attributes: [
+                    NSAttributedStringKey.font: Theme.fontText,
+                    NSAttributedStringKey.foregroundColor: Theme.colorTextPlaceholder
+                ])
         if self.mode == .insert {
             self.banner.text = "channel_edit_header_insert".localized()
             self.doneButton.title = "create".localized()
