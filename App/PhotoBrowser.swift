@@ -35,8 +35,12 @@ class PhotoBrowser: IDMPhotoBrowser {
         initialize()
     }
     
-    override func viewWillLayoutSubviews() {
-        super.viewWillLayoutSubviews()
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        if #available(iOS 11.0, *) {
+            let safeInsets = self.view.safeAreaInsets
+            toolbar.frame.origin.y -= safeInsets.bottom
+        }
     }
     
     /*--------------------------------------------------------------------------------------------
@@ -55,7 +59,7 @@ class PhotoBrowser: IDMPhotoBrowser {
         
         self.trackTintColor = Colors.gray90pcntColor
         self.progressTintColor = Colors.accentColor
-        
+
         if self.mode == .preview {
             /* Configure toolbar */
             if let toolbar = super.toolbar {

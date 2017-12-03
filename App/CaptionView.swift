@@ -29,10 +29,11 @@ class CaptionView: IDMCaptionView {
 	
 	override func layoutSubviews() {
 		
-		let columnLeft = CGFloat(16 + 48 + 8)
+		let columnLeft = CGFloat(16 + 32 + 8)
 		let columnWidth = self.bounds.size.width - (columnLeft + 16)
 		
-		self.userPhoto.anchorTopLeft(withLeftPadding: 16, topPadding: 16, width: 48, height: 48)
+		self.userPhoto.anchorTopLeft(withLeftPadding: 16, topPadding: 16, width: 32, height: 32)
+		self.userPhoto.cornerRadius = 16
 		
 		self.createdDate.sizeToFit()
 		self.userName.sizeToFit()
