@@ -190,7 +190,13 @@ class ContainerController: UIViewController {
         if self.messageBar.alpha == 0 && self.messageBar.superview == nil {
             Log.d("Showing message bar")
             self.view.insertSubview(self.messageBar, at: self.view.subviews.count)
-            self.messageBar.anchorBottomCenterFillingWidth(withLeftAndRightPadding: 0, bottomPadding: 0, height: 40)
+            if #available(iOS 11.0, *) {
+                let safeInsets = self.view.safeAreaInsets
+                self.messageBar.anchorBottomCenterFillingWidth(withLeftAndRightPadding: 0, bottomPadding: safeInsets.bottom, height: 40)
+            } else {
+                self.messageBar.anchorBottomCenterFillingWidth(withLeftAndRightPadding: 0, bottomPadding: 0, height: 40)
+            }
+
             UIView.animate(
                 withDuration: 0.20,
                 delay: 0,
