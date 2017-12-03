@@ -215,7 +215,7 @@ class MessageEditViewController: BaseEditViewController, BEMCheckBoxDelegate {
         self.userGroup.backgroundColor = UIColor(red: CGFloat(0.98), green: CGFloat(0.98), blue: CGFloat(0.98), alpha: CGFloat(1))
         self.userGroup.thickness = 0.5
         
-        self.messageField = AirTextView()
+        self.messageField = AirTextView(frame: .zero)
         self.messageField.initialize()
         self.messageField.minNumberOfLines = 6
         self.messageField.maxNumberOfLines = 6
