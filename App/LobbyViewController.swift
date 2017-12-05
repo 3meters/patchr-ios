@@ -174,7 +174,10 @@ class LobbyViewController: UIViewController {
         UIView.animate(withDuration: 0.3
             , delay: 0
             , animations: { [weak self] in
-                guard let this = self else { return }
+                guard let this = self else {
+                    then?()
+                    return
+                }
                 this.imageLogo.transform = CGAffineTransform(scaleX: 0.5, y: 0.5)
             }
             , completion: { finished in
@@ -185,7 +188,10 @@ class LobbyViewController: UIViewController {
                     , initialSpringVelocity: 6.0
                     , options: []
                     , animations: { [weak self] in
-                        guard let this = self else { return }
+                        guard let this = self else {
+                            then?()
+                            return
+                        }
                         this.imageLogo.transform = .identity
                     }
                     , completion: { finished in
@@ -196,16 +202,21 @@ class LobbyViewController: UIViewController {
                             , initialSpringVelocity: 4.0
                             , options: [.curveEaseIn]
                             , animations: { [weak self] in
-                                guard let this = self else { return }
+                                guard let this = self else {
+                                    then?()
+                                    return
+                                }
                                 this.imageLogo.transform = CGAffineTransform(translationX: 0, y: -156)
                             }
-                            , completion: { finished in
-                                if finished {
-                                    self.appName.fadeIn(duration: 0.3)
-                                    self.buttonGroup.fadeIn(duration: 0.7)
-                                    self.buttonOnboard.fadeIn(duration: 0.7)
+                            , completion: { [weak self] finished in
+                                guard let this = self else {
                                     then?()
+                                    return
                                 }
+                                this.appName.fadeIn(duration: 0.3)
+                                this.buttonGroup.fadeIn(duration: 0.7)
+                                this.buttonOnboard.fadeIn(duration: 0.7)
+                                then?()
                         })
                 })
         })
