@@ -39,8 +39,8 @@ class InviteViewController: BaseEditViewController {
 	}
     
 	override func viewWillLayoutSubviews() {
-		
         super.viewWillLayoutSubviews()
+        
         let headingSize = self.heading.sizeThatFits(CGSize(width: Config.contentWidth, height:CGFloat.greatestFiniteMagnitude))
         let messageSize = self.message.sizeThatFits(CGSize(width: Config.contentWidth, height:CGFloat.greatestFiniteMagnitude))
         

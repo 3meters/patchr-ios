@@ -33,12 +33,12 @@ class EmailViewController: BaseEditViewController {
     }
 
     override func viewWillLayoutSubviews() {
+        super.viewWillLayoutSubviews()
 
-        let messageSize = self.message.sizeThatFits(CGSize(width: Config.contentWidth, height:CGFloat.greatestFiniteMagnitude))        
+        let messageSize = self.message.sizeThatFits(CGSize(width: Config.contentWidth, height:CGFloat.greatestFiniteMagnitude))
         self.message.anchorTopCenter(withTopPadding: 0, width: Config.contentWidth, height: messageSize.height)
         self.emailField.alignUnder(self.message, matchingCenterWithTopPadding: 8, width: Config.contentWidth, height: 48)
 
-        super.viewWillLayoutSubviews()
     }
 
     /*--------------------------------------------------------------------------------------------

@@ -44,6 +44,7 @@ class PasswordViewController: BaseEditViewController {
     }
 
     override func viewWillLayoutSubviews() {
+        super.viewWillLayoutSubviews()
 
         let messageSize = self.message.sizeThatFits(CGSize(width: Config.contentWidth, height:CGFloat.greatestFiniteMagnitude))
         self.message.anchorTopCenter(withTopPadding: 0, width: Config.contentWidth, height: messageSize.height)
@@ -55,8 +56,6 @@ class PasswordViewController: BaseEditViewController {
             self.passwordField.alignUnder(self.message, matchingCenterWithTopPadding: 16, width: Config.contentWidth, height: 48)
             self.forgotPasswordButton.alignUnder(self.passwordField, matchingCenterWithTopPadding: 36, width: Config.contentWidth, height: 48)
         }
-
-        super.viewWillLayoutSubviews()
     }
 
     /*--------------------------------------------------------------------------------------------
