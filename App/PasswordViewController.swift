@@ -32,6 +32,8 @@ class PasswordViewController: BaseEditViewController {
     override func loadView() {
         super.loadView()
         initialize()
+        self.view.setNeedsLayout()
+        self.view.layoutIfNeeded()
     }
 
     override func viewDidAppear(_ animated: Bool) {

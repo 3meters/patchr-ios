@@ -15,7 +15,7 @@ class LobbyViewController: UIViewController {
 	
 	var appName	= AirLabelBanner()
 	var imageBackground = PastelView(frame: CGRect.zero)
-	var imageLogo = UIImageView(frame: CGRect.zero)
+    var imageLogo: UIImageView!
 	var buttonLogin = AirButton()
 	var buttonSignup = AirButton()
     var buttonOnboard = AirButton()
@@ -32,14 +32,27 @@ class LobbyViewController: UIViewController {
 		initialize()
 	}
     
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        self.imageLogo.translatesAutoresizingMaskIntoConstraints = false
+        self.imageLogo.widthAnchor.constraint(equalToConstant: 72).isActive = true
+        self.imageLogo.heightAnchor.constraint(equalToConstant: 72).isActive = true
+        
+        if #available(iOS 11.0, *) {
+            self.imageLogo.centerXAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.centerXAnchor).isActive = true
+            self.imageLogo.centerYAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.centerYAnchor).isActive = true
+        }
+        else {
+            self.imageLogo.centerXAnchor.constraint(equalTo: self.view.centerXAnchor).isActive = true
+            self.imageLogo.centerYAnchor.constraint(equalTo: self.view.centerYAnchor).isActive = true
+        }
+    }
+    
 	override func viewWillAppear(_ animated: Bool) {
 		super.viewWillAppear(animated)
 		self.view.endEditing(true)
         self.navigationController?.setNavigationBarHidden(true, animated: false)
-		if self.firstLaunch {
-   			self.imageLogo.anchorInCenter(withWidth: 72, height: 72)
-            self.imageLogo.frame.origin.y += 12
-		}
 	}
 	
 	override func viewDidAppear(_ animated: Bool) {
@@ -121,19 +134,19 @@ class LobbyViewController: UIViewController {
         self.imageBackground.animationDuration = 5.0
         self.imageBackground.setColors([Colors.accentColor, Colors.accentColor, Colors.brandColor])
         self.imageBackground.startAnimation()
-		
-		self.imageLogo.image = UIImage(named: "imgPatchrWhite")
+        
+        self.imageLogo = UIImageView(image: UIImage(named: "imgPatchrWhite"))
 		self.imageLogo.contentMode = UIViewContentMode.scaleAspectFill
         self.imageLogo.backgroundColor = Colors.clear
         self.imageLogo.clipsToBounds = false
-		
+
 		self.appName.text = Strings.appName
 		self.appName.textAlignment = NSTextAlignment.center
         
         self.view.addSubview(self.imageBackground)
         self.view.addSubview(self.imageLogo)
-		self.view.addSubview(self.appName)
-		
+        self.view.addSubview(self.appName)
+        
 		self.buttonLogin.setTitle("log_in".localized(), for: .normal)
 		self.buttonLogin.setTitleColor(Colors.white, for: .normal)
 		self.buttonLogin.setTitleColor(Theme.colorTint, for: .highlighted)
@@ -174,10 +187,7 @@ class LobbyViewController: UIViewController {
         UIView.animate(withDuration: 0.3
             , delay: 0
             , animations: { [weak self] in
-                guard let this = self else {
-                    then?()
-                    return
-                }
+                guard let this = self else { then?(); return; }
                 this.imageLogo.transform = CGAffineTransform(scaleX: 0.5, y: 0.5)
             }
             , completion: { finished in
@@ -188,10 +198,7 @@ class LobbyViewController: UIViewController {
                     , initialSpringVelocity: 6.0
                     , options: []
                     , animations: { [weak self] in
-                        guard let this = self else {
-                            then?()
-                            return
-                        }
+                        guard let this = self else { then?(); return; }
                         this.imageLogo.transform = .identity
                     }
                     , completion: { finished in
@@ -202,17 +209,11 @@ class LobbyViewController: UIViewController {
                             , initialSpringVelocity: 4.0
                             , options: [.curveEaseIn]
                             , animations: { [weak self] in
-                                guard let this = self else {
-                                    then?()
-                                    return
-                                }
-                                this.imageLogo.transform = CGAffineTransform(translationX: 0, y: -156)
+                                guard let this = self else { then?(); return; }
+                                this.imageLogo.transform = CGAffineTransform(translationX: 0, y: -168)
                             }
                             , completion: { [weak self] finished in
-                                guard let this = self else {
-                                    then?()
-                                    return
-                                }
+                                guard let this = self else { then?(); return; }
                                 this.appName.fadeIn(duration: 0.3)
                                 this.buttonGroup.fadeIn(duration: 0.7)
                                 this.buttonOnboard.fadeIn(duration: 0.7)

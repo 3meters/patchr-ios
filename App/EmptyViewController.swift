@@ -26,11 +26,26 @@ class EmptyViewController: UIViewController {
         initialize()
     }
     
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        self.imageLogo.translatesAutoresizingMaskIntoConstraints = false
+        self.imageLogo.widthAnchor.constraint(equalToConstant: 72).isActive = true
+        self.imageLogo.heightAnchor.constraint(equalToConstant: 72).isActive = true
+        
+        if #available(iOS 11.0, *) {
+            self.imageLogo.centerXAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.centerXAnchor).isActive = true
+            self.imageLogo.centerYAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.centerYAnchor).isActive = true
+        }
+        else {
+            self.imageLogo.centerXAnchor.constraint(equalTo: self.view.centerXAnchor).isActive = true
+            self.imageLogo.centerYAnchor.constraint(equalTo: self.view.centerYAnchor).isActive = true
+        }
+    }
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.view.endEditing(true)  // Ensure keyboard is closed
-        self.imageLogo.anchorInCenter(withWidth: 72, height: 72)
-        self.imageLogo.frame.origin.y -= 32
     }
     
     override func viewDidAppear(_ animated: Bool) {

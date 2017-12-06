@@ -197,9 +197,7 @@ extension BaseEditViewController {
     /* UITextViewDelegate */
     
     func textViewDidBeginEditing(_ textView: UITextView) {
-        if let textView = textView as? AirTextView {
-            self.activeTextField = textView
-        }
+        self.activeTextField = textView
     }
     
     func textViewDidEndEditing(_ textView: UITextView) {

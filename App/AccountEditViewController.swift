@@ -28,6 +28,8 @@ class AccountEditViewController: BaseEditViewController {
         super.loadView()
         initialize()
         bind()
+        self.view.setNeedsLayout()
+        self.view.layoutIfNeeded()
     }
     
     override func viewWillLayoutSubviews() {

@@ -21,10 +21,10 @@ class BaseViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 		
-		let tap = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard(sender:)));
-		tap.delegate = self
-		tap.cancelsTouchesInView = false
-		self.view.addGestureRecognizer(tap)
+        let tap = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard(sender:)));
+        tap.delegate = self
+        tap.cancelsTouchesInView = false
+        self.view.addGestureRecognizer(tap)
         self.controllerIsActive = (UIApplication.shared.applicationState == .active)
     }
     
@@ -32,6 +32,7 @@ class BaseViewController: UIViewController {
         super.viewWillLayoutSubviews()
         
         self.contentHolder.resizeToFitSubviews()
+        Log.v("contentHolder width:\(self.contentHolder.frame.size.width), height: \(self.contentHolder.frame.size.height)")
         self.scrollView.contentSize = CGSize(width: self.contentHolder.frame.size.width, height: self.contentHolder.frame.size.height + CGFloat(32))
         self.scrollView.fillSuperview()
         self.contentHolder.anchorTopCenterFillingWidth(withLeftAndRightPadding: 16, topPadding: 16, height: self.contentHolder.frame.size.height)

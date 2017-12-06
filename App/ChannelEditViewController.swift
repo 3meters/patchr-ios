@@ -10,6 +10,7 @@ import UIKit
 import MBProgressHUD
 import Facade
 import Firebase
+import Localize_Swift
 
 class ChannelEditViewController: BaseEditViewController {
 
@@ -19,9 +20,8 @@ class ChannelEditViewController: BaseEditViewController {
 
     var banner = AirLabelTitle()
     var photoEditView = PhotoEditView()
-    var titleField = FloatTextField(frame: CGRect.zero)
+    var titleField = FloatTextField()
     var purposeField = AirTextView()
-
     var doneButton: UIBarButtonItem!
 
     /*--------------------------------------------------------------------------------------------
@@ -44,6 +44,8 @@ class ChannelEditViewController: BaseEditViewController {
                 this.bind()
             })
         }
+        self.view.setNeedsLayout()
+        self.view.layoutIfNeeded()
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -91,7 +93,6 @@ class ChannelEditViewController: BaseEditViewController {
     }
     
     @objc func doneAction(sender: AnyObject){
-        
         guard !self.processing else { return }
         
         if self.mode == .update {
@@ -105,7 +106,7 @@ class ChannelEditViewController: BaseEditViewController {
                 self.progress?.removeFromSuperViewOnHide = true
                 self.progress?.show(true)
                 Reporting.track("update_channel")
-                self.post()
+                post()
             }
         }
         else if self.mode == .insert {
@@ -220,48 +221,19 @@ class ChannelEditViewController: BaseEditViewController {
         self.contentHolder.addSubview(self.purposeField)
         self.contentHolder.addSubview(self.photoEditView)
 
-        if self.mode == .insert {
-            /* Navigation bar buttons */
-            let closeButton = UIBarButtonItem(barButtonSystemItem: .stop, target: self, action: #selector(closeAction(sender:)))
-            self.doneButton = UIBarButtonItem(title: nil, style: .plain, target: self, action: #selector(doneAction(sender:)))
-            self.doneButton.isEnabled = false
-            self.navigationItem.leftBarButtonItems = [closeButton]
-            self.navigationItem.rightBarButtonItems = [doneButton]
-        }
-        else if self.mode == .update  {
-            /* Navigation bar buttons */
-            let closeButton = UIBarButtonItem(barButtonSystemItem: .stop, target: self, action: #selector(closeAction(sender:)))
-            self.doneButton = UIBarButtonItem(title: nil, style: .plain, target: self, action: #selector(doneAction(sender:)))
-            self.doneButton.isEnabled = false
-            self.navigationItem.leftBarButtonItems = [closeButton]
-            self.navigationItem.rightBarButtonItems = [doneButton]
-        }
+        /* Navigation bar buttons */
+        let closeButton = UIBarButtonItem(barButtonSystemItem: .stop, target: self, action: #selector(closeAction(sender:)))
+        self.doneButton = UIBarButtonItem(title: nil, style: .plain, target: self, action: #selector(doneAction(sender:)))
+        self.doneButton.isEnabled = false
+        self.navigationItem.leftBarButtonItems = [closeButton]
+        self.navigationItem.rightBarButtonItems = [doneButton]
         
         self.titleField.addTarget(self, action: #selector(textFieldDidChange(_:)), for: .editingChanged)
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(bindLanguage), name: NSNotification.Name(LCLLanguageChangeNotification), object: nil)
         bindLanguage()
     }
     
-    func bindLanguage() {
-
-        self.titleField.placeholder = "channel_edit_title_placeholder".localized()
-        self.titleField.title = "title".localized()
-
-        self.purposeField.placeholderAttributedText = NSAttributedString(
-                string: "channel_edit_purpose_placeholder".localized(),
-                attributes: [
-                    NSAttributedStringKey.font: Theme.fontText,
-                    NSAttributedStringKey.foregroundColor: Theme.colorTextPlaceholder
-                ])
-        if self.mode == .insert {
-            self.banner.text = "channel_edit_header_insert".localized()
-            self.doneButton.title = "create".localized()
-        }
-        else if self.mode == .update  {
-            self.banner.text = "channel_edit_header_update".localized()
-            self.doneButton.title = "save".localized()
-        }
-    }
-
     func bind() {
         
         self.titleField.text = self.channel.title
@@ -282,6 +254,26 @@ class ChannelEditViewController: BaseEditViewController {
         self.view.setNeedsLayout()
     }
 
+    @objc func bindLanguage() {
+        
+        self.titleField.placeholder = "channel_edit_title_placeholder".localized()
+        self.titleField.title = "title".localized()
+        
+        self.purposeField.placeholderAttributedText = NSAttributedString(
+            string: "channel_edit_purpose_placeholder".localized(),
+            attributes: [
+                NSAttributedStringKey.font: Theme.fontText,
+                NSAttributedStringKey.foregroundColor: Theme.colorTextPlaceholder
+            ])
+        if self.mode == .insert {
+            self.banner.text = "channel_edit_header_insert".localized()
+            self.doneButton.title = "create".localized()
+        } else if self.mode == .update  {
+            self.banner.text = "channel_edit_header_update".localized()
+            self.doneButton.title = "save".localized()
+        }
+    }
+    
     func post() {
         
         self.processing = true
@@ -399,22 +391,21 @@ class ChannelEditViewController: BaseEditViewController {
 
     func isDirty() -> Bool {
         
-        if self.mode == .update {
-            if !stringsAreEqual(string1: self.titleField.text, string2: self.channel.title) {
+        if self.mode == .insert {
+            if !self.titleField.text!.isEmpty {
                 return true
             }
-            if !stringsAreEqual(string1: self.purposeField.textView.text, string2: self.channel.purpose) {
+            if !self.purposeField.textView.text!.isEmpty {
                 return true
             }
             if self.photoEditView.photoDirty {
                 return true
             }
-        }
-        else {
-            if !self.titleField.text!.isEmpty {
+        } else if self.mode == .update {
+            if !stringsAreEqual(string1: self.titleField.text, string2: self.channel.title) {
                 return true
             }
-            if !self.purposeField.textView.text!.isEmpty {
+            if !stringsAreEqual(string1: self.purposeField.textView.text, string2: self.channel.purpose) {
                 return true
             }
             if self.photoEditView.photoDirty {

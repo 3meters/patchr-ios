@@ -62,6 +62,8 @@ class ProfileEditViewController: BaseEditViewController {
                 this.bind()
             }
         })
+        self.view.setNeedsLayout()
+        self.view.layoutIfNeeded()
     }
     
     override func viewWillLayoutSubviews() {
@@ -107,6 +109,7 @@ class ProfileEditViewController: BaseEditViewController {
     
     @objc func doneAction(sender: AnyObject?) {
         guard !self.processing else { return }
+        
         self.activeTextField?.resignFirstResponder()
         update()
     }
@@ -156,14 +159,12 @@ class ProfileEditViewController: BaseEditViewController {
         self.photoEditView.setHost(controller: self, view: self.photoEditView)
         self.photoEditView.photoDelegate = self
 
-        self.firstNameField.font = Theme.fontTextDisplay
         self.firstNameField.setDelegate(delegate: self)
         self.firstNameField.autocapitalizationType = .words
         self.firstNameField.autocorrectionType = .no
         self.firstNameField.keyboardType = .default
         self.firstNameField.returnKeyType = .next
 
-        self.lastNameField.font = Theme.fontTextDisplay
         self.lastNameField.setDelegate(delegate: self)
         self.lastNameField.autocapitalizationType = .words
         self.lastNameField.autocorrectionType = .no
@@ -186,14 +187,16 @@ class ProfileEditViewController: BaseEditViewController {
         self.contentHolder.addSubview(self.phoneField)
         self.contentHolder.addSubview(self.accountButton)
         
-        self.doneButton = UIBarButtonItem(title: nil, style: UIBarButtonItemStyle.plain, target: self, action: #selector(doneAction(sender:)))
+        
         if self.presented {
+            let closeButton = UIBarButtonItem(barButtonSystemItem: .stop, target: self, action: #selector(closeAction(sender:)))
+            self.doneButton = UIBarButtonItem(title: nil, style: .plain, target: self, action: #selector(doneAction(sender:)))
             self.doneButton.isEnabled = false
+            self.navigationItem.leftBarButtonItems = [closeButton]
             self.navigationItem.rightBarButtonItems = [doneButton]
-            let cancelButton = UIBarButtonItem(barButtonSystemItem: .stop, target: self, action: #selector(closeAction(sender:)))
-            self.navigationItem.leftBarButtonItems = [cancelButton]
         }
         else {
+            self.doneButton = UIBarButtonItem(title: nil, style: UIBarButtonItemStyle.plain, target: self, action: #selector(doneAction(sender:)))
             self.doneButton.isEnabled = false
             self.navigationItem.rightBarButtonItems = [doneButton]
         }
@@ -207,12 +210,12 @@ class ProfileEditViewController: BaseEditViewController {
     }
 
     func bind() {
-        self.photoEditView.configureTo(photoMode: self.user.profile?.photo != nil ? .photo : .placeholder)
         self.firstNameField.text = self.user.profile?.firstName
         self.lastNameField.text = self.user.profile?.lastName
         self.phoneField.text = self.user.profile?.phone
         
         if let photo = self.user.profile?.photo {
+            self.photoEditView.configureTo(photoMode: .photo)
             let photoUrl = ImageProxy.url(photo: photo, category: SizeCategory.standard)
             self.photoEditView.bind(url: photoUrl)
         }

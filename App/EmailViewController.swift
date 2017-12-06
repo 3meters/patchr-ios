@@ -23,9 +23,11 @@ class EmailViewController: BaseEditViewController {
     * Lifecycle
     *--------------------------------------------------------------------------------------------*/
 
-    override func loadView() {
-        super.loadView()
+    override func viewDidLoad() {
+        super.viewDidLoad()
         initialize()
+        self.view.setNeedsLayout()
+        self.view.layoutIfNeeded()
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -38,7 +40,6 @@ class EmailViewController: BaseEditViewController {
         let messageSize = self.message.sizeThatFits(CGSize(width: Config.contentWidth, height:CGFloat.greatestFiniteMagnitude))
         self.message.anchorTopCenter(withTopPadding: 0, width: Config.contentWidth, height: messageSize.height)
         self.emailField.alignUnder(self.message, matchingCenterWithTopPadding: 8, width: Config.contentWidth, height: 48)
-
     }
 
     /*--------------------------------------------------------------------------------------------
@@ -77,10 +78,10 @@ class EmailViewController: BaseEditViewController {
         self.message.textAlignment = .center
 
         self.emailField.setDelegate(delegate: self)
-        self.emailField.keyboardType = UIKeyboardType.emailAddress
+        self.emailField.keyboardType = .emailAddress
         self.emailField.autocapitalizationType = .none
         self.emailField.autocorrectionType = .no
-        self.emailField.returnKeyType = UIReturnKeyType.next
+        self.emailField.returnKeyType = .next
         if let email = UserDefaults.standard.string(forKey: Prefs.lastUserEmail) {
             self.emailField.text = email
         }

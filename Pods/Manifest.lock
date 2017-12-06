@@ -143,7 +143,7 @@ PODS:
   - SDWebImage (4.0.0):
     - SDWebImage/Core (= 4.0.0)
   - SDWebImage/Core (4.0.0)
-  - SkyFloatingLabelTextField (3.2.0)
+  - SkyFloatingLabelTextField (3.4.0)
   - SlackTextViewController (1.9.6)
   - STPopup (1.8.3)
   - TTTAttributedLabel (2.0.0)
@@ -207,7 +207,7 @@ CHECKOUT OPTIONS:
     :commit: 6dd284bde21ea2e7f9fd89bc36f40df16e16369d
     :git: https://github.com/ViccAlexander/Chameleon.git
   SkyFloatingLabelTextField:
-    :commit: a8d39e46e804b9bbf8398934e03a709e633b3f3e
+    :commit: c0076fe0e75c0bfae0b6588aac8f01c73410f3e7
     :git: https://github.com/Skyscanner/SkyFloatingLabelTextField/
   SlackTextViewController:
     :commit: e1604ddbb2760a153c955bcea42ae55283d3e865
@@ -255,7 +255,7 @@ SPEC CHECKSUMS:
   PopupDialog: d4336d7274a6aa3af4cb26d8b6691510eba90cc3
   Protobuf: 03eef2ee0b674770735cf79d9c4d3659cf6908e8
   SDWebImage: 76a6348bdc74eb5a55dd08a091ef298e56b55e41
-  SkyFloatingLabelTextField: 33ac1c1be76a3100d24c1084df34e7cf78c0ad7b
+  SkyFloatingLabelTextField: 52b6ade8588f40c5bed423c651c70848f068e1dc
   SlackTextViewController: b854e62c1c156336bc4fd409c6ca79b5773e8f9d
   STPopup: da1167250a01584af7bcccb898653185f223ec46
   TTTAttributedLabel: 8cffe8e127e4e82ff3af1e5386d4cd0ad000b656
