@@ -56,6 +56,8 @@ class MessageEditViewController: BaseEditViewController, BEMCheckBoxDelegate {
         else {
             bind()
         }
+        self.view.setNeedsLayout()
+        self.view.layoutIfNeeded()
 	}
 
 	override func viewDidAppear(_ animated: Bool) {

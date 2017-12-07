@@ -36,6 +36,8 @@ class InviteViewController: BaseEditViewController {
 	override func loadView() {
 		super.loadView()
 		initialize()
+        self.view.setNeedsLayout()
+        self.view.layoutIfNeeded()
 	}
     
 	override func viewWillLayoutSubviews() {
