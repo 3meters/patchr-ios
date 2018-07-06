@@ -52,7 +52,7 @@ class UserListCell: UITableViewCell {
         self.photoControl?.nameLabel.font = Theme.fontText
         self.contact = contact
         
-        let email = contact.emailAddresses.first?.value as String!
+        let email = contact.emailAddresses.first?.value as String?
         let fullName = CNContactFormatter.string(from: contact, style: .fullName)
         let title = fullName ?? email!
         
