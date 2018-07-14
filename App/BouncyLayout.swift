@@ -45,7 +45,7 @@ public class BouncyLayout: UICollectionViewFlowLayout {
     
     public override func prepare() {
         super.prepare()
-        guard let view = collectionView, let attributes = super.layoutAttributesForElements(in: view.bounds)?.flatMap({ $0.copy() as? UICollectionViewLayoutAttributes }) else { return }
+        guard let view = collectionView, let attributes = super.layoutAttributesForElements(in: view.bounds)?.compactMap({ $0.copy() as? UICollectionViewLayoutAttributes }) else { return }
         
         oldBehaviors(for: attributes).forEach { animator.removeBehavior($0) }
         newBehaviors(for: attributes).forEach { animator.addBehavior($0, damping, frequency) }
@@ -53,15 +53,15 @@ public class BouncyLayout: UICollectionViewFlowLayout {
     
     private func oldBehaviors(for attributes: [UICollectionViewLayoutAttributes]) -> [UIAttachmentBehavior] {
         let indexPaths = attributes.map { $0.indexPath }
-        return animator.behaviors.flatMap {
+        return animator.behaviors.compactMap {
             guard let behavior = $0 as? UIAttachmentBehavior, let itemAttributes = behavior.items.first as? UICollectionViewLayoutAttributes else { return nil }
             return indexPaths.contains(itemAttributes.indexPath) ? nil : behavior
         }
     }
     
     private func newBehaviors(for attributes: [UICollectionViewLayoutAttributes]) -> [UIAttachmentBehavior] {
-        let indexPaths = animator.behaviors.flatMap { (($0 as? UIAttachmentBehavior)?.items.first as? UICollectionViewLayoutAttributes)?.indexPath }
-        return attributes.flatMap { return indexPaths.contains($0.indexPath) ? nil : UIAttachmentBehavior(item: $0, attachedToAnchor: $0.center) }
+        let indexPaths = animator.behaviors.compactMap { (($0 as? UIAttachmentBehavior)?.items.first as? UICollectionViewLayoutAttributes)?.indexPath }
+        return attributes.compactMap { return indexPaths.contains($0.indexPath) ? nil : UIAttachmentBehavior(item: $0, attachedToAnchor: $0.center) }
     }
     
     public override func layoutAttributesForElements(in rect: CGRect) -> [UICollectionViewLayoutAttributes]? {

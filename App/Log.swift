@@ -8,7 +8,7 @@
 
 import Foundation
 import CocoaLumberjack
-import FirebaseCrash
+import Crashlytics
 
 class Log {
     
@@ -76,7 +76,7 @@ class Log {
 	static func breadcrumb(message: String!) {
 		/* Requited to call on the main thread */
 		OperationQueue.main.addOperation {
-            FirebaseCrashMessage(message)
+            CLSLogv("%@", getVaList([message]))
 		}
 	}
 }

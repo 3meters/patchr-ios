@@ -106,7 +106,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, MessagingDelegate {
     func openUrl(application: UIApplication, openURL url: NSURL, sourceApplication: String?, annotation: AnyObject?) -> Bool {
 
         /* First see if Branch claims it as a deep link. Calls handler registered in onLaunch. */
-        if Branch.getInstance().handleDeepLink(url as URL!) {
+        if Branch.getInstance().handleDeepLink(url as URL) {
             Log.d("Branch detected a deep link in openUrl: \(String(describing: url.absoluteString))", breadcrumb: true)
             return true
         }

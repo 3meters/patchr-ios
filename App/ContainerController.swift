@@ -44,7 +44,8 @@ class ContainerController: UIViewController {
      *--------------------------------------------------------------------------------------------*/
     
     @objc func viewDidBecomeActive(sender: Notification) {
-        reachabilityChanged(notification: sender)
+        hideMessageBar()
+        ReachabilityManager.instance.restartNotifier()
         Log.d("Container controller is active")
     }
     
@@ -69,8 +70,8 @@ class ContainerController: UIViewController {
         self.messageBar.text = "connection_offline".localized()
         self.messageBar.numberOfLines = 0
         self.messageBar.textAlignment = NSTextAlignment.center
-        self.messageBar.textColor = Colors.white
-        self.messageBar.layer.backgroundColor = Colors.accentColorFill.cgColor
+        self.messageBar.textColor = Colors.black
+        self.messageBar.layer.backgroundColor = Colors.accentColorLight.cgColor
         self.messageBar.alpha = 0.0
         
         NotificationCenter.default.addObserver(self, selector: #selector(reachabilityChanged(notification:)), name: Notification.Name.reachabilityChanged, object: nil)
@@ -189,7 +190,12 @@ class ContainerController: UIViewController {
     func showMessageBar() {
         if self.messageBar.alpha == 0 && self.messageBar.superview == nil {
             Log.d("Showing message bar")
-            self.view.insertSubview(self.messageBar, at: self.view.subviews.count)
+            if self.actionButton != nil {
+                self.view.insertSubview(self.messageBar, belowSubview: self.actionButton!)
+            }
+            else {
+                self.view.insertSubview(self.messageBar, at: self.view.subviews.count)
+            }
             if #available(iOS 11.0, *) {
                 let safeInsets = self.view.safeAreaInsets
                 self.messageBar.anchorBottomCenterFillingWidth(withLeftAndRightPadding: 0, bottomPadding: safeInsets.bottom, height: 40)

@@ -79,7 +79,7 @@ class CommentView: UIView {
     }
 	
     override public var intrinsicContentSize: CGSize {
-        self.textLabel.bounds.size.width = maxWidth - (32 + 16 + 8)
+        self.textLabel.bounds.size.width = self.maxWidth - (32 + 16 + 12)
         
         self.textLabel.sizeToFit()
         self.usernameLabel.sizeToFit()
@@ -94,8 +94,6 @@ class CommentView: UIView {
         let textHeight = self.textLabel.height()
         let height = 19 + textHeight + 8
         
-        Log.d("Comment text: \(String(describing: self.textLabel.text))")
-        Log.d("Comment height: \(textHeight)")
         let size = CGSize(width: preferredWidth, height: height)
         return size
     }

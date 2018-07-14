@@ -7,6 +7,7 @@
 //
 import Firebase
 import FirebaseAuth
+import Localize_Swift
 
 class UserController: NSObject {
     
@@ -125,6 +126,11 @@ class UserController: NSObject {
                 }
                 
                 this.user = user
+                
+                /* Set language */
+                let profile = user!.profile!
+                let langCode = profile.language != nil ? profile.language : "en"
+                Localize.setCurrentLanguage(langCode!)
                 
                 if !calledBack {
                     then?(nil)

@@ -82,7 +82,7 @@ struct UIShared {
         browser.scaleImage = (animateFromView as! UIImageView).image  // Used because final image might have different aspect ratio than initially
         browser.disableVerticalSwipe = false
         browser.autoHideInterface = false
-        browser.delegate = viewController as! IDMPhotoBrowserDelegate!
+        browser.delegate = viewController as! IDMPhotoBrowserDelegate
         
         viewController.navigationController!.present(browser, animated:true, completion:nil)
         

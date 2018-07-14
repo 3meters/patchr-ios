@@ -219,6 +219,9 @@ class ProfileEditViewController: BaseEditViewController {
             let photoUrl = ImageProxy.url(photo: photo, category: SizeCategory.standard)
             self.photoEditView.bind(url: photoUrl)
         }
+        else {
+            self.photoEditView.configureTo(photoMode: .placeholder)
+        }
     }
     
     @objc func bindLanguage() {

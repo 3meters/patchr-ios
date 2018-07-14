@@ -191,6 +191,15 @@ class PhotoSearchController: UICollectionViewController, UITableViewDelegate, UI
                         var imagesFiltered: [ImageResult] = [ImageResult]()
                         let offsetAddCount = json["nextOffsetAddCount"].int
                         let totalEstimatedMatches = json["totalEstimatedMatches"].int
+                        
+                        guard totalEstimatedMatches != nil else {
+                            /* Triggers ui handling of empty, etc. */
+                            NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.DidFetchQuery), object: self, userInfo: userInfo)
+                            self.processing = false
+                            self.collectionView?.reloadData()
+                            return
+                        }
+                        
                         let more = (self.pageSize + self.offset + offsetAddCount! < totalEstimatedMatches!)
                         
                         if let data = json["value"].arrayObject {

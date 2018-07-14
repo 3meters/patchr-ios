@@ -35,7 +35,7 @@
                     </userDefinedRuntimeAttributes>
                 </view>
                 <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="jFn-K3-oK6" userLabel="Bubble">
-                    <rect key="frame" x="40" y="0.0" width="257" height="60"/>
+                    <rect key="frame" x="40" y="0.0" width="255" height="60"/>
                     <subviews>
                         <stackView opaque="NO" contentMode="left" distribution="equalSpacing" alignment="center" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="hOK-lA-jqv">
                             <rect key="frame" x="8" y="4" width="164" height="22"/>
@@ -74,7 +74,7 @@
                             </subviews>
                         </stackView>
                         <label opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" preferredMaxLayoutWidth="233" translatesAutoresizingMaskIntoConstraints="NO" id="8jZ-7u-BP8" userLabel="Text" customClass="AirLabel" customModule="Teeny" customModuleProvider="target">
-                            <rect key="frame" x="8" y="26" width="241" height="0.0"/>
+                            <rect key="frame" x="8" y="26" width="239" height="0.0"/>
                             <fontDescription key="fontDescription" name="HelveticaNeue-Light" family="Helvetica Neue" pointSize="14"/>
                             <nil key="textColor"/>
                             <nil key="highlightedColor"/>
@@ -101,7 +101,7 @@
             <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
             <constraints>
                 <constraint firstItem="jFn-K3-oK6" firstAttribute="top" secondItem="vUN-kp-3ea" secondAttribute="top" id="89P-s8-dta"/>
-                <constraint firstItem="jFn-K3-oK6" firstAttribute="trailing" secondItem="vUN-kp-3ea" secondAttribute="trailing" constant="2" id="8sy-iE-xar"/>
+                <constraint firstItem="jFn-K3-oK6" firstAttribute="trailing" secondItem="vUN-kp-3ea" secondAttribute="trailing" id="8sy-iE-xar"/>
                 <constraint firstItem="jFn-K3-oK6" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" constant="40" id="Ty1-Tj-H1s"/>
                 <constraint firstItem="rTZ-gL-TUp" firstAttribute="top" secondItem="vUN-kp-3ea" secondAttribute="top" id="Vax-WP-8XE"/>
                 <constraint firstItem="rTZ-gL-TUp" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" id="g6Y-3j-pKE"/>

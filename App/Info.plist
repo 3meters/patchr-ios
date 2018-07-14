@@ -17,7 +17,7 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>2.2.8</string>
+	<string>2.3.0</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleURLTypes</key>
@@ -32,7 +32,7 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>265</string>
+	<string>266</string>
 	<key>FirebaseAppDelegateProxyEnabled</key>
 	<false/>
 	<key>ITSAppUsesNonExemptEncryption</key>
@@ -101,7 +101,7 @@
 	<key>NSCameraUsageDescription</key>
 	<string>Take a photo to include with your message.</string>
 	<key>NSContactsUsageDescription</key>
-	<string>Invite people to your channel using your contacts.</string>
+	<string>Invite people to your scrapbook using your contacts.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Select a library photo to include with your message.</string>
 	<key>UIBackgroundModes</key>

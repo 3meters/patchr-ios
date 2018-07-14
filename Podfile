@@ -25,13 +25,14 @@ def shared_pods
     pod 'Branch',                   '0.14.12'     # Url routing and deep linking
     pod 'ChameleonFramework/Swift', :git => 'https://github.com/ViccAlexander/Chameleon.git'
     pod 'CocoaLumberjack/Swift',    '3.0.0'
+    pod 'Crashlytics',              '3.10.5'
     pod 'CLTokenInputView',         '2.3.0'
     pod 'DLRadioButton',            '1.4.9'
     pod 'Emoji-swift',              '0.1.0'
+    pod 'Fabric',                   '1.7.9'
     pod 'Facade',                   '1.1.1'	    # Convenience methods for frame based layout
     pod 'Firebase/Auth',            '4.1.0'
     pod 'Firebase/Core',            '4.1.0'
-    pod 'Firebase/Crash',           '4.1.0'
     pod 'Firebase/Database',        '4.1.0'
     pod 'Firebase/Messaging',       '4.1.0'
     pod 'Firebase/Storage',         '4.1.0'

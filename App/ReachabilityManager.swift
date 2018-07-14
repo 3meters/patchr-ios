@@ -53,5 +53,10 @@ class ReachabilityManager: NSObject {
         return self.reach.connection == .wifi
     }
     
+    func restartNotifier() {
+        self.reach.stopNotifier()
+        try! self.reach!.startNotifier()
+    }
+    
     func prepare() {}
 }

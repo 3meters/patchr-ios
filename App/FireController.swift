@@ -243,8 +243,12 @@ class FireController: NSObject {
     
     func clearMessageUnread(messageId: String, channelId: String) {
         let userId = UserController.instance.userId!
-        let unreadPath = "unreads/\(userId)/\(channelId)/\(messageId)/message"
-        FireController.db.child(unreadPath).removeValue()
+        let unreadPath = "unreads/\(userId)/\(channelId)/\(messageId)"
+        FireController.db.child(unreadPath).removeValue() { error, ref in
+            if error == nil { return }
+            Log.w("Permission denied removing message unread")
+            return
+        }
     }
 
     func clearCommentUnreads(messageId: String, channelId: String) {
