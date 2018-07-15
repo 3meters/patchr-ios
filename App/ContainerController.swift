@@ -44,12 +44,12 @@ class ContainerController: UIViewController {
      *--------------------------------------------------------------------------------------------*/
     
     @objc func viewDidBecomeActive(sender: Notification) {
-        hideMessageBar()
         ReachabilityManager.instance.restartNotifier()
         Log.d("Container controller is active")
     }
     
     @objc func viewWillResignActive(sender: Notification) {
+        hideMessageBar()
         Log.d("Container controller will resign active")
     }
     

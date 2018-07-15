@@ -1,29 +1,29 @@
 /*
-Copyright (c) 2014, Ashley Mills
-All rights reserved.
-
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are met:
-
-1. Redistributions of source code must retain the above copyright notice, this
-list of conditions and the following disclaimer.
-
-2. Redistributions in binary form must reproduce the above copyright notice,
-this list of conditions and the following disclaimer in the documentation
-and/or other materials provided with the distribution.
-
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
-LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-POSSIBILITY OF SUCH DAMAGE.
-*/
+ Copyright (c) 2014, Ashley Mills
+ All rights reserved.
+ 
+ Redistribution and use in source and binary forms, with or without
+ modification, are permitted provided that the following conditions are met:
+ 
+ 1. Redistributions of source code must retain the above copyright notice, this
+ list of conditions and the following disclaimer.
+ 
+ 2. Redistributions in binary form must reproduce the above copyright notice,
+ this list of conditions and the following disclaimer in the documentation
+ and/or other materials provided with the distribution.
+ 
+ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+ LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ POSSIBILITY OF SUCH DAMAGE.
+ */
 
 import SystemConfiguration
 import Foundation
@@ -42,8 +42,7 @@ extension Notification.Name {
     public static let reachabilityChanged = Notification.Name("reachabilityChanged")
 }
 
-func callback(reachability:SCNetworkReachability, flags: SCNetworkReachabilityFlags, info: UnsafeMutableRawPointer?) {
-
+func callback(reachability: SCNetworkReachability, flags: SCNetworkReachabilityFlags, info: UnsafeMutableRawPointer?) {
     guard let info = info else { return }
     
     let reachability = Unmanaged<Reachability>.fromOpaque(info).takeUnretainedValue()
@@ -51,11 +50,11 @@ func callback(reachability:SCNetworkReachability, flags: SCNetworkReachabilityFl
 }
 
 public class Reachability {
-
+    
     public typealias NetworkReachable = (Reachability) -> ()
     public typealias NetworkUnreachable = (Reachability) -> ()
-
-    @available(*, unavailable, renamed: "Conection")
+    
+    @available(*, unavailable, renamed: "Connection")
     public enum NetworkStatus: CustomStringConvertible {
         case notReachable, reachableViaWiFi, reachableViaWWAN
         public var description: String {
@@ -66,7 +65,7 @@ public class Reachability {
             }
         }
     }
-
+    
     public enum Connection: CustomStringConvertible {
         case none, wifi, cellular
         public var description: String {
@@ -77,36 +76,35 @@ public class Reachability {
             }
         }
     }
-
+    
     public var whenReachable: NetworkReachable?
     public var whenUnreachable: NetworkUnreachable?
     
     @available(*, deprecated: 4.0, renamed: "allowsCellularConnection")
     public let reachableOnWWAN: Bool = true
-
+    
     /// Set to `false` to force Reachability.connection to .none when on cellular connection (default value `true`)
     public var allowsCellularConnection: Bool
-
+    
     // The notification center on which "reachability changed" events are being posted
     public var notificationCenter: NotificationCenter = NotificationCenter.default
-
+    
     @available(*, deprecated: 4.0, renamed: "connection.description")
     public var currentReachabilityString: String {
         return "\(connection)"
     }
-
+    
     @available(*, unavailable, renamed: "connection")
     public var currentReachabilityStatus: Connection {
         return connection
     }
     
     public var connection: Connection {
-        
         guard isReachableFlagSet else { return .none }
-
+        
         // If we're reachable, but not on an iOS device (i.e. simulator), we must be on WiFi
         guard isRunningOnDevice else { return .wifi }
-
+        
         var connection = Connection.none
         
         if !isConnectionRequiredFlagSet {
@@ -134,9 +132,9 @@ public class Reachability {
     
     fileprivate var isRunningOnDevice: Bool = {
         #if targetEnvironment(simulator)
-            return false
+        return false
         #else
-            return true
+        return true
         #endif
     }()
     
@@ -145,24 +143,24 @@ public class Reachability {
     
     fileprivate let reachabilitySerialQueue = DispatchQueue(label: "uk.co.ashleymills.reachability")
     
-    required public init(reachabilityRef: SCNetworkReachability) {
+    fileprivate var usingHostname = false
+    
+    required public init(reachabilityRef: SCNetworkReachability, usingHostname: Bool = false) {
         allowsCellularConnection = true
         self.reachabilityRef = reachabilityRef
+        self.usingHostname = usingHostname
     }
     
     public convenience init?(hostname: String) {
-        
         guard let ref = SCNetworkReachabilityCreateWithName(nil, hostname) else { return nil }
-        
-        self.init(reachabilityRef: ref)
+        self.init(reachabilityRef: ref, usingHostname: true)
     }
     
     public convenience init?() {
-        
         var zeroAddress = sockaddr()
         zeroAddress.sa_len = UInt8(MemoryLayout<sockaddr>.size)
         zeroAddress.sa_family = sa_family_t(AF_INET)
-
+        
         guard let ref = SCNetworkReachabilityCreateWithAddress(nil, &zeroAddress) else { return nil }
         
         self.init(reachabilityRef: ref)
@@ -177,11 +175,10 @@ public extension Reachability {
     
     // MARK: - *** Notifier methods ***
     func startNotifier() throws {
-        
         guard !notifierRunning else { return }
         
         var context = SCNetworkReachabilityContext(version: 0, info: nil, retain: nil, release: nil, copyDescription: nil)
-        context.info = UnsafeMutableRawPointer(Unmanaged<Reachability>.passUnretained(self).toOpaque())        
+        context.info = UnsafeMutableRawPointer(Unmanaged<Reachability>.passUnretained(self).toOpaque())
         if !SCNetworkReachabilitySetCallback(reachabilityRef, callback, &context) {
             stopNotifier()
             throw ReachabilityError.UnableToSetCallback
@@ -210,7 +207,6 @@ public extension Reachability {
     // MARK: - *** Connection test methods ***
     @available(*, deprecated: 4.0, message: "Please use `connection != .none`")
     var isReachable: Bool {
-        
         guard isReachableFlagSet else { return false }
         
         if isConnectionRequiredAndTransientFlagSet {
@@ -232,10 +228,9 @@ public extension Reachability {
         // Check we're not on the simulator, we're REACHABLE and check we're on WWAN
         return isRunningOnDevice && isReachableFlagSet && isOnWWANFlagSet
     }
-
+    
     @available(*, deprecated: 4.0, message: "Please use `connection == .wifi`")
     var isReachableViaWiFi: Bool {
-        
         // Check we're reachable
         guard isReachableFlagSet else { return false }
         
@@ -247,7 +242,6 @@ public extension Reachability {
     }
     
     var description: String {
-        
         let W = isRunningOnDevice ? (isOnWWANFlagSet ? "W" : "-") : "X"
         let R = isReachableFlagSet ? "R" : "-"
         let c = isConnectionRequiredFlagSet ? "c" : "-"
@@ -263,13 +257,15 @@ public extension Reachability {
 }
 
 fileprivate extension Reachability {
-    
     func reachabilityChanged() {
         guard previousFlags != flags else { return }
         
         let block = connection != .none ? whenReachable : whenUnreachable
         
         DispatchQueue.main.async {
+            if self.usingHostname {
+                print("Using hostname, about to call block")
+            }
             block?(self)
             self.notificationCenter.post(name: .reachabilityChanged, object:self)
         }
@@ -279,9 +275,9 @@ fileprivate extension Reachability {
     
     var isOnWWANFlagSet: Bool {
         #if os(iOS)
-            return flags.contains(.isWWAN)
+        return flags.contains(.isWWAN)
         #else
-            return false
+        return false
         #endif
     }
     var isReachableFlagSet: Bool {
@@ -318,6 +314,7 @@ fileprivate extension Reachability {
     var flags: SCNetworkReachabilityFlags {
         var flags = SCNetworkReachabilityFlags()
         if SCNetworkReachabilityGetFlags(reachabilityRef, &flags) {
+            //print("Returning flags \(flags)")
             return flags
         } else {
             return SCNetworkReachabilityFlags()
