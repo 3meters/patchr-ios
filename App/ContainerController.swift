@@ -44,11 +44,15 @@ class ContainerController: UIViewController {
      *--------------------------------------------------------------------------------------------*/
     
     @objc func viewDidBecomeActive(sender: Notification) {
-        ReachabilityManager.instance.restartNotifier()
+        startMonitoring()
+        if ReachabilityManager.instance.isUnreachable() {
+            self.showMessageBar()
+        }
         Log.d("Container controller is active")
     }
     
     @objc func viewWillResignActive(sender: Notification) {
+        stopMonitoring()
         hideMessageBar()
         Log.d("Container controller will resign active")
     }
@@ -74,7 +78,6 @@ class ContainerController: UIViewController {
         self.messageBar.layer.backgroundColor = Colors.accentColorLight.cgColor
         self.messageBar.alpha = 0.0
         
-        NotificationCenter.default.addObserver(self, selector: #selector(reachabilityChanged(notification:)), name: Notification.Name.reachabilityChanged, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(viewWillResignActive(sender:)), name: NSNotification.Name.UIApplicationWillResignActive, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(viewDidBecomeActive(sender:)), name: NSNotification.Name.UIApplicationDidBecomeActive, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(unreadChange(notification:)), name: NSNotification.Name(rawValue: Events.UnreadChange), object: nil)
@@ -128,6 +131,14 @@ class ContainerController: UIViewController {
             controller.view.removeFromSuperview()
             controller.removeFromParentViewController()
         }
+    }
+    
+    func startMonitoring() {
+        NotificationCenter.default.addObserver(self, selector: #selector(reachabilityChanged(notification:)), name: Notification.Name.reachabilityChanged, object: nil)
+    }
+    
+    func stopMonitoring() {
+        NotificationCenter.default.removeObserver(self, name: Notification.Name.reachabilityChanged, object: nil)
     }
     
     @objc func reachabilityChanged(notification: Notification) {

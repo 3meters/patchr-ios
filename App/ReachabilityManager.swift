@@ -31,10 +31,10 @@ class ReachabilityManager: NSObject {
 
         self.reach!.whenUnreachable = { reachability in
             self.reachable = false
-            Log.d("Network is unreachable: \(self.reach.description)", breadcrumb: true)
-        }
-        
-        try! self.reach!.startNotifier()
+            DispatchQueue.main.async() {
+                Log.d("Network is unreachable: \(self.reach.description)", breadcrumb: true)
+            }
+        }        
     }
 
     func isReachable() -> Bool {
@@ -53,9 +53,12 @@ class ReachabilityManager: NSObject {
         return self.reach.connection == .wifi
     }
     
-    func restartNotifier() {
-        self.reach.stopNotifier()
+    func startMonitoring() {
         try! self.reach!.startNotifier()
+    }
+    
+    func stopMonitoring() {
+        self.reach.stopNotifier()
     }
     
     func prepare() {}

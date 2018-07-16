@@ -130,12 +130,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate, MessagingDelegate {
     
     func applicationDidBecomeActive(_ application: UIApplication) {
         Log.d("Application did become active", breadcrumb: true)
+        ReachabilityManager.instance.startMonitoring()
         connectToFcm()
         Database.database().goOnline()
     }
 
     func applicationWillResignActive(_ application: UIApplication) {
         Log.d("Application will resign active", breadcrumb: true)
+        ReachabilityManager.instance.stopMonitoring()
     }
 
     func applicationDidEnterBackground(_ application: UIApplication) {
