@@ -346,7 +346,7 @@ class MessageListCell: UICollectionViewCell {
                         commentView.bind(comment: comment!)
                         self.commentsStack.addArrangedSubview(commentView)
                         
-                        if comment!.createdBy != UserController.instance.userId! {
+                        //if comment!.createdBy != UserController.instance.userId! {
                             let commentId = comment!.id!
                             let userId = UserController.instance.userId!
                             let channelId = comment!.channelId!
@@ -360,7 +360,7 @@ class MessageListCell: UICollectionViewCell {
                                     FireController.instance.clearCommentUnread(commentId: commentId, messageId: messageId, channelId: channelId)
                                 }
                             })
-                        }
+                        //}
                     })
                 }
             }
